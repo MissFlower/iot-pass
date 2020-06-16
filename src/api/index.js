@@ -1,14 +1,14 @@
-import axios from "axios";
-import API from "@/data/api";
+import request from "@/utils/request";
 import Qs from "qs";
 
 const headerFrom = {
   "Content-Type": "application/x-www-form-urlencoded"
 };
 
-export function login(data) { // 登录
-  return axios({
-    url: API.login,
+export function login(data) {
+  // 登录
+  return request({
+    url: "/user/login",
     method: "post",
     headers: headerFrom,
     data: Qs.stringify(data)
@@ -17,8 +17,8 @@ export function login(data) { // 登录
 
 export function register(data) {
   // 注册
-  return axios({
-    url: API.register,
+  return request({
+    url: "/user/register",
     method: "post",
     headers: headerFrom,
     data: Qs.stringify(data)
@@ -27,8 +27,8 @@ export function register(data) {
 
 export function sendCode(data) {
   // 发送验证码
-  return axios({
-    url: API.sendPhoneCode,
+  return request({
+    url: "/user/sendPhoneCode",
     method: "post",
     headers: headerFrom,
     data: Qs.stringify(data)
@@ -36,8 +36,8 @@ export function sendCode(data) {
 }
 export function verifyCode(data) {
   // 验证验证码
-  return axios({
-    url: API.verifyPhoneCode,
+  return request({
+    url: "/user/verifyPhoneCode",
     method: "post",
     headers: headerFrom,
     data: Qs.stringify(data)
@@ -46,8 +46,8 @@ export function verifyCode(data) {
 
 export function verifyAccount(data) {
   // 验证账户名
-  return axios({
-    url: API.verifyAccount,
+  return request({
+    url: "/user/verifyAccount",
     method: "post",
     headers: headerFrom,
     data: Qs.stringify(data)
@@ -56,8 +56,8 @@ export function verifyAccount(data) {
 
 export function updatePassword(data) {
   // 修改密码
-  return axios({
-    url: API.updatePassword,
+  return request({
+    url: "/user/updatePassword",
     method: "post",
     headers: headerFrom,
     data: Qs.stringify(data)
@@ -66,17 +66,17 @@ export function updatePassword(data) {
 
 export function getUserInfo() {
   // 获取个人信息
-  return axios({
-    url: API.userInfo,
+  return request({
+    url: "/user/info",
     method: "post",
     headers: headerFrom
   });
 }
 
-export function sendEmailCode(data) {
+export function sendMailCode(data) {
   // 发送邮箱验证码
-  return axios({
-    url: API.sendEmailValCode,
+  return request({
+    url: "/user/sendMailCode",
     method: "post",
     headers: headerFrom,
     data
@@ -85,8 +85,8 @@ export function sendEmailCode(data) {
 
 export function bandEmailFun(data) {
   // 邮箱绑定
-  return axios({
-    url: API.bandEmail,
+  return request({
+    url: "/user/bandEmail",
     method: "post",
     headers: headerFrom,
     data

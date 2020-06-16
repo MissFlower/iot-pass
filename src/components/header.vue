@@ -9,7 +9,6 @@
     </div>
     <el-dropdown class="avatar-container" trigger="click" v-if="loginStatus">
       <div class="avatar-wrapper df ai_c">
-        <!-- <img :src="src" class="user-avatar" /> -->
         <span>{{ userName }}</span>
         <i class="el-icon-caret-bottom c2" />
       </div>
@@ -40,8 +39,6 @@ import { getUserInfo } from "@/api";
 export default {
   data() {
     return {
-      src:
-        "http://image.yy.com/yywebalbumbs2bucket/144152f8680f421599233c6ffcfcef49_1476265267104.jpeg",
       flag: false // 是否在登录页面
     };
   },
@@ -62,6 +59,7 @@ export default {
     $route() {
       this.flag = this.$route.path === "/login" ? true : false;
       this.pathChange();
+      this.showEmailTips();
     },
     loginStatus() {
       if (this.loginStatus) {
@@ -75,6 +73,7 @@ export default {
     if (this.loginStatus) {
       this.getUserInfoFun();
     }
+    this.showEmailTips();
   },
   methods: {
     pathChange() {
@@ -128,11 +127,19 @@ export default {
           } else if (!emailStatus) {
             // 登录 没有，状态为2不处理
             this.$cookie.setValue("emailStatus", 0);
-            this.$router.push("/add-email-tips");
+            // this.$router.push("/add-email-tips");
           }
         }
         this.$store.dispatch("setLoading", false);
       });
+    },
+    showEmailTips() {
+      // if (
+      //   this.$cookie.getValue("emailStatus") * 1 === 0 &&
+      //   this.$route.path !== "/index"
+      // ) {
+      //   this.$router.push("/add-email-tips");
+      // }
     }
   }
 };

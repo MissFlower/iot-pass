@@ -47,7 +47,7 @@
         </el-form-item>
       </el-form>
     </div>
-    <div else class="con df">
+    <div else class="con df" v-if="flag == 3">
       <div style="font-size: 50px">
         <svg-icon icon-class="success"></svg-icon>
       </div>

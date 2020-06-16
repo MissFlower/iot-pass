@@ -16,7 +16,7 @@
         </div>
         <div class="tc mt30">
           <el-button type="primary" @click="handleGo">立即绑定</el-button>
-          <el-button type="primary" class="ml20" @click="handleSetStatus"
+          <el-button type="primary" class="ml20" @click="handleNext"
             >下次再说
           </el-button>
         </div>
@@ -37,8 +37,9 @@ export default {
         params: { flag: 1 }
       });
     },
-    handleSetStatus() {
-      this.$cookie.setValue("emailSttaus", 2);
+    handleNext() {
+      this.$cookie.setValue("emailStatus", 2);
+      this.$router.push("/home");
     }
   }
 };

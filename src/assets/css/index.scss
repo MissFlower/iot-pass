@@ -1,0 +1,25 @@
+html, body, #app {
+  font-family: sans-serif;
+  height: 100%;
+  width: 100%;
+}
+#app {
+  div, header, main {box-sizing: border-box!important;}
+  .sidebar-container {
+    .el-menu {
+      border: none;
+    }
+    .svg-icon {
+      margin-right: 16px;
+    }
+  
+  }
+  .pre-icon {
+    position: absolute;
+    top: 22px;
+    left: 20px;
+  }
+  .pre-icon:hover {
+    color: #1890ff;
+  }
+}

@@ -1,22 +1,12 @@
 module.exports = {
+  publicPath: process.env.NODE_ENV === "production" ? "./" : "/",
   devServer: {
     // open: true,
     host: "0.0.0.0",
     port: 8091,
     https: false,
     hotOnly: false,
-    // proxy: "http://iot.paas.vaiwan.com" // string | Object
-    proxy: {
-      "/api": {
-        target: "http://iot.paas.vaiwan.com",
-        ws: true, //代理websockets
-        changeOrigin: true, // 虚拟的站点需要更管origin
-        pathRewrite: {
-          //重写路径 比如'/api/aaa/ccc'重写为'/aaa/ccc'
-          "^/api": "/"
-        }
-      }
-    }
+    proxy: null
   },
   chainWebpack: config => {
     // 一个规则里的 基础Loader

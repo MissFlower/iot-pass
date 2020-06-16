@@ -45,7 +45,7 @@ const routes = [
       {
         path: "verify/:flag",
         name: "verify",
-        component: resolve => require(["@/components/verify"], resolve),
+        component: resolve => require(["@/views/login/verify"], resolve),
         meta: { name: "身份验证" }
       },
       {

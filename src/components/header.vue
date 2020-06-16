@@ -117,29 +117,41 @@ export default {
     },
     getUserInfoFun() {
       this.$store.dispatch("setLoading", true);
-      getUserInfo().then(res => {
-        if (res.code === 200) {
-          // 邮箱的标志存放在cookie中， 0 未绑定提示， 1已绑定， 2 未绑定 不提示
-          const emailStatus = this.$cookie.getValue("emailStatus");
-          this.$cookie.setValue("info", JSON.stringify(res.data));
-          if (res.data.email) {
-            this.$cookie.setValue("emailStatus", 1);
-          } else if (!emailStatus) {
-            // 登录 没有，状态为2不处理
-            this.$cookie.setValue("emailStatus", 0);
-            // this.$router.push("/add-email-tips");
+      getUserInfo()
+        .then(res => {
+          if (res.code === 200) {
+            // 邮箱的标志存放在cookie中， 0 未绑定提示， 1已绑定， 2 未绑定 不提示
+            const emailStatus = this.$cookie.getValue("emailStatus");
+            this.$cookie.setValue("info", JSON.stringify(res.data));
+            if (res.data.email) {
+              this.$cookie.setValue("emailStatus", 1);
+            } else if (!emailStatus) {
+              // 登录 没有，状态为2不处理
+              this.$cookie.setValue("emailStatus", 0);
+              this.$router.push("/add-email-tips");
+            }
           }
-        }
-        this.$store.dispatch("setLoading", false);
-      });
+          this.$store.dispatch("setLoading", false);
+        })
+        .catch(() => {
+          this.$message.warning("用户信息获取失败");
+          this.$store.dispatch("setLoading", false);
+        });
     },
     showEmailTips() {
-      // if (
-      //   this.$cookie.getValue("emailStatus") * 1 === 0 &&
-      //   this.$route.path !== "/index"
-      // ) {
-      //   this.$router.push("/add-email-tips");
-      // }
+      const path = this.$route.path;
+      if (
+        this.$cookie.getValue("emailStatus") * 1 === 0 &&
+        path !== "/index" &&
+        path === "/add-email-tips"
+      ) {
+        this.$router.push("/add-email-tips");
+      } else if (
+        (path === "/add-email-tips" || path === "/verify") &&
+        this.$cookie.getValue("emailStatus") * 1 === 1
+      ) {
+        this.$router.push("/home");
+      }
     }
   }
 };

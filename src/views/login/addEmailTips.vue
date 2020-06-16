@@ -32,10 +32,7 @@ export default {
   },
   methods: {
     handleGo() {
-      this.$router.push({
-        name: "verify",
-        params: { flag: 1 }
-      });
+      this.$router.push("/verify");
     },
     handleNext() {
       this.$cookie.setValue("emailStatus", 2);

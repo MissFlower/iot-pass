@@ -43,7 +43,7 @@ const routes = [
         meta: { name: "绑定邮箱提示" }
       },
       {
-        path: "verify/:flag",
+        path: "verify",
         name: "verify",
         component: resolve => require(["@/views/login/verify"], resolve),
         meta: { name: "身份验证" }

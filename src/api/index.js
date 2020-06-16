@@ -79,7 +79,7 @@ export function sendMailCode(data) {
     url: "/user/sendMailCode",
     method: "post",
     headers: headerFrom,
-    data
+    data: Qs.stringify(data)
   });
 }
 
@@ -89,6 +89,6 @@ export function bandEmailFun(data) {
     url: "/user/bandEmail",
     method: "post",
     headers: headerFrom,
-    data
+    data: Qs.stringify(data)
   });
 }

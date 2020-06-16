@@ -20,9 +20,9 @@
           @node-click="handleNodeClick"
         >
           <span class="custom-tree-node" slot-scope="{ node, data }">
-            <span class="tree-label">{{ data.title }}</span>
+            <span class="tree-label">{{ data.name }}</span>
             <span class="tree-check-icon">
-              <i class="el-icon-close red hand"></i>
+              <i class="el-icon-close red hand" @click.stop="handleClose"></i>
               <i
                 class="el-icon-edit blue hand ml10"
                 @click.stop="handleEdit"
@@ -40,13 +40,20 @@
 
 <script>
 import rightCon from "./children/rightCon";
-import { addBreadCrumbFun } from "@/data/fun"
+import { addBreadCrumbFun, dealFun } from "@/data/fun";
+import { getMenuList } from "@/api/menu";
 export default {
   components: { rightCon },
   data() {
     return {
       flag: 1,
       loading: false,
+      formData: {
+        pageNum: 1,
+        pageSize: 1000,
+        name: "",
+        code: ""
+      },
       path: "/menu",
       list: [
         {
@@ -144,7 +151,7 @@ export default {
       ],
       defaultProps: {
         children: "children",
-        label: "title"
+        label: "name"
       },
       activeItem: {}
     };
@@ -155,15 +162,28 @@ export default {
         JSON.stringify(this.$refs.tree.getCurrentNode())
       );
     });
+    this.getData();
   },
   methods: {
+    getData() {
+      getMenuList(this.formData).then(res => {
+        console.log(res);
+        if (res.code === 200) {
+          if (res.data.list) {
+            this.list = dealFun(res.data.list);
+            console.log(this.list);
+          }
+        }
+      });
+    },
     handleNodeClick(data) {
       this.activeItem = JSON.parse(JSON.stringify(data));
     },
     handleAdd() {
-      for (let key in this.activeItem) {
-        this.activeItem[key] = "";
-      }
+      // for (let key in this.activeItem) {
+      //   this.activeItem[key] = "";
+      // }
+      this.activeItem = null;
       this.$refs.right.flag = 2;
       this.flag = 0;
       addBreadCrumbFun({
@@ -174,6 +194,9 @@ export default {
     handleEdit() {
       this.$refs.right.flag = 1;
       this.flag = 0;
+    },
+    handleClose(row) {
+      console.log(row);
     }
   }
 };

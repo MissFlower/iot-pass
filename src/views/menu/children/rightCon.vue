@@ -1,10 +1,10 @@
 <template>
   <div id="menu_right_con">
     <div class="mb20">{{ msg }}</div>
-    <el-form :model="activeItem" label-width="100px" class="mb20">
+    <el-form :model="info" label-width="100px" class="mb20">
       <el-form-item label="菜单名称">
         <el-input
-          v-model="activeItem.title"
+          v-model="info.name"
           placeholder="请输入菜单名称"
           :disabled="!flag"
           class="w200"
@@ -12,7 +12,7 @@
       </el-form-item>
       <el-form-item label="上层菜单">
         <el-cascader
-          v-model="activeItem.pid"
+          v-model="info.pid"
           :options="list"
           :props="cascaderProps"
           :disabled="!flag"
@@ -21,21 +21,21 @@
       </el-form-item>
       <el-form-item label="请求地址">
         <el-input
-          v-model="activeItem.path"
+          v-model="info.url"
           placeholder="请输入请求地址"
           :disabled="!flag"
           class="w200"
         ></el-input>
       </el-form-item>
       <el-form-item label="菜单标记">
-        <el-radio-group v-model="activeItem.flag" :disabled="!flag">
+        <el-radio-group v-model="info.menuFlag" :disabled="!flag">
           <el-radio label="1">是</el-radio>
           <el-radio label="0">否</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="图标">
         <el-input
-          v-model="activeItem.icon"
+          v-model="info.icon"
           placeholder="请输入图标"
           :disabled="!flag"
           class="w200"
@@ -49,11 +49,11 @@
     </div>
     <div v-else class="tc">
       <el-button @click="handleCancel">取消</el-button>
-      <el-button type="primary" @click="handleSave">保存</el-button>
+      <el-button type="primary" @click.stop="handleSave">保存</el-button>
     </div>
     <icon-select-con
       v-if="show"
-      :icon="activeItem.icon"
+      :icon="info.icon"
       @select="selectIcon"
       @close="closeSelectIconCon"
     ></icon-select-con>
@@ -62,6 +62,7 @@
 
 <script>
 import iconSelectCon from "./selectIocn";
+import { createMenu } from "@/api/menu";
 export default {
   components: { iconSelectCon },
   props: ["activeItem"],
@@ -69,68 +70,20 @@ export default {
     return {
       flag: 0, // 0 展示，1 编辑， 2添加
       show: false,
-      list: [
-        {
-          icon: "menu",
-          title: "菜单管理",
-          path: "/menu",
-          pid: "",
-          id: "1",
-          flag: "1" // 1 菜单 0 功能
-        },
-        {
-          title: "角色管理",
-          path: "/role",
-          icon: "role",
-          pid: "",
-          id: "2",
-          flag: "1"
-        },
-        {
-          title: "用户管理",
-          path: "/account",
-          icon: "account",
-          pid: "",
-          id: "3",
-          flag: "1"
-        },
-        {
-          title: "产品管理",
-          path: "/product",
-          icon: "product",
-          pid: "",
-          id: "4",
-          flag: "1"
-        },
-        {
-          title: "设备管理",
-          path: "/equ",
-          icon: "equ",
-          pid: "",
-          id: "5",
-          flag: "1"
-        },
-        {
-          title: "固件管理",
-          path: "/firmware",
-          icon: "firmware",
-          pid: "",
-          id: "6",
-          flag: "1"
-        },
-        {
-          title: "日志管理",
-          path: "/log",
-          icon: "log",
-          pid: "",
-          id: "7",
-          flag: "1"
-        }
-      ],
+      list: [],
       cascaderProps: {
-        label: "title",
+        label: "name",
         value: "id",
         checkStrictly: true
+      },
+      info: {
+        name: "",
+        code: "",
+        pid: "0",
+        pcodeName: "",
+        menuFlag: "1",
+        url: "",
+        icon: ""
       }
     };
   },
@@ -157,12 +110,20 @@ export default {
       this.$parent.flag = 0;
     },
     handleSave() {
-      this.$parent.loading = true;
-      setTimeout(() => {
-        this.flag = 0;
-        this.$parent.loading = false;
-        this.$parent.flag = 1;
-      }, 2000);
+      // this.$parent.loading = true;
+      // setTimeout(() => {
+      //   this.flag = 0;
+      //   this.$parent.loading = false;
+      //   this.$parent.flag = 1;
+      // }, 2000);
+      if (this.activeItem) {
+        // 编辑
+      } else {
+        createMenu(this.info).then(res => {
+          console.log(res);
+          console.log("----");
+        });
+      }
     },
     handleCancel() {
       this.flag = 0;
@@ -172,7 +133,7 @@ export default {
       this.show = true;
     },
     selectIcon(icon) {
-      this.activeItem.icon = icon;
+      this.info.icon = icon;
     },
     closeSelectIconCon() {
       this.show = false;

@@ -29,3 +29,34 @@ export function phoneValidate(value) {
     }
   }
 }
+
+// 处理组织关系的函数
+export function dealFun(list) {
+  const obj = {};
+  list.forEach(item => {
+    if (!obj[item.pcode]) {
+      obj[item.pcode] = [];
+    }
+    obj[item.pcode].push(item);
+  });
+  let arr = null;
+  if (obj["system"]) {
+    arr = obj["system"];
+    delete obj["system"];
+  }
+  for (const key in obj) {
+    fundFun(key, arr, obj);
+  }
+  return arr;
+}
+
+function fundFun(upcode, list, obj) {
+  for (let i = 0; i < list.length; i++) {
+    if (list[i].code + "" === upcode + "") {
+      list[i].children = obj[upcode];
+      break;
+    } else if (list[i].children) {
+      fundFun(upcode, list[i].children, obj);
+    }
+  }
+}

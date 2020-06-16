@@ -6,13 +6,12 @@ const whiteList = ["/index", "/login", "/register", "/password-find"]; // no red
 router.beforeEach(async (to, from, next) => {
   const hasToken = Cookie.getValue("access_token");
   if (hasToken) {
-    console.log(Cookie.getValue("emailStatus"));
-    if (Cookie.getValue("emailStatus") * 1 === 0) {
-      console.log("----------");
-      next("/add-email-tips");
-    } else {
-      next();
-    }
+    // if (Cookie.getValue("emailStatus") * 1 === 0) {
+    //   next("/add-email-tips");
+    // } else {
+    //   next();
+    // }
+    next();
   } else {
     if (whiteList.indexOf(to.path) !== -1) {
       next();

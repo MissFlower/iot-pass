@@ -3,7 +3,7 @@
     <div class="mb20 tr">
       <el-button type="primary" @click="handleAdd">新建产品</el-button>
     </div>
-    <el-table :data="list" border>
+    <el-table :data="productInfos" border :loading="loading">
       <el-table-column label="ID" prop="id"></el-table-column>
       <el-table-column label="产品KEY" prop="key"></el-table-column>
       <el-table-column label="产品名称" prop="name"></el-table-column>
@@ -11,39 +11,36 @@
       <el-table-column label="联网方式"></el-table-column>
       <el-table-column label="数据格式"></el-table-column>
       <el-table-column label="状态"></el-table-column>
-      <el-table-column label="操作"></el-table-column>
+      <el-table-column label="操作">
+        <template >
+          <el-button type="text"  >查看</el-button>
+          <el-button type="text"  >设备管理</el-button>
+          <el-button type="text"  >删除</el-button>
+        </template>
+      </el-table-column>
     </el-table>
-    <el-pagination
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page.sync="page"
-      :page-size="100"
-      layout="total, prev, pager, next"
-      :total="total"
-      class="tr mt20"
-    >
-    </el-pagination>
+   
   </div>
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      list: [
-        {
-          id: 1,
-          key: "rty",
-          name: "测试产品"
-        }
-      ],
-      page: 1,
-      total: 0
-    };
+
+export default { 
+  name:'productList',
+  props: {
+    productInfos:[Array],
+    loading:{
+      type:[Boolean],
+      default:false
+    }
   },
-  methods: {
-    handleSizeChange() {},
-    handleCurrentChange() {},
+  data() {
+    return {   
+      
+     
+    };
+  },  
+  methods: {   
     handleAdd() {
       this.$router.push("add-product");
     }

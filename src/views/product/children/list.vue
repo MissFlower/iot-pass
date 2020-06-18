@@ -1,8 +1,5 @@
 <template>
-  <div id="addProduct">
-    <div class="mb20 tr">
-      <el-button type="primary" @click="handleAdd">新建产品</el-button>
-    </div>
+  <div id="addProduct">    
     <el-table :data="productInfos" border :loading="loading">
       <el-table-column label="ID" prop="id"></el-table-column>
       <el-table-column label="产品KEY" prop="key"></el-table-column>
@@ -13,9 +10,9 @@
       <el-table-column label="状态"></el-table-column>
       <el-table-column label="操作">
         <template >
-          <el-button type="text"  >查看</el-button>
-          <el-button type="text"  >设备管理</el-button>
-          <el-button type="text"  >删除</el-button>
+          <el-button type="text">查看</el-button>
+          <el-button type="text">设备管理</el-button>
+          <el-button type="text">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -41,9 +38,7 @@ export default {
     };
   },  
   methods: {   
-    handleAdd() {
-      this.$router.push("add-product");
-    }
+    
   }
 };
 </script>

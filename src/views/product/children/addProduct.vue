@@ -138,7 +138,7 @@ export default {
   methods: {
     //提交表单
     submitForm(formName) {
-        var categoryId = '';
+        var categoryId = null;
         this.$refs[formName].validate((valid) => {
            if(this.ruleForm.category === '标准品类'){
                 // categoryId = {categoryId: this.standardSelect}

@@ -93,5 +93,69 @@ export function getProduct(data) {
   });
 }
 
+/**
+ * 产品动态注册开关
+ * @param {
+  *   productKey	string	是	产品key
+  *   registerSwitch	int	是	开关状态 1:开,0:关 
+  * }
+  */
+export function dynamicRegisterSwitch(data) { 
+  return request({
+    url: "product/dynamicRegisterSwitch",
+    method: "post",
+    headers: headerFrom,
+    data: Qs.stringify(data)
+  });
+}
+
+/**
+ * 产品取消发布
+ * @param {
+  *   productKey	string	是	产品key  *   
+  * }
+  */
+export function cancelRelease(data) { 
+  return request({
+    url: "product/cancelRelease",
+    method: "post",
+    headers: headerFrom,
+    data: Qs.stringify(data)
+  });
+}
+
+
+/**
+ * 产品发布
+ * @param {
+  *   productKey	string	是	产品key  *   
+  * }
+  */
+export function release(data) { 
+  return request({
+    url: "product/release",
+    method: "post",
+    headers: headerFrom,
+    data: Qs.stringify(data)
+  });
+}
+
+/**
+ * 产品编辑
+ * @param {
+  *   id	string	是	产品id
+  *   productName	string	是	产品名称
+  *   dynRegister	int	是	动态注册开关
+  *   description	string	否	描述   
+  * }
+  */
+export function productEdit(data) { 
+  return request({
+    url: "register/update",
+    method: "post",
+    headers: headerFrom,
+    data: Qs.stringify(data)
+  });
+}
 
 

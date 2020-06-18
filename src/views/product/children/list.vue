@@ -10,7 +10,7 @@
           {{nodeTypeData(scope.row.nodeType)}}
         </template>
       </el-table-column>
-      <el-table-column label="联网方式" >
+      <el-table-column label="连网方式" >
         <template slot-scope="scope">
           {{netTypeData(scope.row.netType)}}
         </template>
@@ -39,7 +39,7 @@
 
 <script>
 import { delProduct } from "@/api/product"
-
+import {nodeTypeData, netTypeData} from "./transformation"
 export default { 
   name:'productList',
   props: {
@@ -58,6 +58,12 @@ export default {
   },  
  
   methods: {   
+    nodeTypeData(val){
+      return nodeTypeData(val)
+    },
+    netTypeData(val){
+      return netTypeData(val)
+    },
     //产品详情
     productDetail(key){
       this.$router.push({path: `detail/${key}`})
@@ -87,44 +93,7 @@ export default {
         })
       
     },
-    //解析节点类型数据
-    nodeTypeData(val){      
-      var str = "";
-      switch (val) {
-        case 1:
-          str = "直连设备"
-          break;
-        case 2:
-          str = "网关子设备"
-          break;
-        default:
-          str = "网关设备"
-          break;
-      }
-     return str;
-    },
-    //解析连网方式数据
-    netTypeData(val){
-      var str = "";
-      switch (val) {
-        case 1:
-          str = "wifi"
-          break;
-        case 2:
-          str = "蜂窝数据"
-          break;
-          case 3:
-          str = "以太网"
-          break;
-          case 4:
-          str = "LoRaWAN"
-          break;
-        default:
-          str = "其他"
-          break;
-      }
-     return str;
-    }
+    
   }
 };
 </script>

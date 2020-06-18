@@ -10,7 +10,7 @@ const headerFrom_Get = {
 export function deviceList(data) {
     // 设备列表
     return request({
-        url: "/device/listByPage?sss",
+        url: "/device/listByPage",
         method: "post",
         headers: headerFrom,
         data: Qs.stringify(data)
@@ -54,5 +54,25 @@ export function deviceInfo(data) {
         method: "get",
         headers: headerFrom_Get,
         params: data
+    });
+}
+
+export function deviceUpdate(data) {
+    // 设备编辑
+    return request({
+        url: "/device/updateDevice",
+        method: "post",
+        headers: headerFrom,
+        data: Qs.stringify(data)
+    });
+}
+
+export function deviceEnable(data) {
+    // 设备启、禁用
+    return request({
+        url: "/device/enable",
+        method: "post",
+        headers: headerFrom,
+        data: Qs.stringify(data)
     });
 }

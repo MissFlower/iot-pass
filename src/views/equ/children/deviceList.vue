@@ -28,13 +28,18 @@
       <el-table-column prop="id" label="ID"></el-table-column>
       <el-table-column prop="deviceName" label="设备名称"></el-table-column>
       <el-table-column prop="productName" label="产品名称"></el-table-column>
-      <el-table-column prop="nodeType" label="节点类型"></el-table-column>
+      <el-table-column prop="nodeTypeStr" label="节点类型"></el-table-column>
       <el-table-column prop="nickName" label="备注名称"></el-table-column>
       <el-table-column prop="lastLoginTime" label="最后登录时间"></el-table-column>
       <el-table-column prop="lastLogoutTime" label="最后登出时间"></el-table-column>
-      <el-table-column prop="deviceStatus" label="设备状态"></el-table-column>
+      <el-table-column prop="deviceStatus" label="状态/启用状态">
+        <template v-slot="device">
+          <span class="w50 dib">{{device.row.deviceStatusStr}}</span>
+          <el-switch v-model="device.row.enableBool" @change="deviceEnable(device.row)"></el-switch>
+        </template>
+      </el-table-column>
       <el-table-column label="操作">
-        <template slot-scope="scope">
+        <template v-slot="scope">
           <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
           <el-button @click="deleteClick(scope.row)" type="text" size="small">删除</el-button>
         </template>
@@ -55,14 +60,14 @@
 
 <script>
 import newDevice from "./newDevice";
-import { deviceList, deleteDevice } from "@/api/equRequest";
+import { deviceList, deleteDevice, deviceEnable } from "@/api/equRequest";
 export default {
   components: { newDevice },
   data() {
     return {
       list: [],
       page: 1,
-      pageSize: 40,
+      pageSize: 20,
       total: 0,
       searchTypeSelect: "1",
       searchInputValue: "",
@@ -89,7 +94,23 @@ export default {
         .then(res => {
           if (res.code === 200) {
             if (res.data) {
-              this.list = res.data.list;
+              var list = res.data.list;
+              //设备状态
+              var statusDict = {'0':'未激活','1':'在线','2':'离线'};
+              //节点类型
+              var nodeTypeDict = {'1':'直连设备','2':'网关子设备','3':'网关设备'};
+              list.map(function(value) {
+
+                if(value.deviceStatus != null){
+                  value.deviceStatusStr = statusDict[value.deviceStatus.toString()];
+                }
+                if(value.nodeType != null){
+                  value.nodeTypeStr = nodeTypeDict[value.nodeType.toString()];
+                }
+                value.enableBool = value.enable==0?true:false;
+                return value;
+              });
+              this.list = list;
               this.total = res.data.total;
             }
           }
@@ -103,6 +124,25 @@ export default {
     //搜索按钮
     searchBtnTouch() {
       this.getDeviceList();
+    },
+
+    //设计启、禁用
+    deviceEnable(deviceObj){
+      this.$store.dispatch("setLoading", true);
+      deviceEnable({
+        id: deviceObj.id,
+        enable: deviceObj.enable==0?'1':'0',
+      })
+        .then(res => {
+          this.getDeviceList();
+          this.$message({
+            message: res.message
+          });
+          this.$store.dispatch("setLoading", false);
+        })
+        .catch(() => {
+          this.$store.dispatch("setLoading", false);
+        });
     },
 
     //设备查看

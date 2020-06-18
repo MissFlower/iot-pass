@@ -44,27 +44,7 @@ export default {
     return {
       dialogVisible: true,
       productSelIndex: null,
-      productList: [{
-                    "id":7453553353,
-                    "productKey":"7482fsf2342",
-                    "productName":"充电宝",
-                    "nodeType":1,
-                    "netType":1,
-                    "authType":2,
-                    "productStatus":1,
-                    "dataFormat":1,
-                    "createTime":"2019-12-12 12:11:11"
-                    },{
-                    "id":7453553353,
-                    "productKey":"7482fsf2342",
-                    "productName":"充电宝1",
-                    "nodeType":1,
-                    "netType":1,
-                    "authType":2,
-                    "productStatus":1,
-                    "dataFormat":1,
-                    "createTime":"2019-12-12 12:11:11"
-                    }],
+      productList: [],
       deviceName: '',
       nickName: '',
       loading: false

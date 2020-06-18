@@ -1,19 +1,25 @@
+<!-- 
+  文件作者：mawenjuan
+  创建日期：2020.6.18
+  文件说明：角色管理的主体
+ -->
 <template>
   <div id="role">
-    <svg-icon
+    <i
       v-if="activeIndex == 2"
-      icon-class="pre"
-      class="pre-icon"
+      class="el-icon-back b pre-icon"
       @click="switchCon(0)"
-    ></svg-icon>
+    ></i>
     <list
+      ref="list"
       v-if="activeIndex == 0 || activeIndex == 1 || activeIndex == 3"
     ></list>
     <edit-role
-      v-if="activeIndex == 1 || activeIndex == 3"
+      v-if="editFlag"
       :info="selectRow"
+      @close="handleCloseEditRole"
     ></edit-role>
-    <role-auth v-if="activeIndex == 2"></role-auth>
+    <role-auth v-if="activeIndex == 2" :info="selectRow"></role-auth>
   </div>
 </template>
 
@@ -26,7 +32,8 @@ export default {
   data() {
     return {
       activeIndex: 0,
-      selectRow: null
+      selectRow: null,
+      editFlag: false
     };
   },
   methods: {
@@ -37,6 +44,14 @@ export default {
         this.selectRow = null;
       }
       this.activeIndex = key;
+    },
+    showEditRole(row) {
+      this.selectRow = row;
+      this.editFlag = true;
+    },
+    handleCloseEditRole() {
+      this.editFlag = false;
+      this.$refs.list.getData();
     }
   }
 };

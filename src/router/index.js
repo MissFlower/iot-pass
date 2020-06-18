@@ -118,14 +118,14 @@ const routes = [
     ]
   },
   {
-    path: "/account",
-    redirect: "/account/index",
+    path: "/user",
+    redirect: "/user/index",
     component: Layout,
     meta: { name: "用户管理" },
     children: [
       {
         path: "index",
-        component: resolve => require(["@/views/account/index"], resolve),
+        component: resolve => require(["@/views/user/index"], resolve),
         meta: { name: "用户管理" }
       }
     ]

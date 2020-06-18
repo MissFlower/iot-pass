@@ -1,3 +1,8 @@
+<!-- 
+  文件作者：mawenjuan
+  创建日期：2020.6.16
+  文件说明：密码找回
+ -->
 <template>
   <div id="passwordFind" v-loading="loading">
     <div class="con" v-if="flag < 3">

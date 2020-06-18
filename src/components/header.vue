@@ -135,21 +135,20 @@ export default {
         })
         .catch(() => {
           this.$message.warning("用户信息获取失败");
+          // this.$cookie.setValue("emailStatus", 0); // test
           this.$store.dispatch("setLoading", false);
         });
     },
     showEmailTips() {
       const path = this.$route.path;
-      if (
-        this.$cookie.getValue("emailStatus") * 1 === 0 &&
-        path !== "/index" &&
-        path === "/add-email-tips"
-      ) {
-        this.$router.push("/add-email-tips");
-      } else if (
-        (path === "/add-email-tips" || path === "/verify") &&
-        this.$cookie.getValue("emailStatus") * 1 === 1
-      ) {
+      const status = this.$cookie.getValue("emailStatus") * 1;
+      if (status === 0) {
+        const pathArr = ["/index", "/verify"];
+        // 未绑定，显示提示
+        if (pathArr.indexOf(path) === -1) {
+          this.$router.push("/add-email-tips");
+        }
+      } else if (path === "/add-email-tips" || path === "/verify") {
         this.$router.push("/home");
       }
     }
@@ -167,7 +166,7 @@ export default {
   display: flex;
   align-items: center;
   padding: 0 20px;
-  z-index: 1;
+  z-index: 2;
   background: #fff;
   .text:hover {
     color: #1890ff;

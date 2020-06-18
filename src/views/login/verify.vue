@@ -1,3 +1,8 @@
+<!-- 
+  文件作者：mawenjuan
+  创建日期：2020.6.16
+  文件说明：身份验证页面
+ -->
 <template>
   <div id="verify" v-loading="loading">
     <div class="con">
@@ -12,7 +17,7 @@
           <span class="red">{{ userName }}</span>
           为确认是你本人操作，请完成一下验证
         </div>
-        <el-form label-width="120px">
+        <el-form label-width="120px" class="mt20">
           <el-form-item label="手机号：">
             <div class="dib">{{ phone }}</div>
           </el-form-item>

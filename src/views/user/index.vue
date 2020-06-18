@@ -1,3 +1,8 @@
+<!-- 
+  文件作者：mawenjuan
+  创建日期：2020.6.18
+  文件说明：用户管理主体页面
+ -->
 <template>
   <div id="account">
     <svg-icon
@@ -8,7 +13,11 @@
     ></svg-icon>
     <account-list v-if="activeIndex == 0"></account-list>
     <add-account v-if="activeIndex == 1" :info="selectRow"></add-account>
-    <role-list v-if="activeIndex == 3" :info="selectRow"></role-list>
+    <role-list
+      ref="roleList"
+      v-if="activeIndex == 3"
+      :info="selectRow"
+    ></role-list>
     <add-role v-if="roleFlag" :info="roleRow" @close="dialogClose"></add-role>
   </div>
 </template>
@@ -43,6 +52,11 @@ export default {
     },
     dialogClose() {
       this.roleFlag = false;
+      this.$nextTick(() => {
+        if (this.$refs.roleList) {
+          this.$refs.roleList.getData();
+        }
+      })
     }
   }
 };

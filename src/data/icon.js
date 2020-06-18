@@ -1,6 +1,6 @@
 export default {
   icons: [
-    "account",
+    "user",
     "accountRole",
     "arrow",
     "auth",

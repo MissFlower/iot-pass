@@ -1,23 +1,28 @@
+<!-- 
+  文件作者：mawenjuan
+  创建日期：2020.6.18
+  文件说明：角色的菜单权限的展示、编辑
+ -->
 <template>
-  <div id="roleAuth">
+  <div id="roleAuth" v-loading="loading">
     <div class="ml20 mb20">
       <span>角色权限</span>
       <span v-if="flag" class="f12 blue ml20">(编辑中)</span>
-      <i v-else class="el-icon-edit blue fr" @click="flag = 1"></i>
+      <i v-else class="el-icon-edit blue fr" @click="handleEdit"></i>
     </div>
-    <div v-for="(item, index) in authData" :key="index" class="row_item">
-      <div class="w120">
-        <el-checkbox :disabled="!flag">{{ item.name }}</el-checkbox>
-      </div>
-      <div class="row_item_children">
-        <div
-          v-for="(child, i) in item.children"
-          :key="`${index}${i}`"
-          class="ml20"
-        >
-          <el-checkbox :disabled="!flag">{{ child.name }}</el-checkbox>
-        </div>
-      </div>
+    <div class="main">
+      <el-tree
+        ref="tree"
+        :data="authData"
+        default-expand-all
+        show-checkbox
+        node-key="id"
+        :expand-on-click-node="false"
+        :default-checked-keys="ids"
+        :props="defaultProps"
+        check-strictly
+      >
+      </el-tree>
     </div>
     <div v-if="flag" class="tc mt20">
       <el-button size="mini" @click="handleCancel">取消</el-button>
@@ -27,73 +32,88 @@
 </template>
 
 <script>
+import { getMenusTree, setAuthorityForRole } from "@/api/role";
+import { dealAuthTreeFun } from "@/data/fun";
 export default {
   props: ["info"],
   data() {
     return {
       flag: 0,
-      authData: [
-        {
-          name: "菜单管理",
-          id: 1,
-          children: [
-            {
-              name: "增",
-              auth: 1,
-              id: 11
-            },
-            {
-              name: "删",
-              auth: 2,
-              id: 12
-            },
-            {
-              name: "改",
-              auth: 4,
-              id: 13
-            },
-            {
-              name: "查",
-              auth: 8,
-              id: 14
-            }
-          ]
-        },
-        {
-          name: "角色管理",
-          id: 2,
-          children: [
-            {
-              name: "增",
-              auth: 1,
-              id: 21
-            },
-            {
-              name: "删",
-              auth: 2,
-              id: 22
-            },
-            {
-              name: "改",
-              auth: 4,
-              id: 23
-            },
-            {
-              name: "查",
-              auth: 8,
-              id: 24
-            }
-          ]
-        }
-      ]
+      loading: false,
+      authData: [],
+      defaultProps: {
+        children: "children",
+        label: "name"
+      },
+      ids: [],
+      allList: null // 用户编辑状态的切换
     };
   },
+  mounted() {
+    this.getAuth();
+  },
   methods: {
+    getAuth() {
+      this.loading = true;
+      this.authData = [];
+      this.ids = [];
+      getMenusTree({
+        roleId: this.info.roleId
+      })
+        .then(res => {
+          if (res.code === 200) {
+            if (res.data && res.data.length > 0) {
+              res.data.forEach(item => {
+                if (item.checked) {
+                  this.ids.push(item.id);
+                }
+                item.disabled = true;
+              });
+              this.allList = res.data;
+              this.authData = dealAuthTreeFun(res.data);
+            }
+          }
+          this.loading = false;
+        })
+        .catch(() => {
+          this.$message.error("角色的菜单权限获取失败");
+          this.loading = false;
+        });
+    },
+    handleEdit() {
+      this.allList.forEach(item => {
+        item.disabled = false;
+      });
+      this.flag = 1;
+    },
     handleCancel() {
+      // this.allList.forEach(item => {
+      //   item.disabled = true;
+      // });
+      this.getAuth();
       this.flag = 0;
     },
     handleSave() {
-      this.flag = 0;
+      this.ids = this.$refs.tree.getCheckedKeys();
+      this.loading = true;
+      setAuthorityForRole({
+        roleId: this.info.roleId,
+        ids: this.ids.join(",")
+      })
+        .then(res => {
+          if (res.code === 200) {
+            this.$message.success("角色的菜单权限设置成功");
+            this.flag = 0;
+            this.getAuth();
+          } else {
+            this.$message.error(res.message);
+          }
+          this.loading = false;
+        })
+        .catch(() => {
+          this.loading = false;
+          this.$message.error("角色的菜单权限设置失败");
+        });
     }
   }
 };
@@ -101,13 +121,14 @@ export default {
 
 <style lang="scss" scoped>
 #roleAuth {
-  .row_item {
-    display: flex;
-    padding: 15px;
-    .row_item_children {
-      flex: 1;
-      display: flex;
-    }
+  position: relative;
+  width: 100%;
+  height: 100%;
+  .main {
+    position: relative;
+    height: calc(100% - 80px);
+    overflow: auto;
+    padding: 0 20px;
   }
 }
 </style>
@@ -118,6 +139,18 @@ export default {
     background-color: #409eff;
     border-color: #409eff;
     opacity: 0.6;
+  }
+  .el-tree-node__expand-icon.expanded {
+    display: none;
+  }
+  .el-tree .el-tree-node__children > .el-tree-node .el-tree-node__children {
+    display: flex;
+    // align-items: center;
+  }
+  .el-tree {
+    .el-tree-node__content {
+      height: 40px;
+    }
   }
 }
 </style>

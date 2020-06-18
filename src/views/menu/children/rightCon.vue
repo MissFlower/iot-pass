@@ -1,8 +1,20 @@
+<!-- 
+  文件作者：mawenjuan
+  创建日期：2020.6.17
+  文件说明：菜单的详情、编辑、创建页面
+ -->
 <template>
   <div id="menu_right_con">
     <div class="mb20">{{ msg }}</div>
-    <el-form :model="info" label-width="100px" class="mb20">
-      <el-form-item label="菜单名称">
+    <el-form
+      ref="form"
+      :model="info"
+      label-width="100px"
+      class="mb20"
+      :rules="rules"
+      v-if="info"
+    >
+      <el-form-item label="菜单名称" prop="name">
         <el-input
           v-model="info.name"
           placeholder="请输入菜单名称"
@@ -10,8 +22,17 @@
           class="w200"
         ></el-input>
       </el-form-item>
-      <el-form-item label="上层菜单">
+      <el-form-item label="菜单编号" prop="code">
+        <el-input
+          v-model="info.code"
+          placeholder="请输入菜单编号"
+          :disabled="!flag"
+          class="w200"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="上层菜单" prop="pid">
         <el-cascader
+          ref="cascader"
           v-model="info.pid"
           :options="list"
           :props="cascaderProps"
@@ -19,7 +40,7 @@
           placeholder="请选择上层菜单"
         ></el-cascader>
       </el-form-item>
-      <el-form-item label="请求地址">
+      <el-form-item label="请求地址" prop="url">
         <el-input
           v-model="info.url"
           placeholder="请输入请求地址"
@@ -27,11 +48,19 @@
           class="w200"
         ></el-input>
       </el-form-item>
-      <el-form-item label="菜单标记">
+      <el-form-item label="菜单标记" prop="menuFlag">
         <el-radio-group v-model="info.menuFlag" :disabled="!flag">
-          <el-radio label="1">是</el-radio>
-          <el-radio label="0">否</el-radio>
+          <el-radio label="Y">是</el-radio>
+          <el-radio label="N">否</el-radio>
         </el-radio-group>
+      </el-form-item>
+      <el-form-item label="排序">
+        <el-input
+          v-model="info.sort"
+          placeholder="请输入菜单排序"
+          :disabled="!flag"
+          class="w200"
+        ></el-input>
       </el-form-item>
       <el-form-item label="图标">
         <el-input
@@ -62,7 +91,7 @@
 
 <script>
 import iconSelectCon from "./selectIocn";
-import { createMenu } from "@/api/menu";
+import { createMenu, updateMenu } from "@/api/menu";
 export default {
   components: { iconSelectCon },
   props: ["activeItem"],
@@ -73,19 +102,46 @@ export default {
       list: [],
       cascaderProps: {
         label: "name",
-        value: "id",
+        value: "menuId",
         checkStrictly: true
       },
-      info: {
+      createRow: {
         name: "",
         code: "",
-        pid: "0",
+        pid: "",
         pcodeName: "",
-        menuFlag: "1",
+        menuFlag: "Y",
         url: "",
         icon: ""
-      }
+      },
+      updateRow: {
+        menuId: "",
+        name: "",
+        code: "",
+        pid: "",
+        pcode: "",
+        menuFlag: "",
+        url: "",
+        icon: "",
+        sort: ""
+      },
+      info: null,
+      rules: {
+        name: [{ required: true, message: "请输入菜单", trigger: "blur" }],
+        code: [{ required: true, message: "请输入编号", trigger: "blur" }],
+        pid: [{ required: true, message: "请选择上级菜单", trigger: "blur" }],
+        menuFlag: [
+          { required: true, message: "请选择菜单标记", trigger: "blur" }
+        ],
+        url: [{ required: true, message: "请输入请求地址", trigger: "blur" }]
+      },
+      menuObj: null
     };
+  },
+  watch: {
+    activeItem: function() {
+      this.into();
+    }
   },
   computed: {
     msg() {
@@ -104,26 +160,75 @@ export default {
       return str;
     }
   },
+  mounted() {
+    this.into();
+  },
   methods: {
-    handleEdit() {
-      this.flag = 1;
-      this.$parent.flag = 0;
-    },
-    handleSave() {
-      // this.$parent.loading = true;
-      // setTimeout(() => {
-      //   this.flag = 0;
-      //   this.$parent.loading = false;
-      //   this.$parent.flag = 1;
-      // }, 2000);
+    into() {
+      this.list = this.$parent.list;
+      this.menuObj = this.$parent.menuObj;
       if (this.activeItem) {
-        // 编辑
+        this.info = JSON.parse(JSON.stringify(this.updateRow));
+        for (const key in this.info) {
+          this.info[key] = this.activeItem[key];
+        }
+        this.info.pid = this.findMenuIds(this.activeItem.pcodes);
       } else {
-        createMenu(this.info).then(res => {
-          console.log(res);
-          console.log("----");
+        this.info = JSON.parse(JSON.stringify(this.createRow));
+        if (this.list && this.list.length > 0) {
+          this.info.pid = this.findMenuIds([this.list[0].code]);
+        }
+      }
+    },
+    findMenuIds(codes) {
+      const arr = [];
+      if (codes && codes.length > 0) {
+        codes.forEach(code => {
+          arr.push(this.menuObj[code]);
         });
       }
+      return arr;
+    },
+    handleSave() {
+      this.$parent.loading = true;
+      let promise = null;
+      let str = "";
+      // 根据父组件传入的值 确认是创建还是编辑
+      const row = JSON.parse(JSON.stringify(this.info));
+      row.pid = this.info.pid[this.info.pid.length - 1];
+      const nodes = this.$refs.cascader.getCheckedNodes();
+      row.pcodeName = nodes[0].data.name;
+      if (this.info.menuId) {
+        // 编辑
+        promise = updateMenu;
+        str = "编辑";
+        // if (row.menuFlag === "Y") {
+        //   row.menuFlag = 1;
+        // } else {
+        //   row.menuFlag = 0;
+        // }
+      } else {
+        promise = createMenu;
+        str = "创建";
+        const nodes = this.$refs.cascader.getCheckedNodes();
+        row.pcodeName = nodes[0].data.name;
+      }
+      promise(row)
+        .then(res => {
+          if (res.code === 200) {
+            this.$message.success(`菜单${str}成功`);
+            this.$parent.getData();
+            this.$parent.flag = 1;
+            this.flag = 0;
+          } else {
+            this.$message.error(res.message);
+          }
+          this.$parent.loading = false;
+        })
+        .catch(() => {
+          this.$message.error(`菜单${str}失败`);
+          this.$parent.loading = false;
+        });
     },
     handleCancel() {
       this.flag = 0;

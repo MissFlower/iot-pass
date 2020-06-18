@@ -67,8 +67,8 @@
        * 页数跳转
        * @param page
        */
-      handleCurrentChange(page) {
-        this.data.pageNum = page - 1
+      handleCurrentChange(page) {       
+        this.data.pageNum = page
         this.$emit('pagination')
         if (this.autoScroll) {
           scrollTo(0, 800)

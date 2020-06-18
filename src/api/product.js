@@ -39,14 +39,57 @@ export function tableList(data) {
 *   description	string	否	描述
 * }
 */
-
-//新建产品
 export function productSave(data) { 
   return request({
     url: "product/save",
     method: "post",
-    headers: {'Content-Type': 'application/json;charset=UTF-8'},
+    headers: headerFrom,
     data: Qs.stringify(data)
+  });
+}
+/**
+ * 删除产品
+ * @param {
+  *   productKey	string	是	产品key 
+  * }
+  */
+export function delProduct(data) { 
+  return request({
+    url: "product/del",
+    method: "post",
+    headers: headerFrom,
+    data: Qs.stringify(data)
+  });
+}
+
+
+
+
+/**
+ * 获取产品密钥
+ * @param {
+  *   productKey	string	是	产品key 
+  * }
+  */
+export function findSecret(data) { 
+  return request({
+    url: "product/findSecret",
+    method: "get",
+    params: data 
+  });
+}
+
+/**
+ * 获取产品详情
+ * @param {
+  *   productKey	string	是	产品key 
+  * }
+  */
+export function getProduct(data) { 
+  return request({
+    url: "product/get",
+    method: "get",
+    params: data 
   });
 }
 

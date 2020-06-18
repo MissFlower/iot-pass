@@ -1,7 +1,7 @@
 <template>
   <div id="addProduct">
     <div class="f20 b pb20">
-      <i class="el-icon-back" @click="handle"></i>
+      <i class="el-icon-back" @click="goBack"></i>
       创建产品
     </div>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
@@ -157,7 +157,7 @@ export default {
         });
     },
     //返回上层页面
-    handle(){
+    goBack(){
       this.$router.go(-1)
     },
     //所属品类选择

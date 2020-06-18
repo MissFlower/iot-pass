@@ -1,132 +1,99 @@
 <template>
-  <div id="addProduct">
-    <div class="f20 b pb20">
-      <i class="el-icon-back" @click="handle"></i>
-      产品详情
+  <div id="addProduct" >
+    <div class="f20 b pb20 title_wrp">
+      <div>
+        <i class="el-icon-back" @click="goBack"></i><span style="margin-left:15px">{{productName}}</span>         
+      </div>
+      <el-button :type="btnType">{{btnType ? '发布' : '撤销发布'}}</el-button>
     </div>
-  
+    <div class="p_key">
+      <span>产品密钥:</span>
+      <span class="key">{{productKey}}</span>
+       <el-link :underline="false" type="primary">复制</el-link>
+    </div>
+    <div class="tab_wrp mt20" >
+      <el-tabs v-model="activeName" type="card" @tab-click="tabChange" >
+        <el-tab-pane label="产品信息" name="product">
+          <product-info />
+        </el-tab-pane>
+        <el-tab-pane label="功能定义" name="second"></el-tab-pane>
+       
+      </el-tabs>
+    </div>
   </div>
 </template>
 
 <script>
-import { productSave } from "@/api/product"
-export default {
-  props: ["info"],
+import { findSecret, getProduct } from "@/api/product"
+import productInfo from './info'
+export default { 
+  components: {
+    productInfo
+  },
   data() {
     return {
-      standardSelectState:true,
-      ruleForm: {
-          productName: '',
-          standardSelect: '',        
-          netType:1,
-          category:'标准品类',
-          nodeType: 1,
-          dataFormat: 1,
-          authType: 1,
-          dynRegister: 1,
-          description: ''
-      },
-      rules: {
-          productName: [
-            { required: true, message: '请输入产品名称', trigger: 'blur' },
-            { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
-          ],
-          // standardSelect:[
-          //   {required: true,message: '请选择标准品类',trigger: 'change'}
-          // ],
-          nodeType:[
-            {required: true,message: '请选择所节点类型',trigger: 'change'}
-          ],
-       
-          resource: [
-            { required: true, message: '请选择活动资源', trigger: 'change' }
-          ],
-          
-        },
-        networkModeOptions:[
-          {
-            value: 1,
-            label: 'wifi',
-            disabled:false            
-          },
-          {
-            value: 2,
-            label: '蜂窝数据',
-            disabled:false           
-          },
-          {
-            value: 3,
-            label: '以太网',
-            disabled:false             
-          },
-          {
-            value: 4,
-            label: 'LoRaWAN',
-            disabled:false             
-          },
-          {
-            value: 5,
-            label: '其他',
-            disabled:false             
-          },
-        ]
+      activeName: 'product',
+      standardSelectState:true, 
+      btnType: 'primary',
+      productKey:'',
+      productName: '',
+      loading: false  
     };
   },
+  created() {
+    this.getProDetail()
+    //获取产品密钥    
+    findSecret({productKey: this.$route.params.key}).then(res => {
+        if(res.code === 200){
+          this.productKey = res.data
+        }
+    })
+  },
   methods: {
-    //提交表单
-    submitForm(formName) {
-        var categoryId = '';
-        this.$refs[formName].validate((valid) => {
-           if(this.ruleForm.category === '标准品类'){
-                // categoryId = {categoryId: this.standardSelect}
-            }else{              
-              // this.$refs['ruleForm'].clearValidate('standardSelect') 
-            }          
-          if (valid) {                   
-            productSave(Object.assign({},this.ruleForm,{categoryId})).then(res => {
-              console.log(res)
-            }).catch(err => {
-              console.log(err)
-            })
-          } else {            
-            return false;
-          }
-        });
-    },
     //返回上层页面
-    handle(){
+    goBack(){
       this.$router.go(-1)
     },
-    //所属品类选择
-    categoryChange(val){
-      if(val === '标准品类'){
-        this.standardSelectState = true
-      }else{
-        this.standardSelectState = false;  
-        // this.$refs['ruleForm'].clearValidate('standardSelect')             
-      }
+    //切换tab
+    tabChange(val){
+
     },
-    //节点类型选择
-    nodeTypeChange(val){
-      if(val === 2){
-        this.ruleForm.netType = 5;
-        this.networkModeOptions.map(v => {
-          if(v.value != 5){
-              v.disabled = true;              
-          }
-        })
-      }else{       
-        this.networkModeOptions.map(v => {                   
-            v.disabled = false;
-              
-        })
-      }
-    },
+    //获取产品详情数据
+    getProDetail(){
+      this.loading = true
+      getProduct({productKey: this.$route.params.key}).then(res => {
+        setTimeout(() => {
+          this.loading = false;
+        },1000)
+        if(res.code === 200){
+          this.productName = res.data.productName
+        }
+      }).catch(err => {
+        this.loading = false
+      })
+    }
   },
 };
 </script>
 
 <style lang="scss" scoped>
+.title_wrp{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.p_key{
+  color: #888;
+  font-size: 14px;
+  .key{
+    margin-left:35px;
+    margin-right: 5px; 
+  }
+}
+
+
+
 #addProduct {
   position: relative;
   width: 100%;

@@ -189,6 +189,11 @@ const routes = [
         path: "index",
         component: resolve => require(["@/views/firmware/index"], resolve),
         meta: { name: "固件管理及升级" }
+      },
+      {
+          path: "details",
+          component: resolve => require(["@/views/firmware/details"], resolve),
+          meta: { name: "固件管理及升级" }
       }
     ]
   },

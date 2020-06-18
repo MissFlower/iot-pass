@@ -170,6 +170,12 @@ const routes = [
         path: "index",
         component: resolve => require(["@/views/equ/index"], resolve),
         meta: { name: "设备管理" }
+      },
+      {
+        path: "deviceInfo",
+        component: resolve =>
+          require(["@/views/equ/children/deviceInfo"], resolve),
+        meta: { name: "设备详情" }
       }
     ]
   },

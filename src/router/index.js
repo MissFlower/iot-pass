@@ -142,6 +142,11 @@ const routes = [
         meta: { name: "产品管理" }
       },
       {
+        path: "detail/:key",
+        component: resolve => require(["@/views/product/children/detail"], resolve),
+        meta: { name: "产品详情" }
+      },
+      {
         path: "add-product",
         component: resolve =>
           require(["@/views/product/children/addProduct"], resolve),

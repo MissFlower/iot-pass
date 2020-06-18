@@ -1,3 +1,8 @@
+<!-- 
+  文件作者：mawenjuan
+  创建日期：2020.6.17
+  文件说明：菜单的选择图标的组件
+ -->
 <template>
   <el-dialog :visible.sync="dialogVisible" title="选择图标">
     <div class="df ai_c fww">

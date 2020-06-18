@@ -38,19 +38,7 @@ export default {
         {
           icon: "menu",
           title: "菜单管理",
-          path: "/menu"
-          // children: [
-          //   {
-          //     icon: "menu",
-          //     title: "菜单管理0",
-          //     path: "index"
-          //   },
-          //   {
-          //     icon: "menu",
-          //     title: "菜单管理1",
-          //     path: "index1"
-          //   }
-          // ]
+          path: "/menu/index"
         },
         {
           title: "角色管理",
@@ -59,8 +47,8 @@ export default {
         },
         {
           title: "用户管理",
-          path: "/account/index",
-          icon: "account"
+          path: "/user/index",
+          icon: "user"
         },
         {
           title: "产品管理",

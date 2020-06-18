@@ -1,7 +1,6 @@
 import store from "@/store";
 
 export function addBreadCrumbFun(data) {
-  console.log(data);
   const list = JSON.parse(JSON.stringify(store.state.app.breadcrumdList));
   list.push(data);
   store.dispatch("setBreadcrumb", list);
@@ -28,4 +27,60 @@ export function phoneValidate(value) {
       return "";
     }
   }
+}
+
+// 处理菜单为tree的函数
+export function dealFun(list) {
+  const len = list.length;
+  if (list && len > 0) {
+    const obj = {};
+    list.forEach(item => {
+      if (!obj[item.levels]) {
+        obj[item.levels] = [];
+      }
+      obj[item.levels].push(item);
+    });
+    const objKeys = Object.keys(obj);
+    objKeys.reverse();
+    for (let i = 0; i < objKeys.length - 1; i++) {
+      const arrI = obj[objKeys[i]];
+      const arrI1 = obj[objKeys[i + 1]];
+      for (let j = 0; j < arrI.length; j++) {
+        for (let m = 0; m < arrI1.length; m++) {
+          if (arrI[j].pcode + "" === arrI1[m].code + "") {
+            if (!arrI1[m].children) {
+              arrI1[m].children = [];
+            }
+            arrI1[m].children.push(arrI[j]);
+            break;
+          }
+        }
+      }
+    }
+    const arr = obj[1];
+    return arr;
+  } else {
+    return [];
+  }
+}
+
+//处理角色权限tree的函数
+export function dealAuthTreeFun(list) {
+  let arr = [];
+  if (list && list.length > 0) {
+    const obj = {};
+    list.forEach(item => {
+      if (!obj[item.pid]) {
+        obj[item.pid] = [];
+      }
+      obj[item.pid].push(item);
+    });
+    list.forEach(item => {
+      if (obj[item.id]) {
+        item.children = obj[item.id];
+      }
+    });
+    arr = obj[0];
+  }
+  return arr;
 }

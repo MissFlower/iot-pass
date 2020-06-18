@@ -94,7 +94,7 @@ export default {
         .then(res => {
           if (res.code === 200) {
             if (res.data) {
-              var list = res.data.list;
+              var list = res.data.data;
               //设备状态
               var statusDict = {'0':'未激活','1':'在线','2':'离线'};
               //节点类型
@@ -198,6 +198,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#editRole {
-}
+
 </style>

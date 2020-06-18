@@ -162,13 +162,13 @@ const routes = [
   },
   {
     path: "/equ",
-    redirect: "/equ/index",
+    redirect: "/equ/deviceList",
     component: Layout,
     meta: { name: "设备管理" },
     children: [
       {
-        path: "index",
-        component: resolve => require(["@/views/equ/index"], resolve),
+        path: "deviceList",
+        component: resolve => require(["@/views/equ/deviceList"], resolve),
         meta: { name: "设备管理" }
       },
       {

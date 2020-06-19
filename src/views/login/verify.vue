@@ -79,6 +79,8 @@ export default {
         if (res.code === 200) {
           this.seconds = 61;
           this.timer();
+        } else {
+          this.$message.error(res.message);
         }
         this.loading = false;
       });

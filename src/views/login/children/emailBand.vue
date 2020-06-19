@@ -135,6 +135,9 @@ export default {
             if (res.code === 200) {
               this.$cookie.setValue("emailStatus", 1);
               this.flag = 2;
+              this.active
+            } else {
+              this.$message.error(res.message);
             }
             this.loading = false;
           });

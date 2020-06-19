@@ -5,7 +5,7 @@
  -->
 <template>
   <div id="menu_right_con">
-    <div class="mb20">{{ msg }}</div>
+    <div class="mb20">{{ activeItem ? "编辑" : "创建" }}菜单</div>
     <el-form
       ref="form"
       :model="info"
@@ -18,7 +18,6 @@
         <el-input
           v-model="info.name"
           placeholder="请输入菜单名称"
-          :disabled="!flag"
           class="w200"
         ></el-input>
       </el-form-item>
@@ -26,7 +25,6 @@
         <el-input
           v-model="info.code"
           placeholder="请输入菜单编号"
-          :disabled="!flag"
           class="w200"
         ></el-input>
       </el-form-item>
@@ -36,7 +34,6 @@
           v-model="info.pid"
           :options="list"
           :props="cascaderProps"
-          :disabled="!flag"
           placeholder="请选择上层菜单"
         ></el-cascader>
       </el-form-item>
@@ -44,7 +41,6 @@
         <el-input
           v-model="info.url"
           placeholder="请输入请求地址"
-          :disabled="!flag"
           class="w200"
         ></el-input>
       </el-form-item>
@@ -58,7 +54,6 @@
         <el-input
           v-model="info.sort"
           placeholder="请输入菜单排序"
-          :disabled="!flag"
           class="w200"
         ></el-input>
       </el-form-item>
@@ -66,17 +61,12 @@
         <el-input
           v-model="info.icon"
           placeholder="请输入图标"
-          :disabled="!flag"
           class="w200"
           @focus="handleShowIcons"
         ></el-input>
       </el-form-item>
     </el-form>
-    <div v-if="flag == 0" class="tc">
-      <!-- <el-button type="danger">删除</el-button> -->
-      <!-- <el-button type="primary" @click="handleEdit">编辑</el-button> -->
-    </div>
-    <div v-else class="tc">
+    <div class="tc">
       <el-button @click="handleCancel">取消</el-button>
       <el-button type="primary" @click.stop="handleSave">保存</el-button>
     </div>
@@ -92,12 +82,12 @@
 <script>
 import iconSelectCon from "./selectIocn";
 import { createMenu, updateMenu } from "@/api/menu";
+import { dealFun } from "@/data/fun";
 export default {
   components: { iconSelectCon },
   props: ["activeItem"],
   data() {
     return {
-      flag: 0, // 0 展示，1 编辑， 2添加
       show: false,
       list: [],
       cascaderProps: {
@@ -143,29 +133,12 @@ export default {
       this.into();
     }
   },
-  computed: {
-    msg() {
-      let str = "";
-      switch (this.flag) {
-        case 0:
-          str = "菜单详情";
-          break;
-        case 1:
-          str = "菜单编辑";
-          break;
-        case 2:
-          str = "添加菜单";
-          break;
-      }
-      return str;
-    }
-  },
   mounted() {
     this.into();
   },
   methods: {
     into() {
-      this.list = this.$parent.list;
+      this.list = JSON.parse(JSON.stringify(dealFun(this.$parent.list)));
       this.menuObj = this.$parent.menuObj;
       if (this.activeItem) {
         this.info = JSON.parse(JSON.stringify(this.updateRow));
@@ -202,11 +175,6 @@ export default {
         // 编辑
         promise = updateMenu;
         str = "编辑";
-        // if (row.menuFlag === "Y") {
-        //   row.menuFlag = 1;
-        // } else {
-        //   row.menuFlag = 0;
-        // }
       } else {
         promise = createMenu;
         str = "创建";

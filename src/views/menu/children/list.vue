@@ -1,0 +1,207 @@
+<!-- 
+  文件作者：mawenjuan
+  创建日期：2020.6.19
+  文件说明：菜单管理的主体
+ -->
+
+<template>
+  <div id="menu" v-loading="loading">
+    <div class="mb20 df">
+      <div class="flex1">
+        <el-input
+          v-model="formData.name"
+          placeholder="请输入菜单名"
+          class="w200 mr20"
+          suffix-icon="el-icon-search"
+          @keyup.enter.native="searchNameFun"
+        ></el-input>
+        <el-input
+          v-model="formData.code"
+          placeholder="请输入菜单编号"
+          class="w200"
+          suffix-icon="el-icon-search"
+          @keyup.enter.native="searchCodeFun"
+        ></el-input>
+      </div>
+      <el-button type="primary" @click="handleEdit(2)">
+        新建菜单
+      </el-button>
+    </div>
+    <el-table :data="list" border>
+      <el-table-column label="ID" prop="menuId" width="80"></el-table-column>
+      <el-table-column label="菜单名称" prop="name"></el-table-column>
+      <el-table-column label="菜单编号" prop="code"></el-table-column>
+      <el-table-column label="上层菜单">
+        <template slot-scope="scope">
+          <div v-for="(item, index) in menuObj[scope.row.pcode]" :key="index">
+            <span v-if="index == 'name'">{{ item }}</span>
+          </div>
+          <div v-if="!menuObj[scope.row.pcode]">-</div>
+        </template>
+      </el-table-column>
+      <el-table-column label="请求地址" prop="url"></el-table-column>
+      <el-table-column label="菜单标记" width="80" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.menuFlag == "Y" ? "是" : "否" }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="排序" prop="sort"></el-table-column>
+      <el-table-column label="图标" prop="icon"></el-table-column>
+      <el-table-column label="状态" prop="status" width="80" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.status == "ENABLE" ? "启用" : "禁用" }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="80" align="center">
+        <template slot-scope="scope">
+          <i
+            class="el-icon-edit blue f18"
+            @click="handleEdit(2, scope.row)"
+          ></i>
+          <i
+            class="el-icon-close red f18 ml20"
+            @click="handleClose(scope.row)"
+          ></i>
+        </template>
+      </el-table-column>
+    </el-table>
+    <el-pagination
+      @current-change="handleCurrentChange"
+      :current-page.sync="formData.pageNum"
+      :page-size="formData.pageSize"
+      layout="total, prev, pager, next"
+      :total="total"
+      class="tr mt20"
+    >
+    </el-pagination>
+  </div>
+</template>
+
+<script>
+// import { dealFun } from "@/data/fun";
+import { getMenuList, delMenu } from "@/api/menu";
+export default {
+  data() {
+    return {
+      loading: false,
+      formData: {
+        pageNum: 1,
+        pageSize: 10,
+        name: "",
+        code: ""
+      },
+      list: [],
+      total: 0,
+      menuObj: {}
+    };
+  },
+  watch: {
+    "formData.code": function() {
+      if (this.$fun.trim(this.formData.code) === "") {
+        this.handleCurrentChange(1);
+      }
+    },
+    "formData.name": function() {
+      if (this.$fun.trim(this.formData.name) === "") {
+        this.handleCurrentChange(1);
+      }
+    }
+  },
+  mounted() {
+    this.getData();
+  },
+  methods: {
+    getData() {
+      this.loading = true;
+      this.list = [];
+      this.menuObj = {};
+      getMenuList(this.formData).then(res => {
+        if (res.code === 200) {
+          if (res.data.list) {
+            if (res.data.list.length > 0) {
+              // 处理返回父级菜单数组
+              res.data.list.forEach(item => {
+                this.menuObj[item.code] = {
+                  name: item.name,
+                  menuId: item.menuId
+                };
+                if (item.pcodes) {
+                  let arr = item.pcodes.split(",");
+                  item.pcodes = arr.map(item => {
+                    let str = item.replace(/\[|\]/g, "");
+                    return item ? str : "";
+                  });
+                  item.pcodes.splice(item.pcodes.length - 1, 1);
+                  item.pcodes.splice(0, 1);
+                  if (item.menuFlag === "N") {
+                    item.disabled = true;
+                  }
+                }
+              });
+            }
+            this.list = res.data.list;
+            this.total = res.data.total;
+          }
+        }
+        this.loading = false;
+      });
+    },
+    handleEdit(key, row) {
+      this.$parent.showCon(key, row);
+    },
+    handleClose(row) {
+      const str = "确认删除该菜单吗？";
+      this.$confirm(str, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.loading = true;
+          delMenu({
+            id: row.menuId
+          })
+            .then(res => {
+              if (res.code === 200) {
+                this.$message.success("菜单删除成功");
+                this.getData();
+              } else {
+                this.$message.error(res.message);
+              }
+              this.loading = false;
+            })
+            .catch(() => {
+              this.$message.error("菜单删除失败");
+              this.loading = false;
+            });
+        })
+        .catch(() => {
+          this.$message("操作已取消");
+        });
+    },
+    searchNameFun() {
+      if (this.$fun.trim(this.formData.name) !== "") {
+        this.handleCurrentChange(1);
+      }
+    },
+    searchCodeFun() {
+      if (this.$fun.trim(this.formData.code) !== "") {
+        this.handleCurrentChange(1);
+      }
+    },
+    handleCurrentChange(page) {
+      this.formData.pageNum = page;
+      this.getData();
+    }
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+#menu {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  padding: 20px;
+}
+</style>

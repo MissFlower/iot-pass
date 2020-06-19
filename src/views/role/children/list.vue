@@ -45,7 +45,7 @@
     <el-pagination
       @current-change="handleCurrentChange"
       :current-page.sync="formData.pageNum"
-      :page-size="10"
+      :page-size="formData.pageSize"
       layout="total, prev, pager, next"
       :total="total"
       class="tr mt20"

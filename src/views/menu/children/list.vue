@@ -23,7 +23,11 @@
           @keyup.enter.native="searchCodeFun"
         ></el-input>
       </div>
-      <el-button type="primary" @click="handleEdit(2)">
+      <el-button
+        v-if="authArr.indexOf('menu_add') > -1"
+        type="primary"
+        @click="handleEdit(2)"
+      >
         新建菜单
       </el-button>
     </div>
@@ -46,6 +50,7 @@
           <span>{{ scope.row.menuFlag == "Y" ? "是" : "否" }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="路由" prop="frontPath"></el-table-column>
       <el-table-column label="排序" prop="sort"></el-table-column>
       <el-table-column label="图标" prop="icon"></el-table-column>
       <el-table-column label="状态" prop="status" width="80" align="center">
@@ -55,14 +60,24 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="80" align="center">
+      <el-table-column
+        label="操作"
+        width="80"
+        align="center"
+        v-if="
+          authArr.indexOf('menu_edit') > -1 ||
+            authArr.indexOf('menu_remove') > -1
+        "
+      >
         <template slot-scope="scope">
           <i
+            v-if="authArr.indexOf('menu_edit') > -1"
             class="el-icon-edit blue f18"
             @click="handleEdit(2, scope.row)"
           ></i>
           <i
-            class="el-icon-close red f18 ml20"
+            v-if="authArr.indexOf('menu_remove') > -1"
+            class="el-icon-close red f18"
             @click="handleClose(scope.row)"
           ></i>
         </template>
@@ -110,6 +125,11 @@ export default {
       }
     }
   },
+  computed: {
+    authArr() {
+      return this.$store.state.app.functionArr;
+    }
+  },
   mounted() {
     this.getData();
   },
@@ -129,6 +149,8 @@ export default {
             this.list = res.data.list;
             this.total = res.data.total;
           }
+        } else {
+          this.$message.error(res.message);
         }
         this.loading = false;
       });

@@ -1,11 +1,21 @@
 <template>
   <div id="app" v-loading="loading">
-    <router-view />
+    <router-view v-if="isRouterAlive" />
   </div>
 </template>
 
 <script>
 export default {
+  provide() {
+    return {
+      reload: this.reload
+    };
+  },
+  data() {
+    return {
+      isRouterAlive: true
+    };
+  },
   mounted() {
     if (this.$cookie.getValue("userName")) {
       this.$store.dispatch("setUserInfo", {
@@ -21,6 +31,14 @@ export default {
   computed: {
     loading() {
       return this.$store.state.app.loading;
+    }
+  },
+  methods: {
+    reload() {
+      this.isRouterAlive = false;
+      this.$nextTick(() => {
+        this.isRouterAlive = true;
+      });
     }
   }
 };

@@ -57,6 +57,7 @@
 import { userRoleList, updateRoleforUser } from "@/api/user";
 export default {
   props: ["info"],
+  inject: ["reload"],
   data() {
     return {
       loading: false,
@@ -115,6 +116,7 @@ export default {
         .then(res => {
           if (res.code === 200) {
             this.$message.success("用户的角色设置成功");
+            this.reload();
             this.close();
           } else {
             this.$message.error(res.message);

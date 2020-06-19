@@ -95,12 +95,12 @@ const routes = [
     path: "/menu",
     redirect: "/menu/index",
     component: Layout,
-    meta: { name: "菜单管理" },
+    meta: { name: "菜单管理", code: "menu" },
     children: [
       {
         path: "index",
         component: resolve => require(["@/views/menu/index"], resolve),
-        meta: { name: "菜单管理" }
+        meta: { name: "菜单管理", code: "menu" }
       }
     ]
   },
@@ -108,12 +108,12 @@ const routes = [
     path: "/role",
     redirect: "/role/index",
     component: Layout,
-    meta: { name: "角色管理" },
+    meta: { name: "角色管理", code: "role" },
     children: [
       {
         path: "index",
         component: resolve => require(["@/views/role/index"], resolve),
-        meta: { name: "角色管理" }
+        meta: { name: "角色管理", code: "role" }
       }
     ]
   },
@@ -121,12 +121,12 @@ const routes = [
     path: "/user",
     redirect: "/user/index",
     component: Layout,
-    meta: { name: "用户管理" },
+    meta: { name: "用户管理", code: "mgr" },
     children: [
       {
         path: "index",
         component: resolve => require(["@/views/user/index"], resolve),
-        meta: { name: "用户管理" }
+        meta: { name: "用户管理", code: "mgr" }
       }
     ]
   },

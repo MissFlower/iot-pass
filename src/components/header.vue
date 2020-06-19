@@ -1,7 +1,7 @@
 <template>
   <header id="header">
-    <img class="logo" src="../assets/logo.png" />
-    <div class="flex1 ml10">
+    <img class="logo hand" src="../assets/logo.png" @click="gotoIndex" />
+    <div class="flex1 ml10 hand" @click="gotoIndex">
       IOT管理系统
     </div>
     <div class="f12 mr20 text hand" v-if="!flag" @click="handleGoHome">
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { delBreadCrumbFun } from "@/data/fun";
+import { delBreadCrumbFun, dealUserTreeFun } from "@/data/fun";
 import { getUserInfo } from "@/api";
 export default {
   data() {
@@ -130,6 +130,16 @@ export default {
               this.$cookie.setValue("emailStatus", 0);
               this.$router.push("/add-email-tips");
             }
+            if (res.data.menus) {
+              // this.$store.dispatch("setMenuLists", res.data.menus);
+              this.dealMenus(res.data.menus);
+            } else {
+              this.$store.dispatch("setMenuLists", JSON.stringify([]));
+              this.$message.warning("用户没有权限，请联系管理员");
+              if (this.$route.path !== "/index") {
+                this.$router.push("/index");
+              }
+            }
           }
           this.$store.dispatch("setLoading", false);
         })
@@ -151,6 +161,29 @@ export default {
       } else if (path === "/add-email-tips" || path === "/verify") {
         this.$router.push("/home");
       }
+    },
+    dealMenus(menus) {
+      const list = [];
+      const funArr = [];
+      const funList = [];
+      if (menus.length > 0) {
+        menus.forEach(item => {
+          if (item.menuFlag === "Y") {
+            item.path = item.frontPath ? item.frontPath : "/";
+            list.push(item);
+          } else {
+            funArr.push(item.code);
+            funList.push(item);
+          }
+        });
+      }
+      let list_ = dealUserTreeFun(list);
+      this.$store.dispatch("setMenuLists", list_);
+      this.$store.dispatch("setFunctionArr", funArr);
+      this.$store.dispatch("setFunctionLists", funList);
+    },
+    gotoIndex() {
+      this.$router.push("/index")
     }
   }
 };

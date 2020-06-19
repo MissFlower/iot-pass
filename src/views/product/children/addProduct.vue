@@ -1,5 +1,5 @@
 <template>
-  <div id="addProduct">
+  <div id="addProduct" v-loading="loading">
     <div class="f20 b pb20">
       <i class="el-icon-back" @click="goBack"></i>
       创建产品
@@ -77,12 +77,13 @@ export default {
   props: ["info"],
   data() {
     return {
-      standardSelectState:true,
+      loading: false,
+      standardSelectState: true,
       ruleForm: {
           productName: '',
           standardSelect: '',        
-          netType:1,
-          category:'标准品类',
+          netType: 1,
+          category: '标准品类',
           nodeType: 1,
           dataFormat: 1,
           authType: 1,
@@ -94,9 +95,9 @@ export default {
             { required: true, message: '请输入产品名称', trigger: 'blur' },
             { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
           ],
-          // standardSelect:[
-          //   {required: true,message: '请选择标准品类',trigger: 'change'}
-          // ],
+          standardSelect:[
+            {required: true,message: '请选择标准品类',trigger: 'change'}
+          ],
           nodeType:[
             {required: true,message: '请选择所节点类型',trigger: 'change'}
           ],
@@ -137,19 +138,25 @@ export default {
   },
   methods: {
     //提交表单
-    submitForm(formName) {
+    submitForm(formName) {        
         var categoryId = null;
-        this.$refs[formName].validate((valid) => {
-           if(this.ruleForm.category === '标准品类'){
-                // categoryId = {categoryId: this.standardSelect}
-            }else{              
-              // this.$refs['ruleForm'].clearValidate('standardSelect') 
-            }          
-          if (valid) {                   
+        var validateArr = ['productName'];
+        if(this.ruleForm.category === '标准品类'){           
+            categoryId = {categoryId: this.standardSelect}
+            validateArr.push('standardSelect')
+        }else{                  
+          this.$refs[formName].clearValidate(['standardSelect']);          
+        } 
+        this.$refs[formName].validateField(validateArr,(valid) => {               
+          if (!valid) {             
+            this.loading = true;      
             productSave(Object.assign({},this.ruleForm,{categoryId})).then(res => {
-              console.log(res)
+              this.loading = false;
+              if(res.code === 200){
+                this.$router.push({path: `detail/${res.data.productKey}`})
+              }
             }).catch(err => {
-              console.log(err)
+              this.loading = false
             })
           } else {            
             return false;
@@ -166,7 +173,7 @@ export default {
         this.standardSelectState = true
       }else{
         this.standardSelectState = false;  
-        // this.$refs['ruleForm'].clearValidate('standardSelect')             
+        this.$refs['ruleForm'].clearValidate('standardSelect')             
       }
     },
     //节点类型选择

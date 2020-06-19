@@ -2,7 +2,7 @@
   <div id="main" v-loading="loading">    
       <div class="edit_product">
           <span class="title">产品信息</span>
-          <el-link icon="el-icon-edit" v-show="btnType" @click="dialogProEdit = true">编辑</el-link>
+          <el-link icon="el-icon-edit" v-show="btnType" @click="dialogProEditBtn">编辑</el-link>
       </div>
       <div class="grid_wrp">
         <el-row style="display: flex;flex-wrap: wrap">
@@ -193,9 +193,7 @@ export default {
       }
     };
   },
- created() {
-   this.dialogProEditData()
- },
+ 
   methods: {
     nodeTypeData(val){
       return nodeTypeData(val)
@@ -206,6 +204,11 @@ export default {
     authTypeData(val){
       return authTypeData(val)
     },
+    //产品编辑
+    dialogProEditBtn(){
+      this.dialogProEdit = true;
+      this.dialogProEditData();
+    },
     //保存产品编辑
     dialogProEditSave(){      
       var id = this.productData.id;
@@ -213,7 +216,11 @@ export default {
       var dynRegister = 1;
       var description = this.dialogProEditForm.description;
       productEdit({id, productName, dynRegister, description}).then(res => {
-          console.log(res)
+          if(res.code === 200){
+            this.dialogProEdit = false;
+            this.productData.description = this.dialogProEditForm.description;
+            this.productData.productName = this.dialogProEditForm.productName;
+          }
       })
     },
     //产品编辑数据转换

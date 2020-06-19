@@ -21,7 +21,7 @@
      <div class="deviceCount">
         <span class="text">设备数:</span>
         <span class="key">{{productData.deviceCount}}</span>   
-        <el-link :underline="false" type="primary" @click="seeSecret">前往管理</el-link>       
+        <el-link :underline="false" type="primary" @click="goEqu">前往管理</el-link>       
     </div>
     <div class="tab_wrp mt20" >
       <el-tabs v-model="activeName" type="card" @tab-click="tabChange" >
@@ -93,6 +93,10 @@ export default {
           message: '复制成功',
           type: 'success'
         });       
+     },
+     //设备管理
+     goEqu(){
+       this.$router.push('/equ/deviceManage')
      },
     //修改产品名称
     changeProName(name){

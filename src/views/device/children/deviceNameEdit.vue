@@ -6,7 +6,7 @@
 <template>
   <el-dialog
     title="编辑设备名称"
-    :visible.sync="dialogVisible"
+    :visible.sync='dialogVisible'
     width="500px"
     @close="handleClose"
     v-loading="loading"
@@ -41,7 +41,6 @@ export default {
 
     //取消
     handleCancel() {
-      this.dialogVisible = false;
       this.$parent.deviceNameEditClose();
     },
 
@@ -64,7 +63,6 @@ export default {
         .then(res => {
           this.loading = false;
           if (res.code === 200) {
-            this.dialogVisible = false;
             this.$parent.deviceNameEditClose(true);
           }
           this.$message({
@@ -77,6 +75,7 @@ export default {
         
     },
 
+    //窗口关闭
     handleClose() {
       this.handleCancel();
     }

@@ -24,20 +24,57 @@
 <script>
 import SidebarItem from "./SidebarItem";
 // import variables from "@/styles/variables.scss";
-// import { dealUserTreeFun } from "@/data/fun";
 
 export default {
   components: { SidebarItem },
   data() {
     return {
-      baseList: [
+      list: [
         {
           icon: "home",
-          name: "首页",
+          title: "首页",
           path: "/home"
+        },
+        {
+          icon: "menu",
+          title: "菜单管理",
+          path: "/menu/index"
+        },
+        {
+          title: "角色管理",
+          path: "/role/index",
+          icon: "role"
+        },
+        {
+          title: "用户管理",
+          path: "/user/index",
+          icon: "user"
+        },
+        {
+          title: "产品管理",
+          path: "/product/index",
+          icon: "product"
+        },
+        // {
+        //   title: "物模型管理",
+        //   path: "/model/index",
+        //   icon: "model"
+        {
+          title: "设备管理",
+          path: "/device/deviceManage",
+          icon: "equ"
+        },
+        {
+          title: "固件管理",
+          path: "/firmware/index",
+          icon: "firmware"
+        },
+        {
+          title: "日志管理",
+          path: "/log/index",
+          icon: "log"
         }
-      ],
-      list: []
+      ]
     };
   },
   computed: {
@@ -48,44 +85,7 @@ export default {
     },
     showLogo() {
       return this.$store.state.settings.sidebarLogo;
-    },
-    menuList() {
-      return this.$store.state.app.menuLists;
     }
-  },
-  watch: {
-    menuList: function() {
-      this.dealTreeFun();
-    }
-  },
-  mounted() {
-    this.dealTreeFun();
-  },
-  methods: {
-    dealTreeFun() {
-      if (this.menuList.length > 0 && this.menuList[0].children) {
-        this.list = JSON.parse(JSON.stringify(this.baseList)).concat(
-          this.menuList[0].children
-        );
-      }
-    }
-    // dealRoutesFun(routes, prePath) {
-    //   routes.forEach(route => {
-    //     this.fun(route, prePath);
-    //   });
-    // },
-    // fun(route, prePath) {
-    //   if (route.meta && route.meta.code) {
-    //     this.routeObj[route.meta.code] = JSON.parse(JSON.stringify(prePath));
-    //     if (route.children && route.children.length > 0) {
-    //       console.log("-----------------------------------------------");
-    //       prePath.push(route.path);
-    //       console.log(prePath);
-    //       console.log(route.children);
-    //       // this.dealRoutesFun(route.children, prePath);
-    //     }
-    //   }
-    // }
   }
 };
 </script>

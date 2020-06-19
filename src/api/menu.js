@@ -30,6 +30,7 @@ export function getMenuList(data) {
   menuFlag  是否是菜单0不是 1是
   url	      请求地址
   icon     	图标
+  frontPath 前端路由
 */
 export function createMenu(data) {
   // 新建菜单
@@ -50,6 +51,7 @@ export function createMenu(data) {
   url	      请求地址
   icon	    图标
   sort	    排序
+  frontPath 前端路由
 */
 export function updateMenu(data) {
   // 编辑菜单

@@ -84,3 +84,24 @@ export function dealAuthTreeFun(list) {
   }
   return arr;
 }
+
+//处理用户的菜单列表的函数
+export function dealUserTreeFun(list) {
+  let arr = [];
+  if (list && list.length > 0) {
+    const obj = {};
+    list.forEach(item => {
+      if (!obj[item.pcode]) {
+        obj[item.pcode] = [];
+      }
+      obj[item.pcode].push(item);
+    });
+    list.forEach(item => {
+      if (obj[item.code]) {
+        item.children = obj[item.code];
+      }
+    });
+    arr = obj[0];
+  }
+  return arr;
+}

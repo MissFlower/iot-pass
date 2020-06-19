@@ -16,7 +16,13 @@
           @keyup.enter.native="searchFun"
         ></el-input>
       </div>
-      <el-button type="primary" @click="handleShowEdit()">新建角色</el-button>
+      <el-button
+        v-if="authArr.indexOf('role_add') > -1"
+        type="primary"
+        @click="handleShowEdit()"
+      >
+        新建角色
+      </el-button>
     </div>
     <el-table :data="list" border>
       <el-table-column label="ID" prop="roleId"></el-table-column>
@@ -27,16 +33,19 @@
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
           <svg-icon
+            v-if="authArr.indexOf('role_setAuthority') > -1"
             icon-class="auth"
             class="success hand f20"
             @click.stop="handleShowCon(2, scope.row)"
           ></svg-icon>
           <i
-            class="el-icon-edit blue hand ml20 f18"
+            v-if="authArr.indexOf('role_edit') > -1"
+            class="el-icon-edit blue hand f18"
             @click="handleShowEdit(scope.row)"
           ></i>
           <i
-            class="el-icon-close red ml20 hand f20"
+            v-if="authArr.indexOf('role_remove') > -1"
+            class="el-icon-close red hand f20"
             @click="handleDelete(scope.row)"
           ></i>
         </template>
@@ -45,7 +54,7 @@
     <el-pagination
       @current-change="handleCurrentChange"
       :current-page.sync="formData.pageNum"
-      :page-size="10"
+      :page-size="formData.pageSize"
       layout="total, prev, pager, next"
       :total="total"
       class="tr mt20"
@@ -75,6 +84,11 @@ export default {
       if (this.$fun.trim(this.formData.name === "")) {
         this.handleCurrentChange(1);
       }
+    }
+  },
+  computed: {
+    authArr() {
+      return this.$store.state.app.functionArr;
     }
   },
   mounted() {

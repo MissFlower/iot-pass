@@ -66,7 +66,7 @@ export default {
       flag: 1,
       name: "",
       formData: {
-        email: "mawj0103@163.com",
+        email: "",
         account: ""
       },
       code: "",

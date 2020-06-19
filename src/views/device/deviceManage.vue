@@ -5,6 +5,7 @@
  -->
 <template>
   <div id="deviceControl">
+    <!-- 设备列表 -->
     <deviceList></deviceList>
   </div>
 </template>

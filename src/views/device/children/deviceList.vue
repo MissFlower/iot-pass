@@ -1,13 +1,13 @@
 <!-- 
 文件作者：wengyoubin
 创建日期：2020.6.17
-文件说明：新建设备
+文件说明：设备列表
  -->
 <template>
   <div v-loading="loading">
     <div class="mb20 df jc_sb">
       <div class="df">
-        <el-input placeholder="请输入名称" v-model="searchInputValue">
+        <el-input placeholder="请输入名称" v-model="searchInputValue" @change="searchBtnTouch">
           <el-select
             class="w120"
             v-model="searchTypeSelect"
@@ -19,7 +19,7 @@
             <el-option label="备注名称" value="2"></el-option>
           </el-select>
         </el-input>
-        <el-input class="ml10 mr10 w150" placeholder="固件版本" v-model="fmVersionValue"></el-input>
+        <el-input class="ml10 mr10 w150" placeholder="固件版本" v-model="fmVersionValue" @change="searchBtnTouch"></el-input>
         <el-button icon="el-icon-search" @click="searchBtnTouch"></el-button>
       </div>
       <el-button type="primary" @click="showNewDevice = true">新建设备</el-button>
@@ -45,35 +45,33 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination
-      @current-change="handleCurrentChange"
-      :current-page.sync="page"
-      :page-size="pageSize"
-      layout="total, prev, pager, next"
-      :total="total"
-      class="tr mt20 mb20"
-    ></el-pagination>
 
+     <!-- 分页-->
+    <pagination :data="tableData" @pagination="handleCurrentChange" class="tr"/>
+    <!-- 新建设备 -->
     <newDevice v-if="showNewDevice"></newDevice>
   </div>
 </template>
 
 <script>
 import newDevice from "./newDevice";
+import Pagination from "@/components/Pagination"
 import { deviceList, deleteDevice, deviceEnable } from "@/api/equRequest";
 export default {
-  components: { newDevice },
+  components: { newDevice,Pagination },
   data() {
     return {
       list: [],
-      page: 1,
-      pageSize: 20,
-      total: 0,
+      tableData: {
+        pageCount: 0, //总页数
+        total: 0, // 总条数
+        pageSize: 10, //一页大小
+        pageNum: 0, // 第几页 从0开始    
+      },
       searchTypeSelect: "1",
       searchInputValue: "",
       fmVersionValue: "",
       showNewDevice: false,
-      deviceSel: "",
       loading: false
     };
   },
@@ -89,8 +87,8 @@ export default {
         deviceName: this.searchTypeSelect == "1" ? this.searchInputValue : "",
         nickName: this.searchTypeSelect == "2" ? this.searchInputValue : "",
         fmVersion: this.fmVersionValue,
-        pageNum: this.page,
-        pageSize: this.pageSize
+        pageNum: this.tableData.pageNum,
+        pageSize: this.tableData.pageSize
       })
         .then(res => {
           if (res.code === 200) {
@@ -112,7 +110,9 @@ export default {
                 return value;
               });
               this.list = list;
-              this.total = res.data.total;
+
+              let {data,...pagination} =  res.data;
+              this.tableData = pagination;
             }
           }
           this.loading = false;
@@ -127,7 +127,10 @@ export default {
       this.getDeviceList();
     },
 
-    //设计启、禁用
+    /*
+    设备启、禁用
+    deviceObj  设备对象
+    */
     deviceEnable(deviceObj){
       this.loading = true;
       deviceEnable({
@@ -146,13 +149,19 @@ export default {
         });
     },
 
-    //设备查看
+    /*
+    设备查看
+    deviceObj  设备对象
+    */
     handleClick(deviceObj) {
       console.log(JSON.stringify(deviceObj));
       this.$router.push(`deviceInfo?id=${deviceObj.id}`);
     },
 
-    //删除设备
+    /*
+    删除设备
+    deviceObj  设备对象
+    */
     deleteClick(deviceObj) {
       this.$confirm("确定要删除此设备么?", "提示", {
         confirmButtonText: "确定",
@@ -187,7 +196,10 @@ export default {
       this.getDeviceList();
     },
 
-    //新建设备窗口关闭
+    /*
+    新建设备窗口关闭
+    updata  是否更新数据
+    */
     newDeviceClose(updata) {
       this.showNewDevice = false;
       if (updata) {

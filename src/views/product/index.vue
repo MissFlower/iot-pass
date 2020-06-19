@@ -1,3 +1,9 @@
+
+<!-- 
+文件作者：zhaoyifeng
+创建日期：2020.6.17
+文件说明：产品管理api
+ -->
 <template>
   <div id="product" >
     <div class="mb20 tr">

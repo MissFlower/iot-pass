@@ -1,3 +1,8 @@
+<!-- 
+  文件作者：mawenjuan
+  创建日期：2020.6.16
+  文件说明：账户密码重置
+ -->
 <template>
   <div id="register" v-loading="loading">
     <div class="register-con df">

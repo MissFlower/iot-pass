@@ -2,7 +2,8 @@ import axios from "axios";
 import cookie from "@/utils/cookie.js";
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_URL,
-  timeout: 5000
+  timeout: 500000
+  // crossDomain: true //设置cross跨域
 });
 
 service.interceptors.request.use(

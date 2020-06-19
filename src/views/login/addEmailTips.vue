@@ -1,3 +1,8 @@
+<!-- 
+  文件作者：mawenjuan
+  创建日期：2020.6.16
+  文件说明：邮箱绑定的提示页面
+ -->
 <template>
   <div id="addEmail">
     <div class="con">
@@ -32,10 +37,7 @@ export default {
   },
   methods: {
     handleGo() {
-      this.$router.push({
-        name: "verify",
-        params: { flag: 1 }
-      });
+      this.$router.push("/verify");
     },
     handleNext() {
       this.$cookie.setValue("emailStatus", 2);

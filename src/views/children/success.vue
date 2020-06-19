@@ -1,7 +1,7 @@
 <template>
   <div id="success">
     <div v-if="flag == 1" class="con df ai_c">
-      <div>
+      <div class="f24 mr20">
         <svg-icon icon-class="success"></svg-icon>
       </div>
       <div>
@@ -35,7 +35,7 @@ export default {
   height: 100%;
   .con {
     margin: 0 auto;
-    padding: 30px 0;
+    padding: 30px 20px;
     width: 990px;
     height: auto;
     border: 1px solid #e1e1ca;

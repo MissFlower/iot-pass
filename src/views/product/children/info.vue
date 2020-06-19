@@ -220,6 +220,7 @@ export default {
             this.dialogProEdit = false;
             this.productData.description = this.dialogProEditForm.description;
             this.productData.productName = this.dialogProEditForm.productName;
+            this.$emit('changeProName',this.dialogProEditForm.productName)
           }
       })
     },

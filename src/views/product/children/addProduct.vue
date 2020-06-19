@@ -8,7 +8,7 @@
       <el-form-item label="产品名称" prop="productName">
         <el-input v-model="ruleForm.productName"></el-input>
       </el-form-item>
-      <el-form-item label="所属品类" prop="standardSelect">
+      <el-form-item label="所属品类" prop="standardSelect" >
         <div class="pb10">
           <el-radio-group v-model="ruleForm.category" @change="categoryChange">
             <el-radio label="标准品类"></el-radio>
@@ -88,7 +88,10 @@ export default {
           dataFormat: 1,
           authType: 1,
           dynRegister: 1,
-          description: ''
+          description: '',
+          standardSelectRules: [
+            {required: true,message: '请选择标准品类',trigger: 'change'}
+          ],
       },
       rules: {
           productName: [
@@ -139,27 +142,29 @@ export default {
   methods: {
     //提交表单
     submitForm(formName) {        
-        var categoryId = null;
-        var validateArr = ['productName'];
+        var categoryId = null;        
         if(this.ruleForm.category === '标准品类'){           
-            categoryId = {categoryId: this.standardSelect}
-            validateArr.push('standardSelect')
+            categoryId = {categoryId: this.standardSelect};
+            this.rules.standardSelect = [
+            {required: true,message: '请选择标准品类',trigger: 'change'}
+          ]           
         }else{                  
-          this.$refs[formName].clearValidate(['standardSelect']);          
+          this.$refs[formName].clearValidate(['standardSelect']); 
+          this.rules.standardSelect=[];      
         } 
-        this.$refs[formName].validateField(validateArr,(valid) => {               
-          if (!valid) {             
-            this.loading = true;      
-            productSave(Object.assign({},this.ruleForm,{categoryId})).then(res => {
-              this.loading = false;
-              if(res.code === 200){
-                this.$router.push({path: `detail/${res.data.productKey}`})
-              }
-            }).catch(err => {
-              this.loading = false
-            })
+        this.$refs[formName].validate((valid) => {                    
+          if (valid) {               
+              this.loading = true;      
+              productSave(Object.assign({},this.ruleForm,{categoryId})).then(res => {
+                this.loading = false;
+                if(res.code === 200){
+                  this.$router.push({path: `detail/${res.data.productKey}`})
+                }
+              }).catch(err => {
+                this.loading = false
+              })
           } else {            
-            return false;
+              return false;
           }
         });
     },
@@ -172,8 +177,8 @@ export default {
       if(val === '标准品类'){
         this.standardSelectState = true
       }else{
-        this.standardSelectState = false;  
-        this.$refs['ruleForm'].clearValidate('standardSelect')             
+        this.standardSelectState = false; 
+        this.$refs['ruleForm'].clearValidate(['standardSelect']);                 
       }
     },
     //节点类型选择

@@ -13,7 +13,7 @@
     </div>
     <product-list v-if="flag == 0" :data="listData" :loading="loading" @getList="getList"></product-list>
      <!-- 分页-->
-    <pagination :data="tableData" @pagination="changePage"/>
+    <pagination :data="tableData" @pagination="changePage" class="tr"/>
   </div>
 </template>
 

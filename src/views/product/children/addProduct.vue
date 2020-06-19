@@ -1,5 +1,5 @@
 <template>
-  <div id="addProduct">
+  <div id="addProduct" v-loading="loading">
     <div class="f20 b pb20">
       <i class="el-icon-back" @click="goBack"></i>
       创建产品
@@ -8,7 +8,7 @@
       <el-form-item label="产品名称" prop="productName">
         <el-input v-model="ruleForm.productName"></el-input>
       </el-form-item>
-      <el-form-item label="所属品类" prop="standardSelect">
+      <el-form-item label="所属品类" prop="standardSelect" >
         <div class="pb10">
           <el-radio-group v-model="ruleForm.category" @change="categoryChange">
             <el-radio label="标准品类"></el-radio>
@@ -77,26 +77,30 @@ export default {
   props: ["info"],
   data() {
     return {
-      standardSelectState:true,
+      loading: false,
+      standardSelectState: true,
       ruleForm: {
           productName: '',
           standardSelect: '',        
-          netType:1,
-          category:'标准品类',
+          netType: 1,
+          category: '标准品类',
           nodeType: 1,
           dataFormat: 1,
           authType: 1,
           dynRegister: 1,
-          description: ''
+          description: '',
+          standardSelectRules: [
+            {required: true,message: '请选择标准品类',trigger: 'change'}
+          ],
       },
       rules: {
           productName: [
             { required: true, message: '请输入产品名称', trigger: 'blur' },
             { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' }
           ],
-          // standardSelect:[
-          //   {required: true,message: '请选择标准品类',trigger: 'change'}
-          // ],
+          standardSelect:[
+            {required: true,message: '请选择标准品类',trigger: 'change'}
+          ],
           nodeType:[
             {required: true,message: '请选择所节点类型',trigger: 'change'}
           ],
@@ -137,22 +141,30 @@ export default {
   },
   methods: {
     //提交表单
-    submitForm(formName) {
-        var categoryId = null;
-        this.$refs[formName].validate((valid) => {
-           if(this.ruleForm.category === '标准品类'){
-                // categoryId = {categoryId: this.standardSelect}
-            }else{              
-              // this.$refs['ruleForm'].clearValidate('standardSelect') 
-            }          
-          if (valid) {                   
-            productSave(Object.assign({},this.ruleForm,{categoryId})).then(res => {
-              console.log(res)
-            }).catch(err => {
-              console.log(err)
-            })
+    submitForm(formName) {        
+        var categoryId = null;        
+        if(this.ruleForm.category === '标准品类'){           
+            categoryId = {categoryId: this.standardSelect};
+            this.rules.standardSelect = [
+            {required: true,message: '请选择标准品类',trigger: 'change'}
+          ]           
+        }else{                  
+          this.$refs[formName].clearValidate(['standardSelect']); 
+          this.rules.standardSelect=[];      
+        } 
+        this.$refs[formName].validate((valid) => {                    
+          if (valid) {               
+              this.loading = true;      
+              productSave(Object.assign({},this.ruleForm,{categoryId})).then(res => {
+                this.loading = false;
+                if(res.code === 200){
+                  this.$router.push({path: `detail/${res.data.productKey}`})
+                }
+              }).catch(err => {
+                this.loading = false
+              })
           } else {            
-            return false;
+              return false;
           }
         });
     },
@@ -165,8 +177,8 @@ export default {
       if(val === '标准品类'){
         this.standardSelectState = true
       }else{
-        this.standardSelectState = false;  
-        // this.$refs['ruleForm'].clearValidate('standardSelect')             
+        this.standardSelectState = false; 
+        this.$refs['ruleForm'].clearValidate(['standardSelect']);                 
       }
     },
     //节点类型选择

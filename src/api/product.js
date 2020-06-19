@@ -151,7 +151,7 @@ export function release(data) {
   */
 export function productEdit(data) { 
   return request({
-    url: "register/update",
+    url: "product/update",
     method: "post",
     headers: headerFrom,
     data: Qs.stringify(data)

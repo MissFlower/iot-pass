@@ -1,14 +1,29 @@
+<!--
+  文件作者：mawenjuan
+  创建日期：2020.6.18
+  文件说明：角色的列表
+-->
+
 <template>
-  <div>
-    <div class="mb20 tr">
-      <el-button type="primary" @click="handleShowCon(3)">新建角色</el-button>
+  <div id="roleList" v-loading="loading">
+    <div class="mb20 df">
+      <div class="flex1">
+        <el-input
+          v-model="formData.name"
+          placeholder="角色名称"
+          suffix-icon="el-icon-search"
+          class="w200"
+          @keyup.enter.native="searchFun"
+        ></el-input>
+      </div>
+      <el-button type="primary" @click="handleShowEdit()">新建角色</el-button>
     </div>
     <el-table :data="list" border>
-      <el-table-column label="ID" prop="id"></el-table-column>
+      <el-table-column label="ID" prop="roleId"></el-table-column>
       <el-table-column label="角色名" prop="name"></el-table-column>
       <el-table-column label="排序"></el-table-column>
-      <el-table-column label="描述"></el-table-column>
-      <el-table-column label="创建时间"></el-table-column>
+      <el-table-column label="描述" prop="description"></el-table-column>
+      <el-table-column label="创建时间" prop="createTime_"></el-table-column>
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
           <svg-icon
@@ -18,20 +33,19 @@
           ></svg-icon>
           <i
             class="el-icon-edit blue hand ml20 f18"
-            @click="handleShowCon(1, scope.row)"
+            @click="handleShowEdit(scope.row)"
           ></i>
           <i
             class="el-icon-close red ml20 hand f20"
-            @click="handleClose(scope.row)"
+            @click="handleDelete(scope.row)"
           ></i>
         </template>
       </el-table-column>
     </el-table>
     <el-pagination
-      @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page.sync="page"
-      :page-size="100"
+      :current-page.sync="formData.pageNum"
+      :page-size="10"
       layout="total, prev, pager, next"
       :total="total"
       class="tr mt20"
@@ -41,26 +55,107 @@
 </template>
 
 <script>
+import { roleList, delRole } from "@/api/role";
+
 export default {
   data() {
     return {
-      list: [
-        {
-          name: "管理员",
-          id: "1"
-        }
-      ],
-      page: 1,
-      total: 0
+      loading: false,
+      list: [],
+      total: 0,
+      formData: {
+        pageNum: 1,
+        pageSize: 10,
+        name: ""
+      }
     };
   },
+  watch: {
+    "formData.name": function() {
+      if (this.$fun.trim(this.formData.name === "")) {
+        this.handleCurrentChange(1);
+      }
+    }
+  },
+  mounted() {
+    this.getData();
+  },
   methods: {
-    handleSizeChange() {},
-    handleCurrentChange() {},
+    getData() {
+      this.loading = true;
+      this.list = [];
+      roleList(this.formData)
+        .then(res => {
+          if (res.code === 200) {
+            if (res.data && res.data.list && res.data.list.length > 0) {
+              res.data.list.forEach(item => {
+                item.createTime_ = item.createTime
+                  ? this.$fun.dateFormat(
+                      new Date(item.createTime),
+                      "yyyy-MM-dd hh:mm:ss"
+                    )
+                  : "";
+              });
+              this.list = res.data.list;
+            }
+            this.total = res.data.total;
+            this.loading = false;
+          } else {
+            this.$message.error(res.message);
+            this.loading = false;
+          }
+        })
+        .catch(() => {
+          this.$message.error("角色列表获取失败");
+          this.loading = false;
+        });
+    },
+    searchFun() {
+      if (this.$fun.trim(this.formData.name === "")) {
+        return;
+      }
+      this.handleCurrentChange(1);
+    },
+    handleCurrentChange(page) {
+      this.formData.pageNum = page;
+      this.getData();
+    },
     handleShowCon(key, row) {
       this.$parent.switchCon(key, row);
     },
-    handleClose() {}
+    handleShowEdit(row) {
+      this.$parent.showEditRole(row);
+    },
+    handleDelete(row) {
+      const str = "确认删除该角色吗？";
+      this.$confirm(str, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.loading = true;
+          delRole({
+            roleId: row.roleId
+          })
+            .then(res => {
+              if (res.code === 200) {
+                this.$message.success("角色删除成功");
+                this.getData();
+              } else {
+                this.$message.error(res.message);
+              }
+              this.loading = false;
+            })
+            .catch(() => {
+              this.$message.error("角色删除失败");
+              this.loading = false;
+            });
+        })
+        .catch(() => {
+          this.$message("操作已取消");
+        });
+    }
   }
 };
 </script>

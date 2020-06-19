@@ -51,11 +51,16 @@
         methods: {
             addFmSubmit () {
                 this.ruleForm.id = this.detailInfo.id
+                if (!this.ruleForm.fmDesc) {
+                    this.ruleForm.fmDesc = this.detailInfo.fmDesc
+                }
                 updateFm(this.ruleForm)
                     .then(res => {
                         if (res.code === 200) {
                             this.$emit('changeVisible', this.EditDialogVisible)
                             this.$emit('changeDetail', true)
+                            this.ruleForm.fmDesc = ''
+                            this.ruleForm.fmName = ''
                         } else {
                             this.$message.warning(res.message);
                         }
@@ -65,7 +70,8 @@
                     });
             },
             closeDialog () {
-                this.$refs['ruleForm'].resetFields(); // 清空弹出框校验
+                this.ruleForm.fmDesc = ''
+                this.ruleForm.fmName = ''
                 this.$emit('changeVisible', this.EditDialogVisible)
             }
         }

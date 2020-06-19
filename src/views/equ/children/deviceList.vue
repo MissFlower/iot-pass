@@ -4,7 +4,7 @@
 文件说明：新建设备
  -->
 <template>
-  <div>
+  <div v-loading="loading">
     <div class="mb20 df jc_sb">
       <div class="df">
         <el-input placeholder="请输入名称" v-model="searchInputValue">
@@ -51,7 +51,7 @@
       :page-size="pageSize"
       layout="total, prev, pager, next"
       :total="total"
-      class="tr mt20"
+      class="tr mt20 mb20"
     ></el-pagination>
 
     <newDevice v-if="showNewDevice"></newDevice>
@@ -73,7 +73,8 @@ export default {
       searchInputValue: "",
       fmVersionValue: "",
       showNewDevice: false,
-      deviceSel: ""
+      deviceSel: "",
+      loading: false
     };
   },
   mounted() {
@@ -83,7 +84,7 @@ export default {
   methods: {
     //获取设备列表
     getDeviceList() {
-      this.$store.dispatch("setLoading", true);
+      this.loading = true;
       deviceList({
         deviceName: this.searchTypeSelect == "1" ? this.searchInputValue : "",
         nickName: this.searchTypeSelect == "2" ? this.searchInputValue : "",
@@ -114,10 +115,10 @@ export default {
               this.total = res.data.total;
             }
           }
-          this.$store.dispatch("setLoading", false);
+          this.loading = false;
         })
         .catch(() => {
-          this.$store.dispatch("setLoading", false);
+          this.loading = false;
         });
     },
 
@@ -128,7 +129,7 @@ export default {
 
     //设计启、禁用
     deviceEnable(deviceObj){
-      this.$store.dispatch("setLoading", true);
+      this.loading = true;
       deviceEnable({
         id: deviceObj.id,
         enable: deviceObj.enable==0?'1':'0',
@@ -138,10 +139,10 @@ export default {
           this.$message({
             message: res.message
           });
-          this.$store.dispatch("setLoading", false);
+          this.loading = false;
         })
         .catch(() => {
-          this.$store.dispatch("setLoading", false);
+          this.loading = false;
         });
     },
 
@@ -159,7 +160,7 @@ export default {
         type: "warning"
       })
         .then(() => {
-          this.$store.dispatch("setLoading", true);
+          this.loading = true;
           deleteDevice({
             deviceId: deviceObj.id,
             productKey: deviceObj.productKey,
@@ -172,10 +173,10 @@ export default {
               this.$message({
                 message: res.message
               });
-              this.$store.dispatch("setLoading", false);
+              this.loading = false;
             })
             .catch(() => {
-              this.$store.dispatch("setLoading", false);
+              this.loading = false;
             });
         })
         .catch(() => {});

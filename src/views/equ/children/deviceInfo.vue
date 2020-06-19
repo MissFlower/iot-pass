@@ -4,7 +4,7 @@
 文件说明：设备详情
  -->
 <template>
-  <div id="deviceInfoView">
+  <div id="deviceInfoView" v-loading="loading">
     <input
       id="copy_content"
       type="text"
@@ -22,13 +22,13 @@
       </div>
       <div class="productInfo">
         <span class="dib w100 mr20 c9">DeviceSecret</span><img>
-        <span>{{lookDeviceSecret?'********':deviceObj.deviceSecret}}</span>
+        <span>{{lookDeviceSecret?deviceObj.deviceSecret:'********'}}</span>
+        <el-button v-if="lookDeviceSecret" type="text" class="ml10" @click="copy(deviceObj.deviceSecret)">复制</el-button>
         <el-button
-          v-if="lookDeviceSecret"
           type="text"
           class="ml10"
-          @click="lookDeviceSecret = false"
-        >查看</el-button>
+          @click="lookDeviceSecret = !lookDeviceSecret"
+        >{{lookDeviceSecret?'隐藏':'查看'}}</el-button>
       </div>
       <div class="productInfo">
         <span class="dib w100 mr20 c9">ProductKey</span><img>
@@ -121,7 +121,8 @@ export default {
       deviceObj: {},
       infoType: "first",
       showDeviceNameEdit: false,
-      lookDeviceSecret: true
+      lookDeviceSecret: false,
+      loading: false
     };
   },
 
@@ -132,7 +133,7 @@ export default {
   methods: {
     //获取设备详情
     getDeviceInfo() {
-      // this.$store.dispatch("setLoading", true);
+      this.loading = true;
       deviceInfo({
         id: this.$route.query.id
       })
@@ -170,10 +171,10 @@ export default {
             }
             this.deviceObj = deviceObj;
           }
-          this.$store.dispatch("setLoading", false);
+          this.loading = false;
         })
         .catch(() => {
-          this.$store.dispatch("setLoading", false);
+          this.loading = false;
         });
     },
 

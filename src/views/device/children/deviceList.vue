@@ -24,7 +24,8 @@
       </div>
       <el-button type="primary" @click="showNewDevice = true">新建设备</el-button>
     </div>
-    <el-table :data="list" border>
+    <el-table :data="list" border @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column prop="id" label="ID"></el-table-column>
       <el-table-column prop="deviceName" label="设备名称"></el-table-column>
       <el-table-column prop="productName" label="产品名称"></el-table-column>
@@ -46,8 +47,16 @@
       </el-table-column>
     </el-table>
 
-     <!-- 分页-->
-    <pagination :data="tableData" @pagination="handleCurrentChange" class="tr"/>
+    <div>
+      <div class="mt20 ml10">
+        <el-checkbox v-model="checked" class="mr10"></el-checkbox>
+        <el-button type="primary" @click="batchOperate(1)">删除</el-button>
+        <el-button type="primary" @click="batchOperate(2)">禁用</el-button>
+        <el-button type="primary" @click="batchOperate(3)">启用</el-button>
+      </div>
+      <!-- 分页-->
+      <pagination :data="tableData" @pagination="handleCurrentChange" class="tr"/>
+    </div>
     <!-- 新建设备 -->
     <newDevice v-if="showNewDevice"></newDevice>
   </div>
@@ -72,7 +81,8 @@ export default {
       searchInputValue: "",
       fmVersionValue: "",
       showNewDevice: false,
-      loading: false
+      loading: false,
+      multipleSelection: []
     };
   },
   mounted() {
@@ -194,6 +204,11 @@ export default {
     //列表翻页
     handleCurrentChange() {
       this.getDeviceList();
+    },
+
+    //设备选择
+    handleSelectionChange(val){
+        this.multipleSelection = val;
     },
 
     /*

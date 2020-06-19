@@ -45,7 +45,7 @@
         ></el-input>
       </el-form-item>
       <el-form-item label="菜单标记" prop="menuFlag">
-        <el-radio-group v-model="info.menuFlag" :disabled="!flag">
+        <el-radio-group v-model="info.menuFlag">
           <el-radio label="Y">是</el-radio>
           <el-radio label="N">否</el-radio>
         </el-radio-group>
@@ -81,7 +81,7 @@
 
 <script>
 import iconSelectCon from "./selectIocn";
-import { createMenu, updateMenu } from "@/api/menu";
+import { createMenu, updateMenu, getMenuList } from "@/api/menu";
 import { dealFun } from "@/data/fun";
 export default {
   components: { iconSelectCon },
@@ -110,6 +110,7 @@ export default {
         code: "",
         pid: "",
         pcode: "",
+        pcodeName: "",
         menuFlag: "",
         url: "",
         icon: "",
@@ -138,32 +139,65 @@ export default {
   },
   methods: {
     into() {
-      this.list = JSON.parse(JSON.stringify(dealFun(this.$parent.list)));
-      this.menuObj = this.$parent.menuObj;
-      if (this.activeItem) {
-        this.info = JSON.parse(JSON.stringify(this.updateRow));
-        for (const key in this.info) {
-          this.info[key] = this.activeItem[key];
+      this.loading = true;
+      this.list = [];
+      this.menuObj = {};
+      getMenuList({
+        pageNum: 1,
+        pageSize: 1000
+      }).then(res => {
+        if (res.code === 200) {
+          if (res.data.list) {
+            if (res.data.list.length > 0) {
+              // 处理返回父级菜单数组
+              res.data.list.forEach(item => {
+                this.menuObj[item.code] = item.menuId;
+                if (item.menuFlag === "N") {
+                  item.disabled = true;
+                }
+              });
+            }
+            this.list = dealFun(res.data.list);
+            this.info = JSON.parse(JSON.stringify(this.createRow));
+            if (this.activeItem) {
+              this.info.menuId = null;
+              this.info.sort = 0;
+              for (const key in this.info) {
+                this.info[key] = this.activeItem[key];
+              }
+              this.info.pid = this.findMenuIds(this.activeItem.pcodes);
+            } else {
+              if (this.list && this.list.length > 0) {
+                this.info.pid = this.findMenuIds(`[0],[${this.list[0].code}],`);
+              }
+            }
+          }
         }
-        this.info.pid = this.findMenuIds(this.activeItem.pcodes);
-      } else {
-        this.info = JSON.parse(JSON.stringify(this.createRow));
-        if (this.list && this.list.length > 0) {
-          this.info.pid = this.findMenuIds([this.list[0].code]);
-        }
-      }
+        this.loading = false;
+      });
     },
+    // 菜单的code换成菜单ID
     findMenuIds(codes) {
+      let pcodes = codes;
+      if (pcodes) {
+        let arr = pcodes.split(",");
+        pcodes = arr.map(item => {
+          let str = item.replace(/\[|\]/g, "");
+          return item ? str : "";
+        });
+        pcodes.splice(pcodes.length - 1, 1);
+        pcodes.splice(0, 1);
+      }
       const arr = [];
-      if (codes && codes.length > 0) {
-        codes.forEach(code => {
+      if (pcodes && pcodes.length > 0) {
+        pcodes.forEach(code => {
           arr.push(this.menuObj[code]);
         });
       }
       return arr;
     },
     handleSave() {
-      this.$parent.loading = true;
+      this.loading = true;
       let promise = null;
       let str = "";
       // 根据父组件传入的值 确认是创建还是编辑
@@ -185,22 +219,19 @@ export default {
         .then(res => {
           if (res.code === 200) {
             this.$message.success(`菜单${str}成功`);
-            this.$parent.getData();
-            this.$parent.flag = 1;
-            this.flag = 0;
+            this.$emit("success");
           } else {
             this.$message.error(res.message);
           }
-          this.$parent.loading = false;
+          this.loading = false;
         })
         .catch(() => {
           this.$message.error(`菜单${str}失败`);
-          this.$parent.loading = false;
+          this.loading = false;
         });
     },
     handleCancel() {
-      this.flag = 0;
-      this.$parent.flag = 1;
+      this.$parent.showCon(1);
     },
     handleShowIcons() {
       this.show = true;

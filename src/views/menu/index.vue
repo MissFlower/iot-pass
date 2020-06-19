@@ -6,8 +6,12 @@
 
 <template>
   <div id="menu">
-    <menu-list v-if="activeIndex == 1"></menu-list>
-    <edit-menu v-if="activeIndex == 2" :activeItem="selectRow"></edit-menu>
+    <menu-list ref="list" v-if="activeIndex == 1"></menu-list>
+    <edit-menu
+      v-if="activeIndex == 2"
+      :activeItem="selectRow"
+      @success="successFun"
+    ></edit-menu>
   </div>
 </template>
 
@@ -19,7 +23,8 @@ export default {
   data() {
     return {
       activeIndex: 1,
-      selectRow: null
+      selectRow: null,
+      list: []
     };
   },
   methods: {
@@ -30,6 +35,12 @@ export default {
         this.selectRow = null;
       }
       this.activeIndex = key;
+    },
+    successFun() {
+      this.activeIndex = 1;
+      this.$nextTick(() => {
+        this.$refs.list.getData();
+      });
     }
   }
 };
@@ -40,5 +51,6 @@ export default {
   position: relative;
   width: 100%;
   height: 100%;
+  padding: 20px;
 }
 </style>

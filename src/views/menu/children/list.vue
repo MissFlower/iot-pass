@@ -1,7 +1,7 @@
 <!-- 
   文件作者：mawenjuan
   创建日期：2020.6.19
-  文件说明：菜单管理的主体
+  文件说明：菜单管理的列表
  -->
 
 <template>
@@ -33,10 +33,11 @@
       <el-table-column label="菜单编号" prop="code"></el-table-column>
       <el-table-column label="上层菜单">
         <template slot-scope="scope">
-          <div v-for="(item, index) in menuObj[scope.row.pcode]" :key="index">
-            <span v-if="index == 'name'">{{ item }}</span>
-          </div>
-          <div v-if="!menuObj[scope.row.pcode]">-</div>
+          {{
+            menuObj[scope.row.pcode]
+              ? menuObj[scope.row.pcode]
+              : scope.row.pcode
+          }}
         </template>
       </el-table-column>
       <el-table-column label="请求地址" prop="url"></el-table-column>
@@ -49,7 +50,9 @@
       <el-table-column label="图标" prop="icon"></el-table-column>
       <el-table-column label="状态" prop="status" width="80" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.status == "ENABLE" ? "启用" : "禁用" }}</span>
+          <span :class="scope.row.status == 'ENABLE' ? 'success' : 'red'">
+            {{ scope.row.status == "ENABLE" ? "启用" : "禁用" }}
+          </span>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="80" align="center">
@@ -119,24 +122,8 @@ export default {
         if (res.code === 200) {
           if (res.data.list) {
             if (res.data.list.length > 0) {
-              // 处理返回父级菜单数组
               res.data.list.forEach(item => {
-                this.menuObj[item.code] = {
-                  name: item.name,
-                  menuId: item.menuId
-                };
-                if (item.pcodes) {
-                  let arr = item.pcodes.split(",");
-                  item.pcodes = arr.map(item => {
-                    let str = item.replace(/\[|\]/g, "");
-                    return item ? str : "";
-                  });
-                  item.pcodes.splice(item.pcodes.length - 1, 1);
-                  item.pcodes.splice(0, 1);
-                  if (item.menuFlag === "N") {
-                    item.disabled = true;
-                  }
-                }
+                this.menuObj[item.code] = item.name;
               });
             }
             this.list = res.data.list;
@@ -202,6 +189,5 @@ export default {
   position: relative;
   height: 100%;
   width: 100%;
-  padding: 20px;
 }
 </style>

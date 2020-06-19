@@ -1,3 +1,9 @@
+<!-- 
+  文件作者：mawenjuan
+  创建日期：2020.6.17
+  文件说明：菜单管理的主体
+ -->
+
 <template>
   <div id="menu" v-loading="loading">
     <div class="con">
@@ -7,7 +13,7 @@
             type="success"
             size="mini"
             icon="el-icon-plus"
-            @click="handleAdd"
+            @click.stop="handleAdd"
           ></el-button>
         </div>
         <el-tree
@@ -20,19 +26,22 @@
           @node-click="handleNodeClick"
         >
           <span class="custom-tree-node" slot-scope="{ node, data }">
-            <span class="tree-label">{{ data.title }}</span>
+            <span class="tree-label">{{ data.name }}</span>
             <span class="tree-check-icon">
-              <i class="el-icon-close red hand"></i>
+              <i
+                class="el-icon-close red hand"
+                @click.stop="handleClose(data)"
+              ></i>
               <i
                 class="el-icon-edit blue hand ml10"
-                @click.stop="handleEdit"
+                @click.stop="handleEdit(data)"
               ></i>
             </span>
           </span>
         </el-tree>
       </div>
       <div class="right-con">
-        <right-con ref="right" :activeItem="activeItem"></right-con>
+        <right-con v-if="!loading" ref="right" :activeItem="activeItem"></right-con>
       </div>
     </div>
   </div>
@@ -40,113 +49,28 @@
 
 <script>
 import rightCon from "./children/rightCon";
-import { addBreadCrumbFun } from "@/data/fun"
+import { addBreadCrumbFun, dealFun } from "@/data/fun";
+import { getMenuList, delMenu } from "@/api/menu";
 export default {
   components: { rightCon },
   data() {
     return {
       flag: 1,
       loading: false,
+      formData: {
+        pageNum: 1,
+        pageSize: 1000,
+        name: "",
+        code: ""
+      },
       path: "/menu",
-      list: [
-        {
-          icon: "menu",
-          title: "菜单管理",
-          path: "/menu",
-          pid: "",
-          id: "1",
-          flag: "1" // 1 菜单 0 功能
-        },
-        {
-          title: "角色管理",
-          path: "/role",
-          icon: "role",
-          pid: "",
-          id: "2",
-          flag: "1",
-          children: [
-            {
-              title: "角色管理1",
-              path: "/role1",
-              icon: "role1",
-              pid: "",
-              id: "2-1",
-              flag: "1",
-              children: [
-                {
-                  title: "角色管理1-1",
-                  path: "/role11",
-                  icon: "role11",
-                  pid: "",
-                  id: "2-1-1",
-                  flag: "1"
-                },
-                {
-                  title: "角色管理1-2",
-                  path: "/role12",
-                  icon: "role12",
-                  pid: "",
-                  id: "2-1-2",
-                  flag: "1"
-                }
-              ]
-            },
-            {
-              title: "角色管理2",
-              path: "/role2",
-              icon: "role2",
-              pid: "",
-              id: "2-2",
-              flag: "1"
-            }
-          ]
-        },
-        {
-          title: "用户管理",
-          path: "/account",
-          icon: "account",
-          pid: "",
-          id: "3",
-          flag: "1"
-        },
-        {
-          title: "产品管理",
-          path: "/product",
-          icon: "product",
-          pid: "",
-          id: "4",
-          flag: "1"
-        },
-        {
-          title: "设备管理",
-          path: "/device",
-          icon: "equ",
-          pid: "",
-          id: "5",
-          flag: "1"
-        },
-        {
-          title: "固件管理",
-          path: "/firmware",
-          icon: "firmware",
-          pid: "",
-          id: "6",
-          flag: "1"
-        },
-        {
-          title: "日志管理",
-          path: "/log",
-          icon: "log",
-          pid: "",
-          id: "7",
-          flag: "1"
-        }
-      ],
+      list: [],
       defaultProps: {
         children: "children",
-        label: "title"
+        label: "name"
       },
-      activeItem: {}
+      activeItem: {},
+      menuObj: {}
     };
   },
   mounted() {
@@ -155,15 +79,40 @@ export default {
         JSON.stringify(this.$refs.tree.getCurrentNode())
       );
     });
+    this.getData();
   },
   methods: {
+    getData() {
+      this.loading = true;
+      getMenuList(this.formData).then(res => {
+        if (res.code === 200) {
+          if (res.data.list) {
+            if (res.data.list.length > 0) {
+              // 处理返回父级菜单数组
+              res.data.list.forEach(item => {
+                this.menuObj[item.code] = item.menuId;
+                if (item.pcodes) {
+                  let arr = item.pcodes.split(",");
+                  item.pcodes = arr.map(item => {
+                    let str = item.replace(/\[|\]/g, "");
+                    return item ? str : "";
+                  });
+                  item.pcodes.splice(item.pcodes.length - 1, 1);
+                  item.pcodes.splice(0, 1);
+                }
+              });
+            }
+            this.list = dealFun(res.data.list);
+          }
+        }
+        this.loading = false;
+      });
+    },
     handleNodeClick(data) {
       this.activeItem = JSON.parse(JSON.stringify(data));
     },
     handleAdd() {
-      for (let key in this.activeItem) {
-        this.activeItem[key] = "";
-      }
+      this.activeItem = null;
       this.$refs.right.flag = 2;
       this.flag = 0;
       addBreadCrumbFun({
@@ -171,9 +120,40 @@ export default {
         path: ""
       });
     },
-    handleEdit() {
+    handleEdit(row) {
+      this.activeItem = row;
       this.$refs.right.flag = 1;
       this.flag = 0;
+    },
+    handleClose(row) {
+      const str = "确认删除该菜单吗？";
+      this.$confirm(str, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.loading = true;
+          delMenu({
+            id: row.menuId
+          })
+            .then(res => {
+              if (res.code === 200) {
+                this.$message.success("菜单删除成功");
+                this.getData();
+              } else {
+                this.$message.error(res.message);
+              }
+              this.loading = false;
+            })
+            .catch(() => {
+              this.$message.error("菜单删除失败");
+              this.loading = false;
+            });
+        })
+        .catch(() => {
+          this.$message("操作已取消");
+        });
     }
   }
 };

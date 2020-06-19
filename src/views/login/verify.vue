@@ -1,3 +1,8 @@
+<!-- 
+  文件作者：mawenjuan
+  创建日期：2020.6.16
+  文件说明：身份验证页面
+ -->
 <template>
   <div id="verify" v-loading="loading">
     <div class="con">
@@ -12,7 +17,7 @@
           <span class="red">{{ userName }}</span>
           为确认是你本人操作，请完成一下验证
         </div>
-        <el-form :model="formData" label-width="120px">
+        <el-form label-width="120px" class="mt20">
           <el-form-item label="手机号：">
             <div class="dib">{{ phone }}</div>
           </el-form-item>
@@ -31,57 +36,27 @@
         </el-form>
       </div>
       <div v-if="active == 2" class="info">
-        <el-form :model="formData" label-width="120px" :rules="rules">
-          <el-form-item label="登录名:">
-            {{ formData.name }}
-          </el-form-item>
-          <el-form-item label="邮箱:" prop="email">
-            <el-input v-model="formData.email" class="w200 mr20"></el-input>
-            <el-button @click.stop="handleEmailCode">免费获取验证码</el-button>
-          </el-form-item>
-          <el-form-item label="验证码:" prop="code">
-            <el-input
-              v-model="formData.code"
-              placeholder="6位数字"
-              class="w100"
-            ></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="danger">确定</el-button>
-          </el-form-item>
-        </el-form>
+        <email-band></email-band>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { sendCode, verifyCode, sendMailCode } from "@/api";
+import { sendCode, verifyCode } from "@/api";
+import emailBand from "./children/emailBand";
+
 export default {
+  components: { emailBand },
   data() {
     return {
       loading: false,
-      active: 2,
+      active: 1,
       code: "",
       phone: "",
+      timerVal: null,
       msg: "获取短信验证码",
-      seconds: 61,
-      formData: {
-        name: "",
-        email: "",
-        code: ""
-      },
-      rules: {
-        email: [
-          { required: true, message: "请输入邮箱地址", trigger: "blur" },
-          {
-            type: "email",
-            message: "请输入正确的邮箱地址",
-            trigger: ["blur", "change"]
-          }
-        ],
-        code: [{ required: true, message: "验证码不能为空", trigger: "blur" }]
-      }
+      seconds: 61
     };
   },
   computed: {
@@ -92,7 +67,6 @@ export default {
     }
   },
   mounted() {
-    this.formData.name = this.userName;
     const userInfo = JSON.parse(this.$cookie.getValue("info"));
     this.phone = userInfo.phone;
   },
@@ -113,7 +87,7 @@ export default {
       if (this.seconds > 1) {
         this.seconds--;
         this.msg = this.seconds + " 秒后，可以重新获取";
-        setTimeout(this.timer, 1000);
+        this.timerVal = setTimeout(this.timer, 1000);
       } else {
         this.msg = "重新发送";
         this.seconds = 0;
@@ -138,22 +112,15 @@ export default {
           this.loading = false;
         })
         .catch(() => {
-          this.$message.warning("注册失败");
+          this.$message.warning("验证失败");
           this.loading = false;
         });
     },
     submitFun() {
       if (this.active === 1) {
         this.active++;
+        clearTimeout(this.timerVal);
       }
-    },
-    handleEmailCode() {
-      this.loading = true;
-      sendMailCode({
-        email: this.formData.email
-      }).then(res => {
-        console.log(res);
-      });
     }
   }
 };

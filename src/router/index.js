@@ -43,7 +43,7 @@ const routes = [
         meta: { name: "绑定邮箱提示" }
       },
       {
-        path: "verify/:flag",
+        path: "verify",
         name: "verify",
         component: resolve => require(["@/views/login/verify"], resolve),
         meta: { name: "身份验证" }
@@ -118,14 +118,14 @@ const routes = [
     ]
   },
   {
-    path: "/account",
-    redirect: "/account/index",
+    path: "/user",
+    redirect: "/user/index",
     component: Layout,
     meta: { name: "用户管理" },
     children: [
       {
         path: "index",
-        component: resolve => require(["@/views/account/index"], resolve),
+        component: resolve => require(["@/views/user/index"], resolve),
         meta: { name: "用户管理" }
       }
     ]
@@ -140,6 +140,11 @@ const routes = [
         path: "index",
         component: resolve => require(["@/views/product/index"], resolve),
         meta: { name: "产品管理" }
+      },
+      {
+        path: "detail/:key",
+        component: resolve => require(["@/views/product/children/detail"], resolve),
+        meta: { name: "产品详情" }
       },
       {
         path: "add-product",
@@ -189,6 +194,11 @@ const routes = [
         path: "index",
         component: resolve => require(["@/views/firmware/index"], resolve),
         meta: { name: "固件管理及升级" }
+      },
+      {
+          path: "details",
+          component: resolve => require(["@/views/firmware/details"], resolve),
+          meta: { name: "固件管理及升级" }
       }
     ]
   },

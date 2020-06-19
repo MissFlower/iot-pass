@@ -5,7 +5,10 @@
         <el-input
           placeholder="请输入产品名称查询"
           prefix-icon="el-icon-search"
-          v-model="productName">
+          clearable
+          v-model="productName"
+          @clear="queryProduct"
+          @keyup.enter.native="queryProduct">
         </el-input>
       </div>
       
@@ -43,6 +46,11 @@ export default {
     this.getList();
   },
   methods: {
+      //产品名称搜索
+      queryProduct(){
+        this.tableData.pageNum = 1;
+        this.getList()
+      },
       //产品列表
       getList(){
         this.loading = true;
@@ -64,8 +72,7 @@ export default {
         this.$router.push("add-product");
       },
       //分页
-     changePage(){
-      
+     changePage(){      
       this.getList()
     },
   },

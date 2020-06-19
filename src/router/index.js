@@ -142,6 +142,11 @@ const routes = [
         meta: { name: "产品管理" }
       },
       {
+        path: "detail/:key",
+        component: resolve => require(["@/views/product/children/detail"], resolve),
+        meta: { name: "产品详情" }
+      },
+      {
         path: "add-product",
         component: resolve =>
           require(["@/views/product/children/addProduct"], resolve),
@@ -162,14 +167,20 @@ const routes = [
   },
   {
     path: "/equ",
-    redirect: "/equ/index",
+    redirect: "/equ/deviceManage",
     component: Layout,
     meta: { name: "设备管理" },
     children: [
       {
-        path: "index",
-        component: resolve => require(["@/views/equ/index"], resolve),
+        path: "deviceManage",
+        component: resolve => require(["@/views/equ/deviceManage"], resolve),
         meta: { name: "设备管理" }
+      },
+      {
+        path: "deviceInfo",
+        component: resolve =>
+          require(["@/views/equ/children/deviceInfo"], resolve),
+        meta: { name: "设备详情" }
       }
     ]
   },
@@ -183,6 +194,11 @@ const routes = [
         path: "index",
         component: resolve => require(["@/views/firmware/index"], resolve),
         meta: { name: "固件管理及升级" }
+      },
+      {
+          path: "details",
+          component: resolve => require(["@/views/firmware/details"], resolve),
+          meta: { name: "固件管理及升级" }
       }
     ]
   },

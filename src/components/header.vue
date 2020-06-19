@@ -183,7 +183,7 @@ export default {
       this.$store.dispatch("setFunctionLists", funList);
     },
     gotoIndex() {
-      this.$router.push("/index")
+      this.$router.push("/index");
     }
   }
 };

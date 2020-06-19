@@ -38,11 +38,26 @@
             prop="destVersion"
           ></el-table-column>
           <el-table-column label="创建时间" prop="createTime"></el-table-column>
-          <el-table-column label="固件状态" prop="fmStatus" :formatter="formatFmStatus"></el-table-column>
+          <el-table-column
+            label="固件状态"
+            prop="fmStatus"
+            :formatter="formatFmStatus"
+          ></el-table-column>
           <el-table-column label="操作">
             <template scope="scope">
-              <a class="oprate_btn">验证固件</a> |
-              <a class="oprate_btn">批量升级</a> |
+              <a
+                class="oprate_btn"
+                @click="checkFm(scope.row.id, scope.row.fmStatus)"
+                >验证固件</a
+              >
+              |
+              <a
+                class="oprate_btn"
+                :class="scope.row.fmStatus !== 2 ? 'disabled' : ''"
+                @click="upgradeList(scope.row.id, scope.row.fmStatus)"
+                >批量升级</a
+              >
+              |
               <a class="oprate_btn" @click="toDetails(scope.row.id)">查看</a> |
               <a class="oprate_btn" @click="delItem(scope.row.id)">删除</a>
             </template>
@@ -61,7 +76,12 @@
       </el-tab-pane>
       <el-tab-pane label="版本分布" name="second">
         <div>
-          <el-form :label-position="labelPosition" ref="versionControl" :model="versionControl" :inline="true">
+          <el-form
+            :label-position="labelPosition"
+            ref="versionControl"
+            :model="versionControl"
+            :inline="true"
+          >
             <el-form-item label="产品">
               <el-select v-model="versionControl.proName">
                 <el-option label="测试" value="1"></el-option>
@@ -97,13 +117,30 @@
         </div>
       </el-tab-pane>
     </el-tabs>
-    <AddFirmware :dialogFormVisible="dialogFormVisible" @changeVisible="changeVisible" @changeList="changeList"/>
+    <AddFirmware
+      :dialogFormVisible="dialogFormVisible"
+      @changeVisible="changeVisible"
+      @changeList="changeList"
+    />
+    <CheckFirmware
+      :checkFmVisible="checkFmVisible"
+      :checkFmId="checkFmId"
+      @checkVisible="checkVisible"
+      @refreshList="refreshList"
+    ></CheckFirmware>
+    <UpgradeFirmware
+      :upgradeFmVisible="upgradeFmVisible"
+      :checkFmId="checkFmId"
+      @upgradeVisible="upgradeVisible"
+    ></UpgradeFirmware>
   </div>
 </template>
 
 <script>
-import AddFirmware from '@/components/firmware/addFirmware'
-import { getFmList, deleteFm } from '@/api/fireware'
+import AddFirmware from "@/components/firmware/addFirmware";
+import CheckFirmware from "@/components/firmware/checkFirmware";
+import UpgradeFirmware from "@/components/firmware/upgradeFirmware";
+import { getFmList, deleteFm } from "@/api/fireware";
 export default {
   data() {
     return {
@@ -113,95 +150,135 @@ export default {
       form: {
         fmName: "",
         productName: "1",
-        pageNum: 1,
+        pageNum: 1
       },
       versionControl: {
-          proName: '1',
-          devName: '1'
+        proName: "1",
+        devName: "1"
       },
-      deviceList: [
-          {
-              name: "固件名称名称",
-              version: "1.1。0",
-          }
-      ],
+      checkFmId: "",
+      deviceList: [],
       labelPosition: "left",
-      dialogFormVisible: false
+      dialogFormVisible: false,
+      checkFmVisible: false,
+      upgradeFmVisible: false
     };
   },
   components: {
-      AddFirmware
+    AddFirmware,
+    CheckFirmware,
+    UpgradeFirmware
   },
-  mounted () {
-    this.fetchFmList()
+  mounted() {
+    this.fetchFmList();
   },
   methods: {
-    fetchFmList () {
-        getFmList({
-            pageNum: this.form.pageNum,
-            pageSize: 10,
-            productName: this.form.productName,
-            fmName: this.form.fmName,
+    fetchFmList() {
+      getFmList({
+        pageNum: this.form.pageNum,
+        pageSize: 10,
+        productName: this.form.productName,
+        fmName: this.form.fmName
+      })
+        .then(res => {
+          if (res.code === 200) {
+            this.list = res.data.list;
+          } else if (res.code === 9321) {
+            this.$message.warning(res.message);
+          } else {
+            this.$message.warning(res.message);
+          }
         })
-            .then(res => {
-                if (res.code === 200) {
-                    this.list = res.data.list
-                } else if (res.code === 9321) {
-                    this.$message.warning(res.message);
-                }
-            })
-            .catch((error) => {
-                console.log(error)
-            });
+        .catch(error => {
+          console.log(error);
+        });
     },
-    searchList () {
-      this.form.pageNum = 1
-      this.fetchFmList ()
+    searchList() {
+      this.form.pageNum = 1;
+      this.fetchFmList();
     },
-    formatFmStatus (row) {
-        return row.fmStatus === 0 ? "未验证" : row.ugStatus === 1 ? "验证中" : "已验证"
+    /**
+     * 验证固件
+     */
+    checkFm(fmId, fmStatus) {
+      if (fmStatus === 0) {
+        this.checkFmVisible = true;
+        this.checkFmId = String(fmId);
+      } else {
+        this.openCheckFm(fmStatus);
+      }
+    },
+    checkVisible() {
+      this.checkFmVisible = false;
+    },
+    openCheckFm(status) {
+      let title = status === 1 ? "固件验证中" : "固件验证成功";
+      this.$alert(`${title}`, "验证固件", {
+        confirmButtonText: "关闭"
+      });
+    },
+    refreshList() {
+      this.fetchFmList();
+    },
+    upgradeList(fmId, fmStatus) {
+      if (fmStatus === 2) {
+        this.upgradeFmVisible = true;
+        this.checkFmId = String(fmId);
+      }
+    },
+    upgradeVisible() {
+      this.upgradeFmVisible = false;
+    },
+    formatFmStatus(row) {
+      return row.fmStatus === 0
+        ? "未验证"
+        : row.fmStatus === 1
+        ? "验证中"
+        : "已验证";
     },
     handleCurrentChange() {},
     handleClick(tab, event) {
       console.log(tab, event);
     },
-    addItem () {
-      this.dialogFormVisible = true
+    addItem() {
+      this.dialogFormVisible = true;
     },
-    changeVisible () {
-        this.dialogFormVisible = false
+    changeVisible() {
+      this.dialogFormVisible = false;
     },
-    changeList () {
-        this.fetchFmList()
+    changeList() {
+      this.fetchFmList();
     },
-    toDetails (id) {
-        this.$router.push({
-            path: 'details',
-            query: {
-                id: id
-            }
+    toDetails(id) {
+      this.$router.push({
+        path: "details",
+        query: {
+          id: id
+        }
+      });
+    },
+    deleteFm(fmId) {
+      let formData = new FormData();
+      formData.append("fmId", fmId);
+      deleteFm(formData).then(res => {
+        if (res.code === 200) {
+          this.fetchFmList();
+        } else {
+          this.$message.warning(res.message);
+        }
+      });
+    },
+    delItem(fmId) {
+      this.$confirm("您确定要删除此固件吗?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.deleteFm(fmId);
         })
-    },
-    deleteFm (fmId) {
-        let formData = new FormData()
-        formData.append('fmId', fmId)
-        deleteFm (formData).then (res => {
-          if (res.data.code === 200) {
-              this.fetchFmList()
-          } else {
-              this.$message.warning(res.message);
-          }
-        })
-    },
-    delItem (fmId) {
-        this.$confirm('您确定要删除此固件吗?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-        }).then(() => {
-            this.deleteFm(fmId)
-        }).catch((error) => {
-            console.log(error)
+        .catch(error => {
+          console.log(error);
         });
     }
   }
@@ -209,37 +286,41 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  $default: #409EFF;
-  #firmware {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    padding: 20px;
+$default: #409eff;
+#firmware {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+}
+.oprate_btn {
+  color: $default;
+  cursor: pointer;
+}
+.disabled {
+  color: #999;
+  cursor: text;
+}
+.el-row {
+  margin-bottom: 20px;
+  &:last-child {
+    margin-bottom: 0;
   }
-  .oprate_btn{
-    color: $default;
-    cursor: pointer;
+}
+.el-col {
+  border-radius: 4px;
+}
+.bg-purple {
+  border: 1px solid #d3dce6;
+}
+.grid-content {
+  border-radius: 4px;
+  min-height: 320px;
+  box-sizing: border-box;
+  padding: 20px;
+  .version_tit {
+    margin: 0;
+    padding: 0;
   }
-  .el-row {
-    margin-bottom: 20px;
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
-  .el-col {
-    border-radius: 4px;
-  }
-  .bg-purple {
-    border: 1px solid #d3dce6;
-  }
-  .grid-content {
-    border-radius: 4px;
-    min-height: 320px;
-    box-sizing: border-box;
-    padding: 20px;
-    .version_tit{
-      margin: 0;
-      padding: 0;
-    }
-  }
+}
 </style>

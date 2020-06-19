@@ -4,7 +4,7 @@
 文件说明：设备管理
  -->
 <template>
-  <div id="equ">
+  <div id="deviceControl">
     <deviceList></deviceList>
   </div>
 </template>
@@ -30,7 +30,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#equ {
+#deviceControl {
   position: relative;
   width: 100%;
   height: 100%;

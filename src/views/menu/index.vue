@@ -119,7 +119,7 @@ export default {
         },
         {
           title: "设备管理",
-          path: "/equ",
+          path: "/device",
           icon: "equ",
           pid: "",
           id: "5",

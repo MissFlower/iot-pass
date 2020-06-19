@@ -167,13 +167,13 @@ const routes = [
   },
   {
     path: "/equ",
-    redirect: "/equ/deviceList",
+    redirect: "/equ/deviceManage",
     component: Layout,
     meta: { name: "设备管理" },
     children: [
       {
-        path: "deviceList",
-        component: resolve => require(["@/views/equ/deviceList"], resolve),
+        path: "deviceManage",
+        component: resolve => require(["@/views/equ/deviceManage"], resolve),
         meta: { name: "设备管理" }
       },
       {

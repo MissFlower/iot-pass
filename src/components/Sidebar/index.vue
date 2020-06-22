@@ -55,6 +55,11 @@ export default {
       return this.$store.state.router.addRoutes
     }
   },
+  watch: {
+    permissionRouter() {
+      this.list = this.baseList.concat(this.permissionRouter)
+    }
+  },
   mounted() {
     this.list = this.baseList.concat(this.permissionRouter)
   }

@@ -190,12 +190,12 @@ export const asyncRoutes =[
     path: "/firmware",
     redirect: "/firmware/index",
     component: Layout,
-    meta: { name: "固件管理及升级" },
+    meta: { name: "固件管理及升级", code: "firmware" },
     children: [
       {
         path: "index",
         component: resolve => require(["@/views/firmware/index"], resolve),
-        meta: { name: "固件管理及升级" }
+        meta: { name: "固件管理及升级", code: "firmware" }
       },
       {
           path: "details",

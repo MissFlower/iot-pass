@@ -34,8 +34,13 @@ export default {
   methods: {
     reload() {
       this.isRouterAlive = false;
-      this.$nextTick(() => {
+      this.$nextTick(async() => {
         this.isRouterAlive = true;
+        const list = await this.$store.dispatch("getUserInfo")
+        const asyncList = await this.$store.dispatch("setRouters", list)
+        if (asyncList) {
+          this.$router.addRoutes(asyncList)
+        }
       });
     }
   }

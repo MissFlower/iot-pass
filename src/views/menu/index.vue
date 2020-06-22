@@ -38,9 +38,9 @@ export default {
     },
     successFun() {
       this.activeIndex = 1;
-      this.$nextTick(() => {
-        this.$refs.list.getData();
-      });
+      // this.$nextTick(() => {
+      //   this.$refs.list.getData();
+      // });
     }
   }
 };

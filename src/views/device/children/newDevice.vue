@@ -105,6 +105,7 @@ export default {
             this.$parent.newDeviceClose(true);
           }
           this.$message({
+            type: res.code == 200?"success":'warning',
             message: res.message
           });
         })

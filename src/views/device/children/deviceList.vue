@@ -24,8 +24,8 @@
       </div>
       <el-button type="primary" @click="showNewDevice = true">新建设备</el-button>
     </div>
-    <el-table :data="list" border @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55"></el-table-column>
+    <el-table :data="list" border @selection-change="handleSelectionChange" ref="multipleTable">
+      <el-table-column type="selection" width="40"></el-table-column>
       <el-table-column prop="id" label="ID"></el-table-column>
       <el-table-column prop="deviceName" label="设备名称"></el-table-column>
       <el-table-column prop="productName" label="产品名称"></el-table-column>
@@ -35,7 +35,7 @@
       <el-table-column prop="lastLogoutTime" label="最后登出时间"></el-table-column>
       <el-table-column prop="deviceStatus" label="状态/启用状态">
         <template v-slot="device">
-          <span class="w50 dib">{{device.row.deviceStatusStr}}</span>
+          <span class="deviceStatusView"><div :style="{background: device.row.statusColor}"></div>{{device.row.enableBool?device.row.deviceStatusStr:'已禁用'}}</span>
           <el-switch v-model="device.row.enableBool" @change="deviceEnable(device.row)"></el-switch>
         </template>
       </el-table-column>
@@ -47,12 +47,19 @@
       </el-table-column>
     </el-table>
 
-    <div>
-      <div class="mt20 ml10">
-        <el-checkbox v-model="checked" class="mr10"></el-checkbox>
-        <el-button type="primary" @click="batchOperate(1)">删除</el-button>
-        <el-button type="primary" @click="batchOperate(2)">禁用</el-button>
-        <el-button type="primary" @click="batchOperate(3)">启用</el-button>
+    <div class="pr">
+      <div class="bottomSeleView">
+        <el-checkbox @change="bottomSeleChange" v-model="bottomSeleChecked" :disabled="bottomSeleDis"></el-checkbox>
+
+        <el-popconfirm :title="'确定要批量删除选中的'+multipleSelection.length+'个设备吗？'" @onConfirm="batchOperate(1)" class="ml10">
+          <el-button slot="reference" type="primary" :disabled="bottomSeleDis">删除</el-button>
+        </el-popconfirm>
+        <el-popconfirm :title="'确定要批量禁用选中的'+multipleSelection.length+'个设备吗？'" @onConfirm="batchOperate(2)" class="ml10">
+          <el-button slot="reference" type="primary" :disabled="bottomSeleDis">禁用</el-button>
+        </el-popconfirm>
+        <el-popconfirm :title="'确定要批量启用选中的'+multipleSelection.length+'个设备吗？'" @onConfirm="batchOperate(3)" class="ml10">
+          <el-button slot="reference" type="primary" :disabled="bottomSeleDis">启用</el-button>
+        </el-popconfirm>
       </div>
       <!-- 分页-->
       <pagination :data="tableData" @pagination="handleCurrentChange" class="tr"/>
@@ -82,7 +89,9 @@ export default {
       fmVersionValue: "",
       showNewDevice: false,
       loading: false,
-      multipleSelection: []
+      multipleSelection: [],
+      bottomSeleDis: true,
+      bottomSeleChecked: false
     };
   },
   mounted() {
@@ -103,13 +112,12 @@ export default {
         .then(res => {
           if (res.code === 200) {
             if (res.data) {
-              var list = res.data.data;
+              let list = res.data.data;
               //设备状态
-              var statusDict = {'0':'未激活','1':'在线','2':'离线'};
+              let statusDict = {'0':'未激活','1':'在线','2':'离线'};
               //节点类型
-              var nodeTypeDict = {'1':'直连设备','2':'网关子设备','3':'网关设备'};
-              list.map(function(value) {
-
+              let nodeTypeDict = {'1':'直连设备','2':'网关子设备','3':'网关设备'};
+              var newList = list.map(function(value) {
                 if(value.deviceStatus != null){
                   value.deviceStatusStr = statusDict[value.deviceStatus.toString()];
                 }
@@ -117,11 +125,12 @@ export default {
                   value.nodeTypeStr = nodeTypeDict[value.nodeType.toString()];
                 }
                 value.enableBool = value.enable==0?true:false;
+                value.statusColor = !value.enableBool?'#d93026':value.deviceStatus==1?'#1EA214':'#ffc440';
                 return value;
               });
-              this.list = list;
+              this.list = newList;
 
-              let {data,...pagination} =  res.data;
+              let {data,...pagination} = res.data;
               this.tableData = pagination;
             }
           }
@@ -150,6 +159,7 @@ export default {
         .then(res => {
           this.getDeviceList();
           this.$message({
+            type: res.code == 200?"success":'warning',
             message: res.message
           });
           this.loading = false;
@@ -160,7 +170,7 @@ export default {
     },
 
     /*
-    设备查看
+    查看设备
     deviceObj  设备对象
     */
     handleClick(deviceObj) {
@@ -190,6 +200,7 @@ export default {
                 this.getDeviceList();
               }
               this.$message({
+                type: res.code == 200?"success":'warning',
                 message: res.message
               });
               this.loading = false;
@@ -201,14 +212,39 @@ export default {
         .catch(() => {});
     },
 
-    //列表翻页
-    handleCurrentChange() {
-      this.getDeviceList();
-    },
-
     //设备选择
     handleSelectionChange(val){
-        this.multipleSelection = val;
+      console.log(JSON.stringify(val));
+      this.multipleSelection = val;
+        if(val.length){
+          this.bottomSeleDis = false;
+          this.bottomSeleChecked = true;
+        }else{
+          this.bottomSeleDis = true;
+          this.bottomSeleChecked = false;
+        }
+    },
+
+    /*
+    批量操作设备
+    type 1:删除  2:禁用  3:启用
+    */
+    batchOperate(type){
+      if(type == 1){
+        this.getDeviceList();
+      }else{
+        this.getDeviceList();
+      }
+    },
+
+    /*
+    底部选择框点击变化
+    res  更新后的值
+    */
+    bottomSeleChange(res){
+      if(!res){
+        this.$refs.multipleTable.clearSelection();
+      }
     },
 
     /*
@@ -220,11 +256,35 @@ export default {
       if (updata) {
         this.getDeviceList();
       }
+    },
+
+    //列表翻页
+    handleCurrentChange() {
+      this.getDeviceList();
     }
+
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.deviceStatusView{
+  display: inline-block;
+  width: 60px;
+  div{
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: pink;
+    border-radius: 4px;
+    margin-right: 4px;
+  }
+}
+
+.bottomSeleView{
+  position: absolute;
+  top: 30px;
+  left: 10px;
+}
 
 </style>

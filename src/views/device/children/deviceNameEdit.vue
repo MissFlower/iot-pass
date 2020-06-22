@@ -66,6 +66,7 @@ export default {
             this.$parent.deviceNameEditClose(true);
           }
           this.$message({
+            type: res.code == 200?"success":'warning',
             message: res.message
           });
         })

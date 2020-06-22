@@ -36,7 +36,7 @@
       <el-table-column prop="deviceStatus" label="状态/启用状态">
         <template v-slot="device">
           <span class="deviceStatusView"><div :style="{background: device.row.statusColor}"></div>{{device.row.enableBool?device.row.deviceStatusStr:'已禁用'}}</span>
-          <el-switch v-model="device.row.enableBool" @change="deviceEnable(device.row)"></el-switch>
+          <el-switch v-model="device.row.enableBool" @change="deviceEnable([device.row])"></el-switch>
         </template>
       </el-table-column>
       <el-table-column label="操作">
@@ -72,7 +72,7 @@
 <script>
 import newDevice from "./newDevice";
 import Pagination from "@/components/Pagination"
-import { deviceList, deleteDevice, deviceEnable } from "@/api/equRequest";
+import { deviceList, deleteDevice, deviceBatchEnable } from "@/api/deviceRequest";
 export default {
   components: { newDevice,Pagination },
   data() {
@@ -148,14 +148,27 @@ export default {
 
     /*
     设备启、禁用
-    deviceObj  设备对象
+    devices  设备对象
+    batchEnable
     */
-    deviceEnable(deviceObj){
+    deviceEnable(devices,batchEnable){
       this.loading = true;
-      deviceEnable({
-        id: deviceObj.id,
-        enable: deviceObj.enable==0?'1':'0',
-      })
+
+      var ids = [];
+      devices.map(function(value){
+        var enable;
+        if(batchEnable){
+          enable = batchEnable;
+        }else{
+          enable = value.enable==0?'1':'0'
+        }
+        ids.push({
+          id: value.id,
+          enable
+        });
+      });
+
+      deviceBatchEnable(ids)
         .then(res => {
           this.getDeviceList();
           this.$message({
@@ -179,7 +192,7 @@ export default {
     },
 
     /*
-    删除设备
+    删除指定设备
     deviceObj  设备对象
     */
     deleteClick(deviceObj) {
@@ -189,32 +202,41 @@ export default {
         type: "warning"
       })
         .then(() => {
-          this.loading = true;
-          deleteDevice({
-            deviceId: deviceObj.id,
-            productKey: deviceObj.productKey,
-            deviceName: deviceObj.deviceName
-          })
-            .then(res => {
-              if (res.code === 200) {
-                this.getDeviceList();
-              }
-              this.$message({
-                type: res.code == 200?"success":'warning',
-                message: res.message
-              });
-              this.loading = false;
-            })
-            .catch(() => {
-              this.loading = false;
-            });
+          this.deleteDeviceRequest([deviceObj]);
         })
         .catch(() => {});
     },
 
+    /*
+    设备删除请求
+    devices  需要删除的设备数组
+    */
+    deleteDeviceRequest(devices){
+      this.loading = true;
+
+      var ids = [];
+      devices.map(function(value){
+        ids.push(value.id);
+      });
+
+      deleteDevice(ids)
+        .then(res => {
+          if (res.code === 200) {
+            this.getDeviceList();
+          }
+          this.$message({
+            type: res.code == 200?"success":'warning',
+            message: res.message
+          });
+          this.loading = false;
+        })
+        .catch(() => {
+          this.loading = false;
+        });
+    },
+
     //设备选择
     handleSelectionChange(val){
-      console.log(JSON.stringify(val));
       this.multipleSelection = val;
         if(val.length){
           this.bottomSeleDis = false;
@@ -231,15 +253,16 @@ export default {
     */
     batchOperate(type){
       if(type == 1){
-        this.getDeviceList();
+        this.deleteDeviceRequest(this.multipleSelection);
       }else{
-        this.getDeviceList();
+        let enable = type==2?'1':'0';
+        this.deviceEnable(this.multipleSelection,enable);
       }
     },
 
     /*
     底部选择框点击变化
-    res  更新后的值
+    res  选择框更新后的值
     */
     bottomSeleChange(res){
       if(!res){

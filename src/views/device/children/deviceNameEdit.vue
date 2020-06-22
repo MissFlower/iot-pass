@@ -13,7 +13,7 @@
   >
     <div class="df ai_c mb20">
       <div class="w100 tr">设备名称：</div>
-      <el-input class="w300" v-model="newDeviceName" placeholder="请输入设备名称"></el-input>
+      <el-input v-model="newDeviceName" placeholder="请输入设备名称"></el-input>
     </div>
     <span slot="footer" class="dialog-footer">
       <el-button @click="handleCancel">取 消</el-button>
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { deviceUpdate } from "@/api/equRequest";
+import { deviceUpdate } from "@/api/deviceRequest";
 export default {
   props: ["deviceObj"],
   data() {
@@ -49,7 +49,8 @@ export default {
 
       if(this.newDeviceName.length == 0){
         this.$message({
-          message: "内容错误"
+          type: 'warning',
+          message: "请输入备注名称"
         });
         return;
       }

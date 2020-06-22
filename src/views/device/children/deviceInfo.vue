@@ -126,7 +126,7 @@
 
 <script>
 import deviceNameEdit from "./deviceNameEdit";
-import { deviceInfo } from "@/api/equRequest";
+import { deviceInfo } from "@/api/deviceRequest";
 export default {
   components: { deviceNameEdit },
   data() {

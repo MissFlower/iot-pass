@@ -24,8 +24,8 @@
       </div>
       <el-button type="primary" @click="showNewDevice = true">新建设备</el-button>
     </div>
-    <el-table :data="list" border @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55"></el-table-column>
+    <el-table :data="list" border @selection-change="handleSelectionChange" ref="multipleTable">
+      <el-table-column type="selection" width="40"></el-table-column>
       <el-table-column prop="id" label="ID"></el-table-column>
       <el-table-column prop="deviceName" label="设备名称"></el-table-column>
       <el-table-column prop="productName" label="产品名称"></el-table-column>
@@ -35,24 +35,31 @@
       <el-table-column prop="lastLogoutTime" label="最后登出时间"></el-table-column>
       <el-table-column prop="deviceStatus" label="状态/启用状态">
         <template v-slot="device">
-          <span class="w50 dib">{{device.row.deviceStatusStr}}</span>
-          <el-switch v-model="device.row.enableBool" @change="deviceEnable(device.row)"></el-switch>
+          <span class="deviceStatusView"><div :style="{background: device.row.statusColor}"></div>{{device.row.enableBool?device.row.deviceStatusStr:'已禁用'}}</span>
+          <el-switch v-model="device.row.enableBool" @change="deviceEnable([device.row])"></el-switch>
         </template>
       </el-table-column>
       <el-table-column label="操作">
         <template v-slot="scope">
-          <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
+          <el-button @click="lookClick(scope.row)" type="text" size="small">查看</el-button>
           <el-button @click="deleteClick(scope.row)" type="text" size="small">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <div>
-      <div class="mt20 ml10">
-        <el-checkbox v-model="checked" class="mr10"></el-checkbox>
-        <el-button type="primary" @click="batchOperate(1)">删除</el-button>
-        <el-button type="primary" @click="batchOperate(2)">禁用</el-button>
-        <el-button type="primary" @click="batchOperate(3)">启用</el-button>
+    <div class="pr">
+      <div class="bottomSeleView">
+        <el-checkbox @change="bottomSeleChange" v-model="bottomSeleChecked" :disabled="bottomSeleDis"></el-checkbox>
+
+        <el-popconfirm :title="'确定要批量删除选中的'+multipleSelection.length+'个设备吗？'" @onConfirm="batchOperate(1)" class="ml10">
+          <el-button slot="reference" type="primary" :disabled="bottomSeleDis">删除</el-button>
+        </el-popconfirm>
+        <el-popconfirm :title="'确定要批量禁用选中的'+multipleSelection.length+'个设备吗？'" @onConfirm="batchOperate(2)" class="ml10">
+          <el-button slot="reference" type="primary" :disabled="bottomSeleDis">禁用</el-button>
+        </el-popconfirm>
+        <el-popconfirm :title="'确定要批量启用选中的'+multipleSelection.length+'个设备吗？'" @onConfirm="batchOperate(3)" class="ml10">
+          <el-button slot="reference" type="primary" :disabled="bottomSeleDis">启用</el-button>
+        </el-popconfirm>
       </div>
       <!-- 分页-->
       <pagination :data="tableData" @pagination="handleCurrentChange" class="tr"/>
@@ -65,7 +72,7 @@
 <script>
 import newDevice from "./newDevice";
 import Pagination from "@/components/Pagination"
-import { deviceList, deleteDevice, deviceEnable } from "@/api/equRequest";
+import { deviceList, deleteDevice, deviceBatchEnable } from "@/api/deviceRequest";
 export default {
   components: { newDevice,Pagination },
   data() {
@@ -82,7 +89,9 @@ export default {
       fmVersionValue: "",
       showNewDevice: false,
       loading: false,
-      multipleSelection: []
+      multipleSelection: [],
+      bottomSeleDis: true,
+      bottomSeleChecked: false
     };
   },
   mounted() {
@@ -103,13 +112,12 @@ export default {
         .then(res => {
           if (res.code === 200) {
             if (res.data) {
-              var list = res.data.data;
+              let list = res.data.data;
               //设备状态
-              var statusDict = {'0':'未激活','1':'在线','2':'离线'};
+              let statusDict = {'0':'未激活','1':'在线','2':'离线'};
               //节点类型
-              var nodeTypeDict = {'1':'直连设备','2':'网关子设备','3':'网关设备'};
-              list.map(function(value) {
-
+              let nodeTypeDict = {'1':'直连设备','2':'网关子设备','3':'网关设备'};
+              var newList = list.map(function(value) {
                 if(value.deviceStatus != null){
                   value.deviceStatusStr = statusDict[value.deviceStatus.toString()];
                 }
@@ -117,11 +125,12 @@ export default {
                   value.nodeTypeStr = nodeTypeDict[value.nodeType.toString()];
                 }
                 value.enableBool = value.enable==0?true:false;
+                value.statusColor = !value.enableBool?'#d93026':value.deviceStatus==1?'#1EA214':'#ffc440';
                 return value;
               });
-              this.list = list;
+              this.list = newList;
 
-              let {data,...pagination} =  res.data;
+              let {data,...pagination} = res.data;
               this.tableData = pagination;
             }
           }
@@ -139,17 +148,31 @@ export default {
 
     /*
     设备启、禁用
-    deviceObj  设备对象
+    devices  设备对象数组
+    batchEnable  批量启用、禁用
     */
-    deviceEnable(deviceObj){
+    deviceEnable(devices,batchEnable){
       this.loading = true;
-      deviceEnable({
-        id: deviceObj.id,
-        enable: deviceObj.enable==0?'1':'0',
-      })
+
+      var ids = [];
+      devices.map(function(value){
+        var enable;
+        if(batchEnable){
+          enable = batchEnable;
+        }else{
+          enable = value.enable==0?'1':'0'
+        }
+        ids.push({
+          id: value.id,
+          enable
+        });
+      });
+
+      deviceBatchEnable(ids)
         .then(res => {
           this.getDeviceList();
           this.$message({
+            type: res.code == 200?"success":'warning',
             message: res.message
           });
           this.loading = false;
@@ -160,16 +183,7 @@ export default {
     },
 
     /*
-    设备查看
-    deviceObj  设备对象
-    */
-    handleClick(deviceObj) {
-      console.log(JSON.stringify(deviceObj));
-      this.$router.push(`deviceInfo?id=${deviceObj.id}`);
-    },
-
-    /*
-    删除设备
+    删除指定设备
     deviceObj  设备对象
     */
     deleteClick(deviceObj) {
@@ -179,36 +193,76 @@ export default {
         type: "warning"
       })
         .then(() => {
-          this.loading = true;
-          deleteDevice({
-            deviceId: deviceObj.id,
-            productKey: deviceObj.productKey,
-            deviceName: deviceObj.deviceName
-          })
-            .then(res => {
-              if (res.code === 200) {
-                this.getDeviceList();
-              }
-              this.$message({
-                message: res.message
-              });
-              this.loading = false;
-            })
-            .catch(() => {
-              this.loading = false;
-            });
+          this.deleteDeviceRequest([deviceObj]);
         })
         .catch(() => {});
     },
 
-    //列表翻页
-    handleCurrentChange() {
-      this.getDeviceList();
+    /*
+    设备删除请求
+    devices  需要删除的设备数组
+    */
+    deleteDeviceRequest(devices){
+      this.loading = true;
+
+      var ids = [];
+      devices.map(function(value){
+        ids.push(value.id);
+      });
+
+      deleteDevice(ids)
+        .then(res => {
+          if (res.code === 200) {
+            //判断是否删除最后一页全部设备
+            if(this.tableData.pageNum!=1&&this.tableData.pageNum==this.tableData.pageCount && devices.length==this.tableData.total%this.tableData.pageSize){
+              this.tableData.pageNum--;
+            }
+            this.getDeviceList();
+          }
+          this.$message({
+            type: res.code == 200?"success":'warning',
+            message: res.message
+          });
+          this.loading = false;
+        })
+        .catch(() => {
+          this.loading = false;
+        });
     },
 
     //设备选择
     handleSelectionChange(val){
-        this.multipleSelection = val;
+      this.multipleSelection = val;
+        if(val.length){
+          this.bottomSeleDis = false;
+          this.bottomSeleChecked = true;
+        }else{
+          this.bottomSeleDis = true;
+          this.bottomSeleChecked = false;
+        }
+    },
+
+    /*
+    批量操作设备
+    type 1:删除  2:禁用  3:启用
+    */
+    batchOperate(type){
+      if(type == 1){
+        this.deleteDeviceRequest(this.multipleSelection);
+      }else{
+        let enable = type==2?'1':'0';
+        this.deviceEnable(this.multipleSelection,enable);
+      }
+    },
+
+    /*
+    底部选择框点击变化
+    res  选择框更新后的值
+    */
+    bottomSeleChange(res){
+      if(!res){
+        this.$refs.multipleTable.clearSelection();
+      }
     },
 
     /*
@@ -220,11 +274,44 @@ export default {
       if (updata) {
         this.getDeviceList();
       }
+    },
+
+    /*
+    查看设备
+    deviceObj  设备对象
+    */
+    lookClick(deviceObj) {
+      console.log(JSON.stringify(deviceObj));
+      this.$router.push(`deviceInfo?id=${deviceObj.id}`);
+    },
+
+    //列表翻页
+    handleCurrentChange() {
+      this.getDeviceList();
     }
+
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.deviceStatusView{
+  display: inline-block;
+  width: 60px;
+  div{
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: pink;
+    border-radius: 4px;
+    margin-right: 4px;
+  }
+}
+
+.bottomSeleView{
+  position: absolute;
+  top: 30px;
+  left: 10px;
+}
 
 </style>

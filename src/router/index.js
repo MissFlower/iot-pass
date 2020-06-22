@@ -143,7 +143,8 @@ const routes = [
       },
       {
         path: "detail/:key",
-        component: resolve => require(["@/views/product/children/detail"], resolve),
+        component: resolve =>
+          require(["@/views/product/children/detail"], resolve),
         meta: { name: "产品详情" }
       },
       {
@@ -196,9 +197,14 @@ const routes = [
         meta: { name: "固件管理及升级" }
       },
       {
-          path: "details",
-          component: resolve => require(["@/views/firmware/details"], resolve),
-          meta: { name: "固件管理及升级" }
+        path: "details",
+        component: resolve => require(["@/views/firmware/details"], resolve),
+        meta: { name: "固件管理及升级" }
+      },
+      {
+        path: "batchDetails",
+        component: resolve => require(["@/views/firmware/batchDetails"], resolve),
+        meta: { name: "固件管理及升级" }
       }
     ]
   },

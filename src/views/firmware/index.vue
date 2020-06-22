@@ -1,3 +1,8 @@
+<!--
+文件作者：liuxixiu
+创建日期：2020.6.17
+文件说明：固件管理
+ -->
 <template>
   <div id="firmware">
     <h2>固件升级</h2>
@@ -6,14 +11,30 @@
         <el-form ref="form" :model="form" label-width="80px" :inline="true">
           <el-form-item>
             <el-button type="primary" @click="addItem">新增固件</el-button>
-            <el-button>安全升级</el-button>
           </el-form-item>
           <el-form-item>
-            <el-select v-model="form.productName">
-              <el-option label="全部产品" value="1"></el-option>
-              <el-option label="测试" value="2"></el-option>
+            <el-select
+              v-model="productsValue"
+              filterable
+              :filter-method="userFilter"
+              @change="changeSelect"
+              clearable
+            >
+              <el-option label="全部产品" value=""></el-option>
+              <el-option
+                v-for="item in products"
+                :key="item.id"
+                :label="item.productName"
+                :value="`${item.id}|${item.productName}`"
+              ></el-option>
             </el-select>
           </el-form-item>
+          <!--<el-form-item>-->
+          <!--<el-select v-model="form.productName">-->
+          <!--<el-option label="全部产品" value="1"></el-option>-->
+          <!--<el-option label="测试" value="2"></el-option>-->
+          <!--</el-select>-->
+          <!--</el-form-item>-->
           <el-form-item>
             <el-input
               v-model="form.fmName"
@@ -47,16 +68,22 @@
             <template scope="scope">
               <a
                 class="oprate_btn"
-                @click="checkFm(scope.row.id, scope.row.fmStatus)"
+                @click="checkFm(scope.row)"
                 >验证固件</a
               >
               |
-              <a
-                class="oprate_btn"
-                :class="scope.row.fmStatus !== 2 ? 'disabled' : ''"
-                @click="upgradeList(scope.row.id, scope.row.fmStatus)"
+                <el-tooltip class="item" effect="dark" content="请先验证固件，再进行批量升级" placement="top" v-if="scope.row.fmStatus !== 2">
+                  <a
+                    class="oprate_btn disabled"
+                    >批量升级</a
+                  >
+                </el-tooltip>
+                <a
+                    v-else
+                    class="oprate_btn"
+                    @click="upgradeList(scope.row.id, scope.row.fmStatus)"
                 >批量升级</a
-              >
+                >
               |
               <a class="oprate_btn" @click="toDetails(scope.row.id)">查看</a> |
               <a class="oprate_btn" @click="delItem(scope.row.id)">删除</a>
@@ -66,11 +93,10 @@
         <el-pagination
           @current-change="handleCurrentChange"
           :current-page.sync="form.pageNum"
-          :page-size="100"
+          :page-size="form.pageSize"
           layout="total, prev, pager, next"
-          :total="total"
+          :total="fmTotal"
           class="tr mt20"
-          v-if="form.pageNum > 1"
         >
         </el-pagination>
       </el-tab-pane>
@@ -125,6 +151,7 @@
     <CheckFirmware
       :checkFmVisible="checkFmVisible"
       :checkFmId="checkFmId"
+      :srcVersion="srcVersion"
       @checkVisible="checkVisible"
       @refreshList="refreshList"
     ></CheckFirmware>
@@ -140,23 +167,32 @@
 import AddFirmware from "@/components/firmware/addFirmware";
 import CheckFirmware from "@/components/firmware/checkFirmware";
 import UpgradeFirmware from "@/components/firmware/upgradeFirmware";
-import { getFmList, deleteFm } from "@/api/fireware";
+import { getFmList, deleteFm, getProducts } from "@/api/fireware";
 export default {
   data() {
     return {
       list: [],
-      total: 0,
       activeTag: "first",
       form: {
         fmName: "",
-        productName: "1",
+        productName: "",
+        pageSize: 20,
         pageNum: 1
       },
       versionControl: {
         proName: "1",
         devName: "1"
       },
+      productForm: {
+        pageNum: 1,
+        pageSize: 50,
+        productName: ""
+      },
+        products: [],
+        productsValue: '',
+        fmTotal: 0,
       checkFmId: "",
+        srcVersion: '',
       deviceList: [],
       labelPosition: "left",
       dialogFormVisible: false,
@@ -171,18 +207,20 @@ export default {
   },
   mounted() {
     this.fetchFmList();
+    this.getProductList();
   },
   methods: {
     fetchFmList() {
-      getFmList({
-        pageNum: this.form.pageNum,
-        pageSize: 10,
-        productName: this.form.productName,
-        fmName: this.form.fmName
-      })
+        let formData = new FormData()
+        formData.append('pageNum', this.form.pageNum)
+        formData.append('pageSize', this.form.pageSize)
+        formData.append('productName', this.form.productName)
+        formData.append('fmName', this.form.fmName)
+      getFmList(formData)
         .then(res => {
           if (res.code === 200) {
             this.list = res.data.list;
+            this.fmTotal = res.data.total;
           } else if (res.code === 9321) {
             this.$message.warning(res.message);
           } else {
@@ -190,22 +228,46 @@ export default {
           }
         })
         .catch(error => {
-          console.log(error);
+            this.$message.error(error);
         });
     },
     searchList() {
-      this.form.pageNum = 1;
       this.fetchFmList();
+    },
+    userFilter(query = "") {
+      let arr = this.products.filter(item => {
+        return item.productName.includes(query);
+      });
+      if (arr.length > 50) {
+        this.products = arr.slice(0, 50);
+      } else {
+        this.products = arr;
+      }
+    },
+    getProductList() {
+      this.form.productName = this.productsValue.split("|")[1]
+        ? this.productsValue.split("|")[1]
+        : "";
+      let data = this.productForm;
+      getProducts(data).then(res => {
+        this.products = res.data.data;
+        this.userFilter();
+      });
+    },
+    changeSelect() {
+      this.form.productName = this.productsValue.split("|")[1];
+      this.searchList()
     },
     /**
      * 验证固件
      */
-    checkFm(fmId, fmStatus) {
-      if (fmStatus === 0) {
+    checkFm(row) {
+      if (row.fmStatus === 0) {
         this.checkFmVisible = true;
-        this.checkFmId = String(fmId);
+        this.checkFmId = String(row.fmId);
+        this.srcVersion = row.srcVersion
       } else {
-        this.openCheckFm(fmStatus);
+        this.openCheckFm(row.fmStatus);
       }
     },
     checkVisible() {
@@ -236,10 +298,10 @@ export default {
         ? "验证中"
         : "已验证";
     },
-    handleCurrentChange() {},
-    handleClick(tab, event) {
-      console.log(tab, event);
+    handleCurrentChange() {
+        this.fetchFmList();
     },
+    handleClick() {},
     addItem() {
       this.dialogFormVisible = true;
     },

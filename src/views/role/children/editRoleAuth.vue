@@ -104,7 +104,7 @@ export default {
         .then(res => {
           if (res.code === 200) {
             this.$message.success("角色的菜单权限设置成功");
-            this.reload();
+            this.reload(1);
             this.flag = 0;
             this.getAuth();
           } else {

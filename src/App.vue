@@ -32,14 +32,17 @@ export default {
     }
   },
   methods: {
-    reload() {
+    reload(flag) {
       this.isRouterAlive = false;
       this.$nextTick(async() => {
-        this.isRouterAlive = true;
-        const list = await this.$store.dispatch("getUserInfo")
-        const asyncList = await this.$store.dispatch("setRouters", list)
-        if (asyncList) {
-          this.$router.addRoutes(asyncList)
+        this.isRouterAlive = true; 
+        // 刷新 重新获取用户权限  通过flag控制
+        if (flag) {
+          const list = await this.$store.dispatch("getUserInfo")
+          const asyncList = await this.$store.dispatch("setRouters", list)
+          if (asyncList) {
+            this.$router.addRoutes(asyncList)
+          }
         }
       });
     }

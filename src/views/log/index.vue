@@ -6,7 +6,7 @@
 <template>
   <div id="log" >
     <!-- 搜索部分 -->
-    <el-form :inline="true" :model="formInline" class="demo-form-inline">
+    <el-form :inline="true" :model="formInline" size="mini">
       <el-form-item>
         <el-input v-model="formInline.productKey" placeholder="产品key查询"></el-input>
       </el-form-item>

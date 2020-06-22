@@ -79,7 +79,10 @@ export default {
             trigger: "blur"
           }
         ],
-        code: [{ required: true, validator: validateCode, trigger: "blur" }]
+        code: [
+          { required: true, validator: validateCode, trigger: "blur" },
+          { type: 'number', message: '请输入正确的验证码', trigger: "blur"}
+        ]
       },
       timerVal: null,
       msg: "获取邮箱验证码",

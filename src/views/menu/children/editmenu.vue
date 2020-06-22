@@ -93,6 +93,7 @@ import { dealFun } from "@/data/fun";
 export default {
   components: { iconSelectCon },
   props: ["activeItem"],
+  inject: ["reload"],
   data() {
     return {
       show: false,
@@ -227,6 +228,7 @@ export default {
         .then(res => {
           if (res.code === 200) {
             this.$message.success(`菜单${str}成功`);
+            this.reload();
             this.$emit("success");
           } else {
             this.$message.error(res.message);

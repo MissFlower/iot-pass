@@ -37,13 +37,13 @@
           placeholder="请选择上层菜单"
         ></el-cascader>
       </el-form-item>
-      <el-form-item label="前端地址">
+      <!-- <el-form-item label="前端地址">
         <el-input
           v-model="info.frontPath"
           placeholder="请输入前端路由地址"
           class="w200"
         ></el-input>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="请求地址" prop="url">
         <el-input
           v-model="info.url"

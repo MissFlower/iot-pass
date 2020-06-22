@@ -80,16 +80,13 @@ export default {
     },
     loginStatus() {
       if (this.loginStatus) {
-        this.getUserInfoFun();
+        this.$store.dispatch("getUserInfo")
       }
     }
   },
   mounted() {
     this.flag = this.$route.path === "/login" ? true : false;
     this.pathChange();
-    if (this.loginStatus) {
-      this.getUserInfoFun();
-    }
     this.showEmailTips();
   },
   methods: {
@@ -118,10 +115,6 @@ export default {
       this.$router.push(path);
     },
     handleLogin() {
-      // let url = "/login"
-      // if (this.$route.query.redirect) {
-      //   url = `${url}?redirect`
-      // }
       this.$router.push("/login");
     },
     handleGoHome() {
@@ -131,40 +124,6 @@ export default {
         // this.handleLogin();
         this.$router.push("/login??redirect=/home");
       }
-    },
-    getUserInfoFun() {
-      // this.$store.dispatch("setLoading", true);
-      // getUserInfo()
-      //   .then(res => {
-      //     if (res.code === 200) {
-      //       // 邮箱的标志存放在cookie中， 0 未绑定提示， 1已绑定， 2 未绑定 不提示
-      //       const emailStatus = this.$cookie.getValue("emailStatus");
-      //       this.$cookie.setValue("info", JSON.stringify(res.data));
-      //       if (res.data.email) {
-      //         this.$cookie.setValue("emailStatus", 1);
-      //       } else if (!emailStatus) {
-      //         // 登录 没有，状态为2不处理
-      //         this.$cookie.setValue("emailStatus", 0);
-      //         this.$router.push("/add-email-tips");
-      //       }
-      //       if (res.data.menus) {
-      //         // this.$store.dispatch("setMenuLists", res.data.menus);
-      //         this.dealMenus(res.data.menus);
-      //       } else {
-      //         this.$store.dispatch("setMenuLists", JSON.stringify([]));
-      //         this.$message.warning("用户没有权限，请联系管理员");
-      //         if (this.$route.path !== "/index") {
-      //           this.$router.push("/index");
-      //         }
-      //       }
-      //     }
-      //     this.$store.dispatch("setLoading", false);
-      //   })
-      //   .catch(() => {
-      //     this.$message.warning("用户信息获取失败");
-      //     // this.$cookie.setValue("emailStatus", 0); // test
-      //     this.$store.dispatch("setLoading", false);
-      //   });
     },
     showEmailTips() {
       const path = this.$route.path;
@@ -178,26 +137,6 @@ export default {
       } else if (path === "/add-email-tips" || path === "/verify") {
         this.$router.push("/home");
       }
-    },
-    dealMenus(menus) {
-      const list = [];
-      const funArr = [];
-      const funList = [];
-      if (menus.length > 0) {
-        menus.forEach(item => {
-          if (item.menuFlag === "Y") {
-            item.path = item.frontPath ? item.frontPath : "/";
-            list.push(item);
-          } else {
-            funArr.push(item.code);
-            funList.push(item);
-          }
-        });
-      }
-      this.$store.dispatch("setMenuLists", list);
-      this.$store.dispatch("setRouters", list);
-      this.$store.dispatch("setFunctionArr", funArr);
-      this.$store.dispatch("setFunctionLists", funList);
     },
     gotoIndex() {
       this.$router.push("/index");

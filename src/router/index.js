@@ -90,6 +90,19 @@ export const constantRoutes = [
         meta: { name: "首页" }
       }
     ]
+  }, {
+    path: "/center",
+    component: resolve => require(["@/views/user/centerIndex"], resolve),
+    children: [{
+      path: "secure",
+      component: resolve => require(["@/views/user/center/secure"], resolve)
+    }, {
+      path: "basicInfo",
+      component: resolve => require(["@/views/user/center/basicInfo"], resolve)
+    }, {
+      path: "authc",
+      component: resolve => require(["@/views/user/center/authc"], resolve)
+    }]
   }
 ]
 export const asyncRoutes =[
@@ -136,12 +149,12 @@ export const asyncRoutes =[
     path: "/product",
     redirect: "/product/index",
     component: Layout,
-    meta: { name: "产品管理" },
+    meta: { name: "产品管理", code: "product" },
     children: [
       {
         path: "index",
         component: resolve => require(["@/views/product/index"], resolve),
-        meta: { name: "产品管理" }
+        meta: { name: "产品管理", code: "product" }
       },
       {
         path: "detail/:key",

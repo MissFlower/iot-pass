@@ -55,7 +55,8 @@ const router = {
         if (list.length > 0) {
           const asyncList = filterFun(list);
           commit('SET_ROUTERS', asyncList);
-          resolve(asyncList);
+          resolve(asyncRoutes) // 暂时  用于测试
+          // resolve(asyncList);
         } else {
           resolve()
         }

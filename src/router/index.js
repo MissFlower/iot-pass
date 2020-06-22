@@ -10,7 +10,7 @@ Router.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err);
 };
 
-const routes = [
+export const constantRoutes = [
   {
     path: "/",
     redirect: "/index",
@@ -90,7 +90,9 @@ const routes = [
         meta: { name: "首页" }
       }
     ]
-  },
+  }
+]
+export const asyncRoutes =[
   {
     path: "/menu",
     redirect: "/menu/index",
@@ -169,18 +171,18 @@ const routes = [
     path: "/device",
     redirect: "/device/deviceManage",
     component: Layout,
-    meta: { name: "设备管理" },
+    meta: { name: "设备管理", code: "device" },
     children: [
       {
         path: "deviceManage",
         component: resolve => require(["@/views/device/deviceManage"], resolve),
-        meta: { name: "设备管理" }
+        meta: { name: "设备管理", code: "device" }
       },
       {
         path: "deviceInfo",
         component: resolve =>
           require(["@/views/device/children/deviceInfo"], resolve),
-        meta: { name: "设备详情" }
+        meta: { name: "设备详情", code: "device_detail" }
       }
     ]
   },
@@ -206,18 +208,27 @@ const routes = [
     path: "/log",
     redirect: "/log/index",
     component: Layout,
-    meta: { name: "日志管理" },
+    meta: { name: "日志管理", code: "log" },
     children: [
       {
         path: "index",
         component: resolve => require(["@/views/log/index"], resolve),
-        meta: { name: "日志管理" }
+        meta: { name: "日志管理", code: "log" }
       }
     ]
   }
 ];
-const router = new Router({
-  routes
-});
 
-export default router;
+const createRouter = () => new Router({
+  scrollBehavior: () => ({ y: 0 }),
+  routes: constantRoutes
+})
+
+const router = createRouter()
+
+export function resetRouter () {
+  const newRouter = createRouter()
+  router.matcher = newRouter.matcher // reset router
+}
+
+export default router

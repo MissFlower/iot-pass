@@ -1,4 +1,6 @@
 import store from "@/store";
+import router from "@/router";
+import { Message } from "element-ui"
 
 export function addBreadCrumbFun(data) {
   const list = JSON.parse(JSON.stringify(store.state.app.breadcrumdList));
@@ -104,4 +106,34 @@ export function dealUserTreeFun(list) {
     arr = obj[0];
   }
   return arr;
+}
+
+// 处理权限数组
+
+
+export function dealMenus (menus) {
+  const list = [];
+  const funArr = [];
+  const funList = [];
+  if (menus.length > 0) {
+    menus.forEach(item => {
+      if (item.menuFlag === "Y") {
+        item.path = item.frontPath ? item.frontPath : "/";
+        list.push(item);
+      } else {
+        funArr.push(item.code);
+        funList.push(item);
+      }
+    });
+  }
+  store.dispatch("setMenuLists", list);
+  store.dispatch("setFunctionArr", funArr);
+  store.dispatch("setFunctionLists", funList);
+  if (list.length === 0) {
+    Message.warning("用户没有菜单权限，请联系管理员");
+    if (this.$route.path !== "/index") {
+      router.push("/index");
+    }
+  }
+  return list
 }

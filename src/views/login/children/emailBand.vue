@@ -92,7 +92,7 @@ export default {
   computed: {
     userName() {
       return this.$store.state.app.userInfo
-        ? this.$store.state.app.userInfo.userName
+        ? this.$store.state.app.userInfo.account
         : null;
     }
   },

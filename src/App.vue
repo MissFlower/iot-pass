@@ -17,10 +17,8 @@ export default {
     };
   },
   mounted() {
-    if (this.$cookie.getValue("userName")) {
-      this.$store.dispatch("setUserInfo", {
-        userName: this.$cookie.getValue("userName")
-      });
+    if (localStorage.getItem("info")) {
+      this.$store.dispatch("setUserInfo", JSON.parse(localStorage.getItem("info")))
     }
     if (this.$cookie.getValue("access_token")) {
       this.$store.dispatch("setLoginStatus", true);

@@ -60,7 +60,7 @@ export default {
               this.$cookie.setValue("access_token", res.data.tk);
               this.$cookie.setValue("userName", this.account);
               this.$store.dispatch("setUserInfo", {
-                userName: this.account
+                account: this.account
               });
               this.$store.dispatch("setLoginStatus", true);
               if (!res.data.email) {

@@ -41,7 +41,7 @@
       </el-table-column>
       <el-table-column label="操作">
         <template v-slot="scope">
-          <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
+          <el-button @click="lookClick(scope.row)" type="text" size="small">查看</el-button>
           <el-button @click="deleteClick(scope.row)" type="text" size="small">删除</el-button>
         </template>
       </el-table-column>
@@ -148,8 +148,8 @@ export default {
 
     /*
     设备启、禁用
-    devices  设备对象
-    batchEnable
+    devices  设备对象数组
+    batchEnable  批量启用、禁用
     */
     deviceEnable(devices,batchEnable){
       this.loading = true;
@@ -183,15 +183,6 @@ export default {
     },
 
     /*
-    查看设备
-    deviceObj  设备对象
-    */
-    handleClick(deviceObj) {
-      console.log(JSON.stringify(deviceObj));
-      this.$router.push(`deviceInfo?id=${deviceObj.id}`);
-    },
-
-    /*
     删除指定设备
     deviceObj  设备对象
     */
@@ -222,6 +213,10 @@ export default {
       deleteDevice(ids)
         .then(res => {
           if (res.code === 200) {
+            //判断是否删除最后一页全部设备
+            if(this.tableData.pageNum!=1&&this.tableData.pageNum==this.tableData.pageCount && devices.length==this.tableData.total%this.tableData.pageSize){
+              this.tableData.pageNum--;
+            }
             this.getDeviceList();
           }
           this.$message({
@@ -279,6 +274,15 @@ export default {
       if (updata) {
         this.getDeviceList();
       }
+    },
+
+    /*
+    查看设备
+    deviceObj  设备对象
+    */
+    lookClick(deviceObj) {
+      console.log(JSON.stringify(deviceObj));
+      this.$router.push(`deviceInfo?id=${deviceObj.id}`);
     },
 
     //列表翻页

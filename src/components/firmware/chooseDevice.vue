@@ -1,20 +1,15 @@
+<!--
+文件作者：liuxixiu
+创建日期：2020.6.17
+文件说明：选择设备
+ -->
 <template>
-    <el-dialog title="请选择设备" :visible.sync="chooseDeviceVisible" width="30%" :before-close='closeDialog'>
-        <!--<el-form :model="form" ref="ruleForm" label-width="120px" class="demo-ruleForm" :inline="true">-->
-            <!--<el-form-item>-->
-                <!--<el-select v-model="value5" multiple placeholder="请选择">-->
-                    <!--<el-option-->
-                        <!--v-for="item in options"-->
-                        <!--:key="item.value"-->
-                        <!--:label="item.label"-->
-                        <!--:value="item.value">-->
-                    <!--</el-option>-->
-                <!--</el-select>-->
-            <!--</el-form-item>-->
-            <!--<el-form-item>-->
-                <!--<el-input type="text" placeholder="请输入设备名称"></el-input>-->
-            <!--</el-form-item>-->
-        <!--</el-form>-->
+    <el-dialog title="请选择设备" :visible.sync="chooseDeviceVisible" width="30%" :before-close='closeDialog' :close-on-click-modal="closeModal">
+        <el-form :model="form" ref="ruleForm" label-width="120px" class="demo-ruleForm" :inline="true">
+            <el-form-item>
+                <el-input type="text" v-model="deviceForm.deviceName" placeholder="请输入设备名称" @keyup.enter.native="searchDev"></el-input>
+            </el-form-item>
+        </el-form>
         <el-table
             ref="multipleTable"
             :data="deviceList"
@@ -35,9 +30,18 @@
                 label="productKey">
             </el-table-column>
         </el-table>
+        <el-pagination
+            @current-change="handleDevChange"
+            :current-page.sync="deviceForm.pageNum"
+            :page-size="deviceForm.pageSize"
+            layout="total, prev, pager, next"
+            :total="deviceTotal"
+            class="tr mt20"
+        >
+        </el-pagination>
         <div slot="footer" class="dialog-footer">
             <el-button @click="closeDialog">取 消</el-button>
-            <el-button type="primary">确 定</el-button>
+            <el-button type="primary" @click="chooseSubmit">确 定</el-button>
         </div>
     </el-dialog>
 
@@ -56,43 +60,44 @@
                     name: '',
                     region: ''
                 },
-                options: [{
-                    value: '选项1',
-                    label: '黄金糕'
-                }, {
-                    value: '选项2',
-                    label: '双皮奶'
-                }, {
-                    value: '选项3',
-                    label: '蚵仔煎'
-                }, {
-                    value: '选项4',
-                    label: '龙须面'
-                }, {
-                    value: '选项5',
-                    label: '北京烤鸭'
-                }],
-                value5: [],
                 deviceList: [],
                 multipleSelection: [],
                 deviceForm: {
                     pageNum: 1,
-                    pageSize: 20,
+                    pageSize: 10,
                     deviceName: '',
                     nickName: '',
                     fmVersion: ''
-                }
+                },
+                deviceTotal: '',
+                closeModal: false
             }
         },
         mounted () {
             this.getDeviceList()
         },
         methods: {
+            // 获取设备列表
             getDeviceList () {
                 getDeviceList(this.deviceForm).then(res => {
                     this.deviceList = res.data.data
+                    this.deviceTotal = res.data.total
                 })
             },
+            // 搜索设备
+            searchDev () {
+                this.getDeviceList()
+            },
+            // 选择设备
+            chooseSubmit () {
+                let multipleDeviceId = ''
+                this.multipleSelection.map(item => {
+                    multipleDeviceId += item.id
+                })
+                this.$emit('multipleDevice', multipleDeviceId)
+                this.$emit('deviceVisible', this.chooseDeviceVisible)
+            },
+            // 取消选中
             toggleSelection(rows) {
                 if (rows) {
                     rows.forEach(row => {
@@ -103,10 +108,15 @@
                 }
             },
             handleSelectionChange(val) {
+                console.log(val)
                 this.multipleSelection = val;
+            },
+            handleDevChange () {
+                this.getDeviceList()
             },
             closeDialog () {
                 this.$emit('deviceVisible', this.chooseDeviceVisible)
+                this.toggleSelection()
             }
         }
     }

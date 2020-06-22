@@ -1,3 +1,7 @@
+/**
+ * create by liuxixiu
+ * date 2020-06-18
+ */
 import request from "@/utils/request";
 import Qs from "qs";
 
@@ -27,6 +31,17 @@ export function uploadFile(data) {
     method: "post",
     data
   });
+}
+/**
+ * 获取固件产品类型
+ * @param data
+ */
+export function getFmType(data) {
+    return request({
+        url: "/fm/getFmTypes ",
+        method: "post",
+        data
+    });
 }
 /**
  * 保存新增固件

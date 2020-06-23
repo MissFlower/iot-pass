@@ -4,7 +4,7 @@
       <div>
         <i class="el-icon-back" @click="goBack"></i><span style="margin-left:15px">{{productName}}</span>         
       </div>
-      <el-button :type="btnType" @click="releaseProduct">{{btnType ? '发布' : '撤销发布'}}</el-button>
+      <el-button :type="btnType" @click="releaseProduct" v-if="authArr.indexOf('product_release') > -1">{{btnType ? '发布' : '撤销发布'}}</el-button>
     </div>
     <div class="p_key">
       <div>
@@ -81,6 +81,11 @@ export default {
           this.productSecret = res.data
         }
     })
+  },
+  computed: {
+    authArr() {
+      return this.$store.state.app.functionArr;
+    }
   },
   methods: {
     //复制文本内容

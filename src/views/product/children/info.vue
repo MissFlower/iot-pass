@@ -2,7 +2,7 @@
   <div id="main" v-loading="loading">    
       <div class="edit_product">
           <span class="title">产品信息</span>
-          <el-link icon="el-icon-edit" v-show="btnType" @click="dialogProEditBtn">编辑</el-link>
+          <el-link icon="el-icon-edit" v-show="btnType" @click="dialogProEditBtn" v-if="authArr.indexOf('edit_product') > -1">编辑</el-link>
       </div>
       <div class="grid_wrp">
         <el-row style="display: flex;flex-wrap: wrap">
@@ -84,6 +84,7 @@
                     inactive-text="关闭"
                     :active-value="1" 
                     :inactive-value="0"
+                    :disabled="!authArr.indexOf('dynamic_product') > -1"
                     @change="dynRegisterChange">
                   </el-switch>
                 </div>
@@ -193,7 +194,11 @@ export default {
       }
     };
   },
- 
+  computed: {
+    authArr() {
+      return this.$store.state.app.functionArr;
+    }
+  },
   methods: {
     nodeTypeData(val){
       return nodeTypeData(val)

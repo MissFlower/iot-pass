@@ -18,7 +18,7 @@
         </el-input>
       </div>
       
-      <el-button type="primary" @click="handleAdd">新建产品</el-button>
+      <el-button type="primary" @click="handleAdd" v-if="authArr.indexOf('add_product') > -1">新建产品</el-button>
     </div>
     <product-list v-if="flag == 0" :data="listData" :loading="loading" @getList="getList"></product-list>
      <!-- 分页-->
@@ -50,6 +50,11 @@ export default {
   },
   created() {     
     this.getList();
+  },
+  computed: {
+    authArr() {
+      return this.$store.state.app.functionArr;
+    }
   },
   methods: {
       //产品名称搜索

@@ -29,7 +29,7 @@
         <template slot-scope="scope">
           <el-button type="text"  @click="productDetail(scope.row.productKey)">查看</el-button>
           <el-button type="text" @click="goEqu(scope.row.id)">设备管理</el-button>
-          <el-button type="text" v-if="!scope.row.productStatus" @click="delProduct(scope.row.productKey)">删除</el-button>
+          <el-button type="text" v-if="!scope.row.productStatus" @click="delProduct(scope.row.productKey)" v-show="authArr.indexOf('product_delete') > -1">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -56,7 +56,11 @@ export default {
      
     };
   },  
- 
+  computed: {
+    authArr() {
+      return this.$store.state.app.functionArr;
+    }
+  },
   methods: {   
     nodeTypeData(val){
       return nodeTypeData(val)

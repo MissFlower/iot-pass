@@ -57,6 +57,7 @@
 import { userRoleList, updateRoleforUser } from "@/api/user";
 export default {
   props: ["info"],
+  inject: ["reload"],
   data() {
     return {
       loading: false,
@@ -103,6 +104,10 @@ export default {
       this.close();
     },
     handleSave() {
+      if (this.selectIds.length > 10) {
+        this.$message.warning("一个用户最多配置10个角色");
+        return;
+      }
       this.loading = true;
       updateRoleforUser({
         userId: this.info.id,
@@ -111,6 +116,7 @@ export default {
         .then(res => {
           if (res.code === 200) {
             this.$message.success("用户的角色设置成功");
+            this.reload();
             this.close();
           } else {
             this.$message.error(res.message);

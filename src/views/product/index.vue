@@ -1,3 +1,9 @@
+
+<!-- 
+文件作者：zhaoyifeng
+创建日期：2020.6.17
+文件说明：产品管理api
+ -->
 <template>
   <div id="product" >
     <div class="mb20 tr">
@@ -5,7 +11,10 @@
         <el-input
           placeholder="请输入产品名称查询"
           prefix-icon="el-icon-search"
-          v-model="productName">
+          clearable
+          v-model="productName"
+          @clear="queryProduct"
+          @keyup.enter.native="queryProduct">
         </el-input>
       </div>
       
@@ -13,7 +22,7 @@
     </div>
     <product-list v-if="flag == 0" :data="listData" :loading="loading" @getList="getList"></product-list>
      <!-- 分页-->
-    <pagination :data="tableData" @pagination="changePage"/>
+    <pagination :data="tableData" @pagination="changePage" class="tr"/>
   </div>
 </template>
 
@@ -43,6 +52,11 @@ export default {
     this.getList();
   },
   methods: {
+      //产品名称搜索
+      queryProduct(){
+        this.tableData.pageNum = 1;
+        this.getList()
+      },
       //产品列表
       getList(){
         this.loading = true;
@@ -64,8 +78,7 @@ export default {
         this.$router.push("add-product");
       },
       //分页
-     changePage(){
-      
+     changePage(){      
       this.getList()
     },
   },

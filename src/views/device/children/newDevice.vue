@@ -77,7 +77,6 @@ export default {
 
     //取消
     handleCancel() {
-      this.dialogVisible = false;
       this.$parent.newDeviceClose();
     },
 
@@ -103,7 +102,6 @@ export default {
         .then(res => {
           this.loading = false;
           if (res.code === 200) {
-            this.dialogVisible = false;
             this.$parent.newDeviceClose(true);
           }
           this.$message({
@@ -116,6 +114,7 @@ export default {
         
     },
 
+    //窗口关闭
     handleClose() {
       this.handleCancel();
     }
@@ -124,6 +123,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#editRole {
-}
 </style>

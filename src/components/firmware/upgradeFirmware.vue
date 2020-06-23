@@ -139,6 +139,7 @@ export default {
     };
   },
   methods: {
+    // 固件批量升级
     upgradeSubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {

@@ -9,8 +9,8 @@
     <div class="p_key">
       <div>
           <span>ProductKey:</span>
-          <span class="key">{{this.$route.params.key}}</span>
-          <el-link :underline="false" type="primary">复制</el-link>
+          <span class="key">{{productKey}}</span>
+          <el-link :underline="false" type="primary" @click="copyContent(productKey)">复制</el-link>
       </div>
       <div>
           <span>ProductSecret:</span>
@@ -21,12 +21,12 @@
      <div class="deviceCount">
         <span class="text">设备数:</span>
         <span class="key">{{productData.deviceCount}}</span>   
-        <el-link :underline="false" type="primary" @click="seeSecret">前往管理</el-link>       
+        <el-link :underline="false" type="primary" @click="goEqu">前往管理</el-link>       
     </div>
     <div class="tab_wrp mt20" >
       <el-tabs v-model="activeName" type="card" @tab-click="tabChange" >
         <el-tab-pane label="产品信息" name="product">
-          <product-info :product-data="productData" :btn-type="btnType"/>
+          <product-info :product-data="productData" :btn-type="btnType" @changeProName="changeProName"/>
         </el-tab-pane>
         <el-tab-pane label="功能定义" name="second"></el-tab-pane>
        
@@ -40,12 +40,15 @@
       <div class="dialogSecret">
         <span class="text">ProductSecret</span>
         <span class="secret">{{productSecret}}</span>
-        <el-link :underline="false" type="primary">复制</el-link>
+        <el-link :underline="false" type="primary" @click="copyContent(productSecret)">复制</el-link>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">关 闭</el-button>        
       </span>
     </el-dialog>
+    <div id="copy_content_wrp">
+       <input type="text" id="copy_content"/>
+    </div>   
   </div>
 </template>
 
@@ -59,6 +62,7 @@ export default {
   data() {
     return {
       mainLoading: false,
+      productKey: this.$route.params.key,
       dialogVisible: false,
       activeName: 'product',
       standardSelectState:true, 
@@ -72,34 +76,77 @@ export default {
   created() {
     this.getProDetail()
     //获取产品密钥    
-    findSecret({productKey: this.$route.params.key}).then(res => {
+    findSecret({productKey: this.productKey}).then(res => {
         if(res.code === 200){
           this.productSecret = res.data
         }
     })
   },
   methods: {
+    //复制文本内容
+     copyContent(text){         
+         var inputElement =  document.getElementById("copy_content");         
+         inputElement.value = text;         
+         inputElement.select();          
+         document.execCommand("Copy");         
+         this.$message({
+          message: '复制成功',
+          type: 'success'
+        });       
+     },
+     //设备管理
+     goEqu(){
+       this.$router.push('/equ/deviceManage')
+     },
+    //修改产品名称
+    changeProName(name){
+      this.productName = name
+    },
     //产品发布、取消
-    releaseProduct(){
-      this.mainLoading = true
+    releaseProduct(){            
       if(this.btnType === ''){
-        cancelRelease({productKey: this.$route.params.key}).then(res => {
-          this.mainLoading = false;
-          if(res.code === 200){
-            this.btnType = 'primary'
-          }
-        }).catch(err => {
-          this.mainLoading = false;
+        this.$confirm('确认要将产品撤销发布吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.mainLoading = true
+          cancelRelease({productKey: this.productKey}).then(res => {
+            this.mainLoading = false;
+            if(res.code === 200){
+              this.btnType = 'primary';
+              this.$message({
+                type: 'success',
+                message: '撤销发布成功！'
+              });
+            }
+          }).catch(err => {
+            this.mainLoading = false;
+          })          
         })
+        
       }else{
-        release({productKey: this.$route.params.key}).then(res => {
-          this.mainLoading = false;
-          if(res.code === 200){
-            this.btnType = ''
-          }
-        }).catch(err => {
-          this.mainLoading = false;
+        this.$confirm('请确认产品的各项基本信息准确无误，产品发布后将无法再做修改和删除。', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.mainLoading = true
+          release({productKey: this.productKey}).then(res => {
+            this.mainLoading = false;
+            if(res.code === 200){
+              this.btnType = '';
+              this.$message({
+                type: 'success',
+                message: '发布成功!'
+              });
+            }
+          }).catch(err => {
+            this.mainLoading = false;
+          })
+          
         })
+        
       }
     },
     //查看密钥
@@ -118,13 +165,14 @@ export default {
     //获取产品详情数据
     getProDetail(){
       this.loading = true
-      getProduct({productKey: this.$route.params.key}).then(res => {
+      getProduct({productKey: this.productKey}).then(res => {
         setTimeout(() => {
           this.loading = false;
         },1000)
-        if(res.code === 200){
-          this.productName = res.data.productName;
+        if(res.code === 200){        
+          this.productName = res.data.productName;  
           this.productData = res.data;
+
           if(res.data.productStatus === 0){
               this.btnType = 'primary'
           }else{
@@ -140,7 +188,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+#copy_content_wrp{
+  position: relative;
+  overflow: hidden;
+}
 
+#copy_content{
+  position: absolute;
+  left: -10000px;
+  opacity: 0;
+}
 .deviceCount{
   margin-top: 15px;
   color: #888;

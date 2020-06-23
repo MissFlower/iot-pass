@@ -83,7 +83,7 @@ export default {
       loading: false,
       formData: {
         account: "",
-        phone: "17600625702",
+        phone: "",
         password: ""
       },
       msg: "发送验证码",

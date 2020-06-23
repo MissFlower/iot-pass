@@ -61,7 +61,7 @@ export default {
         //   icon: "model"
         {
           title: "设备管理",
-          path: "/equ/deviceManage",
+          path: "/device/deviceManage",
           icon: "equ"
         },
         {

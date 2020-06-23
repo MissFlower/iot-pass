@@ -80,11 +80,10 @@
                    <el-form ref="form" :model="batchManage" label-width="80px" :inline="true">
                        <el-form-item>
                            <el-button type="primary" @click="checkFm">验证固件</el-button>
-                           <!--<el-tooltip class="item" effect="dark" content="请先验证固件，再进行批量升级" placement="top" v-if="details.detailList.fmStatus !== 2">-->
-                               <!--<el-button disabled>批量升级</el-button>-->
-                           <!--</el-tooltip>-->
-                           <!--<el-button v-else @click="upgradeSubmit">批量升级</el-button>-->
-                           <el-button @click="upgradeSubmit">批量升级</el-button>
+                           <el-tooltip class="item" effect="dark" content="请先验证固件，再进行批量升级" placement="top"  v-if="details.detailList.fmStatus !== 2">
+                               <el-button disabled>批量升级</el-button>
+                           </el-tooltip>
+                           <el-button v-else @click="upgradeSubmit">批量升级</el-button>
                        </el-form-item>
                        <el-form-item>
                            <el-input
@@ -423,12 +422,10 @@
                 this.getUpgradeList()
             },
             upgradeSubmit () {
-                this.upgradeFmVisible = true;
-                this.checkFmId = this.fmId
-                // if (this.details.detailList.fmStatus === 2) {
-                //     this.upgradeFmVisible = true;
-                //     this.checkFmId = String(this.details.detailList.id);
-                // }
+                if (this.details.detailList.fmStatus === 2) {
+                    this.upgradeFmVisible = true;
+                    this.checkFmId = String(this.fmId);
+                }
             },
             // 批量升级
             upgradeVisible() {

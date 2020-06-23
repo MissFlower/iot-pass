@@ -44,7 +44,6 @@
             <el-button type="primary" @click="chooseSubmit">确 定</el-button>
         </div>
     </el-dialog>
-
 </template>
 <script>
     import { getDeviceList } from '@/api/fireware'
@@ -90,9 +89,9 @@
             },
             // 选择设备
             chooseSubmit () {
-                let multipleDeviceId = ''
+                let multipleDeviceId = []
                 this.multipleSelection.map(item => {
-                    multipleDeviceId += item.id
+                    multipleDeviceId.push(item.id)
                 })
                 this.$emit('multipleDevice', multipleDeviceId)
                 this.$emit('deviceVisible', this.chooseDeviceVisible)

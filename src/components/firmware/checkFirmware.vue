@@ -25,11 +25,12 @@
         <!--</el-form-item>-->
         <el-form-item label="待验证设备">
           <el-select
-            v-model="form.deviceNames"
+            v-model="form.showDeviceNames"
             multiple
             placeholder="请选择设备"
             @focus="selectDevice"
           >
+              <option value=""></option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -45,7 +46,7 @@
       :show-close="showClose"
     >
       <p>
-        {{ checkStatus === "0" ? "固件验证中" : "固件验证失败" }}
+        {{ checkStatus === "1" ? "固件验证中" : "固件验证失败" }}
       </p>
       <p v-if="checkStatus === '2'">提示：{{ checkMessage }}</p>
       <el-progress
@@ -83,13 +84,14 @@ export default {
       form: {
         fmId: "",
         srcVersions: "",
-        deviceNames: ""
+        deviceNames: "",
+        showDeviceNames: []
       },
       chooseDeviceVisible: false,
       progressVisible: false,
       showClose: false,
       checkPer: 0,
-      checkStatus: "0",
+      checkStatus: "1",
       checkMessage: ""
     };
   },
@@ -97,9 +99,14 @@ export default {
     ChooseDevice
   },
   methods: {
+      // 提交验证固件
     verifySubmit() {
       this.form.fmId = this.checkFmId;
       this.form.srcVersions = this.srcVersion
+      this.form.showDeviceNames.map(item => {
+          this.form.deviceNames += item + ','
+      })
+      this.form.deviceNames = this.form.deviceNames.slice(0, -1)
       let formData = new FormData();
       formData.append("fmId", this.form.fmId);
       formData.append("srcVersions", this.form.srcVersions);
@@ -110,6 +117,7 @@ export default {
         this.checkProgress(res);
       });
     },
+      // 进度条
     checkProgress(res) {
       let self = this;
       let timer = setInterval(function() {
@@ -130,14 +138,14 @@ export default {
         this.checkMessage = res.message;
       }
     },
+      // 关闭弹窗
     closeDialog() {
       this.$refs["ruleForm"].resetFields(); // 清空弹出框校验
       this.$emit("checkVisible", this.checkFmVisible);
     },
     // 获取选中的设备
     multipleDevice(val) {
-      console.log(val);
-      this.form.deviceNames = val;
+      this.form.showDeviceNames = val;
     },
     selectDevice() {
       this.chooseDeviceVisible = true;

@@ -8,7 +8,10 @@ const app = {
         name: "IOT平台",
         path: "/home"
       }
-    ]
+    ],
+    menuLists: [], // 用户的菜单列表
+    functionLists: [], // 系统功能权限的具体项
+    functionArr: [] // 系统功能权限的code数组
   },
   mutations: {
     SET_USER_INFO: (state, info) => {
@@ -22,6 +25,15 @@ const app = {
     },
     SET_BTEADCRUMB_LIST: (state, list) => {
       state.breadcrumdList = list;
+    },
+    SET_MENU_LISTS: (state, list) => {
+      state.menuLists = list;
+    },
+    SET_FUNCTION_ARR: (state, arr) => {
+      state.functionArr = arr;
+    },
+    SET_FUNCTION_LISTS: (state, list) => {
+      state.functionLists = list;
     }
   },
   actions: {
@@ -40,6 +52,24 @@ const app = {
     setBreadcrumb({ commit }, list) {
       return new Promise(resolve => {
         commit("SET_BTEADCRUMB_LIST", list);
+        resolve();
+      });
+    },
+    setMenuLists({ commit }, list) {
+      return new Promise(resolve => {
+        commit("SET_MENU_LISTS", list);
+        resolve();
+      });
+    },
+    setFunctionArr({ commit }, arr) {
+      return new Promise(resolve => {
+        commit("SET_FUNCTION_ARR", arr);
+        resolve();
+      });
+    },
+    setFunctionLists({ commit }, list) {
+      return new Promise(resolve => {
+        commit("SET_FUNCTION_LISTS", list);
         resolve();
       });
     }

@@ -36,6 +36,7 @@ import { getMenusTree, setAuthorityForRole } from "@/api/role";
 import { dealAuthTreeFun } from "@/data/fun";
 export default {
   props: ["info"],
+  inject: ["reload"],
   data() {
     return {
       flag: 0,
@@ -103,6 +104,7 @@ export default {
         .then(res => {
           if (res.code === 200) {
             this.$message.success("角色的菜单权限设置成功");
+            this.reload();
             this.flag = 0;
             this.getAuth();
           } else {

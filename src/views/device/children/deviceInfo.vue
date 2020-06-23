@@ -13,25 +13,21 @@
     />
     <div class="f20 b">
       <i class="el-icon-back" @click="back"></i>
-      设备详情
+      {{deviceObj.deviceName}}
     </div>
     <div class="f12 c6 mt20 mb20 df fww">
       <div class="productInfo">
-        <span class="dib w100 mr20 c9">产品</span>
+        <span class="dib w100 mr20 c9">产品:</span>
         <span>{{deviceObj.productName}}</span>
+        <el-button type="text" class="ml10" @click="toProduct">查看</el-button>
       </div>
       <div class="productInfo">
-        <span class="dib w100 mr20 c9">DeviceSecret</span><img>
-        <span>{{lookDeviceSecret?deviceObj.deviceSecret:'********'}}</span>
-        <el-button v-if="lookDeviceSecret" type="text" class="ml10" @click="copy(deviceObj.deviceSecret)">复制</el-button>
-        <el-button
-          type="text"
-          class="ml10"
-          @click="lookDeviceSecret = !lookDeviceSecret"
-        >{{lookDeviceSecret?'隐藏':'查看'}}</el-button>
+        <span class="dib w100 mr20 c9">DeviceSecret:</span>
+        <span>********</span>
+        <el-button type="text" class="ml10" @click="lookDeviceSecret = true">查看</el-button>
       </div>
       <div class="productInfo">
-        <span class="dib w100 mr20 c9">ProductKey</span><img>
+        <span class="dib w100 mr20 c9">ProductKey:</span>
         <span>{{deviceObj.productKey}}</span>
         <el-button type="text" class="ml10" @click="copy(deviceObj.productKey)">复制</el-button>
       </div>
@@ -64,6 +60,7 @@
             <div class="device_infoItem">
               <span class="infoItemName">设备名称</span>
               <span>{{deviceObj.deviceName}}</span>
+              <el-button type="text" class="ml10" @click="copy(deviceObj.deviceName)">复制</el-button>
             </div>
             <div class="device_infoItem">
               <span class="infoItemName">备注名称</span>
@@ -107,6 +104,22 @@
       <el-tab-pane label="物模型数据" name="third">物模型数据</el-tab-pane>
     </el-tabs>
 
+    <el-dialog
+      title="设备证书"
+      :visible.sync="lookDeviceSecret"
+      width="50%"
+      >
+      <div class="dialogSecret">
+        <span class="text">DeviceSecret</span>
+        <span class="secret">{{deviceObj.deviceSecret}}</span>
+        <el-button type="text" class="ml10" @click="copy(deviceObj.deviceSecret)">复制</el-button>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="lookDeviceSecret = false">关 闭</el-button>        
+      </span>
+    </el-dialog>
+
+    <!-- 备注名称编辑 -->
     <deviceNameEdit v-if="showDeviceNameEdit" :deviceObj="deviceObj"></deviceNameEdit>
   </div>
 </template>
@@ -143,28 +156,17 @@ export default {
             //设备状态
             var statusDict = { "0": "未激活", "1": "在线", "2": "离线" };
             //节点类型
-            var nodeTypeDict = {
-              "1": "直连设备",
-              "2": "网关子设备",
-              "3": "网关设备"
-            };
+            var nodeTypeDict = { "1": "直连设备", "2": "网关子设备", "3": "网关设备" };
             //认证方式
-            var authTypeDict = {
-              "1": "设备秘钥",
-              "2": "ID2",
-              "3": "X.509证书"
-            };
+            var authTypeDict = { "1": "设备秘钥", "2": "ID2", "3": "X.509证书" };
             if (deviceObj.deviceStatus != null) {
-              deviceObj.deviceStatusStr =
-                statusDict[deviceObj.deviceStatus.toString()];
+              deviceObj.deviceStatusStr = statusDict[deviceObj.deviceStatus.toString()];
             }
             if (deviceObj.nodeType != null) {
-              deviceObj.nodeTypeStr =
-                nodeTypeDict[deviceObj.nodeType.toString()];
+              deviceObj.nodeTypeStr = nodeTypeDict[deviceObj.nodeType.toString()];
             }
             if (deviceObj.authType != null) {
-              deviceObj.authTypeStr =
-                authTypeDict[deviceObj.authType.toString()];
+              deviceObj.authTypeStr = authTypeDict[deviceObj.authType.toString()];
             }
             if (deviceObj.enable != null) {
               deviceObj.enableBool = deviceObj.enable == 0 ? true : false;
@@ -183,7 +185,10 @@ export default {
       this.showDeviceNameEdit = true;
     },
 
-    //名称关闭弹窗关闭
+    /*
+    名称关闭弹窗关闭
+    updata  是否刷新数据
+    */
     deviceNameEditClose(updata) {
       this.showDeviceNameEdit = false;
       if (updata) {
@@ -191,7 +196,15 @@ export default {
       }
     },
 
-    //复制
+    //查看产品
+    toProduct(){
+      this.$router.push(`../product/detail/${this.deviceObj.productKey}`);
+    },
+
+    /*
+    复制
+    copyStr  复制内容
+    */
     copy(copyStr) {
       var inputElement = document.getElementById("copy_content"); //获取要赋值的input的元素
       inputElement.value = copyStr; //给input框赋值
@@ -253,5 +266,21 @@ export default {
   border-right: 1px solid #ecedee;
   border-left: 1px solid #ecedee;
   background: #fbfbfc;
+}
+.dialogSecret{
+  border: 1px solid #ecedee;
+  height: 36px; 
+  display: flex;
+  align-items: stretch; 
+  span{
+    display: flex;
+    align-items: center;
+    
+    padding: 5px;
+  }
+  .text{
+    background: #fbfbfc;
+    border-right: 1px solid #ecedee;
+  }
 }
 </style>

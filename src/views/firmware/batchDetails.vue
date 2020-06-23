@@ -12,7 +12,7 @@
             <el-tag :type="deviceType" class="el_tag">{{batchDetailList.upgrade.ugStatus === 1 ? '待升级' : batchDetailList.upgrade.ugStatus === 2 ? '升级中' : batchDetailList.upgrade.ugStatus === 3 ? '已完成': '已取消'}}</el-tag>
         </div>
         <div>
-            <el-tabs v-model="tab" type="card" @tab-click="handleClick">
+            <el-tabs v-model="tab" type="card">
                 <el-tab-pane label="设备列表" name="first">
                     <el-table :data="devManage.devList" border stripe>
                         <el-table-column label="DeviceName" prop="deviceName"></el-table-column>
@@ -36,15 +36,6 @@
                             </template>
                         </el-table-column>
                     </el-table>
-                    <el-pagination
-                        @current-change="handleBatchChange"
-                        :current-page.sync="batchManage.pageNum"
-                        :page-size="batchManage.pageSize"
-                        layout="total, prev, pager, next"
-                        class="tr mt20"
-                        :total="batchManage.total"
-                    >
-                    </el-pagination>
                 </el-tab-pane>
                 <el-tab-pane label="批次信息" name="second">
                     <el-row>
@@ -217,9 +208,11 @@
                     }
                 })
             },
+            // 格式化表格内容
             formatUpgradeStatus (row) {
                 return row.upgradeStatus === 0 ? "待升级" : row.ugStatus === 1 ? "升级中" : row.ugStatus === 2 ? "已完成": "升级失败"
             },
+            // 重新升级
             upgrade(upgradeId) {
                 this.$confirm('确认要重新升级?', '提示', {
                     confirmButtonText: '确定',
@@ -238,8 +231,6 @@
                 }).catch(() => {
                 });
             },
-            handleBatchChange () {},
-            handleClick (){},
             // 返回上一级菜单
             goBack () {
                 this.$router.go(-1)

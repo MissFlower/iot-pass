@@ -23,7 +23,11 @@
           @keyup.enter.native="searchPhoneFun"
         ></el-input>
       </div>
-      <el-button type="primary" @click="handleShowCon(1)">
+      <el-button
+        v-if="authArr.indexOf('mgr_add') > -1"
+        type="primary"
+        @click="handleShowCon(1)"
+      >
         新建用户
       </el-button>
     </div>
@@ -59,21 +63,25 @@
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
           <svg-icon
+            v-if="authArr.indexOf('mgr_updateRole') > -1"
             icon-class="accountRole"
             class="success hand f20"
             @click.stop="handleShowCon(3, scope.row)"
           ></svg-icon>
           <svg-icon
+            v-if="authArr.indexOf('mgr_updateRole') > -1"
             icon-class="roleSet"
-            class="success orange f16 ml20"
+            class="success orange f16"
             @click.stop="handleShowAddRole(scope.row)"
           ></svg-icon>
           <i
-            class="el-icon-edit blue hand ml20 f18"
+            v-if="authArr.indexOf('mgr_edit') > -1"
+            class="el-icon-edit blue hand f18"
             @click="handleShowCon(1, scope.row)"
           ></i>
           <i
-            class="el-icon-close red ml20 hand f20"
+            v-if="authArr.indexOf('mgr_remove') > -1"
+            class="el-icon-close red hand f20"
             @click="handleClose(scope.row)"
           ></i>
         </template>
@@ -119,6 +127,11 @@ export default {
       if (this.$fun.trim(this.formData.phone === "")) {
         this.handleCurrentChange(1);
       }
+    }
+  },
+  computed: {
+    authArr() {
+      return this.$store.state.app.functionArr;
     }
   },
   mounted() {

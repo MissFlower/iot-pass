@@ -59,7 +59,11 @@
                 if (!this.ruleForm.fmDesc) {
                     this.ruleForm.fmDesc = this.detailInfo.fmDesc
                 }
-                updateFm(this.ruleForm)
+                let formData = new FormData()
+                formData.append('fmName', this.ruleForm.fmName)
+                formData.append('id', this.ruleForm.id)
+                formData.append('fmDesc', this.ruleForm.fmDesc)
+                updateFm(formData)
                     .then(res => {
                         if (res.code === 200) {
                             this.$emit('changeVisible', this.EditDialogVisible)

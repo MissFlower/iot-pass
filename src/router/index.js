@@ -158,7 +158,8 @@ export const asyncRoutes =[
       },
       {
         path: "detail/:key",
-        component: resolve => require(["@/views/product/children/detail"], resolve),
+        component: resolve =>
+          require(["@/views/product/children/detail"], resolve),
         meta: { name: "产品详情" }
       },
       {
@@ -211,9 +212,14 @@ export const asyncRoutes =[
         meta: { name: "固件管理及升级", code: "firmware" }
       },
       {
-          path: "details",
-          component: resolve => require(["@/views/firmware/details"], resolve),
-          meta: { name: "固件详情", code: "fm_details" }
+        path: "details",
+        component: resolve => require(["@/views/firmware/details"], resolve),
+        meta: { name: "固件管理及升级" }
+      },
+      {
+        path: "batchDetails",
+        component: resolve => require(["@/views/firmware/batchDetails"], resolve),
+        meta: { name: "固件管理及升级", code: "fm_details" }
       }
     ]
   },

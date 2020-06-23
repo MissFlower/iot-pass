@@ -2,7 +2,7 @@
 <!-- 
 文件作者：zhaoyifeng
 创建日期：2020.6.17
-文件说明：产品管理api
+文件说明：产品管理
  -->
 <template>
   <div id="product" >

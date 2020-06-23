@@ -159,3 +159,36 @@ export function productEdit(data) {
 }
 
 
+/**
+ * 品类选择--领域列表
+ * 
+  *   
+  * 
+  */
+export function domainList() { 
+  return request({
+    url: "domain/list",
+    method: "get"    
+  });
+}
+
+/**
+ * 品类选择--领域详情列表 * 
+  *   
+  * @param {
+  *   domainId string	是	领域id
+  *  pageNum	int	是	当前页
+  *  pageSize	int	是	每页取几条
+  *  name	string	否	品类名称
+  * }
+  */
+ export function categoryPage(data) { 
+  return request({
+    url: "category/page",
+    method: "get",
+    params: data  
+  });
+}
+
+
+

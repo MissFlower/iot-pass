@@ -1,9 +1,14 @@
+<!--
+文件作者：liuxixiu
+创建日期：2020.6.17
+文件说明：新增固件
+ -->
 <template>
   <div>
     <el-dialog
       title="添加固件"
       :visible.sync="dialogFormVisible"
-      width="25%"
+      width="30%"
       :before-close="closeDialog"
     >
       <el-form
@@ -37,6 +42,11 @@
             ></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="固件产品类型" required>
+          <el-select v-model="ruleForm.type" placeholder="固件产品类型">
+            <el-option label="Md5" value="1"></el-option>
+          </el-select>
+        </el-form-item>
         <!--<el-form-item label="固件模块" required>-->
         <!--<el-radio v-model="ruleForm.typel" label="1">选择模块</el-radio>-->
         <!--<el-radio v-model="ruleForm.typel" label="2">新增模块</el-radio>-->
@@ -59,18 +69,14 @@
         <el-form-item label="选择固件" required>
           <el-upload
             class="upload-demo"
-            action=""
+            action="111"
             :before-upload="beforeUpload"
-            :on-preview="handlePreview"
-            :on-remove="handleRemove"
-            :before-remove="beforeRemove"
             multiple
             :limit="3"
-            :on-exceed="handleExceed"
             :file-list="fileList"
             accept=".zip,.tar,.tar.gz,.gzip,.bin"
           >
-            <el-button size="small">点击上传</el-button>
+            <el-button size="small">{{ uploadText }}</el-button>
             <div slot="tip" class="el-upload__tip">
               仅支持bin、tar、gz、tar.gz、zip、gzip类型的文件
             </div>
@@ -81,14 +87,16 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="addFmSubmit">确 定</el-button>
+        <el-button type="primary" @click="addFmSubmit('ruleForm')"
+          >确 定</el-button
+        >
         <el-button @click="closeDialog">取 消</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 <script>
-import { uploadFile, saveFm, getProducts } from "@/api/fireware";
+import { uploadFile, saveFm, getProducts, getFmType } from "@/api/fireware";
 export default {
   props: {
     dialogFormVisible: {
@@ -98,6 +106,7 @@ export default {
   data() {
     return {
       fileList: [],
+      uploadText: "点击上传",
       ruleForm: {
         fmType: 1, // 固件名称 1整包、2差分
         productId: "", // 固件所属产品id
@@ -127,36 +136,57 @@ export default {
   },
   mounted() {
     this.getProductList();
+    this.getFmType();
   },
   methods: {
-    addFmSubmit() {
-      saveFm(this.ruleForm)
-        .then(res => {
-          if (res.code === 200) {
-            this.$emit("changeVisible", this.dialogFormVisible);
-            this.$emit("changeList", true);
-            this.$refs["ruleForm"].resetFields(); // 清空弹出框校验
-          } else {
-            this.$message.warning(res.message);
-          }
-        })
-        .catch(error => {
-          console.log(error);
-        });
+    // 提交新增固件
+    addFmSubmit(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          saveFm(this.ruleForm)
+            .then(res => {
+              if (res.code === 200) {
+                this.$emit("changeVisible", this.dialogFormVisible);
+                this.$emit("changeList", true);
+                this.$refs["ruleForm"].resetFields(); // 清空弹出框校验
+              } else {
+                this.$message.warning(res.message);
+              }
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
+    // 获取固件产品类型
+    getFmType() {
+      getFmType().then(res => {
+        console.log(res);
+      });
     },
     closeDialog() {
       this.$refs["ruleForm"].resetFields(); // 清空弹出框校验
       this.$emit("changeVisible", this.dialogFormVisible);
     },
+    // 上传文件
     beforeUpload(file) {
       let fromData = new FormData();
       fromData.append("file", file);
-      uploadFile(fromData).then(res => {
-        this.ruleForm.fmUrl = res.data.fmUrl;
-        this.ruleForm.fmSign = res.data.fmSign;
-        this.ruleForm.fmName = res.data.fmName;
-        this.ruleForm.fmSize = res.data.fmSize;
-      });
+      uploadFile(fromData)
+        .then(res => {
+          this.ruleForm.fmUrl = res.data.fmUrl;
+          this.ruleForm.fmSign = res.data.fmSign;
+          this.ruleForm.fmName = res.data.fmName;
+          this.ruleForm.fmSize = res.data.fmSize;
+          this.uploadText = "重新上传";
+        })
+        .catch(error => {
+          this.$message.error(error);
+        });
     },
     userFilter(query = "") {
       let arr = this.products.filter(item => {
@@ -168,6 +198,7 @@ export default {
         this.products = arr;
       }
     },
+    // 获取产品列表
     getProductList() {
       this.productForm.productName = this.productsValue.split("|")[1]
         ? this.productsValue.split("|")[1]
@@ -181,22 +212,6 @@ export default {
     changeSelect() {
       this.ruleForm.productId = this.productsValue.split("|")[0];
       this.ruleForm.productName = this.productsValue.split("|")[1];
-    },
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
-    },
-    handlePreview(file) {
-      console.log(file);
-    },
-    handleExceed(files, fileList) {
-      this.$message.warning(
-        `当前限制选择 3 个文件，本次选择了 ${
-          files.length
-        } 个文件，共选择了 ${files.length + fileList.length} 个文件`
-      );
-    },
-    beforeRemove(file) {
-      return this.$confirm(`确定移除 ${file.name}？`);
     }
   }
 };

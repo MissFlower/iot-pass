@@ -11,43 +11,57 @@
     @close="handleClose"
     v-loading="loading"
   >
-    <div class="df ai_c mb20">
-      <div class="w100 tr">产品：</div>
-      <el-select class="w300" v-model="productSelIndex" placeholder="请选择产品">
-        <el-option
-          v-for="(item,index) in productList"
-          :key="index"
-          :label="item.productName"
-          :value="index">
-        </el-option>
-      </el-select>
-    </div>
-    <div class="df ai_c mb20">
-      <div class="w100 tr">设备名称：</div>
-      <el-input class="w300" v-model="deviceName" placeholder="请输入设备名称"></el-input>
-    </div>
-    <div class="df ai_c">
-      <div class="w100 tr">备注名称：</div>
-      <el-input class="w300" v-model="nickName" placeholder="备注名称"></el-input>
-    </div>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="handleCancel">取 消</el-button>
-      <el-button type="primary" @click="handleSave">确 定</el-button>
-    </span>
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+      <el-form-item label="产品：" prop="productSelIndex">
+        <el-select class="wp100" v-model="ruleForm.productSelIndex" placeholder="请选择产品">
+          <el-option
+            v-for="(item,index) in productList"
+            :key="index"
+            :label="item.productName"
+            :value="index">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="设备名称：" prop="deviceName">
+        <el-input v-model="ruleForm.deviceName" placeholder="请输入设备名称"></el-input>
+      </el-form-item>
+      <el-form-item label="备注名称：" prop="nickName">
+        <el-input v-model="ruleForm.nickName" placeholder="请输入备注名称"></el-input>
+      </el-form-item>
+      <el-form-item class="mt20 tr" style="margin-bottom:0;">
+        <el-button @click="handleCancel">取 消</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+      </el-form-item>
+    </el-form>
   </el-dialog>
 </template>
 
 <script>
-import { productList,createDevice } from "@/api/equRequest";
+import { productList,createDevice } from "@/api/deviceRequest";
 export default {
   data() {
     return {
       dialogVisible: true,
-      productSelIndex: null,
       productList: [],
-      deviceName: '',
-      nickName: '',
-      loading: false
+      loading: false,
+      ruleForm:{
+        productSelIndex: null,
+        deviceName: '',
+        nickName: '',
+      },
+      rules: {
+        productSelIndex: [
+          { required: true, message: '请选择产品', trigger: 'change' }
+        ],
+        deviceName: [
+          { required: true, message: '请输入设备名称', trigger: 'blur' },
+          { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+        ],
+        nickName: [
+          { required: true, message: '请输入备注名称', trigger: 'blur' },
+          { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+        ]
+      }
     };
   },
   mounted() {
@@ -80,24 +94,27 @@ export default {
       this.$parent.newDeviceClose();
     },
 
+    //验证所填信息
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.handleSave();
+        } else {
+          return false;
+        }
+      });
+    },
+
     //保存
     handleSave() {
-
-      if(this.productSelIndex == null || this.deviceName.length == 0 || this.nickName.length == 0){
-        this.$message({
-          message: "内容错误"
-        });
-        return;
-      }
-
       this.loading = true;
-      var productObj = this.productList[this.productSelIndex];
+      var productObj = this.productList[this.ruleForm.productSelIndex];
       
       createDevice({
         productId: productObj.id,
         productKey: productObj.productKey,
-        deviceName: this.deviceName,
-        nickName: this.nickName,
+        deviceName: this.ruleForm.deviceName,
+        nickName: this.ruleForm.nickName,
       })
         .then(res => {
           this.loading = false;
@@ -105,13 +122,13 @@ export default {
             this.$parent.newDeviceClose(true);
           }
           this.$message({
+            type: res.code == 200?"success":'warning',
             message: res.message
           });
         })
         .catch(() => {
           this.loading = false;
         });
-        
     },
 
     //窗口关闭

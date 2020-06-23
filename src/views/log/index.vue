@@ -6,25 +6,46 @@
 <template>
   <div id="log" >
     <!-- 搜索部分 -->
-    <el-row :gutter="10">
-      <el-col :span="6">
-        <el-input
-          placeholder="请输入产品key查询"
-          prefix-icon="el-icon-search"
-          v-model.lazy="productKey">
-        </el-input>
-      </el-col>
-      <el-col :span="6">
-        <el-date-picker
-        type="date"
-        placeholder="开始时间"
-        v-model="startTime">
-        </el-date-picker>
-      </el-col>
-    </el-row>
+    <el-form :inline="true" :model="formInline" size="mini">
+      <el-form-item>
+        <el-input v-model="formInline.productKey" placeholder="产品key查询"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-select v-model="formInline.logType" placeholder="日志类型">
+          <el-option label="设备行为分析" value="1"></el-option>
+          <el-option label="物模型数据分析" value="2"></el-option>
+          <el-option label="上行消息分析" value="3"></el-option>
+          <el-option label="下行消息分析" value="4"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-input v-model="formInline.deviceName" placeholder="设备名称"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-input v-model="formInline.keyword" placeholder="关键字"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-date-picker type="datetime" v-model="formInline.startTime" value-format="yyyy-MM-dd HH:mm:ss" placeholder="开始时间"></el-date-picker>
+      </el-form-item>
+      <el-form-item>
+        <el-date-picker type="datetime" v-model="formInline.endTime" value-format="yyyy-MM-dd HH:mm:ss" placeholder="截止时间"></el-date-picker>
+      </el-form-item>
+      <el-form-item>
+        <el-input v-model="formInline.messageId" placeholder="消息id"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-select v-model="formInline.status" placeholder="上下行状态">
+          <el-option label="成功" value="1"></el-option>
+          <el-option label="失败" value="2"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="search">查询</el-button>
+      </el-form-item>
+    </el-form>
     <!-- 日志列表 -->
     <log-list v-if="flag == 0" :data="listData" :loading="loading" @getList="getList"></log-list>
-    <!-- 分页-->
+    <!-- 分页 -->
     <pagination :data="tableData" @pagination="changePage"/>
   </div>
 </template>
@@ -38,14 +59,16 @@
     components: { logList , Pagination},
     data() {
       return {
-        productKey:'', //产品key
-        logType:1,    //日志类型：1:设备行为分析 2:物模型数据分析 3:上行消息分析 4:下行消息分析
-        deviceName:'', //设备名称
-        keyword:'',    //关键字
-        startTime:'',  //开始时间
-        endTime:'',    //截止时间
-        messageId:'',  //消息id
-        status:'',     //上下行状态 1:成功 2:失败
+        formInline:{
+          productKey:'', //产品key
+          logType:'1',   //日志类型：1:设备行为分析 2:物模型数据分析 3:上行消息分析 4:下行消息分析
+          deviceName:'', //设备名称
+          keyword:'',    //关键字
+          startTime:'',  //开始时间
+          endTime:'',    //截止时间
+          messageId:'',  //消息id
+          status:''      //上下行状态 1:成功 2:失败
+        },
         flag: 0,
         listData:[],
         tableData:{
@@ -57,11 +80,6 @@
         loading:false
       }
     },
-    watch: {
-      productKey: function(key) {
-        console.log(key);
-      }
-    },
     created() {
       this.getList();
     },
@@ -69,61 +87,36 @@
       //获取日志列表
       getList(){
         this.loading = true;
-        tableList(Object.assign(this.tableData, {
-          productKey:this.productKey,
-          logType:this.logType,
-          deviceName:this.deviceName,
-          keyword:this.keyword,
-          startTime:this.startTime,
-          endTime:this.endTime,
-          messageId:this.messageId,
-          status:this.status
-        }))
-        .then(res => {
-          setTimeout(() => { this.loading = false; },1000);
-          if(res.code === 200){
-            let {data,...pagination} =  res.data;
-            this.tableData = pagination;
-            this.listData = res.data.list;
-          }else{
-            this.$message.error(res.message);
-          }
-        })
-        .catch(err => {
-          this.loading = false;
-          this.$message.error('获取日志列表失败！');
-        })
+        tableList(Object.assign(this.tableData, this.formInline))
+          .then(res => {
+            setTimeout(() => { this.loading = false; },1000);
+            if(res.code === 200){
+              this.tableData.pageNum = res.data.pageNum;
+              this.tableData.total = res.data.total;
+              res.data.pageSize !== 0 && (this.tableData.pageSize = res.data.pageSize);
+              this.listData = res.data.list;
+            }else{
+              this.$message.error(res.message);
+            }
+          })
+          .catch(err => {
+            this.loading = false;
+            this.$message.error('获取日志列表失败！');
+          })
       },
       //分页
       changePage(){
         this.getList()
+      },
+      //搜索
+      search(event){
+        this.tableData.pageNum = 1;
+        this.getList();
       }
     }
   };
 </script>
 
 <style lang="scss" scoped>
-   #log { padding: 20px; }
-  .search_box{
-    display: inline-block;
-    margin-right: 20px;
-  }
-
-
-   .el-col {
-     border-radius: 4px;
-   }
-   .bg-purple-dark {
-     background: #99a9bf;
-   }
-   .bg-purple {
-     background: #d3dce6;
-   }
-   .bg-purple-light {
-     background: #e5e9f2;
-   }
-   .grid-content {
-     border-radius: 4px;
-     min-height: 36px;
-   }
+  #log { padding: 20px; }
 </style>

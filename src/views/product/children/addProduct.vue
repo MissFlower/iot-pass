@@ -9,16 +9,23 @@
         <el-input v-model="ruleForm.productName"></el-input>
       </el-form-item>
       <el-form-item label="所属品类" prop="standardSelect" >
-        <div class="pb10">
+        <div class="pb10">           
           <el-radio-group v-model="ruleForm.category" @change="categoryChange">
             <el-radio label="标准品类"></el-radio>
             <el-radio label="自定义品类"></el-radio>
           </el-radio-group>
-        </div>
-        <el-select v-model="ruleForm.standardSelect" filterable  placeholder="请选择标准品类" v-show="standardSelectState">
-          <el-option label="WiFi模板" :value="1"></el-option>
-          <el-option label="4G模板" :value="2"></el-option>
-        </el-select>
+        </div>   
+        <div @click="standardSelectDrawer = true">
+          <el-input
+            placeholder="请选择标准品类"
+            suffix-icon="el-icon-arrow-down"
+            v-show="standardSelectState"
+            v-model="ruleForm.standardSelect"
+            class="standardSelectInput"
+            disabled
+            >
+          </el-input>
+        </div>     
       </el-form-item>
      
      <el-form-item label="节点类型" prop="nodeType">        
@@ -68,17 +75,67 @@
         <el-button @click="goBack">取消</el-button>
       </el-form-item>
     </el-form>
+    <!-- 选择品类 -->
+    <el-drawer
+      title="选择品类!"
+      :visible.sync="standardSelectDrawer"
+      direction="rtl"
+      size="40%">
+      <div>
+         <el-select v-model="standardSelectValue" placeholder="请选择">
+            <el-option
+              v-for="item in standardSelectOption"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+         <div class="standardSelectSearch_wrp">
+            <el-input
+            placeholder="请输入内容"
+            prefix-icon="el-icon-search"
+            v-model="standardSelectSearch">
+          </el-input>
+         </div>
+      </div>
+      <div >
+         <el-table :data="standardSelectTlData">
+          <el-table-column property="date" label="日期"></el-table-column>
+          <el-table-column property="name" label="姓名"></el-table-column>
+          <el-table-column property="address" label="地址"></el-table-column>
+        </el-table>
+        <!-- 分页-->
+        <pagination :data="tableData" @pagination="changePage" class="tr"/>
+      </div>
+      <div class="demo-drawer__footer" style="margin-top: 20px;text-align: right;">
+        <el-button @click="standardSelectDrawer = false">关 闭</el-button>        
+      </div>     
+    </el-drawer>
   </div>
 </template>
 
 <script>
-import { productSave } from "@/api/product"
+import Pagination from "@/components/Pagination"
+import { productSave, domainList, categoryPage } from "@/api/product"
 export default {
+  components: { Pagination },
   props: ["info"],
   data() {
     return {
+      standardSelectSearch: '',
+      standardSelectValue: '',
+      standardSelectOption: [],
+      standardSelectTlData: [],
+      standardSelectDrawer: false,
       loading: false,
       standardSelectState: true,
+      tableData:{        
+        pageCount: 0, //总页数
+        total: 0, // 总条数
+        pageSize: 10, //一页大小
+        pageNum: 0, // 第几页 从0开始           
+       
+      },
       ruleForm: {
           productName: '',
           standardSelect: '',        
@@ -139,7 +196,33 @@ export default {
         ]
     };
   },
+  watch: {
+    standardSelectValue(val){
+      this.getCategoryPage()
+    }
+  },
+  created() {
+    domainList().then(res => {
+      if(res.code === 200){
+          this.standardSelectOption = res.data;
+          this.standardSelectValue = res.data[0].id
+      }
+    })
+  },
   methods: {
+    //分页
+     changePage(){      
+      this.getCategoryPage()
+    },
+    getCategoryPage(){
+      categoryPage(Object.assign(this.tableData,{domainId: this.standardSelectValue,name: this.standardSelectSearch})).then(res => {
+          if(res.code === 200){
+            this.standardSelectTlData = res.data.data
+          }
+      }).catch(err => {
+
+      })
+    },
     //提交表单
     submitForm(formName) {        
         var categoryId = null;        
@@ -202,6 +285,39 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+::v-deep .el-drawer{
+  outline: none;
+  min-width: 510px;
+  .el-drawer__header span{
+    outline: none;
+  }
+}
+
+
+::v-deep .el-drawer__body {
+    padding: 20px;
+}
+
+
+.standardSelectInput{
+  cursor: pointer;
+  ::v-deep input{
+    background: #fff!important;
+    cursor: pointer !important;
+  }
+  ::v-deep.el-input__icon{
+    cursor: pointer !important;
+  }
+}
+
+
+.standardSelectSearch_wrp{
+  width: 180px;
+  display: inline-block;
+  margin-left: 20px;
+}
+
+
 #addProduct {
   position: relative;
   width: 100%;

@@ -142,3 +142,18 @@ export function bandEmailFun(data) {
     data: Qs.stringify(data)
   });
 }
+
+/*
+  退出登录
+
+  userId  用户id
+*/
+
+export function  logout(data) {
+  return request({
+    url: "/user/logout",
+    method: "post",
+    headers: headerFrom,
+    data: Qs.stringify(data)
+  });
+}

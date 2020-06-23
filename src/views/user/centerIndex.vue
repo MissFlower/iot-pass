@@ -1,7 +1,7 @@
 <!-- 
   文件作者：mawenjuan
-  创建日期：2020.6.17
-  文件说明：菜单的详情、编辑、创建页面
+  创建日期：2020.6.21
+  文件说明：个人中心
  -->
 
 <template>
@@ -38,14 +38,25 @@ export default {
       }]
     }
   },
-  mounted () {
-    const path = this.$route.path
-    if (path === "/center") {
-      this.$router.push(`${path}/${this.menu[0].path}`)
-      this.activeTab = this.menu[0].path
+  watch: {
+    $route: function () {
+      this.init();
     }
   },
+  mounted () {
+    this.init();
+  },
   methods: {
+    init () {
+      const path = this.$route.path
+      if (path === "/center") {
+        this.$router.push(`${path}/${this.menu[0].path}`)
+        this.activeTab = this.menu[0].path
+      } else {
+        const paths = path.split("/")
+        this.activeTab = paths[paths.length - 1]
+      }
+    },
     handleSelectTab (item) {
       this.$router.push(item.path)
       this.activeTab = item.path

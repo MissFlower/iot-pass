@@ -137,8 +137,11 @@ export default {
           bandEmailFun(this.formData).then(res => {
             if (res.code === 200) {
               this.$cookie.setValue("emailStatus", 1);
-              this.flag = 2;
-              this.active
+              this.$store.dispatch("getUserInfo")
+              this.$router.push({
+                name: "success",
+                params: { id: 1 }
+              })
             } else {
               this.$message.error(res.message);
             }

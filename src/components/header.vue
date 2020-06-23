@@ -7,9 +7,9 @@
     <div class="f12 mr20 text hand" v-if="!flag" @click="handleGoHome">
       控制台
     </div>
-    <el-dropdown class="avatar-container" trigger="click" v-if="loginStatus">
+    <el-dropdown class="avatar-container" trigger="hover" v-if="loginStatus">
       <div class="avatar-wrapper df ai_c">
-        <svg-icon icon-class="photo" class="user-avatar"></svg-icon>
+        <svg-icon icon-class="photo" class="user-avatar" @click.stop="handleGoUserCenter"></svg-icon>
         <!-- <span>{{ userName }}</span> -->
         <!-- <i class="el-icon-caret-bottom c2" /> -->
       </div>
@@ -22,7 +22,7 @@
           <div class="drop-link-item hand" v-for="(item, index) in dropArr" :key="index" @click.stop="handleGoPath(item)">{{item.name}}</div>
         </div>
         <el-dropdown-item divided class="tc">
-          <span style="display:block;" @click="logout">退出登录</span>
+          <span style="display:block;" @click="logoutFun">退出登录</span>
         </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
@@ -38,7 +38,7 @@
 
 <script>
 import { delBreadCrumbFun } from "@/data/fun";
-import { getUserInfo } from "@/api";
+import { getUserInfo, logout } from "@/api";
 export default {
   data() {
     return {
@@ -46,15 +46,15 @@ export default {
       dropArr: [
         {
           name: "基本资料",
-          path: ""
+          path: "/center/basicInfo"
         },
         {
           name: "实名认证",
-          path: ""
+          path: "/center/authc"
         },
         {
           name: "安全设置",
-          path: ""
+          path: "/center/secure"
         }
       ]
     };
@@ -64,6 +64,9 @@ export default {
       return this.$store.state.app.userInfo
         ? this.$store.state.app.userInfo.account
         : null;
+    },
+    userInfo() {
+      return this.$store.state.app.userInfo
     },
     loginStatus() {
       return this.$store.state.app.loginStatus;
@@ -102,17 +105,29 @@ export default {
       });
       this.$store.dispatch("setBreadcrumb", list);
     },
-    logout() {
-      this.$cookie.removeValue("access_token");
-      this.$cookie.removeValue("userName");
-      this.$store.dispatch("setUserInfo", null);
-      this.$store.dispatch("setLoginStatus", false);
-      this.$cookie.removeValue("emailStatus");
-      let path = "/index";
-      if (this.$route.path !== path) {
-        path = `${path}?redirect=${this.$route.path}`;
-      }
-      this.$router.push(path);
+    logoutFun() {
+      this.$store.dispatch("setLoading", true)
+      logout({
+        userId: this.userInfo.id
+      }).then(res => {
+        if (res.code === 200) {
+          this.$cookie.removeValue("access_token");
+          this.$cookie.removeValue("userName");
+          this.$store.dispatch("setUserInfo", null);
+          this.$store.dispatch("setLoginStatus", false);
+          this.$cookie.removeValue("emailStatus");
+          localStorage.removeItem("info")
+          let path = "/index";
+          if (this.$route.path !== path) {
+            path = `${path}?redirect=${this.$route.path}`;
+          }
+          this.$router.push(path);
+        } else {
+          this.$message.error(res.message)
+        }
+        this.$store.dispatch("setLoading", false)
+      })
+      
     },
     handleLogin() {
       this.$router.push("/login");
@@ -134,7 +149,7 @@ export default {
         if (pathArr.indexOf(path) === -1) {
           this.$router.push("/add-email-tips");
         }
-      } else if (path === "/add-email-tips" || path === "/verify") {
+      } else if (path === "/add-email-tips") {
         this.$router.push("/home");
       }
     },
@@ -147,6 +162,9 @@ export default {
       } else {
         this.$router.push(item.path);
       }
+    },
+    handleGoUserCenter () {
+      this.$router.push("/center")
     }
   }
 };

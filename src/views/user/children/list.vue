@@ -80,7 +80,7 @@
             @click="handleShowCon(1, scope.row)"
           ></i>
           <i
-            v-if="authArr.indexOf('mgr_remove') > -1"
+            v-if="authArr.indexOf('mgr_delete') > -1"
             class="el-icon-close red hand f20"
             @click="handleClose(scope.row)"
           ></i>

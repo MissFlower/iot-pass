@@ -1,3 +1,8 @@
+<!--
+文件作者：liuxixiu
+创建日期：2020.6.17
+文件说明：固件详情
+ -->
 <template>
     <div class="details">
         <div class="details-tit clearfix">
@@ -74,8 +79,12 @@
                <el-tab-pane label="批次管理" name="first">
                    <el-form ref="form" :model="batchManage" label-width="80px" :inline="true">
                        <el-form-item>
-                           <el-button type="primary">验证固件</el-button>
-                           <el-button>批量升级</el-button>
+                           <el-button type="primary" @click="checkFm">验证固件</el-button>
+                           <!--<el-tooltip class="item" effect="dark" content="请先验证固件，再进行批量升级" placement="top" v-if="details.detailList.fmStatus !== 2">-->
+                               <!--<el-button disabled>批量升级</el-button>-->
+                           <!--</el-tooltip>-->
+                           <!--<el-button v-else @click="upgradeSubmit">批量升级</el-button>-->
+                           <el-button @click="upgradeSubmit">批量升级</el-button>
                        </el-form-item>
                        <el-form-item>
                            <el-input
@@ -86,33 +95,35 @@
                        </el-form-item>
                    </el-form>
                    <el-table :data="batchManage.batchList" border stripe>
-                       <el-table-column label="批次ID" prop="id"></el-table-column>
-                       <el-table-column label="批次类型" prop="type" :formatter="formatType"></el-table-column>
+                       <el-table-column label="批次ID" prop="upgrade.id"></el-table-column>
+                       <el-table-column label="批次类型" prop="upgrade.type" :formatter="formatType"></el-table-column>
                        <el-table-column
                            label="升级策略"
-                           prop="ugType"
+                           prop="upgrade.ugType"
                            :formatter="formatUgType"
                        ></el-table-column>
                        <el-table-column
                            label="状态"
-                           prop="ugStatus"
+                           prop="upgrade.ugStatus"
                            :formatter="formatUgStatus"
                        ></el-table-column>
                        <el-table-column
                            label="添加时间"
-                           prop="createTime"
+                           prop="upgrade.createTime"
                        ></el-table-column>
-                       <!--<el-table-column label="操作">-->
-                           <!--<a class="oprate_btn">查看</a>-->
-                       <!--</el-table-column>-->
+                       <el-table-column label="操作">
+                           <template scope="scope">
+                               <a class="oprate_btn" @click="toBatchDetails(scope.row.upgrade.id)">查看</a>
+                           </template>
+                       </el-table-column>
                    </el-table>
                    <el-pagination
-                       @current-change="handleCurrentChange"
+                       @current-change="handleBatchChange"
                        :current-page.sync="batchManage.page"
-                       :page-size="100"
+                       :page-size="batchManage.pageSize"
                        layout="total, prev, pager, next"
                        class="tr mt20"
-                       v-if="batchManage.page > 1"
+                       :total="batchManage.total"
                    >
                    </el-pagination>
                </el-tab-pane>
@@ -122,12 +133,14 @@
                            <el-input
                                v-model="devManage.deviceName"
                                placeholder="请输入deviceName"
+                               @keyup.enter.native="searchDevManage"
                            ></el-input>
                        </el-form-item>
                        <el-form-item>
                            <el-input
                                v-model="devManage.upgradeId"
                                placeholder="请输入批次ID"
+                               @keyup.enter.native="searchDevManage"
                            ></el-input>
                        </el-form-item>
                    </el-form>
@@ -139,11 +152,7 @@
                            prop="upgradeId"
                        ></el-table-column>
                        <el-table-column
-                           label="原版本号"
-                           prop="srcVersion"
-                       ></el-table-column>
-                       <el-table-column
-                           label="要升级成的版本号"
+                           label="当前版本号"
                            prop="destVersion"
                        ></el-table-column>
                        <el-table-column
@@ -151,18 +160,19 @@
                            prop="upgradeStatus"
                            :formatter="formatUpgradeStatus"
                        ></el-table-column>
-                       <!--<el-table-column label="操作">-->
-                           <!--<a class="oprate_btn">查看</a>-->
-                       <!--</el-table-column>-->
+                       <el-table-column label="操作">
+                           <template scope="scope">
+                            <a class="oprate_btn" @click="toBatchDetails(scope.row.upgradeId)">查看</a>
+                           </template>
+                       </el-table-column>
                    </el-table>
                    <el-pagination
-                       @current-change="handleCurrentChange"
+                       @current-change="handleDevChange"
                        :current-page.sync="devManage.pageNum"
-                       :page-size="100"
+                       :page-size="devManage.pageSize"
                        layout="total, prev, pager, next"
                        :total="devManage.total"
                        class="tr mt20"
-                       v-if="devManage.pageNum > 1"
                    >
                    </el-pagination>
                </el-tab-pane>
@@ -286,12 +296,28 @@
                </el-tab-pane>
            </el-tabs>
        </div>
+        <!--编辑固件信息-->
         <EditFirmware :EditDialogVisible="fmInfo.EditDialogVisible" :detailInfo="fmInfo.fmInfoList" @changeVisible="changeVisible" @changeDetail="changeDetail"/>
+        <!--验证固件-->
+        <CheckFirmware
+            :checkFmVisible="checkFmVisible"
+            :checkFmId="fmId"
+            @checkVisible="checkVisible"
+            @refreshList="refreshList"
+        ></CheckFirmware>
+        <!--批量升级-->
+        <UpgradeFirmware
+            :upgradeFmVisible="upgradeFmVisible"
+            :checkFmId="checkFmId"
+            @upgradeVisible="upgradeVisible"
+        ></UpgradeFirmware>
     </div>
 </template>
 <script>
     import { getFmDetails, upgradeList, upgradeDeviceList } from '@/api/fireware'
     import EditFirmware from '@/components/firmware/editFirmware'
+    import CheckFirmware from "@/components/firmware/checkFirmware";
+    import UpgradeFirmware from "@/components/firmware/upgradeFirmware";
     export default {
         data () {
             return {
@@ -312,25 +338,41 @@
                 devManage: { // 设备列表参数
                     deviceName: '',
                     upgradeId: '',
-                    devList: []
+                    devList: [],
+                    total: 0,
+                    pageNum: 1,
+                    pageSize: 20
                 },
                 fmInfo: {
                     fmInfoList: {},
                     EditDialogVisible: false,
                 },
-                fmId: ''
+                fmId: '',
+                checkFmVisible: false,
+                upgradeFmVisible: false,
+                checkFmId: ''
             }
         },
         components: {
-            EditFirmware
+            EditFirmware,
+            CheckFirmware,
+            UpgradeFirmware
         },
         mounted () {
-            this.fmId = this.$route.query.id
+            this.fmId = String(this.$route.query.id)
             this.getDetails()
             this.getUpgradeList() // 批次管理
-            this.getDeviceList() // 设备列表
         },
         methods: {
+            // tab切换方法
+            handleClick (value) {
+                if (value.index === '0') {
+                    this.getUpgradeList()
+                } else if (value.index === '1') {
+                    this.getDeviceList()
+                }
+            },
+            // 获取详情
             getDetails () {
                 let formData = new FormData ()
                 formData.append('id', this.fmId)
@@ -351,54 +393,117 @@
             changeVisible () {
                 this.fmInfo.EditDialogVisible = false
             },
+            // 编辑固件信息方法
             changeDetail () {
                 this.getDetails()
             },
-            // 批次管理
+            // 批次管理列表
             getUpgradeList () {
-                this.batchManage.fmId = this.fmId
-                upgradeList ({
-                    pageNum: this.batchManage.pageNum,
-                    pageSize: this.batchManage.pageSize,
-                    fmId: this.batchManage.fmId,
-                    id: this.batchManage.id
-                }).then ( res => {
+                let formData = new FormData()
+                formData.append('pageNum', this.batchManage.pageNum)
+                formData.append('pageSize', this.batchManage.pageSize)
+                formData.append('fmId', this.fmId)
+                formData.append('id', this.batchManage.id)
+                upgradeList (formData).then ( res => {
                     if (res.code === 200) {
                         this.batchManage.batchList = res.data.list
+                        this.batchManage.total = res.data.total
                     } else {
                         this.$message.error(res.message);
                     }
                 })
             },
+            // 搜索批次管理
             searchBatchManage () {
                 this.batchManage.pageNum = 1
                 this.getUpgradeList()
             },
-            // 设备列表
+            // 批次管理分页
+            handleBatchChange () {
+                this.getUpgradeList()
+            },
+            upgradeSubmit () {
+                this.upgradeFmVisible = true;
+                this.checkFmId = this.fmId
+                // if (this.details.detailList.fmStatus === 2) {
+                //     this.upgradeFmVisible = true;
+                //     this.checkFmId = String(this.details.detailList.id);
+                // }
+            },
+            // 批量升级
+            upgradeVisible() {
+                this.upgradeFmVisible = false;
+            },
+            // 获取设备列表
             getDeviceList () {
-                upgradeDeviceList ({
-                    deviceName: this.devManage.deviceName,
-                    upgradeId: this.devManage.upgradeId
-                }).then( res => {
+                let formData = new FormData()
+                if (this.devManage.deviceName) {
+                    formData.append('deviceName', this.devManage.deviceName)
+                }
+                formData.append('upgradeId', this.devManage.upgradeId)
+                formData.append('pageNum', this.devManage.pageNum)
+                formData.append('pageSize', this.devManage.pageSize)
+                upgradeDeviceList (formData).then( res => {
                     if (res.code === 200) {
-                        this.devManage.devList = res.data
+                        this.devManage.devList = res.data.list
+                        this.devManage.total = res.data.total
                     } else {
                         this.$message.error(res.message);
                     }
                 })
             },
+            // 设备列表分页
+            handleDevChange () {
+                this.getDeviceList()
+            },
+            // 设备列表搜索
+            searchDevManage () {
+                this.getDeviceList()
+            },
+            // 验证固件方法
+            checkFm () {
+                let fmStatus = this.details.detailList.fmStatus
+                if (fmStatus === 0) {
+                    this.checkFmVisible = true;
+                } else {
+                    this.openCheckFm(fmStatus);
+                }
+            },
+            openCheckFm(status) {
+                let title = status === 1 ? "固件验证中" : "固件验证成功";
+                this.$alert(`${title}`, "验证固件", {
+                    confirmButtonText: "关闭"
+                });
+            },
+            checkVisible() {
+                this.checkFmVisible = false;
+            },
+            refreshList() {
+                this.fetchFmList();
+            },
+            // 跳转批次详情
+            toBatchDetails (upgradeId) {
+                this.$router.push({
+                    path: 'batchDetails',
+                    query: {
+                        id: this.fmId,
+                        upgradeId: upgradeId
+                    }
+                })
+            },
+            // 返回上一级菜单
             goBack () {
                 this.$router.go(-1)
             },
-            handleClick () {},
+            // 格式化表格内容
             formatType (row) {
-                return row.type === "0" ? "验证固件" : "批量升级"
+                return row.upgrade.type === "0" ? "验证固件" : "批量升级"
             },
             formatUgType (row) {
-                return row.ugType === "1" ? "静态升级" : "动态升级"
+                return row.upgrade.ugType === "1" ? "静态升级" : "动态升级"
             },
             formatUgStatus (row) {
-                return row.ugStatus === 1 ? "待升级" : row.ugStatus === 2 ? "升级中" : row.ugStatus === 3 ? "升级完成": "已取消"
+                return row.upgrade.ugStatus === 1 ? "待升级" : row.upgrade.ugStatus === 2 ? "升级中" : row.upgrade.ugStatus === 3 ? "升级完成": "已取消"
             },
             formatUpgradeStatus (row) {
                 return row.upgradeStatus === 0 ? "待升级" : row.ugStatus === 1 ? "升级中" : row.ugStatus === 2 ? "已完成": "升级失败"
@@ -447,6 +552,10 @@
             margin-top: 3px;
             margin-left: 20px;
         }
+    }
+    .disabled {
+        color: #999;
+        cursor: text;
     }
     .el-row {
         margin-bottom: 20px;

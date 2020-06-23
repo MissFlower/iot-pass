@@ -5,6 +5,8 @@ const getter = {
   loginStatus: state => state.app.loginStatus,
   breadcrumdList: state => state.app.breadcrumdList,
   menuLists: state => state.app.menuLists,
-  functionArr: state => state.app.functionArr
+  functionArr: state => state.app.functionArr,
+  routes: state => state.router.routes,
+  addRoutes: state => state.router.addRoutes,
 };
 export default getter;

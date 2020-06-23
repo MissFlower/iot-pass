@@ -1,3 +1,8 @@
+<!--
+文件作者：liuxixiu
+创建日期：2020.6.17
+文件说明：固件编辑
+ -->
 <template>
     <div>
         <el-dialog title="编辑固件" :visible.sync="EditDialogVisible" width="25%" :before-close='closeDialog'>

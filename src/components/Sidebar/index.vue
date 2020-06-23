@@ -32,8 +32,10 @@ export default {
     return {
       baseList: [
         {
-          icon: "home",
-          name: "首页",
+          meta: {
+            icon: "home",
+            name: "首页"
+          },
           path: "/home"
         }
       ],
@@ -46,46 +48,20 @@ export default {
       const { path } = route;
       return path;
     },
-    showLogo() {
-      return this.$store.state.settings.sidebarLogo;
-    },
-    menuList() {
-      return this.$store.state.app.menuLists;
+    // showLogo() {
+    //   return this.$store.state.settings.sidebarLogo;
+    // },
+    permissionRouter() {
+      return this.$store.state.router.addRoutes
     }
   },
   watch: {
-    menuList: function() {
-      this.dealTreeFun();
+    permissionRouter() {
+      this.list = this.baseList.concat(this.permissionRouter)
     }
   },
   mounted() {
-    this.dealTreeFun();
-  },
-  methods: {
-    dealTreeFun() {
-      if (this.menuList.length > 0 && this.menuList[0].children) {
-        this.list = JSON.parse(JSON.stringify(this.baseList)).concat(
-          this.menuList[0].children
-        );
-      }
-    }
-    // dealRoutesFun(routes, prePath) {
-    //   routes.forEach(route => {
-    //     this.fun(route, prePath);
-    //   });
-    // },
-    // fun(route, prePath) {
-    //   if (route.meta && route.meta.code) {
-    //     this.routeObj[route.meta.code] = JSON.parse(JSON.stringify(prePath));
-    //     if (route.children && route.children.length > 0) {
-    //       console.log("-----------------------------------------------");
-    //       prePath.push(route.path);
-    //       console.log(prePath);
-    //       console.log(route.children);
-    //       // this.dealRoutesFun(route.children, prePath);
-    //     }
-    //   }
-    // }
+    this.list = this.baseList.concat(this.permissionRouter)
   }
 };
 </script>

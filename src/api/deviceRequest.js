@@ -4,6 +4,9 @@ import Qs from "qs";
 const headerFrom = {
     "Content-Type": "application/x-www-form-urlencoded"
 };
+const headerFrom_json = {
+    "Content-Type": "application/json"
+};
 const headerFrom_Get = {
     "Content-Type": "application/json;charset=UTF-8"
 };
@@ -20,10 +23,10 @@ export function deviceList(data) {
 export function deleteDevice(data) {
     // 设备删除
     return request({
-        url: "/device/deleteDevice",
+        url: "/device/delete",
         method: "post",
-        headers: headerFrom,
-        data: Qs.stringify(data)
+        headers: headerFrom_json,
+        data: data
     });
 }
 
@@ -67,12 +70,12 @@ export function deviceUpdate(data) {
     });
 }
 
-export function deviceEnable(data) {
+export function deviceBatchEnable(data) {
     // 设备启、禁用
     return request({
-        url: "/device/enable",
+        url: "/device/batchEnable",
         method: "post",
-        headers: headerFrom,
-        data: Qs.stringify(data)
+        headers: headerFrom_json,
+        data: data
     });
 }

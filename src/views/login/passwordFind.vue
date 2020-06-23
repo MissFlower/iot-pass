@@ -21,9 +21,9 @@
             class="w200"
             :disabled="flag == 1"
           ></el-input>
-          <router-link to="" class="red f12 ml20">
+          <!-- <router-link to="" class="red f12 ml20">
             忘记登录名，请点此找回登录名
-          </router-link>
+          </router-link> -->
         </el-form-item>
         <el-form-item label="新密码" v-if="flag" prop="password">
           <el-input
@@ -70,7 +70,21 @@
 import { verifyAccount, updatePassword } from "@/api";
 export default {
   data() {
-    const validatePaasword = (value, rule, callback) => {
+    const validatePassword = (value, rule, callback) => {
+      if (this.formData.password === "") {
+        callback(new Error("请输入新密码"));
+      } else {
+        const pwdRegex = new RegExp('(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])');
+        if (!pwdRegex.test(this.formData.password)) {
+          callback(new Error("您的密码复杂度太低（密码中必须包含大小写字母、数字)！"));
+        } else if(this.password !== "") {
+          this.$refs.form.validateField("newpassword");
+        } else {
+          callback();
+        }
+      }
+    };
+    const validateNewPaasword = (value, rule, callback) => {
       if (this.password !== this.formData.password) {
         callback(new Error("两次密码输入不同"));
       } else {
@@ -88,10 +102,13 @@ export default {
       rules: {
         account: [{ required: true, message: "请输入用户名", trigger: "blur" }],
         password: [
-          { required: true, message: "请输入新密码", trigger: "blur" }
+          { required: true, validator: validatePassword, trigger: "blur" },
+          {
+            min: 8, max: 14, message: '长度在 8 到 14 个字符', trigger: 'blur'
+          }
         ],
         newpassword: [
-          { required: true, validator: validatePaasword, trigger: "blur" }
+          { required: true, validator: validateNewPaasword, trigger: "blur" }
         ]
       }
     };

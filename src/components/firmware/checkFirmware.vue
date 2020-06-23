@@ -1,3 +1,8 @@
+<!--
+文件作者：liuxixiu
+创建日期：2020.6.17
+文件说明：验证固件
+ -->
 <template>
   <div>
     <el-dialog
@@ -13,20 +18,20 @@
         class="demo-ruleForm"
       >
         <el-form-item label="待升级版本号">
-          <el-input type="text" v-model="form.srcVersions"></el-input>
+          <el-input type="text" v-model="srcVersion"></el-input>
         </el-form-item>
-          <el-form-item label="待验证设备">
-              <el-input type="text" v-model="form.deviceNames"></el-input>
-          </el-form-item>
         <!--<el-form-item label="待验证设备">-->
-        <!--<el-select-->
-        <!--v-model="form.deviceNames"-->
-        <!--multiple-->
-        <!--placeholder="请选择设备"-->
-        <!--@focus="selectDevice"-->
-        <!--&gt;-->
-        <!--</el-select>-->
+        <!--<el-input type="text" v-model="form.deviceNames"></el-input>-->
         <!--</el-form-item>-->
+        <el-form-item label="待验证设备">
+          <el-select
+            v-model="form.deviceNames"
+            multiple
+            placeholder="请选择设备"
+            @focus="selectDevice"
+          >
+          </el-select>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="closeDialog">取 消</el-button>
@@ -40,11 +45,7 @@
       :show-close="showClose"
     >
       <p>
-        {{
-          checkStatus === "0"
-            ? "固件验证中"
-            : "固件验证失败"
-        }}
+        {{ checkStatus === "0" ? "固件验证中" : "固件验证失败" }}
       </p>
       <p v-if="checkStatus === '2'">提示：{{ checkMessage }}</p>
       <el-progress
@@ -58,6 +59,7 @@
     <ChooseDevice
       :chooseDeviceVisible="chooseDeviceVisible"
       @deviceVisible="deviceVisible"
+      @multipleDevice="multipleDevice"
     ></ChooseDevice>
   </div>
 </template>
@@ -70,6 +72,9 @@ export default {
       type: Boolean
     },
     checkFmId: {
+      type: String
+    },
+    srcVersion: {
       type: String
     }
   },
@@ -93,7 +98,8 @@ export default {
   },
   methods: {
     verifySubmit() {
-        this.form.fmId = this.checkFmId;
+      this.form.fmId = this.checkFmId;
+      this.form.srcVersions = this.srcVersion
       let formData = new FormData();
       formData.append("fmId", this.form.fmId);
       formData.append("srcVersions", this.form.srcVersions);
@@ -127,6 +133,11 @@ export default {
     closeDialog() {
       this.$refs["ruleForm"].resetFields(); // 清空弹出框校验
       this.$emit("checkVisible", this.checkFmVisible);
+    },
+    // 获取选中的设备
+    multipleDevice(val) {
+      console.log(val);
+      this.form.deviceNames = val;
     },
     selectDevice() {
       this.chooseDeviceVisible = true;

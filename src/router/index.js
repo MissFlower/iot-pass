@@ -10,7 +10,7 @@ Router.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err);
 };
 
-const routes = [
+export const constantRoutes = [
   {
     path: "/",
     redirect: "/index",
@@ -90,7 +90,22 @@ const routes = [
         meta: { name: "首页" }
       }
     ]
-  },
+  }, {
+    path: "/center",
+    component: resolve => require(["@/views/user/centerIndex"], resolve),
+    children: [{
+      path: "secure",
+      component: resolve => require(["@/views/user/center/secure"], resolve)
+    }, {
+      path: "basicInfo",
+      component: resolve => require(["@/views/user/center/basicInfo"], resolve)
+    }, {
+      path: "authc",
+      component: resolve => require(["@/views/user/center/authc"], resolve)
+    }]
+  }
+]
+export const asyncRoutes =[
   {
     path: "/menu",
     redirect: "/menu/index",
@@ -134,16 +149,17 @@ const routes = [
     path: "/product",
     redirect: "/product/index",
     component: Layout,
-    meta: { name: "产品管理" },
+    meta: { name: "产品管理", code: "product" },
     children: [
       {
         path: "index",
         component: resolve => require(["@/views/product/index"], resolve),
-        meta: { name: "产品管理" }
+        meta: { name: "产品管理", code: "product" }
       },
       {
         path: "detail/:key",
-        component: resolve => require(["@/views/product/children/detail"], resolve),
+        component: resolve =>
+          require(["@/views/product/children/detail"], resolve),
         meta: { name: "产品详情" }
       },
       {
@@ -169,18 +185,18 @@ const routes = [
     path: "/device",
     redirect: "/device/deviceManage",
     component: Layout,
-    meta: { name: "设备管理" },
+    meta: { name: "设备管理", code: "device" },
     children: [
       {
         path: "deviceManage",
         component: resolve => require(["@/views/device/deviceManage"], resolve),
-        meta: { name: "设备管理" }
+        meta: { name: "设备管理", code: "device" }
       },
       {
         path: "deviceInfo",
         component: resolve =>
           require(["@/views/device/children/deviceInfo"], resolve),
-        meta: { name: "设备详情" }
+        meta: { name: "设备详情", code: "device_detail" }
       }
     ]
   },
@@ -188,17 +204,22 @@ const routes = [
     path: "/firmware",
     redirect: "/firmware/index",
     component: Layout,
-    meta: { name: "固件管理及升级" },
+    meta: { name: "固件管理及升级", code: "firmware" },
     children: [
       {
         path: "index",
         component: resolve => require(["@/views/firmware/index"], resolve),
+        meta: { name: "固件管理及升级", code: "firmware" }
+      },
+      {
+        path: "details",
+        component: resolve => require(["@/views/firmware/details"], resolve),
         meta: { name: "固件管理及升级" }
       },
       {
-          path: "details",
-          component: resolve => require(["@/views/firmware/details"], resolve),
-          meta: { name: "固件管理及升级" }
+        path: "batchDetails",
+        component: resolve => require(["@/views/firmware/batchDetails"], resolve),
+        meta: { name: "固件管理及升级" }
       }
     ]
   },
@@ -206,18 +227,27 @@ const routes = [
     path: "/log",
     redirect: "/log/index",
     component: Layout,
-    meta: { name: "日志管理" },
+    meta: { name: "日志管理", code: "log" },
     children: [
       {
         path: "index",
         component: resolve => require(["@/views/log/index"], resolve),
-        meta: { name: "日志管理" }
+        meta: { name: "日志管理", code: "log" }
       }
     ]
   }
 ];
-const router = new Router({
-  routes
-});
 
-export default router;
+const createRouter = () => new Router({
+  scrollBehavior: () => ({ y: 0 }),
+  routes: constantRoutes
+})
+
+const router = createRouter()
+
+export function resetRouter () {
+  const newRouter = createRouter()
+  router.matcher = newRouter.matcher // reset router
+}
+
+export default router

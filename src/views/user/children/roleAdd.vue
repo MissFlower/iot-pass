@@ -116,7 +116,7 @@ export default {
         .then(res => {
           if (res.code === 200) {
             this.$message.success("用户的角色设置成功");
-            this.reload();
+            this.reload(1);
             this.close();
           } else {
             this.$message.error(res.message);

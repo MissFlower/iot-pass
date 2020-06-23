@@ -75,8 +75,22 @@ export default {
     const validateCode = (rule, value, callback) => {
       if (this.$fun.trim(this.code) === "") {
         callback(new Error("请输入验证码"));
+      } else if (this.$fun.trim(this.code).length !== 6) {
+        callback(new Error("验证码格式错误"));
       } else {
         callback();
+      }
+    };
+    const validatePassword = (value, rule, callback) => {
+      if (this.formData.password === "") {
+        callback(new Error("请输入密码"));
+      } else {
+        const pwdRegex = new RegExp('(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])');
+        if (!pwdRegex.test(this.formData.password)) {
+          callback(new Error("您的密码复杂度太低（密码中必须包含大小写字母、数字)！"));
+        } else {
+          callback();
+        }
       }
     };
     return {
@@ -91,9 +105,12 @@ export default {
       seconds: 61,
       rules: {
         account: [{ required: true, message: "请输入用户名", trigger: "blur" }],
-        password: [{ required: true, message: "请输入密码", trigger: "blur" }],
+        password: [{ required: true, validator: validatePassword, trigger: "blur" }],
         phone: [{ required: true, validator: validatePhone, trigger: "blur" }],
-        code: [{ required: true, validator: validateCode, trigger: "blur" }]
+        code: [
+          { required: true, validator: validateCode, trigger: "blur" },
+          { type: 'number', message: '请输入正确的验证码', trigger: "blur"}
+        ]
       }
     };
   },

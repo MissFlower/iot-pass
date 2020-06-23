@@ -9,17 +9,20 @@
     </div>
     <el-dropdown class="avatar-container" trigger="click" v-if="loginStatus">
       <div class="avatar-wrapper df ai_c">
-        <span>{{ userName }}</span>
-        <i class="el-icon-caret-bottom c2" />
+        <svg-icon icon-class="photo" class="user-avatar"></svg-icon>
+        <!-- <span>{{ userName }}</span> -->
+        <!-- <i class="el-icon-caret-bottom c2" /> -->
       </div>
       <el-dropdown-menu slot="dropdown" class="user-dropdown">
-        <router-link to="/">
-          <el-dropdown-item>
-            Home
-          </el-dropdown-item>
-        </router-link>
-        <el-dropdown-item divided>
-          <span style="display:block;" @click="logout">Log Out</span>
+        <div class="df ai_c p10">
+          <svg-icon icon-class="photo" class="user-avatar mr10"></svg-icon>
+          <span>{{ userName }}</span> 
+        </div>
+        <div class="drop-link df ai_c f12 c6">
+          <div class="drop-link-item hand" v-for="(item, index) in dropArr" :key="index" @click.stop="handleGoPath(item)">{{item.name}}</div>
+        </div>
+        <el-dropdown-item divided class="tc">
+          <span style="display:block;" @click="logout">退出登录</span>
         </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
@@ -34,18 +37,32 @@
 </template>
 
 <script>
-import { delBreadCrumbFun, dealUserTreeFun } from "@/data/fun";
+import { delBreadCrumbFun } from "@/data/fun";
 import { getUserInfo } from "@/api";
 export default {
   data() {
     return {
-      flag: false // 是否在登录页面
+      flag: false, // 是否在登录页面
+      dropArr: [
+        {
+          name: "基本资料",
+          path: ""
+        },
+        {
+          name: "实名认证",
+          path: ""
+        },
+        {
+          name: "安全设置",
+          path: ""
+        }
+      ]
     };
   },
   computed: {
     userName() {
       return this.$store.state.app.userInfo
-        ? this.$store.state.app.userInfo.userName
+        ? this.$store.state.app.userInfo.account
         : null;
     },
     loginStatus() {
@@ -63,16 +80,13 @@ export default {
     },
     loginStatus() {
       if (this.loginStatus) {
-        this.getUserInfoFun();
+        this.$store.dispatch("getUserInfo")
       }
     }
   },
   mounted() {
     this.flag = this.$route.path === "/login" ? true : false;
     this.pathChange();
-    if (this.loginStatus) {
-      this.getUserInfoFun();
-    }
     this.showEmailTips();
   },
   methods: {
@@ -101,10 +115,6 @@ export default {
       this.$router.push(path);
     },
     handleLogin() {
-      // let url = "/login"
-      // if (this.$route.query.redirect) {
-      //   url = `${url}?redirect`
-      // }
       this.$router.push("/login");
     },
     handleGoHome() {
@@ -114,40 +124,6 @@ export default {
         // this.handleLogin();
         this.$router.push("/login??redirect=/home");
       }
-    },
-    getUserInfoFun() {
-      this.$store.dispatch("setLoading", true);
-      getUserInfo()
-        .then(res => {
-          if (res.code === 200) {
-            // 邮箱的标志存放在cookie中， 0 未绑定提示， 1已绑定， 2 未绑定 不提示
-            const emailStatus = this.$cookie.getValue("emailStatus");
-            this.$cookie.setValue("info", JSON.stringify(res.data));
-            if (res.data.email) {
-              this.$cookie.setValue("emailStatus", 1);
-            } else if (!emailStatus) {
-              // 登录 没有，状态为2不处理
-              this.$cookie.setValue("emailStatus", 0);
-              this.$router.push("/add-email-tips");
-            }
-            if (res.data.menus) {
-              // this.$store.dispatch("setMenuLists", res.data.menus);
-              this.dealMenus(res.data.menus);
-            } else {
-              this.$store.dispatch("setMenuLists", JSON.stringify([]));
-              this.$message.warning("用户没有权限，请联系管理员");
-              if (this.$route.path !== "/index") {
-                this.$router.push("/index");
-              }
-            }
-          }
-          this.$store.dispatch("setLoading", false);
-        })
-        .catch(() => {
-          this.$message.warning("用户信息获取失败");
-          // this.$cookie.setValue("emailStatus", 0); // test
-          this.$store.dispatch("setLoading", false);
-        });
     },
     showEmailTips() {
       const path = this.$route.path;
@@ -162,28 +138,15 @@ export default {
         this.$router.push("/home");
       }
     },
-    dealMenus(menus) {
-      const list = [];
-      const funArr = [];
-      const funList = [];
-      if (menus.length > 0) {
-        menus.forEach(item => {
-          if (item.menuFlag === "Y") {
-            item.path = item.frontPath ? item.frontPath : "/";
-            list.push(item);
-          } else {
-            funArr.push(item.code);
-            funList.push(item);
-          }
-        });
-      }
-      let list_ = dealUserTreeFun(list);
-      this.$store.dispatch("setMenuLists", list_);
-      this.$store.dispatch("setFunctionArr", funArr);
-      this.$store.dispatch("setFunctionLists", funList);
-    },
     gotoIndex() {
       this.$router.push("/index");
+    },
+    handleGoPath (item) {
+      if (!item.path) {
+        this.$message.warning("功能正在开发中。。。")
+      } else {
+        this.$router.push(item.path);
+      }
     }
   }
 };
@@ -212,22 +175,38 @@ export default {
     // margin-right: 30px;
     .avatar-wrapper {
       // margin-top: 5px;
-      min-width: 100px;
+      // min-width: 100px;
       position: relative;
       border: none;
       .user-avatar {
         cursor: pointer;
         width: 40px;
         height: 40px;
-        border-radius: 10px;
       }
       // .el-icon-caret-bottom {
       //   cursor: pointer;
-      //   position: absolute;
-      //   right: -20px;
-      //   top: 25px;
-      //   font-size: 12px;
+      //   margin-left: 5px;
       // }
+    }
+    
+  }
+}
+.user-dropdown {
+  width: 300px;
+  .user-avatar {
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+  }
+  .drop-link {
+    margin-bottom: 10px;
+    .drop-link-item {
+      flex: 1;
+      text-align: center;
+      padding: 2px 5px;
+    }
+    .drop-link-item + .drop-link-item {
+      border-left: 1px solid #ddd;
     }
   }
 }

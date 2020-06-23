@@ -42,7 +42,7 @@ export default {
         pageCount: 0, //总页数
         total: 0, // 总条数
         pageSize: 10, //一页大小
-        pageNum: 0, // 第几页 从0开始           
+        pageNum: 1, // 第几页 从0开始           
        
       },
       loading:false,  

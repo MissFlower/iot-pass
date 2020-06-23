@@ -96,7 +96,7 @@ export default {
      },
      //设备管理
      goEqu(){
-       this.$router.push('/equ/deviceManage')
+       this.$router.push(`/equ/deviceManage?productId=${this.productData.id}`)
      },
     //修改产品名称
     changeProName(name){
@@ -172,7 +172,6 @@ export default {
         if(res.code === 200){        
           this.productName = res.data.productName;  
           this.productData = res.data;
-
           if(res.data.productStatus === 0){
               this.btnType = 'primary'
           }else{

@@ -49,7 +49,7 @@
         <el-input class="ml10 mr10 w150" placeholder="固件版本" v-model="fmVersionValue" @change="searchBtnTouch"></el-input>
         <el-button icon="el-icon-search" @click="searchBtnTouch"></el-button>
       </div>
-      <el-button type="primary" @click="toNewDevice">新建设备</el-button>
+      <el-button v-if="authArr.indexOf('device_new')>-1" type="primary" @click="toNewDevice">新建设备</el-button>
     </div>
     <el-table :data="list" border @selection-change="handleSelectionChange" ref="multipleTable">
       <el-table-column type="selection" width="40"></el-table-column>
@@ -63,27 +63,27 @@
       <el-table-column prop="deviceStatus" label="状态/启用状态">
         <template v-slot="device">
           <span class="deviceStatusView"><div :style="{background: device.row.statusColor}"></div>{{device.row.enableBool?device.row.deviceStatusStr:'已禁用'}}</span>
-          <el-switch v-model="device.row.enableBool" @change="deviceEnable([device.row])"></el-switch>
+          <el-switch :disabled="authArr.indexOf('device_enable')<0" v-model="device.row.enableBool" @change="deviceEnable([device.row])"></el-switch>
         </template>
       </el-table-column>
       <el-table-column label="操作">
         <template v-slot="scope">
           <el-button @click="lookClick(scope.row)" type="text" size="small">查看</el-button>
-          <el-button @click="deleteClick(scope.row)" type="text" size="small">删除</el-button>
+          <el-button v-if="authArr.indexOf('device_delete')>-1" @click="deleteClick(scope.row)" type="text" size="small">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <div class="pr">
       <div class="bottomSeleView">
-        <el-checkbox @change="bottomSeleChange" v-model="bottomSeleChecked" :disabled="bottomSeleDis"></el-checkbox>
-        <el-popconfirm :title="'确定要批量删除选中的'+multipleSelection.length+'个设备吗？'" @onConfirm="batchOperate(1)" class="ml10">
+        <el-checkbox v-if="authArr.indexOf('device_delete')>-1 || authArr.indexOf('device_enable')>-1" @change="bottomSeleChange" v-model="bottomSeleChecked" :disabled="bottomSeleDis"></el-checkbox>
+        <el-popconfirm v-if="authArr.indexOf('device_delete')>-1" :title="'确定要批量删除选中的'+multipleSelection.length+'个设备吗？'" @onConfirm="batchOperate(1)" class="ml10">
           <el-button slot="reference" type="primary" :disabled="bottomSeleDis">删除</el-button>
         </el-popconfirm>
-        <el-popconfirm :title="'确定要批量禁用选中的'+multipleSelection.length+'个设备吗？'" @onConfirm="batchOperate(2)" class="ml10">
+        <el-popconfirm v-if="authArr.indexOf('device_enable')>-1" :title="'确定要批量禁用选中的'+multipleSelection.length+'个设备吗？'" @onConfirm="batchOperate(2)" class="ml10">
           <el-button slot="reference" type="primary" :disabled="bottomSeleDis">禁用</el-button>
         </el-popconfirm>
-        <el-popconfirm :title="'确定要批量启用选中的'+multipleSelection.length+'个设备吗？'" @onConfirm="batchOperate(3)" class="ml10">
+        <el-popconfirm v-if="authArr.indexOf('device_enable')>-1" :title="'确定要批量启用选中的'+multipleSelection.length+'个设备吗？'" @onConfirm="batchOperate(3)" class="ml10">
           <el-button slot="reference" type="primary" :disabled="bottomSeleDis">启用</el-button>
         </el-popconfirm>
       </div>
@@ -128,6 +128,13 @@ export default {
       bottomSeleChecked: false
     };
   },
+
+  computed: {
+    authArr() {
+      return this.$store.state.app.functionArr;
+    }
+  },
+
   mounted() {
     //获取产品列表
     this.getProductList();
@@ -184,8 +191,8 @@ export default {
 
               //设备各种状态数量
               this.deviceCountObj[0].count = res.data.total;
-              this.deviceCountObj[1].count = 0;
-              this.deviceCountObj[2].count = 0;
+              this.deviceCountObj[1].count = res.data.activateCount;
+              this.deviceCountObj[2].count = res.data.onlineCount;
             }
           }
           this.loading = false;
@@ -242,6 +249,9 @@ export default {
     batchEnable  批量启用、禁用
     */
     deviceEnable(devices,batchEnable){
+
+      if(this.authArr.indexOf('device_enable')<0) return;
+
       this.loading = true;
 
       var ids = [];

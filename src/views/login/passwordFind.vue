@@ -79,6 +79,7 @@ export default {
           callback(new Error("您的密码复杂度太低（密码中必须包含大小写字母、数字)！"));
         } else if(this.password !== "") {
           this.$refs.form.validateField("newpassword");
+          callback();
         } else {
           callback();
         }

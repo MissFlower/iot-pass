@@ -8,7 +8,7 @@
     <div class="con">
       <el-steps :active="active">
         <el-step title="验证身份" icon="el-icon-edit"></el-step>
-        <el-step title="修改安全邮箱" icon="el-icon-upload"></el-step>
+        <el-step :title="title" icon="el-icon-upload"></el-step>
         <el-step title="完成" icon="el-icon-picture"></el-step>
       </el-steps>
       <div v-if="active == 1" class="info f14">
@@ -36,7 +36,9 @@
         </el-form>
       </div>
       <div v-if="active == 2" class="info">
-        <email-band></email-band>
+        <email-band v-if="flag == 1"></email-band>
+        <phone-band v-if="flag == 2"></phone-band>
+        <password-update v-if="flag == 3"></password-update>
       </div>
     </div>
   </div>
@@ -45,18 +47,22 @@
 <script>
 import { sendCode, verifyCode } from "@/api";
 import emailBand from "./children/emailBand";
+import phoneBand from "./children/phoneBand";
+import passwordUpdate from "./children/updatePassword";
 
 export default {
-  components: { emailBand },
+  components: { emailBand, phoneBand, passwordUpdate },
   data() {
     return {
       loading: false,
-      active: 1,
+      active: 2,
       code: "",
       phone: "",
       timerVal: null,
       msg: "获取短信验证码",
-      seconds: 61
+      seconds: 61,
+      flag: null,
+      title: ""
     };
   },
   computed: {
@@ -66,9 +72,27 @@ export default {
         : null;
     }
   },
+  watch: {
+    flag: function() {
+      switch(this.flag * 1) {
+        case 1:
+          this.title = '修改安全邮箱'
+          break
+        case 2:
+          this.title = '修改手机号'
+          break
+        case 3:
+          this.title = '修改密码'
+          break
+      }
+    }
+  },
   mounted() {
-    const userInfo = JSON.parse(this.$cookie.getValue("info"));
+    const userInfo = JSON.parse(localStorage.getItem("info"));
     this.phone = userInfo.phone;
+    if (this.$route.query.flag) {
+      this.flag = this.$route.query.flag
+    }
   },
   methods: {
     getCode() {

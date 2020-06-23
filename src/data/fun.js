@@ -135,5 +135,8 @@ export function dealMenus (menus) {
       router.push("/index");
     }
   }
-  return list
+  return {
+    list,
+    funArr
+  }
 }

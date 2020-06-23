@@ -1,6 +1,7 @@
 import router from "@/router"
 import { getUserInfo } from "@/api";
 import Cookie from "@/utils/cookie.js";
+import { Message } from 'element-ui'
 
 const app = {
   state: {
@@ -63,6 +64,12 @@ const app = {
             }
             commit("SET_LOADING", false)
             resolve(res.data.menus);
+          } else {
+            commit("SET_LOADING", false)
+            Message.warning(res.message)
+            localStorage.setItem("info", null)
+            router.push("/login");
+            resolve()
           }
         }).catch(error => {
           commit("SET_LOADING", false)

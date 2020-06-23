@@ -9,31 +9,35 @@
     <el-form
       :model="editItem"
       label-width="120px"
-      class="mt20 w400"
+      class="mt20"
       :rules="rules"
     >
       <el-form-item label="账号：" prop="account">
         <el-input
           v-model="editItem.account"
           placeholder="请输入用户名:"
+          class="w200"
         ></el-input>
       </el-form-item>
       <el-form-item label="密码：" prop="password">
         <el-input
           v-model="editItem.password"
           placeholder="请输入密码"
+          show-password
+          class="w200"
         ></el-input>
+        <span class="f12 ml20 c6">密码中必须包含大小写字母、数字</span>
       </el-form-item>
       <el-form-item label="姓名：">
-        <el-input v-model="editItem.name" placeholder="请输入姓名"></el-input>
+        <el-input v-model="editItem.name" placeholder="请输入姓名" class="w200"></el-input>
       </el-form-item>
       <el-form-item label="邮箱：" prop="email">
-        <el-input v-model="editItem.email" placeholder="请输入邮箱"></el-input>
+        <el-input v-model="editItem.email" placeholder="请输入邮箱" class="w200"></el-input>
       </el-form-item>
       <el-form-item label="电话：" prop="phone">
-        <el-input v-model="editItem.phone" placeholder="请输入电话"></el-input>
+        <el-input v-model="editItem.phone" placeholder="请输入电话" class="w200"></el-input>
       </el-form-item>
-      <div class="tr">
+      <div class="tc mb20">
         <el-button @click="handleCancel">取消</el-button>
         <el-button type="primary" @click="handleSave">保存</el-button>
       </div>
@@ -48,6 +52,14 @@ import { phoneValidate } from "@/data/fun";
 export default {
   props: ["info"],
   data() {
+    const validatePassword = (value, rule, callback) => {
+      const pwdRegex = new RegExp('(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])');
+      if (!pwdRegex.test(this.editItem.password) && this.editItem.password !== "") {
+        callback(new Error("您的密码复杂度太低"));
+      } else {
+        callback();
+      }
+    };
     const validatePhone = (rule, value, callback) => {
       let str = phoneValidate(value);
       if (str.length > 0) {
@@ -74,6 +86,12 @@ export default {
             type: "email",
             message: "请输入正确的邮箱地址",
             trigger: "blur"
+          }
+        ],
+        password: [
+          { required: false, validator: validatePassword, trigger: "blur" },
+          {
+            min: 8, max: 14, message: '长度在 8 到 14 个字符', trigger: 'blur'
           }
         ]
       }

@@ -213,7 +213,7 @@ export const asyncRoutes =[
       {
           path: "details",
           component: resolve => require(["@/views/firmware/details"], resolve),
-          meta: { name: "固件管理及升级" }
+          meta: { name: "固件详情", code: "fm_details" }
       }
     ]
   },

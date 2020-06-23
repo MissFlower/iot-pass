@@ -3,7 +3,7 @@ import { asyncRoutes, constantRoutes } from '@/router'
 import { deepClone } from '@/utils/validate'
 import { dealMenus } from "@/data/fun"
 
-
+let functionArr = null
 
 function filterFun(list) {
   // 处理路由
@@ -25,9 +25,12 @@ function fun (routes, codeArr, list) {
       item.meta.icon = list[len].icon
       item.meta.name = list[len].name
       routerArr.push(item)
-      if (item.children && item.children.length > 0) {
+      if (!item.hidden && item.children && item.children.length > 0) {
         item.children = fun(item.children, codeArr, list)
       }
+    } else if (item.meta && item.meta.code && functionArr.indexOf(item.meta.code) > -1) {
+      item.hidden = true
+      routerArr.push(item)
     }
   }
   return routerArr
@@ -51,13 +54,15 @@ const router = {
   actions: {
     setRouters ({ commit }, menus) {
       return new Promise((resolve) => {
-        const list = dealMenus(menus);
+        const {list, funArr} = dealMenus(menus);
+        functionArr = funArr
         if (list.length > 0) {
           const asyncList = filterFun(list);
+          console.log(asyncList)
           commit('SET_ROUTERS', asyncList);
-          resolve(asyncRoutes) // 暂时  用于测试
-          // resolve(asyncList);
+          resolve(asyncList);
         } else {
+          commit('SET_ROUTERS', []);
           resolve()
         }
       })

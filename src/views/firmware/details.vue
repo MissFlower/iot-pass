@@ -112,7 +112,7 @@
                            :formatter="formatCreateTime"
                        ></el-table-column>
                        <el-table-column label="操作">
-                           <template scope="scope">
+                           <template slot-scope="scope">
                                <a class="oprate_btn" @click="toBatchDetails(scope.row.upgrade.id)">查看</a>
                            </template>
                        </el-table-column>
@@ -161,7 +161,7 @@
                            :formatter="formatUpgradeStatus"
                        ></el-table-column>
                        <el-table-column label="操作">
-                           <template scope="scope">
+                           <template slot-scope="scope">
                             <a class="oprate_btn" @click="toBatchDetails(scope.row.upgradeId)">查看</a>
                            </template>
                        </el-table-column>

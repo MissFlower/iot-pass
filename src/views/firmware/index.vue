@@ -65,7 +65,7 @@
             :formatter="formatFmStatus"
           ></el-table-column>
           <el-table-column label="操作">
-            <template scope="scope">
+            <template slot-scope="scope">
               <a class="oprate_btn" @click="checkFm(scope.row)">验证固件</a>
               |
               <el-tooltip

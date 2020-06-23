@@ -13,7 +13,7 @@
   >
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
       <el-form-item label="产品：" prop="productSelIndex">
-        <el-select class="wp100" v-model="ruleForm.productSelIndex" placeholder="请选择产品">
+        <el-select class="wp100" v-model="ruleForm.productSelIndex" placeholder="请选择产品" :disabled="selectDisabled">
           <el-option
             v-for="(item,index) in productList"
             :key="index"
@@ -39,10 +39,16 @@
 <script>
 import { productList,createDevice } from "@/api/deviceRequest";
 export default {
+  props: {
+    appointProduck: {
+      default: {}
+    }
+  },
   data() {
     return {
       dialogVisible: true,
       productList: [],
+      selectDisabled: false,
       loading: false,
       ruleForm:{
         productSelIndex: null,
@@ -65,7 +71,12 @@ export default {
     };
   },
   mounted() {
-    this.getProductList();
+    if(this.appointProduck.productName == '全部产品'){
+      this.getProductList();
+    }else{
+      this.selectDisabled = true;
+      this.ruleForm.productSelIndex = this.appointProduck.productName;
+    }
   },
 
   methods: {
@@ -108,7 +119,12 @@ export default {
     //保存
     handleSave() {
       this.loading = true;
-      var productObj = this.productList[this.ruleForm.productSelIndex];
+      var productObj;
+      if(this.appointProduck.productName == '全部产品'){
+        productObj = this.productList[this.ruleForm.productSelIndex];
+      }else{
+        productObj = this.appointProduck;
+      }
       
       createDevice({
         productId: productObj.id,

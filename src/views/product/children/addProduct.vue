@@ -82,7 +82,7 @@
       direction="rtl"
       size="40%">
       <div>
-         <el-select v-model="standardSelectValue" placeholder="请选择">
+         <el-select v-model="standardSelectValue" placeholder="请选择" >
             <el-option
               v-for="item in standardSelectOption"
               :key="item.id"
@@ -94,15 +94,22 @@
             <el-input
             placeholder="请输入内容"
             prefix-icon="el-icon-search"
-            v-model="standardSelectSearch">
+            v-model="standardSelectSearch"
+            clearable
+            @clear="queryProduct"
+            @keyup.enter.native="queryProduct">
           </el-input>
          </div>
       </div>
       <div >
-         <el-table :data="standardSelectTlData">
-          <el-table-column property="date" label="日期"></el-table-column>
-          <el-table-column property="name" label="姓名"></el-table-column>
-          <el-table-column property="address" label="地址"></el-table-column>
+         <el-table :data="standardSelectTlData">          
+          <el-table-column property="name" label="品类名称"></el-table-column>
+          <el-table-column property="scene" label="所属场景"></el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+            <el-button type="text"  @click="standardSelectBtn(scope.row)">选择</el-button>            
+          </template>
+          </el-table-column>
         </el-table>
         <!-- 分页-->
         <pagination :data="tableData" @pagination="changePage" class="tr"/>
@@ -121,7 +128,7 @@ export default {
   components: { Pagination },
   props: ["info"],
   data() {
-    return {
+    return {     
       standardSelectSearch: '',
       standardSelectValue: '',
       standardSelectOption: [],
@@ -129,13 +136,15 @@ export default {
       standardSelectDrawer: false,
       loading: false,
       standardSelectState: true,
+      categoryId: '',
       tableData:{        
         pageCount: 0, //总页数
         total: 0, // 总条数
         pageSize: 10, //一页大小
-        pageNum: 0, // 第几页 从0开始           
+        pageNum: 1, // 第几页 从0开始           
        
       },
+      
       ruleForm: {
           productName: '',
           standardSelect: '',        
@@ -145,10 +154,7 @@ export default {
           dataFormat: 1,
           authType: 1,
           dynRegister: 1,
-          description: '',
-          standardSelectRules: [
-            {required: true,message: '请选择标准品类',trigger: 'change'}
-          ],
+          description: '',         
       },
       rules: {
           productName: [
@@ -205,11 +211,25 @@ export default {
     domainList().then(res => {
       if(res.code === 200){
           this.standardSelectOption = res.data;
-          this.standardSelectValue = res.data[0].id
+          this.standardSelectOption.unshift({id:'',name:'全部领域'});
+          this.standardSelectValue = ''          
       }
     })
+    this.getCategoryPage();
   },
   methods: {
+    
+    //选择品类
+    standardSelectBtn(obj){     
+      this.categoryId = obj.id;
+      this.ruleForm.standardSelect = `${obj.domainName || ''}/${obj.scene}/${obj.name}`;
+      this.standardSelectDrawer = false;
+    },
+    //搜索品类
+    queryProduct(){
+      this.tableData.pageNum = 1;
+      this.getCategoryPage()
+    },
     //分页
      changePage(){      
       this.getCategoryPage()
@@ -227,7 +247,7 @@ export default {
     submitForm(formName) {        
         var categoryId = null;        
         if(this.ruleForm.category === '标准品类'){           
-            categoryId = {categoryId: this.standardSelect};
+            categoryId =  this.categoryId;
             this.rules.standardSelect = [
             {required: true,message: '请选择标准品类',trigger: 'change'}
           ]           
@@ -237,7 +257,7 @@ export default {
         } 
         this.$refs[formName].validate((valid) => {                    
           if (valid) {               
-              this.loading = true;      
+              this.loading = true;            
               productSave(Object.assign({},this.ruleForm,{categoryId})).then(res => {
                 this.loading = false;
                 if(res.code === 200){

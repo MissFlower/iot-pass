@@ -65,7 +65,7 @@
             <div class="device_infoItem">
               <span class="infoItemName">备注名称</span>
               <span>{{deviceObj.nickName}}</span>
-              <el-button type="text" class="ml10" @click="deviceNameEdit">编辑</el-button>
+              <el-button v-if="authArr.indexOf('device_nameEdit')>-1" type="text" class="ml10" @click="deviceNameEdit">编辑</el-button>
             </div>
           </div>
 
@@ -137,6 +137,12 @@ export default {
       lookDeviceSecret: false,
       loading: false
     };
+  },
+
+  computed: {
+    authArr() {
+      return this.$store.state.app.functionArr;
+    }
   },
 
   mounted() {

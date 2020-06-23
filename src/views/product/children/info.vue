@@ -127,7 +127,7 @@
       </div>
       <!-- 产品编辑弹窗 -->
       <el-dialog title="编辑产品信息" :visible.sync="dialogProEdit" width="30%" class="dialogProEdit">
-        <el-form :model="dialogProEditForm" label-position="top" :rules="dialogProEditRole">
+        <el-form :model="dialogProEditForm" label-position="top" :rules="dialogProEditRole" ref="dialogProEditForm">
           <el-form-item label="产品名称" :label-width="formLabelWidth" prop="productName">
             <el-input v-model="dialogProEditForm.productName" autocomplete="off"></el-input>
           </el-form-item>
@@ -154,7 +154,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogProEdit = false">取 消</el-button>
-          <el-button type="primary" @click="dialogProEditSave">确 定</el-button>
+          <el-button type="primary" @click="dialogProEditSave('dialogProEditForm')">确 定</el-button>
         </div>
       </el-dialog>
   </div>
@@ -210,19 +210,30 @@ export default {
       this.dialogProEditData();
     },
     //保存产品编辑
-    dialogProEditSave(){      
+    dialogProEditSave(formName){      
       var id = this.productData.id;
       var productName = this.dialogProEditForm.productName;
       var dynRegister = 1;
       var description = this.dialogProEditForm.description;
-      productEdit({id, productName, dynRegister, description}).then(res => {
-          if(res.code === 200){
-            this.dialogProEdit = false;
-            this.productData.description = this.dialogProEditForm.description;
-            this.productData.productName = this.dialogProEditForm.productName;
-            this.$emit('changeProName',this.dialogProEditForm.productName)
+      this.$refs[formName].validate((valid) => {                    
+          if (valid) {               
+              this.loading = true;            
+              productEdit({id, productName, dynRegister, description}).then(res => {
+                  this.loading = false;
+                  if(res.code === 200){
+                    this.dialogProEdit = false;
+                    this.productData.description = this.dialogProEditForm.description;
+                    this.productData.productName = this.dialogProEditForm.productName;
+                    this.$emit('changeProName',this.dialogProEditForm.productName)
+                  }
+              }).catch(err => {
+                  this.loading = false;
+              })
+          } else {            
+              return false;
           }
-      })
+      });
+      
     },
     //产品编辑数据转换
     dialogProEditData(){     

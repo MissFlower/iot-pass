@@ -22,7 +22,7 @@
           <div class="drop-link-item hand" v-for="(item, index) in dropArr" :key="index" @click.stop="handleGoPath(item)">{{item.name}}</div>
         </div>
         <el-dropdown-item divided class="tc">
-          <span style="display:block;" @click="logout">退出登录</span>
+          <span style="display:block;" @click="logoutFun">退出登录</span>
         </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
@@ -38,7 +38,7 @@
 
 <script>
 import { delBreadCrumbFun } from "@/data/fun";
-import { getUserInfo } from "@/api";
+import { getUserInfo, logout } from "@/api";
 export default {
   data() {
     return {
@@ -64,6 +64,9 @@ export default {
       return this.$store.state.app.userInfo
         ? this.$store.state.app.userInfo.account
         : null;
+    },
+    userInfo() {
+      return this.$store.state.app.userInfo
     },
     loginStatus() {
       return this.$store.state.app.loginStatus;
@@ -102,18 +105,29 @@ export default {
       });
       this.$store.dispatch("setBreadcrumb", list);
     },
-    logout() {
-      this.$cookie.removeValue("access_token");
-      this.$cookie.removeValue("userName");
-      this.$store.dispatch("setUserInfo", null);
-      this.$store.dispatch("setLoginStatus", false);
-      this.$cookie.removeValue("emailStatus");
-      localStorage.removeItem("info")
-      let path = "/index";
-      if (this.$route.path !== path) {
-        path = `${path}?redirect=${this.$route.path}`;
-      }
-      this.$router.push(path);
+    logoutFun() {
+      this.$store.dispatch("setLoading", true)
+      logout({
+        userId: this.userInfo.id
+      }).then(res => {
+        if (res.code === 200) {
+          this.$cookie.removeValue("access_token");
+          this.$cookie.removeValue("userName");
+          this.$store.dispatch("setUserInfo", null);
+          this.$store.dispatch("setLoginStatus", false);
+          this.$cookie.removeValue("emailStatus");
+          localStorage.removeItem("info")
+          let path = "/index";
+          if (this.$route.path !== path) {
+            path = `${path}?redirect=${this.$route.path}`;
+          }
+          this.$router.push(path);
+        } else {
+          this.$message.error(res.message)
+        }
+        this.$store.dispatch("setLoading", false)
+      })
+      
     },
     handleLogin() {
       this.$router.push("/login");

@@ -1,5 +1,8 @@
 import axios from "axios";
 import cookie from "@/utils/cookie.js";
+import { Message } from "element-ui";
+import router from "@/router"
+
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_URL,
   timeout: 500000
@@ -21,6 +24,10 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     const res = response.data ? response.data : {};
+    // if (res.code === 401) {
+    //   Message.error(res.message)
+    //   router.push("/login")
+    // }
     return res;
   },
   error => {

@@ -58,7 +58,7 @@
             label="升级后版本"
             prop="destVersion"
           ></el-table-column>
-          <el-table-column label="创建时间" prop="createTime"></el-table-column>
+          <el-table-column label="创建时间" prop="createTime" :formatter="formatCreateTime"></el-table-column>
           <el-table-column
             label="固件状态"
             prop="fmStatus"
@@ -151,6 +151,7 @@
       :checkFmVisible="checkFmVisible"
       :checkFmId="checkFmId"
       :srcVersion="srcVersion"
+      :fmDeviceList="fmDeviceList"
       @checkVisible="checkVisible"
       @refreshList="refreshList"
     ></CheckFirmware>
@@ -166,7 +167,12 @@
 import AddFirmware from "@/components/firmware/addFirmware";
 import CheckFirmware from "@/components/firmware/checkFirmware";
 import UpgradeFirmware from "@/components/firmware/upgradeFirmware";
-import { getFmList, deleteFm, getProducts } from "@/api/fireware";
+import {
+  getFmList,
+  deleteFm,
+  getProducts,
+  getVerifyFirmInfo
+} from "@/api/fireware";
 export default {
   data() {
     return {
@@ -193,6 +199,7 @@ export default {
       fmTotal: 0,
       checkFmId: "",
       srcVersion: "",
+      fmDeviceList: [],
       deviceList: [],
       labelPosition: "left",
       dialogFormVisible: false,
@@ -268,13 +275,38 @@ export default {
      * 验证固件
      */
     checkFm(row) {
+      // 未验证的固件进行验证，验证中或已验证的固件弹窗提示
       if (row.fmStatus === 0) {
-        this.checkFmVisible = true;
         this.checkFmId = String(row.id);
         this.srcVersion = row.srcVersion;
+        this.getVerifyFirmInfo(this.checkFmId, this.srcVersion);
       } else {
         this.openCheckFm(row.fmStatus);
       }
+    },
+    // 验证固件前校验是否存在设备
+    getVerifyFirmInfo(fmId, versions) {
+      let formData = new FormData();
+      formData.append("fmId", fmId);
+      formData.append("versions", versions);
+      getVerifyFirmInfo(formData).then(res => {
+        if (res.code === 200) {
+            this.fmDeviceList = res.data.deviceList
+            this.checkFmVisible = true;
+        } else if (res.code === 9003) {
+          this.$alert(res.message, "提示", {
+            confirmButtonText: "确定",
+            type: "warning",
+            callback: action => {
+            }
+          });
+        } else {
+            this.$message({
+                type: "warning",
+                message: res.message
+            });
+        }
+      });
     },
     // 验证固件组件
     checkVisible() {
@@ -306,6 +338,12 @@ export default {
         : row.fmStatus === 1
         ? "验证中"
         : "已验证";
+    },
+    formatCreateTime (row) {
+      return row.createTime ? this.$fun.dateFormat(
+          new Date(row.createTime),
+          "yyyy-MM-dd hh:mm:ss"
+      ): ''
     },
     // 分页
     handleCurrentChange() {

@@ -59,6 +59,7 @@
     </el-dialog>
     <ChooseDevice
       :chooseDeviceVisible="chooseDeviceVisible"
+      :fmDeviceList="fmDeviceList"
       @deviceVisible="deviceVisible"
       @multipleDevice="multipleDevice"
     ></ChooseDevice>
@@ -77,7 +78,10 @@ export default {
     },
     srcVersion: {
       type: String
-    }
+    },
+      fmDeviceList: {
+          type: Array
+      }
   },
   data() {
     return {

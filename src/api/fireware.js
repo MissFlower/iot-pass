@@ -113,6 +113,17 @@ export function addVerify(data) {
   });
 }
 /**
+ * 验证固件前校验
+ * @param data
+ */
+export function getVerifyFirmInfo(data) {
+    return request({
+        url: "/upgrade/getVerifyFirmInfo",
+        method: "post",
+        data
+    });
+}
+/**
  * 批量升级
  * @param data
  */

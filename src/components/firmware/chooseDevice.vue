@@ -12,7 +12,7 @@
         </el-form>
         <el-table
             ref="multipleTable"
-            :data="deviceList"
+            :data="fmDeviceList"
             tooltip-effect="dark"
             style="width: 100%"
             @selection-change="handleSelectionChange">
@@ -30,15 +30,6 @@
                 label="productKey">
             </el-table-column>
         </el-table>
-        <el-pagination
-            @current-change="handleDevChange"
-            :current-page.sync="deviceForm.pageNum"
-            :page-size="deviceForm.pageSize"
-            layout="total, prev, pager, next"
-            :total="deviceTotal"
-            class="tr mt20"
-        >
-        </el-pagination>
         <div slot="footer" class="dialog-footer">
             <el-button @click="closeDialog">取 消</el-button>
             <el-button type="primary" @click="chooseSubmit">确 定</el-button>
@@ -46,11 +37,13 @@
     </el-dialog>
 </template>
 <script>
-    import { getDeviceList } from '@/api/fireware'
     export default {
         props: {
             chooseDeviceVisible: {
                 type: Boolean
+            },
+            fmDeviceList: {
+                type: Array
             }
         },
         data () {
@@ -72,21 +65,7 @@
                 closeModal: false
             }
         },
-        mounted () {
-            this.getDeviceList()
-        },
         methods: {
-            // 获取设备列表
-            getDeviceList () {
-                getDeviceList(this.deviceForm).then(res => {
-                    this.deviceList = res.data.data
-                    this.deviceTotal = res.data.total
-                })
-            },
-            // 搜索设备
-            searchDev () {
-                this.getDeviceList()
-            },
             // 选择设备
             chooseSubmit () {
                 let multipleDeviceId = []
@@ -107,7 +86,6 @@
                 }
             },
             handleSelectionChange(val) {
-                console.log(val)
                 this.multipleSelection = val;
             },
             handleDevChange () {

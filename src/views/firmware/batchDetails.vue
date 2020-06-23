@@ -32,7 +32,7 @@
                         ></el-table-column>
                         <el-table-column label="操作">
                             <template scope="scope">
-                                <a class="oprate_btn" @click="upgrade(scope.row.upgradeId)">重升级</a>
+                                <a class="oprate_btn" v-if="scope.row.upgradeStatus===2 || scope.row.upgradeStatus===3" @click="upgrade(scope.row.upgradeId)">重升级</a>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -219,9 +219,9 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    retryPublishUpdateMsg({
-                        upgradeId: [upgradeId]
-                    }).then(res => {
+                    let formData = new FormData()
+                    formData.append('upgradeId', upgradeId)
+                    retryPublishUpdateMsg(formData).then(res => {
                         if (res.code === 200) {
                             this.getDeviceList()
                         }

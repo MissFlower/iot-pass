@@ -109,6 +109,7 @@
                        <el-table-column
                            label="添加时间"
                            prop="upgrade.createTime"
+                           :formatter="formatCreateTime"
                        ></el-table-column>
                        <el-table-column label="操作">
                            <template scope="scope">
@@ -247,7 +248,7 @@
                                    添加时间
                                </div>
                                <div class="edit_info-rf">
-                                   {{fmInfo.fmInfoList.createTime}}
+                                   {{new Date(fmInfo.fmInfoList.createTime).toLocaleString()}}
                                </div>
                            </div>
                        </el-col>
@@ -494,17 +495,23 @@
             },
             // 格式化表格内容
             formatType (row) {
-                return row.upgrade.type === "0" ? "验证固件" : "批量升级"
+                return row.upgrade.type === 0 ? "验证固件" : "批量升级"
             },
             formatUgType (row) {
-                return row.upgrade.ugType === "1" ? "静态升级" : "动态升级"
+                return row.upgrade.ugType === 1 ? "静态升级" : "动态升级"
             },
             formatUgStatus (row) {
                 return row.upgrade.ugStatus === 1 ? "待升级" : row.upgrade.ugStatus === 2 ? "升级中" : row.upgrade.ugStatus === 3 ? "升级完成": "已取消"
             },
             formatUpgradeStatus (row) {
                 return row.upgradeStatus === 0 ? "待升级" : row.ugStatus === 1 ? "升级中" : row.ugStatus === 2 ? "已完成": "升级失败"
-            }
+            },
+            formatCreateTime (row) {
+                return row.upgrade.createTime ? this.$fun.dateFormat(
+                    new Date(row.upgrade.createTime),
+                    "yyyy-MM-dd hh:mm:ss"
+                ): ''
+            },
         }
     }
 </script>

@@ -146,7 +146,6 @@ export default {
   },
   mounted() {
     this.getProductList();
-    this.getFmType();
   },
   methods: {
     // 提交新增固件
@@ -237,6 +236,7 @@ export default {
     changeSelect() {
       this.ruleForm.productId = this.productsValue.split("|")[0];
       this.ruleForm.productName = this.productsValue.split("|")[1];
+      this.getFmType();
     }
   },
   computed: {

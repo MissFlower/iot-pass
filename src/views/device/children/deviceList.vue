@@ -5,6 +5,30 @@
  -->
 <template>
   <div v-loading="loading">
+
+    <div class="mb20 df ai_c">
+      <el-select class="w200" v-model="productSelIndex" placeholder="请选择产品" @change="getDeviceList">
+        <el-option
+          v-for="(item,index) in productList"
+          :key="index"
+          :label="item.productName"
+          :value="index">
+        </el-option>
+      </el-select>
+      <div class="deviceCountView">
+        <div>设备总数
+          <el-popover
+            placement="top-start"
+            width="160"
+            trigger="hover"
+            content="当前指定产品的设备总数">
+            <span class="el-icon-question ml2" slot="reference"></span>
+          </el-popover>
+        </div>
+        <div class="deviceCount">{{tableData.total}}</div>
+      </div>
+    </div>
+
     <div class="mb20 df jc_sb">
       <div class="df">
         <el-input placeholder="请输入名称" v-model="searchInputValue" @change="searchBtnTouch">
@@ -72,7 +96,7 @@
 <script>
 import newDevice from "./newDevice";
 import Pagination from "@/components/Pagination"
-import { deviceList, deleteDevice, deviceBatchEnable } from "@/api/deviceRequest";
+import { deviceList, deleteDevice, deviceBatchEnable, productList } from "@/api/deviceRequest";
 export default {
   components: { newDevice,Pagination },
   data() {
@@ -84,6 +108,8 @@ export default {
         pageSize: 10, //一页大小
         pageNum: 0, // 第几页 从0开始    
       },
+      productSelIndex: 0,
+      productList: [{productName:'全部产品'}],
       searchTypeSelect: "1",
       searchInputValue: "",
       fmVersionValue: "",
@@ -95,19 +121,34 @@ export default {
     };
   },
   mounted() {
-    this.getDeviceList();
+    //获取产品列表
+    this.getProductList();
+    
+    let productId = this.$route.query.productId;
+    if(productId==undefined || !productId.length){
+      //获取设备列表
+      this.getDeviceList();
+    }
   },
 
   methods: {
     //获取设备列表
     getDeviceList() {
       this.loading = true;
+
+      //获取所选产品
+      var productId = '';
+      if(this.productSelIndex != 0){
+        productId = this.productList[this.productSelIndex].id;
+      }
+
       deviceList({
         deviceName: this.searchTypeSelect == "1" ? this.searchInputValue : "",
         nickName: this.searchTypeSelect == "2" ? this.searchInputValue : "",
         fmVersion: this.fmVersionValue,
         pageNum: this.tableData.pageNum,
-        pageSize: this.tableData.pageSize
+        pageSize: this.tableData.pageSize,
+        productId
       })
         .then(res => {
           if (res.code === 200) {
@@ -140,6 +181,42 @@ export default {
           this.loading = false;
         });
     },
+
+
+    //获取产品列表
+    getProductList(){
+      let productId = this.$route.query.productId;
+      productList({
+        pageNum: 1,
+        pageSize: 100,
+        productName: ''
+      })
+      .then(res => {
+        if (res.code === 200) {
+          if (res.data) {
+            var list = res.data.data;
+            list.unshift({productName:'全部产品'});
+            var selIndex = 0;
+            if(productId){
+              list.map(function(value,index){
+                if(value.id == productId){
+                  selIndex = index;
+                }
+              });
+            }
+            this.productList = list;
+            this.productSelIndex = selIndex;
+
+            if(productId){
+              this.getDeviceList();
+            }
+          }
+        }
+      })
+      .catch(() => {
+      });
+    },
+
 
     //搜索按钮
     searchBtnTouch() {
@@ -295,6 +372,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.deviceCountView{
+  height: 45px;
+  margin-left: 60px;
+  border-left: 1px solid #ebecec;
+  padding-left: 20px;
+  font-size: 13px;
+  color: #888;
+  .deviceCount{
+    color: #373d41;
+    font-size: 24px;
+    margin-top: 5px;
+  }
+}
+
 .deviceStatusView{
   display: inline-block;
   width: 60px;

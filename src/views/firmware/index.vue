@@ -6,7 +6,7 @@
 <template>
   <div id="firmware">
     <h2>固件升级</h2>
-    <el-tabs v-model="activeTag" type="card" @tab-click="handleClick">
+    <el-tabs v-model="activeTag" type="card">
       <el-tab-pane label="固件列表" name="first">
         <el-form ref="form" :model="form" label-width="80px" :inline="true">
           <el-form-item>
@@ -43,7 +43,7 @@
             ></el-input>
           </el-form-item>
         </el-form>
-        <el-table :data="list" border stripe>
+        <el-table :data="list" border stripe v-loading="loading">
           <el-table-column label="固件ID" prop="id"></el-table-column>
           <el-table-column label="固件名称" prop="fmName"></el-table-column>
           <el-table-column
@@ -58,32 +58,31 @@
             label="升级后版本"
             prop="destVersion"
           ></el-table-column>
-          <el-table-column label="创建时间" prop="createTime"></el-table-column>
+          <el-table-column label="创建时间" prop="createTime" :formatter="formatCreateTime"></el-table-column>
           <el-table-column
             label="固件状态"
             prop="fmStatus"
             :formatter="formatFmStatus"
           ></el-table-column>
           <el-table-column label="操作">
-            <template scope="scope">
-              <a
-                class="oprate_btn"
-                @click="checkFm(scope.row)"
-                >验证固件</a
-              >
+            <template slot-scope="scope">
+              <a class="oprate_btn" @click="checkFm(scope.row)">验证固件</a>
               |
-                <el-tooltip class="item" effect="dark" content="请先验证固件，再进行批量升级" placement="top" v-if="scope.row.fmStatus !== 2">
-                  <a
-                    class="oprate_btn disabled"
-                    >批量升级</a
-                  >
-                </el-tooltip>
-                <a
-                    v-else
-                    class="oprate_btn"
-                    @click="upgradeList(scope.row.id, scope.row.fmStatus)"
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="请先验证固件，再进行批量升级"
+                placement="top"
+                v-if="scope.row.fmStatus !== 2"
+              >
+                <a class="oprate_btn disabled">批量升级</a>
+              </el-tooltip>
+              <a
+                v-else
+                class="oprate_btn"
+                @click="upgradeList(scope.row.id, scope.row.fmStatus)"
                 >批量升级</a
-                >
+              >
               |
               <a class="oprate_btn" @click="toDetails(scope.row.id)">查看</a> |
               <a class="oprate_btn" @click="delItem(scope.row.id)">删除</a>
@@ -100,7 +99,7 @@
         >
         </el-pagination>
       </el-tab-pane>
-      <el-tab-pane label="版本分布" name="second">
+      <el-tab-pane label="版本分布" name="second" :disabled="tabDisabled">
         <div>
           <el-form
             :label-position="labelPosition"
@@ -152,6 +151,7 @@
       :checkFmVisible="checkFmVisible"
       :checkFmId="checkFmId"
       :srcVersion="srcVersion"
+      :fmDeviceList="fmDeviceList"
       @checkVisible="checkVisible"
       @refreshList="refreshList"
     ></CheckFirmware>
@@ -167,10 +167,16 @@
 import AddFirmware from "@/components/firmware/addFirmware";
 import CheckFirmware from "@/components/firmware/checkFirmware";
 import UpgradeFirmware from "@/components/firmware/upgradeFirmware";
-import { getFmList, deleteFm, getProducts } from "@/api/fireware";
+import {
+  getFmList,
+  deleteFm,
+  getProducts,
+  getVerifyFirmInfo
+} from "@/api/fireware";
 export default {
   data() {
     return {
+      loading: true,
       list: [],
       activeTag: "first",
       form: {
@@ -188,16 +194,18 @@ export default {
         pageSize: 50,
         productName: ""
       },
-        products: [],
-        productsValue: '',
-        fmTotal: 0,
+      products: [],
+      productsValue: "",
+      fmTotal: 0,
       checkFmId: "",
-        srcVersion: '',
+      srcVersion: "",
+      fmDeviceList: [],
       deviceList: [],
       labelPosition: "left",
       dialogFormVisible: false,
       checkFmVisible: false,
-      upgradeFmVisible: false
+      upgradeFmVisible: false,
+      tabDisabled: true
     };
   },
   components: {
@@ -210,17 +218,19 @@ export default {
     this.getProductList();
   },
   methods: {
+    // 获取固件列表
     fetchFmList() {
-        let formData = new FormData()
-        formData.append('pageNum', this.form.pageNum)
-        formData.append('pageSize', this.form.pageSize)
-        formData.append('productName', this.form.productName)
-        formData.append('fmName', this.form.fmName)
+      let formData = new FormData();
+      formData.append("pageNum", this.form.pageNum);
+      formData.append("pageSize", this.form.pageSize);
+      formData.append("productName", this.form.productName);
+      formData.append("fmName", this.form.fmName);
       getFmList(formData)
         .then(res => {
           if (res.code === 200) {
             this.list = res.data.list;
             this.fmTotal = res.data.total;
+            this.loading = false;
           } else if (res.code === 9321) {
             this.$message.warning(res.message);
           } else {
@@ -228,12 +238,14 @@ export default {
           }
         })
         .catch(error => {
-            this.$message.error(error);
+          this.$message.error(error);
         });
     },
+    // 搜索固件列表
     searchList() {
       this.fetchFmList();
     },
+    // 筛选产品数据
     userFilter(query = "") {
       let arr = this.products.filter(item => {
         return item.productName.includes(query);
@@ -244,6 +256,7 @@ export default {
         this.products = arr;
       }
     },
+    // 获取产品列表
     getProductList() {
       this.form.productName = this.productsValue.split("|")[1]
         ? this.productsValue.split("|")[1]
@@ -256,20 +269,46 @@ export default {
     },
     changeSelect() {
       this.form.productName = this.productsValue.split("|")[1];
-      this.searchList()
+      this.searchList();
     },
     /**
      * 验证固件
      */
     checkFm(row) {
+      // 未验证的固件进行验证，验证中或已验证的固件弹窗提示
       if (row.fmStatus === 0) {
-        this.checkFmVisible = true;
-        this.checkFmId = String(row.fmId);
-        this.srcVersion = row.srcVersion
+        this.checkFmId = String(row.id);
+        this.srcVersion = row.srcVersion;
+        this.getVerifyFirmInfo(this.checkFmId, this.srcVersion);
       } else {
         this.openCheckFm(row.fmStatus);
       }
     },
+    // 验证固件前校验是否存在设备
+    getVerifyFirmInfo(fmId, versions) {
+      let formData = new FormData();
+      formData.append("fmId", fmId);
+      formData.append("versions", versions);
+      getVerifyFirmInfo(formData).then(res => {
+        if (res.code === 200) {
+            this.fmDeviceList = res.data.deviceList
+            this.checkFmVisible = true;
+        } else if (res.code === 9003) {
+          this.$alert(res.message, "提示", {
+            confirmButtonText: "确定",
+            type: "warning",
+            callback: action => {
+            }
+          });
+        } else {
+            this.$message({
+                type: "warning",
+                message: res.message
+            });
+        }
+      });
+    },
+    // 验证固件组件
     checkVisible() {
       this.checkFmVisible = false;
     },
@@ -282,6 +321,7 @@ export default {
     refreshList() {
       this.fetchFmList();
     },
+    // 升级固件组件
     upgradeList(fmId, fmStatus) {
       if (fmStatus === 2) {
         this.upgradeFmVisible = true;
@@ -291,6 +331,7 @@ export default {
     upgradeVisible() {
       this.upgradeFmVisible = false;
     },
+    // 格式化表格数据
     formatFmStatus(row) {
       return row.fmStatus === 0
         ? "未验证"
@@ -298,19 +339,27 @@ export default {
         ? "验证中"
         : "已验证";
     },
-    handleCurrentChange() {
-        this.fetchFmList();
+    formatCreateTime (row) {
+      return row.createTime ? this.$fun.dateFormat(
+          new Date(row.createTime),
+          "yyyy-MM-dd hh:mm:ss"
+      ): ''
     },
-    handleClick() {},
+    // 分页
+    handleCurrentChange() {
+      this.fetchFmList();
+    },
     addItem() {
       this.dialogFormVisible = true;
     },
+    // 添加固件组件传值
     changeVisible() {
       this.dialogFormVisible = false;
     },
     changeList() {
       this.fetchFmList();
     },
+    // 查看详情
     toDetails(id) {
       this.$router.push({
         path: "details",
@@ -319,6 +368,7 @@ export default {
         }
       });
     },
+    // 删除固件
     deleteFm(fmId) {
       let formData = new FormData();
       formData.append("fmId", fmId);
@@ -330,6 +380,7 @@ export default {
         }
       });
     },
+    // 删除固件
     delItem(fmId) {
       this.$confirm("您确定要删除此固件吗?", "提示", {
         confirmButtonText: "确定",

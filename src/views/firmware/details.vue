@@ -80,11 +80,10 @@
                    <el-form ref="form" :model="batchManage" label-width="80px" :inline="true">
                        <el-form-item>
                            <el-button type="primary" @click="checkFm">验证固件</el-button>
-                           <!--<el-tooltip class="item" effect="dark" content="请先验证固件，再进行批量升级" placement="top" v-if="details.detailList.fmStatus !== 2">-->
-                               <!--<el-button disabled>批量升级</el-button>-->
-                           <!--</el-tooltip>-->
-                           <!--<el-button v-else @click="upgradeSubmit">批量升级</el-button>-->
-                           <el-button @click="upgradeSubmit">批量升级</el-button>
+                           <el-tooltip class="item" effect="dark" content="请先验证固件，再进行批量升级" placement="top"  v-if="details.detailList.fmStatus !== 2">
+                               <el-button disabled>批量升级</el-button>
+                           </el-tooltip>
+                           <el-button v-else @click="upgradeSubmit">批量升级</el-button>
                        </el-form-item>
                        <el-form-item>
                            <el-input
@@ -110,9 +109,10 @@
                        <el-table-column
                            label="添加时间"
                            prop="upgrade.createTime"
+                           :formatter="formatCreateTime"
                        ></el-table-column>
                        <el-table-column label="操作">
-                           <template scope="scope">
+                           <template slot-scope="scope">
                                <a class="oprate_btn" @click="toBatchDetails(scope.row.upgrade.id)">查看</a>
                            </template>
                        </el-table-column>
@@ -161,7 +161,7 @@
                            :formatter="formatUpgradeStatus"
                        ></el-table-column>
                        <el-table-column label="操作">
-                           <template scope="scope">
+                           <template slot-scope="scope">
                             <a class="oprate_btn" @click="toBatchDetails(scope.row.upgradeId)">查看</a>
                            </template>
                        </el-table-column>
@@ -248,7 +248,7 @@
                                    添加时间
                                </div>
                                <div class="edit_info-rf">
-                                   {{fmInfo.fmInfoList.createTime}}
+                                   {{new Date(fmInfo.fmInfoList.createTime).toLocaleString()}}
                                </div>
                            </div>
                        </el-col>
@@ -423,12 +423,10 @@
                 this.getUpgradeList()
             },
             upgradeSubmit () {
-                this.upgradeFmVisible = true;
-                this.checkFmId = this.fmId
-                // if (this.details.detailList.fmStatus === 2) {
-                //     this.upgradeFmVisible = true;
-                //     this.checkFmId = String(this.details.detailList.id);
-                // }
+                if (this.details.detailList.fmStatus === 2) {
+                    this.upgradeFmVisible = true;
+                    this.checkFmId = String(this.fmId);
+                }
             },
             // 批量升级
             upgradeVisible() {
@@ -497,17 +495,23 @@
             },
             // 格式化表格内容
             formatType (row) {
-                return row.upgrade.type === "0" ? "验证固件" : "批量升级"
+                return row.upgrade.type === 0 ? "验证固件" : "批量升级"
             },
             formatUgType (row) {
-                return row.upgrade.ugType === "1" ? "静态升级" : "动态升级"
+                return row.upgrade.ugType === 1 ? "静态升级" : "动态升级"
             },
             formatUgStatus (row) {
                 return row.upgrade.ugStatus === 1 ? "待升级" : row.upgrade.ugStatus === 2 ? "升级中" : row.upgrade.ugStatus === 3 ? "升级完成": "已取消"
             },
             formatUpgradeStatus (row) {
                 return row.upgradeStatus === 0 ? "待升级" : row.ugStatus === 1 ? "升级中" : row.ugStatus === 2 ? "已完成": "升级失败"
-            }
+            },
+            formatCreateTime (row) {
+                return row.upgrade.createTime ? this.$fun.dateFormat(
+                    new Date(row.upgrade.createTime),
+                    "yyyy-MM-dd hh:mm:ss"
+                ): ''
+            },
         }
     }
 </script>

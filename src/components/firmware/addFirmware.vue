@@ -43,8 +43,17 @@
           </el-select>
         </el-form-item>
         <el-form-item label="固件产品类型" required>
-          <el-select v-model="ruleForm.type" placeholder="固件产品类型">
-            <el-option label="Md5" value="1"></el-option>
+          <el-select
+            v-model="ruleForm.type"
+            placeholder="固件产品类型"
+            :disabled="typeDisabled"
+          >
+            <el-option
+              v-for="(key, value) in productsType"
+              :key="key"
+              :label="value"
+              :value="key"
+            ></el-option>
           </el-select>
         </el-form-item>
         <!--<el-form-item label="固件模块" required>-->
@@ -111,7 +120,7 @@ export default {
         fmType: 1, // 固件名称 1整包、2差分
         productId: "", // 固件所属产品id
         productName: "", // 固件所属产品名称
-        type: "1", // 固件模块类型
+        type: "", // 固件产品类型
         srcVersion: "", // 待升级版本号
         destVersion: "", // 升级后固定版本
         fmName: "", // 固件名称
@@ -125,6 +134,7 @@ export default {
       },
       typelTag: "1",
       products: [],
+      productsType: {},
       timeout: null,
       productForm: {
         pageNum: 1,
@@ -136,14 +146,17 @@ export default {
   },
   mounted() {
     this.getProductList();
-    this.getFmType();
   },
   methods: {
     // 提交新增固件
     addFmSubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          saveFm(this.ruleForm)
+            let formData = new FormData()
+            for (let item in this.ruleForm) {
+                formData.append(item, this.ruleForm[item])
+            }
+          saveFm(formData)
             .then(res => {
               if (res.code === 200) {
                 this.$emit("changeVisible", this.dialogFormVisible);
@@ -164,8 +177,19 @@ export default {
     },
     // 获取固件产品类型
     getFmType() {
-      getFmType().then(res => {
-        console.log(res);
+      let formData = new FormData();
+      formData.append('productId', this.ruleForm.productId)
+      getFmType(formData).then(res => {
+        if (res.code === 200) {
+            // this.productsType = { //测试数据
+            //   HW: "0",
+            //   YOS: "1",
+            //   DEMEAN: "2"
+            // };
+            this.productsType = res.data
+        } else {
+            this.$message.warning(res.message);
+        }
       });
     },
     closeDialog() {
@@ -212,6 +236,12 @@ export default {
     changeSelect() {
       this.ruleForm.productId = this.productsValue.split("|")[0];
       this.ruleForm.productName = this.productsValue.split("|")[1];
+      this.getFmType();
+    }
+  },
+  computed: {
+    typeDisabled: function() {
+      return !this.ruleForm.productId;
     }
   }
 };

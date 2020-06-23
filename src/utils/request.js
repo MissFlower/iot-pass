@@ -1,5 +1,6 @@
 import axios from "axios";
 import cookie from "@/utils/cookie.js";
+import {Message} from 'element-ui'
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_URL,
   timeout: 500000
@@ -21,7 +22,16 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     const res = response.data ? response.data : {};
-    return res;
+    if (res.code === 200) {
+      return res
+    }     
+     //错误提示
+     let message = res.message || res.msg || 'Error'
+     Message({
+       message: message,
+       type: 'error',
+       duration: 5 * 1000
+     })
   },
   error => {
     return Promise.reject(error);

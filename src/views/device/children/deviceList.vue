@@ -5,7 +5,7 @@
  -->
 <template>
   <div v-loading="loading">
-
+    <h2>设备管理</h2>
     <div class="mb20 df ai_c">
       <el-select class="w200" v-model="productSelIndex" placeholder="请选择产品" @change="getDeviceList">
         <el-option
@@ -15,17 +15,20 @@
           :value="index">
         </el-option>
       </el-select>
-      <div class="deviceCountView">
-        <div>设备总数
+
+      <div class="deviceCountView" v-for="(obj,index) in deviceCountObj" :key="index">
+        <div class="df ai_c">
+          <span v-if='index!=0' class="dib mr5" :style="{width:'8px', height:'8px', borderRadius:'4px', background: index==1?'#0A59C0':'#1D7F2F'}"></span>
+          <span>{{obj.title}}</span>
           <el-popover
             placement="top-start"
             width="160"
             trigger="hover"
-            content="当前指定产品的设备总数">
-            <span class="el-icon-question ml2" slot="reference"></span>
+            :content="obj.alert">
+            <span class="el-icon-question ml2 img" slot="reference"></span>
           </el-popover>
         </div>
-        <div class="deviceCount">{{tableData.total}}</div>
+        <div class="Count">{{obj.count}}</div>
       </div>
     </div>
 
@@ -46,7 +49,7 @@
         <el-input class="ml10 mr10 w150" placeholder="固件版本" v-model="fmVersionValue" @change="searchBtnTouch"></el-input>
         <el-button icon="el-icon-search" @click="searchBtnTouch"></el-button>
       </div>
-      <el-button type="primary" @click="showNewDevice = true">新建设备</el-button>
+      <el-button type="primary" @click="toNewDevice">新建设备</el-button>
     </div>
     <el-table :data="list" border @selection-change="handleSelectionChange" ref="multipleTable">
       <el-table-column type="selection" width="40"></el-table-column>
@@ -74,7 +77,6 @@
     <div class="pr">
       <div class="bottomSeleView">
         <el-checkbox @change="bottomSeleChange" v-model="bottomSeleChecked" :disabled="bottomSeleDis"></el-checkbox>
-
         <el-popconfirm :title="'确定要批量删除选中的'+multipleSelection.length+'个设备吗？'" @onConfirm="batchOperate(1)" class="ml10">
           <el-button slot="reference" type="primary" :disabled="bottomSeleDis">删除</el-button>
         </el-popconfirm>
@@ -89,7 +91,7 @@
       <pagination :data="tableData" @pagination="handleCurrentChange" class="tr"/>
     </div>
     <!-- 新建设备 -->
-    <newDevice v-if="showNewDevice"></newDevice>
+    <newDevice v-if="showNewDevice" :appointProduck="selProduck"></newDevice>
   </div>
 </template>
 
@@ -102,6 +104,11 @@ export default {
   data() {
     return {
       list: [],
+      deviceCountObj:[
+        {title:'设备总数',alert:'当前指定产品的设备总数',count:''},
+        {title:'激活设备',alert:'当前已激活的设备总数',count:''},
+        {title:'当前在线',alert:'当前在线的设备总数',count:''},
+      ],
       tableData: {
         pageCount: 0, //总页数
         total: 0, // 总条数
@@ -110,6 +117,7 @@ export default {
       },
       productSelIndex: 0,
       productList: [{productName:'全部产品'}],
+      selProduck: '',
       searchTypeSelect: "1",
       searchInputValue: "",
       fmVersionValue: "",
@@ -173,6 +181,11 @@ export default {
 
               let {data,...pagination} = res.data;
               this.tableData = pagination;
+
+              //设备各种状态数量
+              this.deviceCountObj[0].count = res.data.total;
+              this.deviceCountObj[1].count = 0;
+              this.deviceCountObj[2].count = 0;
             }
           }
           this.loading = false;
@@ -342,6 +355,12 @@ export default {
       }
     },
 
+    //新建设备
+    toNewDevice(){
+      this.selProduck = this.productList[this.productSelIndex];
+      this.showNewDevice = true;
+    },
+
     /*
     新建设备窗口关闭
     updata  是否更新数据
@@ -374,15 +393,18 @@ export default {
 <style lang="scss" scoped>
 .deviceCountView{
   height: 45px;
-  margin-left: 60px;
+  margin-left: 100px;
   border-left: 1px solid #ebecec;
   padding-left: 20px;
   font-size: 13px;
   color: #888;
-  .deviceCount{
+  .Count{
     color: #373d41;
     font-size: 24px;
     margin-top: 5px;
+  }
+  .img{
+    opacity: 0.7;
   }
 }
 

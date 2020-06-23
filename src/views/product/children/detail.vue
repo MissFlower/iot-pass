@@ -96,7 +96,7 @@ export default {
      },
      //设备管理
      goEqu(){
-       this.$router.push(`/equ/deviceManage?productId=${this.productData.id}`)
+       this.$router.push(`/device/deviceManage?productId=${this.productData.id}`)
      },
     //修改产品名称
     changeProName(name){

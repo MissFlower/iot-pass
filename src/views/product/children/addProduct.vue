@@ -66,7 +66,11 @@
       <el-form-item label="注册开关" prop="dynRegister">
         <el-switch v-model="ruleForm.dynRegister" active-text="开" inactive-text="关" :active-value="1" :inactive-value="0"></el-switch>
       </el-form-item>
-    
+
+      <el-form-item label="固件版本">
+        <el-input v-model="ruleForm.fmTypes"></el-input>
+      </el-form-item>
+
       <el-form-item label="描述" prop="description">
         <el-input type="textarea" v-model="ruleForm.description" placeholder="请输入产品描述"></el-input>
       </el-form-item>
@@ -154,7 +158,8 @@ export default {
           dataFormat: 1,
           authType: 1,
           dynRegister: 1,
-          description: '',         
+          description: '', 
+          fmTypes: ''        
       },
       rules: {
           productName: [

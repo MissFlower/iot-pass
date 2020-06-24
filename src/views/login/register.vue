@@ -162,7 +162,8 @@ export default {
     },
     handleSendCode() {
       sendCode({
-        phone: this.formData.phone
+        phone: this.formData.phone,
+        type: 1
       }).then(res => {
         if (res.code === 200) {
           this.seconds = 61;

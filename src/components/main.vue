@@ -7,16 +7,16 @@
       <!-- <breadcrumb v-if="flag"></breadcrumb> -->
       <router-view />
     </div>
-    <!-- <add-fun></add-fun> -->
+    <add-fun></add-fun>
   </main>
 </template>
 
 <script>
 import paasMenu from "./children/menu";
 // import breadcrumb from "./breadcrumb";
-// import addFun from "./addFun"
+import addFun from "./addFun"
 export default {
-  components: { paasMenu },
+  components: { paasMenu, addFun },
   computed: {
     flag() {
       if (this.$route.path === "/home") {

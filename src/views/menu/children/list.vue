@@ -132,7 +132,6 @@ export default {
   },
   mounted() {
     this.getData();
-    console.log(this.authArr)
   },
   methods: {
     getData() {

@@ -14,7 +14,7 @@
       <div v-if="active == 1" class="info f14">
         <div class="title pl10">
           账户
-          <span class="red">{{ userName }}</span>
+          <span class="red">{{ userInfo.acount }}</span>
           为确认是你本人操作，请完成一下验证
         </div>
         <el-form label-width="120px" class="mt20">
@@ -55,21 +55,20 @@ export default {
   data() {
     return {
       loading: false,
-      active: 2,
+      active: 1,
       code: "",
       phone: "",
       timerVal: null,
       msg: "获取短信验证码",
       seconds: 61,
       flag: null,
-      title: ""
+      title: "",
+      type: 2,
     };
   },
   computed: {
-    userName() {
+    userInfo() {
       return this.$store.state.app.userInfo
-        ? this.$store.state.app.userInfo.account
-        : null;
     }
   },
   watch: {
@@ -77,12 +76,19 @@ export default {
       switch(this.flag * 1) {
         case 1:
           this.title = '修改安全邮箱'
+          if (this.userInfo.email) {
+            this.type = 3
+          } else {
+            this.type = 2
+          }
           break
         case 2:
           this.title = '修改手机号'
+          this.type = 5
           break
         case 3:
           this.title = '修改密码'
+          this.type = 4
           break
       }
     }
@@ -98,7 +104,8 @@ export default {
     getCode() {
       this.loading = true;
       sendCode({
-        phone: this.phone
+        phone: this.phone,
+        type: this.type
       }).then(res => {
         if (res.code === 200) {
           this.seconds = 61;

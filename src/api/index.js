@@ -41,6 +41,7 @@ export function register(data) {
 发送手机验证码，用于验证手机号有效性
 
     phone	string	是	手机号
+    type    1 注册 2 绑定邮箱， 3修改邮箱， 4 修改密码， 5修改手机号
 */
 export function sendCode(data) {
   // 发送验证码

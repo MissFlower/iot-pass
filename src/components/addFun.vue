@@ -38,7 +38,14 @@
       <attribute-con v-if="type == 1"></attribute-con>
       <service-con v-if="type == 2"></service-con>
       <event-con v-if="type == 3"></event-con>
+      <el-form-item label="描述">
+        <el-input v-model="formData.desc" type="textarea" placeholder="请输入描述" :rows="4" maxlength="100" show-word-limit></el-input>
+      </el-form-item>
     </el-form>
+    <div slot="footer">
+      <el-button type="primary">确认</el-button>
+      <el-button>取消</el-button>
+    </div>
   </el-dialog>
 </template>
 
@@ -46,16 +53,23 @@
 import attributeCon from "./children/attributeCon";
 import serviceCon from "./children/serviceCon";
 import eventCon from "./children/eventCon";
+
 export default {
   components: {attributeCon, serviceCon, eventCon},
   data () {
     return {
-      dialogVisible: true,
+      dialogVisible: false,
       type: 1,
       formData: {
+        desc: ''
       },
       rules: {}
     }
+  },
+  mounted () {
+    // if (location.href.indexOf('localhost') > -1) {
+    //   this.dialogVisible = true
+    // }
   }
 }
 </script>
@@ -63,7 +77,7 @@ export default {
 <style lang="scss">
 .addFun {
   .el-dialog__body {
-    padding-top: 10px;
+    padding: 10px 20px 0;
   }
   .el-form-item--small .el-form-item__content, .el-form-item--small .el-form-item__label {
     float: none;

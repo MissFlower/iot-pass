@@ -196,7 +196,7 @@ export const asyncRoutes =[
         path: "deviceInfo",
         component: resolve =>
           require(["@/views/device/children/deviceInfo"], resolve),
-        meta: { name: "设备详情", code: "device_detail" }
+        meta: { name: "设备详情", code: "deviceInfo" }
       }
     ]
   },

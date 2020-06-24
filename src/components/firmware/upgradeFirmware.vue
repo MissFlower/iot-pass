@@ -11,7 +11,7 @@
       :before-close="closeDialog"
       width="25%"
     >
-      <el-form :model="form" ref="ruleFormUpgrade">
+      <el-form :model="form" ref="ruleFormUpgrade" :rules="rules">
         <el-form-item
           label="升级前版本号"
           label-width="150px"
@@ -135,6 +135,17 @@ export default {
         timeOut: "",
         retryInterval: "1",
         ugDeviceCount: ""
+      },
+      rules: {
+          ugDeviceCount: [
+              { required: true, message: '请输入固件推送速率', trigger: 'blur' }
+          ],
+          srcVersion: [
+              { required: true, message: '请输入待升级版本号', trigger: 'blur' }
+          ],
+          destVersion: [
+              { required: true, message: '请输入升级后版本号', trigger: 'blur' }
+          ]
       }
     };
   },

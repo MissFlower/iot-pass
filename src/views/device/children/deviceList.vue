@@ -75,15 +75,15 @@
     </el-table>
 
     <div class="pr">
-      <div class="bottomSeleView">
+      <div class="bottomSeleView" v-if="list.length">
         <el-checkbox v-if="authArr.indexOf('device_delete')>-1 || authArr.indexOf('device_enable')>-1" @change="bottomSeleChange" v-model="bottomSeleChecked" :disabled="bottomSeleDis"></el-checkbox>
-        <el-popconfirm v-if="authArr.indexOf('device_delete')>-1" :title="'确定要批量删除选中的'+multipleSelection.length+'个设备吗？'" @onConfirm="batchOperate(1)" class="ml10">
+        <el-popconfirm v-if="authArr.indexOf('device_delete')>-1" :title="'确定要批量删除选中的'+deviceSelection.length+'个设备吗？'" @onConfirm="batchOperate(1)" class="ml10">
           <el-button slot="reference" type="primary" :disabled="bottomSeleDis">删除</el-button>
         </el-popconfirm>
-        <el-popconfirm v-if="authArr.indexOf('device_enable')>-1" :title="'确定要批量禁用选中的'+multipleSelection.length+'个设备吗？'" @onConfirm="batchOperate(2)" class="ml10">
+        <el-popconfirm v-if="authArr.indexOf('device_enable')>-1" :title="'确定要批量禁用选中的'+deviceSelection.length+'个设备吗？'" @onConfirm="batchOperate(2)" class="ml10">
           <el-button slot="reference" type="primary" :disabled="bottomSeleDis">禁用</el-button>
         </el-popconfirm>
-        <el-popconfirm v-if="authArr.indexOf('device_enable')>-1" :title="'确定要批量启用选中的'+multipleSelection.length+'个设备吗？'" @onConfirm="batchOperate(3)" class="ml10">
+        <el-popconfirm v-if="authArr.indexOf('device_enable')>-1" :title="'确定要批量启用选中的'+deviceSelection.length+'个设备吗？'" @onConfirm="batchOperate(3)" class="ml10">
           <el-button slot="reference" type="primary" :disabled="bottomSeleDis">启用</el-button>
         </el-popconfirm>
       </div>
@@ -123,7 +123,7 @@ export default {
       fmVersionValue: "",
       showNewDevice: false,
       loading: false,
-      multipleSelection: [],
+      deviceSelection: [],
       bottomSeleDis: true,
       bottomSeleChecked: false
     };
@@ -332,7 +332,7 @@ export default {
 
     //设备选择
     handleSelectionChange(val){
-      this.multipleSelection = val;
+      this.deviceSelection = val;
         if(val.length){
           this.bottomSeleDis = false;
           this.bottomSeleChecked = true;
@@ -348,10 +348,10 @@ export default {
     */
     batchOperate(type){
       if(type == 1){
-        this.deleteDeviceRequest(this.multipleSelection);
+        this.deleteDeviceRequest(this.deviceSelection);
       }else{
         let enable = type==2?'1':'0';
-        this.deviceEnable(this.multipleSelection,enable);
+        this.deviceEnable(this.deviceSelection,enable);
       }
     },
 

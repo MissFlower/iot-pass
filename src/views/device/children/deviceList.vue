@@ -387,7 +387,6 @@ export default {
     deviceObj  设备对象
     */
     lookClick(deviceObj) {
-      console.log(JSON.stringify(deviceObj));
       this.$router.push(`deviceInfo?id=${deviceObj.id}`);
     },
 

@@ -160,7 +160,7 @@ export const asyncRoutes =[
         path: "detail/:key",
         component: resolve =>
           require(["@/views/product/children/detail"], resolve),
-        meta: { name: "产品详情" }
+        meta: { name: "产品详情" ,code: "product_detail"}
       },
       {
         path: "add-product",

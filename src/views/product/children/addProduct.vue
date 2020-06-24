@@ -213,6 +213,8 @@ export default {
           this.standardSelectOption = res.data;
           this.standardSelectOption.unshift({id:'',name:'全部领域'});
           this.standardSelectValue = ''          
+      }else {
+        this.$message.warning(res.message);
       }
     })
     this.getCategoryPage();
@@ -238,9 +240,11 @@ export default {
       categoryPage(Object.assign(this.tableData,{domainId: this.standardSelectValue,name: this.standardSelectSearch})).then(res => {
           if(res.code === 200){
             this.standardSelectTlData = res.data.data
+          }else {
+            this.$message.warning(res.message);
           }
       }).catch(err => {
-
+            this.$message.error(err); 
       })
     },
     //提交表单
@@ -262,9 +266,12 @@ export default {
                 this.loading = false;
                 if(res.code === 200){
                   this.$router.push({path: `detail/${res.data.productKey}`})
+                }else {
+                  this.$message.warning(res.message);
                 }
               }).catch(err => {
-                this.loading = false
+                this.loading = false;
+                this.$message.error(err);  
               })
           } else {            
               return false;

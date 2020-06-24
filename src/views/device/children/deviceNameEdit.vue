@@ -1,19 +1,19 @@
 <!-- 
 文件作者：wengyoubin
 创建日期：2020.6.18
-文件说明：编辑设备名称
+文件说明：编辑备注名称
  -->
 <template>
   <el-dialog
-    title="编辑设备名称"
+    title="编辑备注名称"
     :visible.sync='dialogVisible'
     width="500px"
     @close="handleClose"
     v-loading="loading"
   >
     <div class="df ai_c mb20">
-      <div class="w100 tr">设备名称：</div>
-      <el-input v-model="newDeviceName" placeholder="请输入设备名称"></el-input>
+      <div class="w100 tr">备注名称：</div>
+      <el-input v-model="newDeviceName" placeholder="请输入备注名称"></el-input>
     </div>
     <span slot="footer" class="dialog-footer">
       <el-button @click="handleCancel">取 消</el-button>

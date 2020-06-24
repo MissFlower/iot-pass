@@ -230,9 +230,12 @@ export default {
                     this.productData.description = this.dialogProEditForm.description;
                     this.productData.productName = this.dialogProEditForm.productName;
                     this.$emit('changeProName',this.dialogProEditForm.productName)
+                  }else {
+                    this.$message.warning(res.message);
                   }
               }).catch(err => {
                   this.loading = false;
+                  this.$message.error(err); 
               })
           } else {            
               return false;
@@ -254,6 +257,13 @@ export default {
       this.loading = true;
       dynamicRegisterSwitch({registerSwitch: val, productKey: this.$route.params.key}).then(res => {
         this.loading = false;
+        if(res.code !== 200){
+          if(val === 0){
+            this.productData.dynRegister = 1;
+          }else{
+            this.productData.dynRegister = 0;
+          }
+        }
       }).catch(err => {
         this.loading = false;
         if(val === 0){

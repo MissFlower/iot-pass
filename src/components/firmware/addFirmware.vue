@@ -14,6 +14,7 @@
       <el-form
         :model="ruleForm"
         ref="ruleForm"
+        :rules="rules"
         label-width="120px"
         class="demo-ruleForm"
       >
@@ -83,13 +84,15 @@
             multiple
             :limit="3"
             :file-list="fileList"
-            accept=".zip,.tar,.tar.gz,.gzip,.bin"
+            :show-file-list="false"
+            accept=".zip,.tar,.tar.gz,.gzip,.bin,.hex"
           >
             <el-button size="small">{{ uploadText }}</el-button>
             <div slot="tip" class="el-upload__tip">
               仅支持bin、tar、gz、tar.gz、zip、gzip类型的文件
             </div>
           </el-upload>
+          <el-progress v-if="uploadProgressShow" :percentage="100" :status="uploadStatus ? 'success':'exception'"></el-progress>
         </el-form-item>
         <el-form-item label="固件描述" prop="fmDesc">
           <el-input type="textarea" v-model="ruleForm.fmDesc"></el-input>
@@ -116,6 +119,8 @@ export default {
     return {
       fileList: [],
       uploadText: "点击上传",
+      uploadProgressShow: false,
+      uploadStatus: true,
       ruleForm: {
         fmType: 1, // 固件名称 1整包、2差分
         productId: "", // 固件所属产品id
@@ -141,7 +146,18 @@ export default {
         pageSize: 50,
         productName: ""
       },
-      productsValue: ""
+      productsValue: "",
+      rules: {
+          fmName: [
+              { required: true, message: '请输入固件名称', trigger: 'blur' }
+          ],
+          srcVersion: [
+              { required: true, message: '请输入待升级版本号', trigger: 'blur' }
+          ],
+          destVersion: [
+              { required: true, message: '请输入升级后版本号', trigger: 'blur' }
+          ]
+      }
     };
   },
   mounted() {
@@ -194,6 +210,8 @@ export default {
     },
     closeDialog() {
       this.$refs["ruleForm"].resetFields(); // 清空弹出框校验
+      this.uploadText = '上传文件'
+      this.uploadProgressShow = false
       this.$emit("changeVisible", this.dialogFormVisible);
     },
     // 上传文件
@@ -202,11 +220,18 @@ export default {
       fromData.append("file", file);
       uploadFile(fromData)
         .then(res => {
-          this.ruleForm.fmUrl = res.data.fmUrl;
-          this.ruleForm.fmSign = res.data.fmSign;
-          this.ruleForm.fmName = res.data.fmName;
-          this.ruleForm.fmSize = res.data.fmSize;
-          this.uploadText = "重新上传";
+            if (res.data.fmUrl) {
+                this.ruleForm.fmUrl = res.data.fmUrl;
+                this.ruleForm.fmSign = res.data.fmSign;
+                this.ruleForm.fmName = res.data.fmName;
+                this.ruleForm.fmSize = res.data.fmSize;
+                this.uploadText = "重新上传";
+                this.uploadStatus = true
+                this.uploadProgressShow = true
+            } else {
+                this.uploadStatus = false
+                this.uploadProgressShow = true
+            }
         })
         .catch(error => {
           this.$message.error(error);

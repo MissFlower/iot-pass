@@ -66,7 +66,11 @@
       <el-form-item label="注册开关" prop="dynRegister">
         <el-switch v-model="ruleForm.dynRegister" active-text="开" inactive-text="关" :active-value="1" :inactive-value="0"></el-switch>
       </el-form-item>
-    
+
+      <el-form-item label="固件版本">
+        <el-input v-model="ruleForm.fmTypes"></el-input>
+      </el-form-item>
+
       <el-form-item label="描述" prop="description">
         <el-input type="textarea" v-model="ruleForm.description" placeholder="请输入产品描述"></el-input>
       </el-form-item>
@@ -154,7 +158,8 @@ export default {
           dataFormat: 1,
           authType: 1,
           dynRegister: 1,
-          description: '',         
+          description: '', 
+          fmTypes: ''        
       },
       rules: {
           productName: [
@@ -213,6 +218,8 @@ export default {
           this.standardSelectOption = res.data;
           this.standardSelectOption.unshift({id:'',name:'全部领域'});
           this.standardSelectValue = ''          
+      }else {
+        this.$message.warning(res.message);
       }
     })
     this.getCategoryPage();
@@ -238,9 +245,11 @@ export default {
       categoryPage(Object.assign(this.tableData,{domainId: this.standardSelectValue,name: this.standardSelectSearch})).then(res => {
           if(res.code === 200){
             this.standardSelectTlData = res.data.data
+          }else {
+            this.$message.warning(res.message);
           }
       }).catch(err => {
-
+            this.$message.error(err); 
       })
     },
     //提交表单
@@ -262,9 +271,12 @@ export default {
                 this.loading = false;
                 if(res.code === 200){
                   this.$router.push({path: `detail/${res.data.productKey}`})
+                }else {
+                  this.$message.warning(res.message);
                 }
               }).catch(err => {
-                this.loading = false
+                this.loading = false;
+                this.$message.error(err);  
               })
           } else {            
               return false;

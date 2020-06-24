@@ -73,9 +73,12 @@ export default {
               let {data,...pagination} =  res.data;
               this.tableData = pagination;
               this.listData = res.data.data;          
+            }else {
+              this.$message.warning(res.message);
             }
         }).catch(err => {
-          this.loading = false;     
+          this.loading = false;   
+          this.$message.error(err);  
         })
       },
       //新建产品

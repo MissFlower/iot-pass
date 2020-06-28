@@ -79,3 +79,13 @@ export function deviceBatchEnable(data) {
         data: data
     });
 }
+
+export function deviceStatistics(data) {
+    // 指定产品设备统计
+    return request({
+        url: "/device/statistics",
+        method: "get",
+        headers: headerFrom_Get,
+        params: data
+    });
+}

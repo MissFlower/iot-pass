@@ -7,7 +7,7 @@
   <div v-loading="loading">
     <h2>设备管理</h2>
     <div class="mb20 df ai_c">
-      <el-select class="w200" v-model="productSelIndex" placeholder="请选择产品" @change="getDeviceList">
+      <el-select class="w200" v-model="productSelIndex" placeholder="请选择产品" @change="getDeviceStatistics">
         <el-option
           v-for="(item,index) in productList"
           :key="index"
@@ -98,7 +98,7 @@
 <script>
 import newDevice from "./newDevice";
 import Pagination from "@/components/Pagination"
-import { deviceList, deleteDevice, deviceBatchEnable, productList } from "@/api/deviceRequest";
+import { deviceList, deleteDevice, deviceBatchEnable, productList,deviceStatistics } from "@/api/deviceRequest";
 export default {
   components: { newDevice,Pagination },
   data() {
@@ -138,6 +138,8 @@ export default {
   mounted() {
     //获取产品列表
     this.getProductList();
+    //获取指定产品设备统计
+    this.getDeviceStatistics();
     
     let productId = this.$route.query.productId;
     if(productId==undefined || !productId.length){
@@ -188,11 +190,6 @@ export default {
 
               let {data,...pagination} = res.data;
               this.tableData = pagination;
-
-              //设备各种状态数量
-              this.deviceCountObj[0].count = res.data.total;
-              this.deviceCountObj[1].count = res.data.activateCount;
-              this.deviceCountObj[2].count = res.data.onlineCount;
             }
           }
           this.loading = false;
@@ -235,6 +232,40 @@ export default {
       })
       .catch(() => {
       });
+    },
+
+
+    //获取指定产品设备统计
+    getDeviceStatistics(){
+
+      //获取所选产品
+      var productId = '';
+      if(this.productSelIndex != 0){
+        productId = this.productList[this.productSelIndex].id;
+      }
+
+      deviceStatistics({
+        productId
+      })
+      .then(res => {
+        if (res.code === 200) {
+          if (res.data) {
+            //设备各种状态数量
+            this.deviceCountObj[0].count = res.data.deviceCount;
+            this.deviceCountObj[1].count = res.data.activateCount;
+            this.deviceCountObj[2].count = res.data.onlineCount;
+          }
+        }
+      })
+      .catch(() => {
+      });
+
+      //清空设备名称、固件版本筛选条件
+      this.searchInputValue = '';
+      this.fmVersionValue = '';
+
+      //获取指定产品设备列表
+      this.getDeviceList();
     },
 
 

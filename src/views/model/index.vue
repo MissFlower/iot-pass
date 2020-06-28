@@ -25,7 +25,7 @@
       <el-button size="mini" disabled>快速导入</el-button>
       <el-button size="mini" disabled>物模型 TSL</el-button>
       <el-button size="mini" disabled>历史版本</el-button>
-      <div v-if="list.length > 0 && !loading" class="info df ai_c mb5 mt10">
+      <div v-if="list.length > 0 && !loading" class="info df ai_c mb5 mt10 c9">
         <i class="el-icon-warning blue mr5"></i>
         您正在编辑的是草稿，需点击发布后，物模型才会正式生效
       </div>

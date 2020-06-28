@@ -58,7 +58,6 @@ const router = {
         functionArr = funArr
         if (list.length > 0) {
           const asyncList = filterFun(list);
-          console.log(asyncList)
           commit('SET_ROUTERS', asyncList);
           resolve(asyncList);
         } else {

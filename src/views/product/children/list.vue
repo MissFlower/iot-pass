@@ -90,6 +90,11 @@ export default {
                   message: '删除成功!'
               });
               this.$emit('getList')
+            }else{
+              this.$message({
+                  type: 'error',
+                  message: '删除失败!'
+              });
             }
           }).catch(err => {
               this.$message({

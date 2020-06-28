@@ -160,13 +160,13 @@ export const asyncRoutes =[
         path: "detail/:key",
         component: resolve =>
           require(["@/views/product/children/detail"], resolve),
-        meta: { name: "产品详情" }
+        meta: { name: "产品详情" ,code: "product_detail"}
       },
       {
         path: "add-product",
         component: resolve =>
           require(["@/views/product/children/addProduct"], resolve),
-        meta: { name: "创建产品" }
+        meta: { name: "创建产品",code: "product_add" }
       }
     ]
   },
@@ -196,7 +196,7 @@ export const asyncRoutes =[
         path: "deviceInfo",
         component: resolve =>
           require(["@/views/device/children/deviceInfo"], resolve),
-        meta: { name: "设备详情", code: "device_detail" }
+        meta: { name: "设备详情", code: "deviceInfo" }
       }
     ]
   },

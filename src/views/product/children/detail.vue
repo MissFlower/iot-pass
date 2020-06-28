@@ -124,9 +124,12 @@ export default {
                 type: 'success',
                 message: '撤销发布成功！'
               });
+            }else {
+              this.$message.warning(res.message);
             }
           }).catch(err => {
             this.mainLoading = false;
+            this.$message.error(err);  
           })          
         })
         
@@ -145,9 +148,12 @@ export default {
                 type: 'success',
                 message: '发布成功!'
               });
+            }else {
+              this.$message.warning(res.message);
             }
           }).catch(err => {
             this.mainLoading = false;
+            this.$message.error(err);  
           })
           
         })
@@ -182,9 +188,12 @@ export default {
           }else{
               this.btnType = ''
           }
+        }else {
+          this.$message.warning(res.message);
         }
       }).catch(err => {
-        this.loading = false
+        this.loading = false;
+        this.$message.error(err); 
       })
     }
   },

@@ -174,10 +174,12 @@ export const asyncRoutes =[
     path: "/model",
     redirect: "/model/index",
     component: Layout,
+    meta: { name: "物模型管理", code: "model" },
     children: [
       {
         path: "index",
-        component: resolve => require(["@/views/model/index"], resolve)
+        component: resolve => require(["@/views/model/index"], resolve),
+        meta: { name: "物模型管理", code: "model" },
       }
     ]
   },

@@ -81,7 +81,7 @@ export function deviceBatchEnable(data) {
 }
 
 export function deviceStatistics(data) {
-    // 设备启、禁用
+    // 指定产品设备统计
     return request({
         url: "/device/statistics",
         method: "get",

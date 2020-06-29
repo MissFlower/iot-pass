@@ -29,7 +29,7 @@
             <div slot="content" class="f12 c9 w200">必填，支持中文、大小写字母、数字、短划线、下划线和小数点，必须以中文、英文或数字开头，不超过30个字符。</div>
           </el-tooltip>
         </span>
-        <el-input v-model="formData.name" placeholder="请输入您的功能名称"></el-input>
+        <el-input v-model="formData.modelData.name" placeholder="请输入您的功能名称"></el-input>
       </el-form-item>
       <el-form-item prop="identifier">
         <span slot="label">
@@ -39,14 +39,14 @@
             <div slot="content" class="f12 c9 w200">必填，支持大小写字母、数字和下划线、不超过50个字符。</div>
           </el-tooltip>
         </span>
-        <el-input v-model="formData.identifier" placeholder="请输入您的标识符"></el-input>
+        <el-input v-model="formData.modelData.identifier" placeholder="请输入您的标识符"></el-input>
       </el-form-item>
       <!--不同类型对应不同模块-->
-      <attribute-con ref="attDataSelectPart"  v-if="formData.abilityType == 1" :dataSpecs="formData.dataSpecs" @callBack="callBackForAttribute"></attribute-con>
+      <attribute-con ref="attDataSelectPart"  v-if="formData.abilityType == 1" :dataType="formData.dataType" @callBack="callBackForAttribute"></attribute-con>
       <service-con v-if="formData.abilityType == 2"></service-con>
       <event-con v-if="formData.abilityType == 3"></event-con>
       <el-form-item label="描述">
-        <el-input v-model="formData.description" type="textarea" placeholder="请输入描述" :rows="4" maxlength="100" show-word-limit></el-input>
+        <el-input v-model="formData.modelData.description" type="textarea" placeholder="请输入描述" :rows="4" maxlength="100" show-word-limit></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer">
@@ -67,24 +67,39 @@ export default {
   components: {attributeCon, serviceCon, eventCon},
   props: ['productKey'],
   data () {
+    const validateName = (rule, value, callback) => {
+      if (this.formData.modelData.name === '') {
+        callback(new Error('该名称不能为空'))
+      } else {
+        callback()
+      }
+    }
+    const validateIdentifier = (rule, value, callback) => {
+      if (this.formData.modelData.identifier === '') {
+        callback(new Error('标识符不能为空'))
+      } else {
+        callback()
+      }
+    }
     return {
       dialogVisible: true,
       formData: {
         productKey: '',
         abilityType: 1,
-        identifier: 'test',
-        name: '测试',
-        description: '',
-        dataSpecs: {},
-        rwFlag: '',
-        dataType: ''
+        modelData: {
+          identifier: 'test',
+          name: '测试',
+          description: '',
+          accessMode: '',
+          dataType: {}
+        }
       },
       rules: {
         name: [
-          { required: true, message: '该名称不能为空', trigger: 'change' },
+          { required: true, validator: validateName, trigger: 'change' },
         ],
         identifier: [
-          { required: true, message: '标识符不能为空', trigger: 'change' },
+          { required: true, validator: validateIdentifier, trigger: 'change' },
         ]
       }
     }
@@ -105,7 +120,15 @@ export default {
       })
     },
     callBackForAttribute (data) {
-      console.log(data)
+      if (data) {
+        for (let key in data) {
+          this.formData.modelData[key] = data[key]
+        }
+        console.log(this.formData)
+        addCustomAbility(this.formData).then(res => {
+          console.log(res)
+        })
+      }
     }
   }
 }

@@ -6,8 +6,8 @@
 
 <template>
   <el-dialog id="addParam" title="新增参数" :visible.sync="dialogVisible" append-to-body  width="400px">
-    <el-form :model="formData">
-      <el-form-item>
+    <el-form ref="form" :model="formData" :rules="rules">
+      <el-form-item prop="name">
         <span slot="label">
           参数名称
           <el-tooltip>
@@ -15,9 +15,9 @@
             <div slot="content" class="f12 c9 w200">必填，支持中文、大小写字母、数字、短划线、下划线和小数点，必须以中文、英文或数字开头，不超过30个字符。</div>
           </el-tooltip>
         </span>
-        <el-input placeholder="请输入您的参数名称"></el-input>
+        <el-input v-model="formData.name" placeholder="请输入您的参数名称"></el-input>
       </el-form-item>
-      <el-form-item>
+      <el-form-item prop="identifier">
         <span slot="label">
           标记符
           <el-tooltip>
@@ -25,22 +25,67 @@
             <div slot="content" class="f12 c9 w200">必填，支持大小写字母、数字和下划线、不超过50个字符。</div>
           </el-tooltip>
         </span>
-        <el-input placeholder="请输入您的标识符"></el-input>
+        <el-input v-model="formData.identifier" placeholder="请输入您的标识符"></el-input>
       </el-form-item>
-      <datatype-selectpart :type="`addParam`"></datatype-selectpart>
+      <datatype-selectpart ref="dataSelect" :type="`addParam`" @success="handleSuccess"></datatype-selectpart>
     </el-form>
+    <div slot="footer">
+      <el-button type="primary" @click="handleSave">确认</el-button>
+      <el-button>取消</el-button>
+    </div>
   </el-dialog>
 </template>
 
 <script>
 export default {
+  props: ['specs', 'info'],
   data () {
     return {
       dialogVisible: true,
       formData: {
         name: '',
-        identifier: ''
+        identifier: '',
+        dataType: null
+      },
+      rules: {
+        name: [
+          { required: true, message: '参数名不能为空', trigger: 'change' },
+        ],
+        identifier: [
+          { required: true, message: '参数标识符不能为空', trigger: 'change' },
+        ]
+      },
+      specsArr: []
+    }
+  },
+  mounted () {
+    if (this.specs) {
+      this.specs.forEach(item => {
+        this.specsArr.push(item.identifier)
+      })
+    }
+  },
+  methods: {
+    handleSave () {
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          this.$refs.dataSelect.getDataForParent()
+        }
+      })
+    },
+    handleSuccess (data) {
+      if (data) {
+        this.formData.dataType = data
+        this.$emit('success', this.formData)
+        this.close()
+      } else {
+        this.$emit('success', null)
       }
+    },
+    close () { // 弹框关闭函数
+      this.dialogVisible = false
+      // this.$refs.form.resetFields()
+      this.$emit('close')
     }
   }
 }

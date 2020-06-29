@@ -7,32 +7,32 @@
 <template>
   <div id="dataSelectPart">
     <el-form ref="dataSelectPartForm" :model="formData" :rules="rules">
-      <el-form-item label="数据类型" prop="dataType">
-        <el-select v-model="formData.dataType" @change="handleChange">
+      <el-form-item label="数据类型" prop="type">
+        <el-select v-model="formData.type" @change="handleChange">
           <el-option v-for="(item, index) in dataTypeArr" :key="index" :value="item.value" :label="item.label"></el-option>
         </el-select>
       </el-form-item>
-      <div v-if="formData.dataType == '0' || formData.dataType == '1' || formData.dataType == '2'">
+      <div v-if="formData.type == '0' || formData.type == '1' || formData.type == '2'">
         <div><span class="red mr5">*</span>取值范围</div>
         <div class="df ai_c mt10">
           <el-form-item prop="min">
-            <el-input v-model="formData.min" placeholder="最小值" class="w150 mr10"></el-input>
+            <el-input v-model="formData.specs.min" placeholder="最小值" class="w150 mr10" @input="rangeValueFun"></el-input>
             <span class="mr10">~</span>
           </el-form-item>
           <el-form-item prop="max">
-            <el-input v-model="formData.max" placeholder="最大值" class="w150"></el-input>
+            <el-input v-model="formData.specs.max" placeholder="最大值" class="w150" @input="rangeValueFun"></el-input>
           </el-form-item>
         </div>
         <el-form-item label="步长" prop="step">
-          <el-input v-model="formData.step" placeholder="请输入步长"></el-input>
+          <el-input v-model="formData.specs.step" placeholder="请输入步长"></el-input>
         </el-form-item>
         <el-form-item label="单位" placeholder="请选择单位">
-          <el-select v-model="formData.unit" filterable>
+          <el-select v-model="formData.specs.unit" filterable>
             <el-option v-for="item in unitArr" :key="item.symbol" :value="item.symbol" :label="`${item.name} /${item.symbol}`"></el-option>
           </el-select>
         </el-form-item>
       </div>
-      <div v-if="formData.dataType == '3'">
+      <div v-if="formData.type == '3'" class="mb10">
         <div><span class="red mr5">*</span>枚举项</div>
         <div class="df mt10 mb10">
           <div class="flex1">
@@ -64,7 +64,7 @@
         </div>
         <span @click="addEnumItem" class="blue f12"><i class="el-icon-plus mr10"></i>添加枚举项</span>
       </div>
-      <div v-if="formData.dataType == '4'">
+      <div v-if="formData.type == '4'">
         <div class="mb10"><span class="red mr5">*</span>布尔值</div>
         <el-form-item prop="bool0">
           <span class="dib w30 tc">0 -</span>
@@ -75,18 +75,25 @@
           <el-input v-model="boolObj[1]" placeholder="如：开" class="ml20" style="width: calc(100% - 50px)"></el-input>
         </el-form-item>
       </div>
-      <el-form-item label="数据长度" v-if="formData.dataType == '5'">
+      <el-form-item label="数据长度" v-if="formData.type == '5'">
         <el-input placeholder="请输入内容" v-model="text">
           <template slot="append">字节</template>
         </el-input>
       </el-form-item>
-      <el-form-item label="时间格式" v-if="formData.dataType == '6'">
+      <el-form-item label="时间格式" v-if="formData.type == '6'">
         <el-input disabled v-model="dataText"></el-input>
       </el-form-item>
-      <el-form-item label="JSON对象：" v-if="formData.dataType == '7'">
+      <el-form-item label="JSON对象：" v-if="formData.type == '7'">
+        <div v-for="(item, index) in formData.specs" :key="index" class="df ai_c json_item">
+          <div class="flex1">参数名称： {{item.name}}</div>
+          <div>
+            <el-link type="primary" :underline="false" class="f12 mr10" disabled>编辑</el-link>
+            <el-link type="primary" :underline="false" class="f12" disabled>删除</el-link>
+          </div>
+        </div>
         <el-button type="text" icon="el-icon-plus" @click="addStruct">新增参数</el-button>
       </el-form-item>
-      <div v-if="formData.dataType == '8'">
+      <div v-if="formData.type == '8'">
         <el-form-item label="元素类型">
           <el-radio-group v-model="arrObj.type">
             <el-radio v-for="(item, index) in arrTypes" :key="index" :label="item.value">{{item.text}}</el-radio>
@@ -97,7 +104,7 @@
         </el-form-item>
       </div>
     </el-form>
-    <add-param v-if="flag == 1"></add-param>
+    <add-param v-if="flag == 1" :specs="formData.specs" :info="structInfo" @success="successAddParams" @close="clodeAddParams"></add-param>
   </div>
 </template>
 
@@ -107,46 +114,27 @@ import units from "@/data/unit"
 export default {
   name: 'DatatypeSelectpart',
   components: {addParam},
-  props: ['type'],
+  props: ['info'],
   data () {
-    const validateValueRange = (rule, value, callback) => {
-      let str = ''
-      let val = null
-      switch (this.formData.dataType) {
-        case '0':
-          val = 2147483648
-          if (value === '') {
-            str = '不能为空'
-          }else if (this.formData.max && this.formData.min && (this.formData.min > this.formData.max)) {
-            str = "最大值必须大于最小值，整数型不能有小数位，单精度有效位为7，双精度为16"
-          } else if (value > -val && value < val) {
-            str = ''
-          } else {
-            str = `取值范围：-${val} ~ ${val}`
-          }
-          break
-        case '1':
-          val = '2^128'
-          if (this.formData.max && this.formData.min && (this.formData.min > this.formData.max)) {
-            str = "最大值必须大于最小值，整数型不能有小数位，单精度有效位为7，双精度为16"
-          } else if (value > -(Math.pow(2, 128)) && value < Math.pow(2, 128)) {
-            str = ''
-          } else {
-            str = `取值范围：-${val} ~ ${val}`
-          }
-          break
-        case '2':
-          val = 64
-          if (value.length > val) {
-            str = 'double类型支持最大位数为64'
-          } else {
-            str = ''
-          }
-          break
-      }
-      
+    const validateValueRangeMin = (rule, value, callback) => {
+      let str = this.numMinMaxDealFun(this.formData.specs.min)
       if (str) {
         callback(new Error(str))
+      } else {
+        callback()
+      }
+    }
+    const validateValueRangeMax = (rule, value, callback) => {
+      let str = this.numMinMaxDealFun(this.formData.specs.max)
+      if (str) {
+        callback(new Error(str))
+      } else {
+        callback()
+      }
+    }
+    const validateStep = (rule, value, callback) => {
+      if (this.formData.specs.step === '') {
+        callback(new Error('步长不能为空'))
       } else {
         callback()
       }
@@ -160,12 +148,21 @@ export default {
       }
     }
     return {
+      // formData: {
+      //   unit: '',
+      //   step: '',
+      //   dataType: '0',
+      //   max: '',
+      //   min: ''
+      // },
       formData: {
-        unit: '',
-        step: '',
-        dataType: '0',
-        max: '',
-        min: ''
+        type: '0',
+        specs: {
+          unit: '',
+          step: '',
+          max: '',
+          min: ''
+        }
       },
       enumArr: [],
       boolObj: {
@@ -175,7 +172,7 @@ export default {
       text: '',
       dataText: 'String类型的UTC时间戳（毫秒）',
       arrObj: {
-        type: 'int',
+        type: '1',
         num: 10
       },
       dataTypeArr: [
@@ -210,35 +207,36 @@ export default {
       ],
       arrTypes: [
         {
-          value: 'int',
+          value: '0',
           text: 'int32'
         }, {
-          value: 'float',
+          value: '1',
           text: 'float'
         }, {
-          value: 'double',
+          value: '2',
           text: 'double'
         }, {
-          value: 'text',
+          value: '5',
           text: 'text'
         }, {
-          value: 'struct',
+          value: '7',
           text: 'struct'
         }
       ],
-      flag: 0,
+      flag: 0, // 新增参数的标记
+      structInfo: null, // 编辑新增参数
       rules: {
-        dataType: [
+        type: [
           {required: true, message: "数据类型不能为空", trigger: 'change' }
         ],
         min: [
-          { required: true, validator: validateValueRange, trigger: 'change' },
+          { required: true, validator: validateValueRangeMin, trigger: 'change' },
         ],
         max: [
-          { required: true, validator: validateValueRange, trigger: 'change' },
+          { required: true, validator: validateValueRangeMax, trigger: 'change' },
         ],
         step: [
-          {required: true, message: "步长不能为空", trigger: 'change' }
+          {required: true, validator: validateStep, trigger: 'change' }
         ],
         bool0: [
           {required: true, validator: validateBool0, trigger: 'change'}
@@ -247,16 +245,8 @@ export default {
       unitArr: units
     }
   },
-  watch: {
-    'formData.min': function (newVal) {
-      this.formData.min = this.rangeValueFun(newVal)
-    },
-    'formData.max': function (newVal) {
-      this.formData.max = this.rangeValueFun(newVal)
-    }
-  },
   mounted () {
-    if (this.type) {
+    if (this.info) {
       this.dataTypeArr.forEach(item => {
         if (item.value === '7' || item.value === '8') {
           item.hidden = true
@@ -268,14 +258,52 @@ export default {
     }
   },
   methods: {
+    // 大小值的检验
+    numMinMaxDealFun (value) {
+      let str = ''
+      let val = null
+      switch (this.formData.type) {
+        case '0':
+          val = 2147483648
+          if (value === '') {
+            str = '不能为空'
+          }else if (this.formData.specs.max && this.formData.specs.min && (this.formData.specs.min > this.formData.specs.max)) {
+            str = "最大值必须大于最小值，整数型不能有小数位，单精度有效位为7，双精度为16"
+          } else if (value > -val && value < val) {
+            str = ''
+          } else {
+            str = `取值范围：-${val} ~ ${val}`
+          }
+          break
+        case '1':
+          val = '2^128'
+          if (this.formData.specs.max && this.formData.specs.min && (this.formData.specs.min > this.formData.specs.max)) {
+            str = "最大值必须大于最小值，整数型不能有小数位，单精度有效位为7，双精度为16"
+          } else if (value > -(Math.pow(2, 128)) && value < Math.pow(2, 128)) {
+            str = ''
+          } else {
+            str = `取值范围：-${val} ~ ${val}`
+          }
+          break
+        case '2':
+          val = 64
+          if (value.length > val) {
+            str = 'double类型支持最大位数为64'
+          } else {
+            str = ''
+          }
+          break
+      }
+      return str
+    },
     rangeValueFun (newVal) {
       let value = newVal
-      if (this.formData.dataType === '0') {
+      if (this.formData.type === '0') {
         value = newVal.replace(/\./g, '')
       } else {
         value = newVal.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".")
         let len = 7
-        if (this.formData.dataType === '1') {
+        if (this.formData.type === '1') {
           len = 7
         } else {
           len = 16
@@ -289,15 +317,20 @@ export default {
       return value
     },
     handleChange () { // 选择数据类型
-      switch(this.formData.dataType) {
+      switch(this.formData.type) {
         case '0':
         case '1':
         case '2':
-          this.formData.min = ''
-          this.formData.max = ''
+          this.formData.specs = {
+            unit: '',
+            step: '',
+            max: '',
+            min: ''
+          }
           break
         case '3':
           this.enumArr = []
+          this.formData.specs = {}
           this.addEnumItem()
           break
         case '4':
@@ -309,7 +342,9 @@ export default {
         case '5':
           this.text = 2048
           break
-
+        case '7':
+          this.formData.specs = []
+          break
       }
     },
     addEnumItem() {
@@ -354,9 +389,42 @@ export default {
     delectEnum(index) {
       this.enumArr.splice(index, 1)
     },
+    successAddParams (data) { // 新增参数的成功的返回函数
+      if (data) {
+        this.formData.specs.push(data)
+      }
+    },
+    clodeAddParams () {
+      this.flag = 0
+    },
     getDataForParent () {
       this.$refs.dataSelectPartForm.validate(valid => {
         if (valid) {
+          switch (this.formData.type) {
+            case '3':
+              this.enumArr.forEach(item => {
+                this.formData.specs[item.key] = item.desc
+              })
+              break
+            case '4':
+              this.formData.specs = this.boolObj
+              break
+            case '5':
+              this.formData.specs = {
+                length: this.text
+              }
+              break
+            case '7':
+              // this.formData.specs = []
+              break
+            case '8':
+              this.formData.specs = {
+                size: this.arrObj.num,
+                item: {
+                  type: this.arrObj.type
+                }
+              }
+          }
           this.$emit('success', this.formData)
         } else {
           this.$emit('success', null)
@@ -376,6 +444,13 @@ export default {
     .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item {
       margin-bottom: 10px;
     }
+  }
+  .json_item {
+    background: #e3f2fd;
+    padding: 0 8px;
+    margin-bottom: 8px;
+    color: #555;
+    font-size: 12px;
   }
 }
 </style>

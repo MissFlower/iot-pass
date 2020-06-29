@@ -6,34 +6,33 @@
 
 <template>
   <div id="attributeCon">
-    <datatype-selectpart ref="form" :dataSpecs="formData.dataSpecs" @success="handleSuccess"></datatype-selectpart>
+    <datatype-selectpart ref="form" :info="formData.dataType" @success="handleSuccess"></datatype-selectpart>
     <div><span class="red mr5">*</span>读写类型</div>
     <el-form-item>
-      <el-radio v-model="formData.rwFlag" label="0">读写</el-radio>
-      <el-radio v-model="formData.rwFlag" label="1">只读</el-radio>
+      <el-radio v-model="formData.accessMode" label="0">读写</el-radio>
+      <el-radio v-model="formData.accessMode" label="1">只读</el-radio>
     </el-form-item>
   </div>
 </template>
 
 <script>
 export default {
-  props: ['dataSpecs'],
+  props: ['dataType'],
   data() {
     return {
       formData: {
-        rwFlag: '0',
-        dataSpecs: null,
-        dataType: ''
+        accessMode: '0',
+        dataType: null
       }
     }
   },
   mounted () {
-    console.log(this.dataSpecs)
+    console.log(this.dataType)
   },
   methods: {
     handleSuccess (data) {
       if (data) {
-        this.formData.dataSpecs = JSON.parse(JSON.stringify(data))
+        this.formData.dataType = JSON.parse(JSON.stringify(data))
         this.$emit('callBack', this.formData)
       } else {
         this.$emit('callBack', null)

@@ -4,6 +4,9 @@ import Qs from "qs";
 const headerFrom = {
   "Content-Type": "application/x-www-form-urlencoded"
 };
+const headerFrom_json = {
+  "Content-Type": "application/json"
+};
 
 /**
  * 查看产品的功能
@@ -43,8 +46,8 @@ export function addCustomAbility (data) {
   return request({
     url: "/model/addCustomAbility",
     method: "post",
-    headers: headerFrom,
-    data: Qs.stringify(data)
+    headers: headerFrom_json,
+    params: data
   });
 }
 

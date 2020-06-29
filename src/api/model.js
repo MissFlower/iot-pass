@@ -77,3 +77,35 @@ export function updateCustomAbility (data) {
     data: Qs.stringify(data)
   });
 }
+
+/**
+ * 
+ * 批量添加标准功能
+ * 
+ *  productKey	 string	  是	产品key
+    propertyIds	 string[]	否	标准属性id数组
+    serviceIds	 string[]	否	标准服务id数组
+    eventIds	   string[]	否	标准事件id数组
+ */
+
+export function addStdAbility (data) {
+  return request({
+    url: '/model/batchAddStdAbility',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 单个功能删除
+ *    productKey	string	是	产品key
+      abilityType	int	是	1属性 2服务 3事件
+      identifier	string	是	唯一标识符
+ */
+export function deleteAbility (data) {
+  return request({
+    url: '/model/deleteAbility',
+    method: 'post',
+    data
+  })
+}

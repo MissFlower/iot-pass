@@ -114,7 +114,7 @@ import units from "@/data/unit"
 export default {
   name: 'DatatypeSelectpart',
   components: {addParam},
-  props: ['info'],
+  props: ['type', 'info', 'specs'],
   data () {
     const validateValueRangeMin = (rule, value, callback) => {
       let str = this.numMinMaxDealFun(this.formData.specs.min)
@@ -148,13 +148,6 @@ export default {
       }
     }
     return {
-      // formData: {
-      //   unit: '',
-      //   step: '',
-      //   dataType: '0',
-      //   max: '',
-      //   min: ''
-      // },
       formData: {
         type: '0',
         specs: {
@@ -246,7 +239,7 @@ export default {
     }
   },
   mounted () {
-    if (this.info) {
+    if (this.type) {
       this.dataTypeArr.forEach(item => {
         if (item.value === '7' || item.value === '8') {
           item.hidden = true
@@ -396,6 +389,7 @@ export default {
     },
     clodeAddParams () {
       this.flag = 0
+      console.log(this.flag)
     },
     getDataForParent () {
       this.$refs.dataSelectPartForm.validate(valid => {

@@ -1,3 +1,7 @@
+/**
+ * 项目用到的函数（非全局函数）
+ */
+
 import store from "@/store";
 import router from "@/router";
 import { Message } from "element-ui"

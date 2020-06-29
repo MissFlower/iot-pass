@@ -17,7 +17,7 @@
           <span class="red">{{ userInfo.acount }}</span>
           为确认是你本人操作，请完成一下验证
         </div>
-        <el-form label-width="120px" class="mt20">
+        <el-form ref="form" label-width="120px" class="mt20">
           <el-form-item label="手机号：">
             <div class="dib">{{ phone }}</div>
           </el-form-item>
@@ -102,19 +102,25 @@ export default {
   },
   methods: {
     getCode() {
-      this.loading = true;
-      sendCode({
-        phone: this.phone,
-        type: this.type
-      }).then(res => {
-        if (res.code === 200) {
-          this.seconds = 61;
-          this.timer();
-        } else {
-          this.$message.error(res.message);
-        }
-        this.loading = false;
-      });
+      if (this.seconds === 0) {
+        this.loading = true;
+        sendCode({
+          phone: this.phone,
+          type: this.type
+        }).then(res => {
+          if (res.code === 200) {
+            this.seconds = 61;
+            this.timer();
+          } else {
+            this.$message.error(res.message);
+          }
+          this.loading = false;
+        }).catch(() => {
+          this.$message.warning('验证码获取失败')
+          this.loading = false
+        })
+      }
+      
     },
     timer() {
       if (this.seconds > 1) {

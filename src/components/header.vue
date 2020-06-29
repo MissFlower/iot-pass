@@ -126,6 +126,9 @@ export default {
           this.$message.error(res.message)
         }
         this.$store.dispatch("setLoading", false)
+      }).catch(() => {
+        this.$message.warning('退出失败')
+        this.$store.dispatch("setLoading", false)
       })
       
     },

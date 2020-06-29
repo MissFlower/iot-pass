@@ -76,6 +76,9 @@ export default {
           this.$message.error(res.message)
         }
         this.loading = false
+      }).catch(() => {
+        this.$message.error('功能列表获取失败')
+        this.loading = false
       })
     },
     showDetail (item) {

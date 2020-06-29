@@ -22,7 +22,7 @@
       <el-form-item label="密码：" prop="password">
         <el-input
           v-model="editItem.password"
-          placeholder="请输入密码"
+          :placeholder="info ? '不输入保持原来的密码' : '请输入密码'"
           show-password
           class="w200"
         ></el-input>

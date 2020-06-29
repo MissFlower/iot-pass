@@ -137,7 +137,10 @@ export default {
           this.$message.warning(res.message);
         }
         this.loading = false;
-      });
+      }).catch(() => {
+        this.$message.error('账户名验证失败')
+        this.loading = false
+      })
     },
     submit() {
       this.loading = true;

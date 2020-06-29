@@ -181,9 +181,14 @@ export default {
               }
             }
           }
+        } else {
+          this.$message.error(res.message)
         }
         this.loading = false;
-      });
+      }).catch(() => {
+        this.$message.error('菜单获取失败')
+        this.loading = false
+      })
     },
     // 菜单的code换成菜单ID
     findMenuIds(codes) {

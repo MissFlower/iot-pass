@@ -27,11 +27,11 @@
         </span>
         <el-input v-model="formData.identifier" placeholder="请输入您的标识符"></el-input>
       </el-form-item>
-      <datatype-selectpart ref="dataSelect" :type="`addParam`" @success="handleSuccess"></datatype-selectpart>
+      <datatype-selectpart ref="dataSelect" :type="`addParam`" :specs="specs" :info="info" @success="handleSuccess"></datatype-selectpart>
     </el-form>
     <div slot="footer">
       <el-button type="primary" @click="handleSave">确认</el-button>
-      <el-button>取消</el-button>
+      <el-button @click="close">取消</el-button>
     </div>
   </el-dialog>
 </template>
@@ -40,6 +40,15 @@
 export default {
   props: ['specs', 'info'],
   data () {
+    const validateIdentifier = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('参数标识符不能为空'))
+      } else if (this.specsArr.indexOf(value) > -1) {
+        callback(new Error('参数标识符已存在'))
+      } else {
+        callback()
+      }
+    } 
     return {
       dialogVisible: true,
       formData: {
@@ -52,7 +61,7 @@ export default {
           { required: true, message: '参数名不能为空', trigger: 'change' },
         ],
         identifier: [
-          { required: true, message: '参数标识符不能为空', trigger: 'change' },
+          { required: true, validator: validateIdentifier, trigger: 'change' },
         ]
       },
       specsArr: []
@@ -63,6 +72,7 @@ export default {
       this.specs.forEach(item => {
         this.specsArr.push(item.identifier)
       })
+      console.log(this.specsArr)
     }
   },
   methods: {

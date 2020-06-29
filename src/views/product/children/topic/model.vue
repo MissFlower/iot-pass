@@ -40,7 +40,7 @@
       objectSpanMethod({ row, column, rowIndex, columnIndex }) {
         if (columnIndex === 0) {
           if (rowIndex  === 0) {
-            return [2,1];
+            return [4,1];
           } else if (rowIndex  === 2){
             return [2,1];
           }else if(rowIndex  === 4){

@@ -30,7 +30,7 @@
         </el-tab-pane>
 
         <el-tab-pane label="Topic类列表" name="topic">
-          <product-topic  />
+          <product-topic  :productId="productData.id"/>
         </el-tab-pane>
 
         <el-tab-pane label="功能定义" name="second"></el-tab-pane>

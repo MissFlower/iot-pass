@@ -190,5 +190,20 @@ export function domainList() {
   });
 }
 
+/**
+ * topic类列表 * 
+  *   
+  * @param {
+    *   id string	是	产品id  
+    * }
+    */
+   export function sysTopic(data) { 
+    return request({
+      url: "product/sysTopic",
+      method: "get",
+      params: data  
+    });
+  }
+
 
 

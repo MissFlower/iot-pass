@@ -24,7 +24,9 @@
 import basics from './basics'
 import model from './model'
 import custom from './custom'
+import { sysTopic } from '@/api/product'
   export default {
+    props: ['productId'],
     components: {
       basics,
       model,
@@ -33,50 +35,21 @@ import custom from './custom'
     data() {
       return {
         topicRadio: '基础通信Topic',
-        modelData: [{
-          fn: '固件升级1',
-          type: '/ota/device/inform/a10LfCPxkMs/${deviceName}',
-          pess: '发布',
-          des: '设备上报固件升级信息'
-        },{
-          fn: '固件升级2',
-          type: '/ota/device/inform/a10LfCPxkMs/${deviceName}',
-          pess: '发布',
-          des: '设备上报固件升级信息'
-        },{
-          fn: '固件升级3',
-          type: '/ota/device/inform/a10LfCPxkMs/${deviceName}',
-          pess: '发布',
-          des: '设备上报固件升级信息'
-        }],
-        basicsData: [{
-          fn: '固件升级1',
-          type: '/ota/device/inform/a10LfCPxkMs/${deviceName}',
-          pess: '发布',
-          des: '设备上报固件升级信息'
-        },{
-          fn: '固件升级2',
-          type: '/ota/device/inform/a10LfCPxkMs/${deviceName}',
-          pess: '发布',
-          des: '设备上报固件升级信息'
-        },{
-          fn: '固件升级3',
-          type: '/ota/device/inform/a10LfCPxkMs/${deviceName}',
-          pess: '发布',
-          des: '设备上报固件升级信息'
-        },{
-          fn: '固件升级4',
-          type: '/ota/device/inform/a10LfCPxkMs/${deviceName}',
-          pess: '发布',
-          des: '设备上报固件升级信息'
-        },{
-          fn: '固件升级5',
-          type: '/ota/device/inform/a10LfCPxkMs/${deviceName}',
-          pess: '发布',
-          des: '设备上报固件升级信息'
-        }]
+        basicsData: [],
+        modelData: []
       };
-    },
+    },      
+    watch: {
+      productId(id){
+        sysTopic({id}).then(res => {          
+          if(res.code === 200){
+              this.basicsData = res.data.base_communication_topic;
+          }
+        }).catch(err => {
+
+        })
+      }
+    },   
     methods: {
       
     }

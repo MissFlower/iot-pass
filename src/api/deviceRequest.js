@@ -89,3 +89,23 @@ export function deviceStatistics(data) {
         params: data
     });
 }
+
+export function eventManage(data) {
+  // 物模型数据-事件管理
+  return request({
+    url: "/tsdb/getEventForList",
+    method: "post",
+    headers: headerFrom,
+    data: Qs.stringify(data)
+  });
+}
+
+export function serviceCall(data) {
+  // 物模型数据-服务调用
+  return request({
+    url: "/tsdb/getServiceForList",
+    method: "post",
+    headers: headerFrom,
+    data: Qs.stringify(data)
+  });
+}

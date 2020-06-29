@@ -101,7 +101,18 @@
         </div>
       </el-tab-pane>
       <el-tab-pane label="Topic列表" name="second">Topic列表</el-tab-pane>
-      <el-tab-pane label="物模型数据" name="third">物模型数据</el-tab-pane>
+      <el-tab-pane label="物模型数据" name="third">
+        <!-- 二级标签页 -->
+        <el-radio-group v-model="modelType">
+          <el-radio-button label="runState">运行状态</el-radio-button>
+          <el-radio-button label="eventManage">事件管理</el-radio-button>
+          <el-radio-button label="serviceCall">服务调用</el-radio-button>
+        </el-radio-group>
+        <!-- 标签下方对应的内容 -->
+        <run-state v-if="modelType == 'runState'"></run-state>
+        <event-manage v-if="modelType == 'eventManage'"></event-manage>
+        <service-Call v-if="modelType == 'serviceCall'"></service-Call>
+      </el-tab-pane>
     </el-tabs>
 
     <el-dialog
@@ -126,15 +137,19 @@
 
 <script>
 import deviceNameEdit from "./deviceNameEdit";
+import runState from "./runState";
+import eventManage from "./eventManage";
+import serviceCall from "./serviceCall";
 import { deviceInfo } from "@/api/deviceRequest";
 export default {
-  components: { deviceNameEdit },
+  components: { deviceNameEdit, runState, eventManage, serviceCall },
   data() {
     return {
       deviceObj: {},
       infoType: "first",
       showDeviceNameEdit: false,
       lookDeviceSecret: false,
+      modelType: "runState",
       loading: false
     };
   },

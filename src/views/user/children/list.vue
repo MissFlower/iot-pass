@@ -144,8 +144,8 @@ export default {
       userList(this.formData)
         .then(res => {
           if (res.code === 200) {
-            if (res.data && res.data.list) {
-              this.list = res.data.list;
+            if (res.data && res.data.data) {
+              this.list = res.data.data;
             }
             this.total = res.data.total;
           } else {

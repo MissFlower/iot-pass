@@ -101,8 +101,8 @@ export default {
       roleList(this.formData)
         .then(res => {
           if (res.code === 200) {
-            if (res.data && res.data.list && res.data.list.length > 0) {
-              res.data.list.forEach(item => {
+            if (res.data && res.data.data && res.data.data.length > 0) {
+              res.data.data.forEach(item => {
                 item.createTime_ = item.createTime
                   ? this.$fun.dateFormat(
                       new Date(item.createTime),
@@ -110,7 +110,7 @@ export default {
                     )
                   : "";
               });
-              this.list = res.data.list;
+              this.list = res.data.data;
             }
             this.total = res.data.total;
             this.loading = false;

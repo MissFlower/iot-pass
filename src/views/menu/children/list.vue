@@ -140,13 +140,13 @@ export default {
       this.menuObj = {};
       getMenuList(this.formData).then(res => {
         if (res.code === 200) {
-          if (res.data.list) {
-            if (res.data.list.length > 0) {
-              res.data.list.forEach(item => {
+          if (res.data.data) {
+            if (res.data.data.length > 0) {
+              res.data.data.forEach(item => {
                 this.menuObj[item.code] = item.name;
               });
             }
-            this.list = res.data.list;
+            this.list = res.data.data;
             this.total = res.data.total;
           }
         } else {

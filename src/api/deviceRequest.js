@@ -15,8 +15,8 @@ export function deviceList(data) {
     return request({
         url: "/device/listByPage",
         method: "post",
-        headers: headerFrom,
-        data: Qs.stringify(data)
+        headers: headerFrom_json,
+        data: data
     });
 }
 
@@ -45,8 +45,8 @@ export function createDevice(data) {
     return request({
         url: "/device/createDevice",
         method: "post",
-        headers: headerFrom,
-        data: Qs.stringify(data)
+        headers: headerFrom_json,
+        data: data
     });
 }
 

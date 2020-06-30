@@ -75,6 +75,7 @@ export default {
     // console.log(this.userInfo)
   },
   methods: {
+    // 跳转要验证页面
     goToVerify (value) {
       this.$router.push(`/verify?flag=${value}`);
     }

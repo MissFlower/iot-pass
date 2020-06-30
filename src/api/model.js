@@ -47,7 +47,7 @@ export function addCustomAbility (data) {
     url: "/model/addCustomAbility",
     method: "post",
     headers: headerFrom_json,
-    params: data
+    data
   });
 }
 

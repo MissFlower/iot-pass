@@ -134,7 +134,7 @@ export default {
     this.getData();
   },
   methods: {
-    getData() {
+    getData() { // 获取菜单列表
       this.loading = true;
       this.list = [];
       this.menuObj = {};
@@ -153,12 +153,15 @@ export default {
           this.$message.error(res.message);
         }
         this.loading = false;
-      });
+      }).catch(() => {
+        this.loading = false
+        this.$message.warning('菜单列表获取失败')
+      })
     },
     handleEdit(key, row) {
       this.$parent.showCon(key, row);
     },
-    handleClose(row) {
+    handleClose(row) { // 删除菜单
       const str = "确认删除该菜单吗？";
       this.$confirm(str, "提示", {
         confirmButtonText: "确定",
@@ -188,17 +191,17 @@ export default {
           this.$message("操作已取消");
         });
     },
-    searchNameFun() {
+    searchNameFun() { // 筛选
       if (this.$fun.trim(this.formData.name) !== "") {
         this.handleCurrentChange(1);
       }
     },
-    searchCodeFun() {
+    searchCodeFun() {// 筛选
       if (this.$fun.trim(this.formData.code) !== "") {
         this.handleCurrentChange(1);
       }
     },
-    handleCurrentChange(page) {
+    handleCurrentChange(page) {// 当前页改变
       this.formData.pageNum = page;
       this.getData();
     }

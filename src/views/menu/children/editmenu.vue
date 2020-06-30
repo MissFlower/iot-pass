@@ -150,7 +150,7 @@ export default {
     this.into();
   },
   methods: {
-    into() {
+    into() { // 初始函数  加载全部
       this.loading = true;
       this.list = [];
       this.menuObj = {};
@@ -213,7 +213,7 @@ export default {
       }
       return arr;
     },
-    handleSave() {
+    handleSave() { // 保存函数
       this.loading = true;
       let promise = null;
       let str = "";
@@ -251,13 +251,13 @@ export default {
     handleCancel() {
       this.$parent.showCon(1);
     },
-    handleShowIcons() {
+    handleShowIcons() { // 显示选择icon的弹框
       this.show = true;
     },
-    selectIcon(icon) {
+    selectIcon(icon) { // icon选择成功
       this.info.icon = icon;
     },
-    closeSelectIconCon() {
+    closeSelectIconCon() { // 关闭icon弹框
       this.show = false;
     }
   }

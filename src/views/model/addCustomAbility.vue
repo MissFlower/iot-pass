@@ -5,21 +5,22 @@
  -->
 
 <template>
-  <el-dialog :visible.sync="dialogVisible" title="添加自定义功能" width="400px" class="addCustomAbility">
+  <el-dialog :visible.sync="dialogVisible" :title="title" width="400px" class="addCustomAbility" @close="close" v-loading="loading">
     <el-form ref="addCustomAbilityForm" :model="formData" :rules="rules">
       <el-form-item prop="abilityType">
         <span slot="label">
           功能类型
-          <el-tooltip>
+          <el-tooltip v-if="!editAbility">
             <i class="el-icon-question c9"></i>
             <div slot="content" class="f12 c9 w200">属性一般是设备的运行状态，如当前温度等；服务是设备可被调用的方法，支持定义参数，如执行某项任务；事件则是设备上报的通知，如告警，需要被及时处理。</div>
           </el-tooltip>
         </span>
-        <el-radio-group v-model="formData.abilityType" @change="changeAblityTypeFun">
+        <el-radio-group v-model="formData.abilityType" @change="changeAblityTypeFun" v-if="!editAbility">
           <el-radio-button label="1">属性</el-radio-button>
           <el-radio-button label="2">服务</el-radio-button>
           <el-radio-button label="3">事件</el-radio-button>
         </el-radio-group>
+        <div v-else>{{formData.abilityType}}</div>
       </el-form-item>
       <el-form-item prop="name">
         <span slot="label">
@@ -39,7 +40,7 @@
             <div slot="content" class="f12 c9 w200">必填，支持大小写字母、数字和下划线、不超过50个字符。</div>
           </el-tooltip>
         </span>
-        <el-input v-model="formData.modelData.identifier" placeholder="请输入您的标识符"></el-input>
+        <el-input v-model="formData.modelData.identifier" placeholder="请输入您的标识符" :disabled="editAbility ? true : false"></el-input>
       </el-form-item>
       <!--不同类型对应不同模块-->
       <attribute-con ref="attDataSelectPart"  v-if="formData.abilityType == 1" :dataType="formData.dataType" @callBack="callBackForAttribute"></attribute-con>
@@ -51,7 +52,7 @@
     </el-form>
     <div slot="footer">
       <el-button type="primary" @click="handleSave">确认</el-button>
-      <el-button>取消</el-button>
+      <el-button @click="close">取消</el-button>
     </div>
   </el-dialog>
 </template>
@@ -65,7 +66,7 @@ import { addCustomAbility } from '@/api/model'
 
 export default {
   components: {attributeCon, serviceCon, eventCon},
-  props: ['productKey'],
+  props: ['productKey', 'editAbility'],
   data () {
     const validateName = (rule, value, callback) => {
       if (this.formData.modelData.name === '') {
@@ -83,6 +84,7 @@ export default {
     }
     return {
       dialogVisible: true,
+      loading: false,
       formData: {
         productKey: '',
         abilityType: 1,
@@ -101,10 +103,16 @@ export default {
         identifier: [
           { required: true, validator: validateIdentifier, trigger: 'change' },
         ]
-      }
+      },
+      title: '添加自定义功能'
     }
   },
   mounted () {
+    if (this.editAbility) {
+      this.title = '编辑功能'
+    } else {
+      this.title = '添加自定义功能'
+    }
     this.formData.productKey = this.productKey
   },
   methods: {
@@ -125,10 +133,22 @@ export default {
           this.formData.modelData[key] = data[key]
         }
         console.log(this.formData)
+        this.loading = true
         addCustomAbility(this.formData).then(res => {
-          console.log(res)
+          if (res.code === 200) {
+            console.log(res)
+          } else {
+            this.$message.warning(res.message)
+          }
+          this.loading = false
+        }).catch(() => {
+          this.loading = false
+          this.$message.error('功能添加失败')
         })
       }
+    },
+    close () {
+      this.$emit('close')
     }
   }
 }

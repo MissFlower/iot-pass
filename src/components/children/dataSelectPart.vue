@@ -8,7 +8,7 @@
   <div id="dataSelectPart">
     <el-form ref="dataSelectPartForm" :model="formData" :rules="rules">
       <el-form-item label="数据类型" prop="type">
-        <el-select v-model="formData.type" @change="handleChange">
+        <el-select v-model="formData.type" @change="handleChange" :disabled="info ? true : false">
           <el-option v-for="(item, index) in dataTypeArr" :key="index" :value="item.value" :label="item.label"></el-option>
         </el-select>
       </el-form-item>
@@ -251,7 +251,7 @@ export default {
     }
   },
   methods: {
-    // 大小值的检验
+    // 最大、小值的验证
     numMinMaxDealFun (value) {
       let str = ''
       let val = null
@@ -289,6 +289,7 @@ export default {
       }
       return str
     },
+    // 最大、小值的监控函数
     rangeValueFun (newVal) {
       let value = newVal
       if (this.formData.type === '0') {
@@ -340,6 +341,7 @@ export default {
           break
       }
     },
+    // 添加枚举项
     addEnumItem() {
       this.enumArr.push({
         key: '',
@@ -349,9 +351,11 @@ export default {
       })
       this.$forceUpdate()
     },
+    // 显示新增参数的弹框
     addStruct () {
       this.flag = 1
     },
+    // 枚举项 key值得监控函数  验证信息的显示
     enumKeyChange (index) {
       const row = this.enumArr[index]
       const enumKey = row.key
@@ -368,6 +372,7 @@ export default {
       }
       this.$forceUpdate()
     },
+    // 枚举项 描述值得监控函数  验证信息的显示
     enumDescChange (index) {
       const row = this.enumArr[index]
       const enumDesc = row.desc
@@ -379,6 +384,7 @@ export default {
         row.errorDesc = ''
       }
     },
+    // 删除枚举项
     delectEnum(index) {
       this.enumArr.splice(index, 1)
     },
@@ -387,10 +393,12 @@ export default {
         this.formData.specs.push(data)
       }
     },
+    // 新增参数弹框的close函数
     clodeAddParams () {
       this.flag = 0
       console.log(this.flag)
     },
+    // 返回数据到父级，为父级组件调用
     getDataForParent () {
       this.$refs.dataSelectPartForm.validate(valid => {
         if (valid) {

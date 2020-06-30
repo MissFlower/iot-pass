@@ -35,7 +35,7 @@ export default {
     this.getData();
   },
   methods: {
-    getData() {
+    getData() { // 角色列表
       this.loading = true;
       this.roleList = [];
       userRoleList({

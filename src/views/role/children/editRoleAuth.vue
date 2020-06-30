@@ -54,6 +54,7 @@ export default {
     this.getAuth();
   },
   methods: {
+    // 获取角色权限
     getAuth() {
       this.loading = true;
       this.authData = [];
@@ -87,6 +88,7 @@ export default {
       });
       this.flag = 1;
     },
+    // 取消函数
     handleCancel() {
       // this.allList.forEach(item => {
       //   item.disabled = true;
@@ -94,6 +96,7 @@ export default {
       this.getAuth();
       this.flag = 0;
     },
+    // 提交函数
     handleSave() {
       this.ids = this.$refs.tree.getCheckedKeys();
       this.loading = true;
@@ -147,6 +150,7 @@ export default {
   }
   .el-tree .el-tree-node__children > .el-tree-node .el-tree-node__children {
     display: flex;
+    flex-wrap: wrap;
     // align-items: center;
   }
   .el-tree {

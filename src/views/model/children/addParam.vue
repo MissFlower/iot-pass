@@ -76,6 +76,7 @@ export default {
     }
   },
   methods: {
+    // 保存
     handleSave () {
       this.$refs.form.validate(valid => {
         if (valid) {
@@ -83,6 +84,7 @@ export default {
         }
       })
     },
+    // 数据选择成功的回调
     handleSuccess (data) {
       if (data) {
         this.formData.dataType = data
@@ -94,7 +96,6 @@ export default {
     },
     close () { // 弹框关闭函数
       this.dialogVisible = false
-      // this.$refs.form.resetFields()
       this.$emit('close')
     }
   }

@@ -27,9 +27,10 @@ export default {
     }
   },
   mounted () {
-    console.log(this.dataType)
+    // console.log(this.dataType)
   },
   methods: {
+    // 数据选择成功的回调
     handleSuccess (data) {
       if (data) {
         this.formData.dataType = JSON.parse(JSON.stringify(data))

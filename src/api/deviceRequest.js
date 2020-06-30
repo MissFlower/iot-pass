@@ -89,3 +89,13 @@ export function deviceStatistics(data) {
         params: data
     });
 }
+
+export function topicList(data) {
+    // 获取topic列表
+    return request({
+        url: "/device/sysTopic",
+        method: "get",
+        headers: headerFrom_Get,
+        params: data
+    });
+}

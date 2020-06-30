@@ -5,7 +5,7 @@
  -->
 <template>
   <div id="deviceInfoView" v-loading="loading">
-    <input
+    <textarea
       id="copy_content"
       type="text"
       value
@@ -24,7 +24,7 @@
       <div class="productInfo">
         <span class="dib w100 mr20 c9">DeviceSecret:</span>
         <span>********</span>
-        <el-button type="text" class="ml10" @click="lookDeviceSecret = true">查看</el-button>
+        <el-button type="text" class="ml10" @click="lookDeviceSecret = true,burnShow = false">查看</el-button>
       </div>
       <div class="productInfo">
         <span class="dib w100 mr20 c9">ProductKey:</span>
@@ -104,16 +104,41 @@
       <el-tab-pane label="物模型数据" name="third">物模型数据</el-tab-pane>
     </el-tabs>
 
-    <el-dialog
-      title="设备证书"
-      :visible.sync="lookDeviceSecret"
-      width="50%"
-      >
-      <div class="dialogSecret">
-        <span class="text">DeviceSecret</span>
-        <span class="secret">{{deviceObj.deviceSecret}}</span>
-        <el-button type="text" class="ml10" @click="copy(deviceObj.deviceSecret)">复制</el-button>
+    <el-dialog title="设备证书" :visible.sync="lookDeviceSecret" width="50%">
+      <span class="b mb10">设备证书</span>
+      <el-button type="text" class="ml10" @click="copy('一键复制')">一键复制</el-button>
+      <div class="mb50" style="borderBottom: 1px solid #ecedee;">
+        <div class="dialogSecret">
+          <span class="title">ProductKey</span>
+          <span class="secret">{{deviceObj.productKey}}</span>
+          <el-button type="text" class="ml10" @click="copy(deviceObj.productKey)">复制</el-button>
+        </div>
+        <div class="dialogSecret">
+          <span class="title">DeviceName</span>
+          <span class="secret">{{deviceObj.deviceName}}</span>
+          <el-button type="text" class="ml10" @click="copy(deviceObj.deviceName)">复制</el-button>
+        </div>
+        <div class="dialogSecret">
+          <span class="title">DeviceSecret</span>
+          <span class="secret">{{deviceObj.deviceSecret}}</span>
+          <el-button type="text" class="ml10" @click="copy(deviceObj.deviceSecret)">复制</el-button>
+        </div>
       </div>
+      <span class="b mb10">烧录方式介绍</span>
+      <div>
+        <div v-if='burnShow' class="burnView">
+          <div style="color:#333;">一型一密</div>
+          <div>同一产品下所有设备可以烧录相同产品证书（即 ProductKey 和 ProductSecret ）。设备发送激活请求时，物联网平台进行产品身份确认，认证通过，下发该设备对应的DeviceSecret。</div>
+          <div class="el-icon-info" style="background-color: #e5f3ff; padding-left:10px;width:100%;">
+            如果您期望使用一型一密烧录方式，请前往对应的产品详情，来获取产品证书烧录，
+            <el-button type="text" @click="toProduct">前往查看</el-button>
+          </div>
+          <div style="color:#333;">一机一密</div>
+          <div>每个设备烧录其唯一的设备证书（ProductKey、DeviceName 和 DeviceSecret）。<br>当设备与物联网平台建立连接时，物联网平台对其携带的设备证书信息进行认证。</div>
+        </div>
+        <el-button type="text" class="mt10" :class="{'el-icon-arrow-up':burnShow,'el-icon-arrow-down':!burnShow}" @click="showBurn">{{burnShow?'收起':'一机一密、一型一密介绍'}}</el-button>
+      </div>
+      
       <span slot="footer" class="dialog-footer">
         <el-button @click="lookDeviceSecret = false">关 闭</el-button>        
       </span>
@@ -126,7 +151,7 @@
 
 <script>
 import deviceNameEdit from "./deviceNameEdit";
-import { deviceInfo } from "@/api/deviceRequest";
+import { deviceInfo,topicList } from "@/api/deviceRequest";
 export default {
   components: { deviceNameEdit },
   data() {
@@ -135,7 +160,8 @@ export default {
       infoType: "first",
       showDeviceNameEdit: false,
       lookDeviceSecret: false,
-      loading: false
+      loading: false,
+      burnShow: false,
     };
   },
 
@@ -147,6 +173,7 @@ export default {
 
   mounted() {
     this.getDeviceInfo();
+    this.getTopicList();
   },
 
   methods: {
@@ -186,6 +213,22 @@ export default {
         });
     },
 
+    //获取topic列表
+    getTopicList(){
+
+      topicList({
+        id: this.$route.query.id
+      })
+        .then(res => {
+          if (res.code === 200) {
+            console.log(JSON.stringify(res.data));
+            this.topicList = res.data;
+          }
+        })
+        .catch(() => {
+        });
+    },
+
     //设备名称编辑
     deviceNameEdit() {
       this.showDeviceNameEdit = true;
@@ -212,6 +255,11 @@ export default {
     copyStr  复制内容
     */
     copy(copyStr) {
+
+      if(copyStr == '一键复制'){
+        copyStr = `{\r"ProductKey":${this.deviceObj.productKey},\r"DeviceName":${this.deviceObj.deviceName},\r"DeviceSecret":${this.deviceObj.deviceSecret}\r}`;
+      }
+
       var inputElement = document.getElementById("copy_content"); //获取要赋值的input的元素
       inputElement.value = copyStr; //给input框赋值
       inputElement.select(); //选中input框的内容
@@ -220,6 +268,11 @@ export default {
         type: "success",
         message: "复制成功"
       });
+    },
+
+    //查看烧录方式介绍
+    showBurn(){
+      this.burnShow = !this.burnShow;
     },
 
     //type切换
@@ -275,18 +328,27 @@ export default {
 }
 .dialogSecret{
   border: 1px solid #ecedee;
+  border-bottom: 0;
   height: 36px; 
   display: flex;
   align-items: stretch; 
   span{
     display: flex;
     align-items: center;
-    
-    padding: 5px;
+    padding: 10px;
   }
-  .text{
+  .title{
     background: #fbfbfc;
     border-right: 1px solid #ecedee;
+    width: 100px;
   }
+}
+.burnView{
+   div{
+     margin-top: 10px;
+     font-size: 12px;
+     color: #777;
+     line-height: 20px;
+   }
 }
 </style>

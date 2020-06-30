@@ -1,4 +1,4 @@
-<!-- 
+<!--
 文件作者：wengyoubin
 创建日期：2020.6.17
 文件说明：设备列表
@@ -113,7 +113,7 @@ export default {
         pageCount: 0, //总页数
         total: 0, // 总条数
         pageSize: 10, //一页大小
-        pageNum: 0, // 第几页 从0开始    
+        pageNum: 0, // 第几页 从0开始
       },
       productSelIndex: 0,
       productList: [{productName:'全部产品'}],
@@ -140,7 +140,7 @@ export default {
     this.getProductList();
     //获取指定产品设备统计
     this.getDeviceStatistics();
-    
+
     let productId = this.$route.query.productId;
     if(productId==undefined || !productId.length){
       //获取设备列表
@@ -285,21 +285,11 @@ export default {
 
       this.loading = true;
 
-      var ids = [];
-      devices.map(function(value){
-        var enable;
-        if(batchEnable){
-          enable = batchEnable;
-        }else{
-          enable = value.enable==0?'1':'0'
-        }
-        ids.push({
-          id: value.id,
-          enable
-        });
+      let ids = devices.map(function(value){
+        return value.id;
       });
 
-      deviceBatchEnable(ids)
+      deviceBatchEnable({ids: ids, enable: batchEnable})
         .then(res => {
           this.getDeviceList();
           this.$message({
@@ -341,7 +331,7 @@ export default {
         ids.push(value.id);
       });
 
-      deleteDevice(ids)
+      deleteDevice({ids: ids})
         .then(res => {
           if (res.code === 200) {
             //判断是否删除最后一页全部设备

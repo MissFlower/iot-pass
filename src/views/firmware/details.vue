@@ -94,26 +94,26 @@
                        </el-form-item>
                    </el-form>
                    <el-table :data="batchManage.batchList" border stripe>
-                       <el-table-column label="批次ID" prop="upgrade.id"></el-table-column>
-                       <el-table-column label="批次类型" prop="upgrade.type" :formatter="formatType"></el-table-column>
+                       <el-table-column label="批次ID" prop="id"></el-table-column>
+                       <el-table-column label="批次类型" prop="type" :formatter="formatType"></el-table-column>
                        <el-table-column
                            label="升级策略"
-                           prop="upgrade.ugType"
+                           prop="ugType"
                            :formatter="formatUgType"
                        ></el-table-column>
                        <el-table-column
                            label="状态"
-                           prop="upgrade.ugStatus"
+                           prop="ugStatus"
                            :formatter="formatUgStatus"
                        ></el-table-column>
                        <el-table-column
                            label="添加时间"
-                           prop="upgrade.createTime"
+                           prop="=createTime"
                            :formatter="formatCreateTime"
                        ></el-table-column>
                        <el-table-column label="操作">
                            <template slot-scope="scope">
-                               <a class="oprate_btn" @click="toBatchDetails(scope.row.upgrade.id)">查看</a>
+                               <a class="oprate_btn" @click="toBatchDetails(scope.row.id)">查看</a>
                            </template>
                        </el-table-column>
                    </el-table>
@@ -399,15 +399,16 @@
             },
             // 批次管理列表
             getUpgradeList () {
-                let formData = new FormData()
-                formData.append('pageNum', this.batchManage.pageNum)
-                formData.append('pageSize', this.batchManage.pageSize)
-                formData.append('fmId', this.fmId)
-                formData.append('id', this.batchManage.id)
-                upgradeList (formData).then ( res => {
+                let data = {
+                  'pageNum': this.batchManage.pageNum,
+                  'pageSize': this.batchManage.pageSize,
+                  'fmId': this.fmId,
+                  'id': this.batchManage.id
+                };
+                upgradeList (data).then ( res => {
                     if (res.code === 200) {
-                        this.batchManage.batchList = res.data.list
-                        this.batchManage.total = res.data.total
+                        this.batchManage.batchList = res.data.data;
+                        this.batchManage.total = res.data.total;
                     } else {
                         this.$message.error(res.message);
                     }
@@ -434,16 +435,17 @@
             },
             // 获取设备列表
             getDeviceList () {
-                let formData = new FormData()
-                if (this.devManage.deviceName) {
-                    formData.append('deviceName', this.devManage.deviceName)
-                }
-                formData.append('upgradeId', this.devManage.upgradeId)
-                formData.append('pageNum', this.devManage.pageNum)
-                formData.append('pageSize', this.devManage.pageSize)
-                upgradeDeviceList (formData).then( res => {
+              console.log(this.devManage);
+                let data = {
+                  'fmId': this.fmId,
+                  'upgradeId': this.devManage.upgradeId,
+                  'deviceName': this.devManage.deviceName,
+                  'pageNum': this.devManage.pageNum,
+                  'pageSize': this.devManage.pageSize,
+                };
+                upgradeDeviceList (data).then( res => {
                     if (res.code === 200) {
-                        this.devManage.devList = res.data.list
+                        this.devManage.devList = res.data.data;
                         this.devManage.total = res.data.total
                     } else {
                         this.$message.error(res.message);
@@ -495,20 +497,20 @@
             },
             // 格式化表格内容
             formatType (row) {
-                return row.upgrade.type === 0 ? "验证固件" : "批量升级"
+                return row.type === 0 ? "验证固件" : "批量升级"
             },
             formatUgType (row) {
-                return row.upgrade.ugType === 1 ? "静态升级" : "动态升级"
+                return row.ugType === 1 ? "静态升级" : "动态升级"
             },
             formatUgStatus (row) {
-                return row.upgrade.ugStatus === 1 ? "待升级" : row.upgrade.ugStatus === 2 ? "升级中" : row.upgrade.ugStatus === 3 ? "升级完成": "已取消"
+                return row.ugStatus === 1 ? "待升级" : row.ugStatus === 2 ? "升级中" : row.ugStatus === 3 ? "升级完成": "已取消"
             },
             formatUpgradeStatus (row) {
                 return row.upgradeStatus === 0 ? "待升级" : row.ugStatus === 1 ? "升级中" : row.ugStatus === 2 ? "已完成": "升级失败"
             },
             formatCreateTime (row) {
-                return row.upgrade.createTime ? this.$fun.dateFormat(
-                    new Date(row.upgrade.createTime),
+                return row.createTime ? this.$fun.dateFormat(
+                    new Date(row.createTime),
                     "yyyy-MM-dd hh:mm:ss"
                 ): ''
             },

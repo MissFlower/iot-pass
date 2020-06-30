@@ -67,7 +67,7 @@ export default {
       getModelByproductKey({productKey: this.productKey}).then(res => {
         if (res.code === 200) {
           // console.log(res)
-          if (res.data.allJson) {
+          if (res.data && res.data.allJson) {
             this.list = this.list.concat(res.data.allJson.events)
             this.list = this.list.concat(res.data.allJson.properties)
             this.list = this.list.concat(res.data.allJson.services)

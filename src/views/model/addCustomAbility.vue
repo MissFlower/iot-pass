@@ -132,11 +132,16 @@ export default {
         for (let key in data) {
           this.formData.modelData[key] = data[key]
         }
-        console.log(this.formData)
+        const obj = {
+          modelData: JSON.stringify(this.formData.modelData),
+          abilityType: this.formData.abilityType * 1,
+          productKey: this.formData.productKey
+        }
         this.loading = true
-        addCustomAbility(this.formData).then(res => {
+        addCustomAbility(obj).then(res => {
           if (res.code === 200) {
             console.log(res)
+            this.$emit('success')
           } else {
             this.$message.warning(res.message)
           }

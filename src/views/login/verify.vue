@@ -38,7 +38,7 @@
       <div v-if="active == 2" class="info">
         <email-band v-if="flag == 1"></email-band>
         <phone-band v-if="flag == 2"></phone-band>
-        <password-update v-if="flag == 3 || flag == 4"></password-update>
+        <password-update v-if="flag == 3 || flag == 4" :flag="flag"></password-update>
       </div>
     </div>
   </div>
@@ -60,7 +60,7 @@ export default {
       phone: "",
       timerVal: null,
       msg: "获取短信验证码",
-      seconds: 61,
+      seconds: 0,
       flag: null,
       title: "",
       type: 2,

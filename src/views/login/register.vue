@@ -138,7 +138,7 @@ export default {
             })
             .catch(() => {
               this.$message.warning("注册失败");
-              this.loading('验证码验证失败')
+              this.loading = false
             });
         }
       });

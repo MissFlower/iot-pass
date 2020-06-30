@@ -2,7 +2,7 @@ import router from "@/router";
 import Cookie from "@/utils/cookie.js";
 import store from '@/store'
 
-const whiteList = ["/index", "/login", "/register", "/password-find", "/verify"]; // no redirect whitelist
+const whiteList = ["/index", "/login", "/register", "/password-find", "/verify", "/success"]; // no redirect whitelist
 
 router.beforeEach(async (to, from, next) => {
   const hasToken = Cookie.getValue("access_token");

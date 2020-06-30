@@ -16,7 +16,7 @@
         {{ formData.account }}
       </el-form-item>
       <el-form-item label="邮箱:" prop="email">
-        <el-input v-model="formData.email" class="w200 mr20"></el-input>
+        <el-input v-model="formData.email" placeholder="请输入邮箱地址" class="w200 mr20"></el-input>
         <el-button @click.stop="handleEmailCode">{{ msg }}</el-button>
         <!-- <div v-if="flag">
           校验码已发送到你的邮箱，15分钟内输入有效，请勿泄露于他人
@@ -86,7 +86,7 @@ export default {
       },
       timerVal: null,
       msg: "获取邮箱验证码",
-      seconds: 61
+      seconds: 0
     };
   },
   computed: {
@@ -101,23 +101,29 @@ export default {
   },
   methods: {
     handleEmailCode() {
-      const reg = /^([a-zA-Z]|[0-9])(\w|\\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
-      const email = this.$fun.trim(this.formData.email);
-      if (reg.test(email)) {
-        this.loading = true;
-        sendMailCode({
-          email: this.formData.email
-        }).then(res => {
-          if (res.code === 200) {
-            this.timer();
-          } else {
-            this.$message.warning(res.message);
+      // const reg = /^([a-zA-Z]|[0-9])(\w|\\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/;
+      // const email = this.$fun.trim(this.formData.email);
+      this.$refs.form.validateField('email', (valid) => {
+        if(!valid) {
+          this.loading = true;
+          if (this.seconds === 0) {
+            sendMailCode({
+              email: this.formData.email
+            }).then(res => {
+              if (res.code === 200) {
+                this.seconds = 61
+                this.timer();
+              } else {
+                this.$message.warning(res.message);
+              }
+              this.loading = false;
+            }).catch(() => {
+              this.loading = false
+              this.$message.error('验证码发送失败')
+            })
           }
-          this.loading = false;
-        });
-      } else {
-        alert("邮箱格式不正确");
-      }
+        }
+      })
     },
     timer() {
       if (this.seconds > 1) {

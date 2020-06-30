@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pb20">
      <el-radio-group v-model="topicRadio">
       <el-radio-button label="基础通信Topic"></el-radio-button>
       <el-radio-button label="物模型通信Topic"></el-radio-button>
@@ -44,6 +44,7 @@ import { sysTopic } from '@/api/product'
         sysTopic({id}).then(res => {          
           if(res.code === 200){
               this.basicsData = res.data.base_communication_topic;
+              this.modelData = res.data.model_communication_topic;
           }
         }).catch(err => {
 

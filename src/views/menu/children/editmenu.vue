@@ -4,7 +4,7 @@
   文件说明：菜单的详情、编辑、创建页面
  -->
 <template>
-  <div id="menu_right_con">
+  <div id="menu_right_con" v-loading="loading">
     <div class="mb20">{{ activeItem ? "编辑" : "创建" }}菜单</div>
     <el-form
       ref="form"
@@ -13,6 +13,7 @@
       class="mb20"
       :rules="rules"
       v-if="info"
+      
     >
       <el-form-item label="菜单名称" prop="name">
         <el-input
@@ -96,6 +97,7 @@ export default {
   inject: ["reload"],
   data() {
     return {
+      loading: false,
       show: false,
       list: [],
       cascaderProps: {
@@ -144,6 +146,7 @@ export default {
     }
   },
   mounted() {
+    console.log(this.activeItem)
     this.into();
   },
   methods: {
@@ -156,17 +159,17 @@ export default {
         pageSize: 1000
       }).then(res => {
         if (res.code === 200) {
-          if (res.data.list) {
-            if (res.data.list.length > 0) {
+          if (res.data.data) {
+            if (res.data.data.length > 0) {
               // 处理返回父级菜单数组
-              res.data.list.forEach(item => {
+              res.data.data.forEach(item => {
                 this.menuObj[item.code] = item.menuId;
                 if (item.menuFlag === "N") {
                   item.disabled = true;
                 }
               });
             }
-            this.list = dealFun(res.data.list);
+            this.list = dealFun(res.data.data);
             this.info = JSON.parse(JSON.stringify(this.createRow));
             if (this.activeItem) {
               this.info.menuId = null;

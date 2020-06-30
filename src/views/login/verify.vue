@@ -14,7 +14,7 @@
       <div v-if="active == 1" class="info f14">
         <div class="title pl10">
           账户
-          <span class="red">{{ userInfo.acount }}</span>
+          <span class="red">{{ userInfo.account }}</span>
           为确认是你本人操作，请完成一下验证
         </div>
         <el-form ref="form" label-width="120px" class="mt20">
@@ -38,7 +38,7 @@
       <div v-if="active == 2" class="info">
         <email-band v-if="flag == 1"></email-band>
         <phone-band v-if="flag == 2"></phone-band>
-        <password-update v-if="flag == 3"></password-update>
+        <password-update v-if="flag == 3 || flag == 4"></password-update>
       </div>
     </div>
   </div>
@@ -90,14 +90,23 @@ export default {
           this.title = '修改密码'
           this.type = 4
           break
+        case 4:
+          this.title = '找回密码'
+          this.type = 7
+          break
       }
     }
   },
   mounted() {
-    const userInfo = JSON.parse(localStorage.getItem("info"));
-    this.phone = userInfo.phone;
-    if (this.$route.query.flag) {
-      this.flag = this.$route.query.flag
+    if (JSON.parse(localStorage.getItem("info")) || this.userInfo) {
+      const info = this.userInfo ? this.userInfo : JSON.parse(localStorage.getItem("info"))
+      this.phone = info.phone;
+      if (this.$route.query.flag) {
+        this.flag = this.$route.query.flag
+      }
+    } else {
+      this.$message.warning("没有用户信息，请重新登录")
+      this.$router.push('/login')
     }
   },
   methods: {

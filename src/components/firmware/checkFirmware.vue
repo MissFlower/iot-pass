@@ -111,11 +111,12 @@ export default {
           this.form.deviceNames += item + ','
       })
       this.form.deviceNames = this.form.deviceNames.slice(0, -1)
-      // let formData = new FormData();
-      // formData.append("fmId", this.form.fmId);
-      // formData.append("srcVersions", this.form.srcVersions);
-      // formData.append("deviceNames", this.form.deviceNames);
-      addVerify(this.form).then(res => {
+      let data = {
+        "fmId": this.form.fmId,
+        "srcVersions": this.form.srcVersions,
+        "deviceNames": this.form.deviceNames
+      };
+      addVerify(data).then(res => {
         this.progressVisible = true;
         this.$emit("checkVisible", this.checkFmVisible);
         this.checkProgress(res);

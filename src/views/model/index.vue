@@ -56,6 +56,28 @@
               <div v-for="(item, key) in typeObj" :key="key">{{item}}</div>
             </div>
           </span> -->
+          <el-popover
+            placement="bottom"
+            width="100"
+            trigger="click"
+            v-if="visible"
+            >
+            <div class="conHeader">
+              <div>
+                <i class="mr10 blue dib w20" :class="type == '' ? 'el-icon-check' : ''"></i>
+                <span>全部</span>
+              </div>
+              <div v-for="(item, key) in typeObj" :key="key">
+                <i class="mr10 blue dib w20" :class="type == key ? 'el-icon-check' : ''"></i>
+                <span>{{item}}</span>
+              </div>
+              <div class="mt10 tc">
+                <el-button type="primary" size="mini">确认</el-button>
+                <el-button size="mini">重置</el-button>
+              </div>
+            </div>
+            <svg-icon icon-class="screen" slot="reference" @click="handle"></svg-icon>
+          </el-popover>
         </span>
         <template slot-scope="scope">
           {{scope.row.name}}
@@ -89,6 +111,8 @@
 import { getModelByproductKey } from '@/api/model'
 import addCustomAbility from './addCustomAbility'
 import addStdAbility from './addStdAbility'
+
+import dataObj from '@/data/data'
 export default {
   components: {addCustomAbility, addStdAbility},
   data () {
@@ -99,15 +123,8 @@ export default {
       productKey: '',
       editAbility: null,
       addStdAbilityFlag: false,
-      abilityTypeObj: {
-        '1': '属性',
-        '2': '服务',
-        '3': '事件'
-      },
-      typeObj: {
-        '1': '标准',
-        '0': '自定义' 
-      },
+      abilityTypeObj: dataObj.abilityTypeObj,
+      typeObj: dataObj.typeObj,
       type: '', // 用于列表功能类型筛选
       visible: true,
       allData: null
@@ -153,6 +170,12 @@ export default {
                     if (key.indexOf('Eve') > -1) {
                       item.abilityType = '3' // 3 事件
                     }
+                    item.accessMode_ = item.accessMode
+                    if (item.accessMode === 'rw') {
+                      item.accessMode = '0'
+                    } else if(item.accessMode == 'r') {
+                      item.accessMode = '1'
+                    }
                   })
                   this.list = this.list.concat(arr)
                 }
@@ -191,12 +214,18 @@ export default {
     },
     // 添加标准功能
     handleShowAddStdAbility () {
-      console.log('---------')
       this.addStdAbilityFlag = true
     },
     // 返回上级
     goBack () {
       this.$router.push({path: `/product/detail/${this.productKey}?activetab=second`})
+    },
+    handle () {
+      if (this.visible) {
+        this.visible = false
+      } else {
+        this.visible = true
+      }
     }
   }
 }

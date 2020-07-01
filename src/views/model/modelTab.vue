@@ -28,33 +28,45 @@
           </div>
         </div>
       </div>
-      <el-table-column label="功能类型" prop="type"></el-table-column>
+      <el-table-column label="功能类型" prop="type">
+        <template slot-scope="scope">
+          {{abilityTypeObj[scope.row.abilityType]}}
+        </template>
+      </el-table-column>
       <el-table-column label="功能名称（全部）" prop="name"></el-table-column>
       <el-table-column label="标识符" prop="identifier"></el-table-column>
-      <el-table-column label="数据类型"></el-table-column>
-      <el-table-column label="数据定义" prop="desc"></el-table-column>
+      <el-table-column label="数据类型">
+        <template slot-scope="scope">
+          {{scope.row.dataType ? scope.row.dataType.type : ''}}
+        </template>
+      </el-table-column>
+      <el-table-column label="数据定义">
+        <template slot-scope="scope">
+          {{scope.row.dataType ? scope.row.dataType.specs : ''}}
+        </template>
+      </el-table-column>
       <el-table-column label="操作" width="80" align="center">
         <template slot-scope="scope">
           <el-link :underline="false" type="primary" class="f12" @click="showDetail(scope.row)">查看</el-link>
         </template>
       </el-table-column>
     </el-table>
-    <add-custom-ability v-if="addFlag"></add-custom-ability>
   </div>
 </template>
 
 <script>
 import { getModelByproductKey } from '@/api/model'
-import addCustomAbility from './addCustomAbility'
+
+import dataObj from "@/data/data"
 export default {
-  components: {addCustomAbility},
   props: ['productKey'],
   data () {
     return {
       loading: false,
       list: [],
       maxHeight:  window.innerHeight - 18 - 15 - 20 - 40,
-      addFlag: false
+      abilityTypeObj: dataObj.abilityTypeObj,
+      typeObj: dataObj.typeObj
     }
   },
   mounted () {
@@ -67,10 +79,32 @@ export default {
       getModelByproductKey({productKey: this.productKey}).then(res => {
         if (res.code === 200) {
           // console.log(res)
-          if (res.data && res.data.allJson) {
-            this.list = this.list.concat(res.data.allJson.events)
-            this.list = this.list.concat(res.data.allJson.properties)
-            this.list = this.list.concat(res.data.allJson.services)
+          if (res.data) {
+            for (let key in res.data) {
+              if (key.indexOf('Json') > -1 && key !== 'allJson') {
+                const arr = res.data[key]
+                if (Array.isArray(arr)) {
+                  arr.forEach(item => {
+                    if (key.indexOf('base') > -1) {
+                      item.type = '1' // 1 标准
+                    }
+                    if (key.indexOf('custom') > -1) {
+                      item.type = '0' // 0 自定义
+                    }
+                    if (key.indexOf('Pro') > -1) {
+                      item.abilityType = '1' // 1 属性
+                    }
+                    if (key.indexOf('Ser') > -1) {
+                      item.abilityType = '2' // 2 服务
+                    }
+                    if (key.indexOf('Eve') > -1) {
+                      item.abilityType = '3' // 3 事件
+                    }
+                  })
+                  this.list = this.list.concat(arr)
+                }
+              }
+            }
           }
         } else {
           this.$message.error(res.message)
@@ -85,8 +119,6 @@ export default {
       console.log(item)
     },
     handleEdit () {
-      // this.addFlag = true
-      console.log('------')
       this.$router.push(`/model/index?key=${this.productKey}`)
     }
   }

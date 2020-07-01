@@ -168,11 +168,11 @@ export default {
     addFmSubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-            let formData = new FormData()
-            for (let item in this.ruleForm) {
-                formData.append(item, this.ruleForm[item])
-            }
-          saveFm(formData)
+            // let formData = new FormData()
+            // for (let item in this.ruleForm) {
+            //     formData.append(item, this.ruleForm[item])
+            // }
+          saveFm(this.ruleForm)
             .then(res => {
               if (res.code === 200) {
                 this.$emit("changeVisible", this.dialogFormVisible);

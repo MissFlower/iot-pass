@@ -220,12 +220,12 @@ export default {
   methods: {
     // 获取固件列表
     fetchFmList() {
-      let formData = new FormData();
-      formData.append("pageNum", this.form.pageNum);
-      formData.append("pageSize", this.form.pageSize);
-      formData.append("productName", this.form.productName);
-      formData.append("fmName", this.form.fmName);
-      getFmList(formData)
+      // let formData = new FormData();
+      // formData.append("pageNum", this.form.pageNum);
+      // formData.append("pageSize", this.form.pageSize);
+      // formData.append("productName", this.form.productName);
+      // formData.append("fmName", this.form.fmName);
+      getFmList(this.form)
         .then(res => {
           if (res.code === 200) {
             this.list = res.data.list;

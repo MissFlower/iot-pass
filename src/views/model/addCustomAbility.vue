@@ -20,7 +20,7 @@
           <el-radio-button label="2">服务</el-radio-button>
           <el-radio-button label="3">事件</el-radio-button>
         </el-radio-group>
-        <div v-else>{{formData.abilityType}}</div>
+        <div v-else><el-tag type="primary">{{abilityTypeObj[formData.abilityType]}}</el-tag></div>
       </el-form-item>
       <el-form-item prop="name">
         <span slot="label">
@@ -63,7 +63,7 @@ import serviceCon from "./children/serviceCon";
 import eventCon from "./children/eventCon";
 
 import { addCustomAbility } from '@/api/model'
-
+import dataObj from '@/data/data'
 export default {
   components: {attributeCon, serviceCon, eventCon},
   props: ['productKey', 'editAbility'],
@@ -104,12 +104,25 @@ export default {
           { required: true, validator: validateIdentifier, trigger: 'change' },
         ]
       },
-      title: '添加自定义功能'
+      title: '添加自定义功能',
+      abilityTypeObj: dataObj.abilityTypeObj
     }
   },
   mounted () {
+    console.log(this.editAbility)
     if (this.editAbility) {
       this.title = '编辑功能'
+      for (let key in this.formData) {
+        console.log(key)
+        if (key !== 'modelData') {
+          this.formData[key] = this.editAbility[key]
+        } else {
+          const row = this.formData[key]
+          for (let key_row in row) {
+            row[key_row] = this.editAbility[key_row]
+          }
+        }
+      }
     } else {
       this.title = '添加自定义功能'
     }
@@ -140,7 +153,6 @@ export default {
         this.loading = true
         addCustomAbility(obj).then(res => {
           if (res.code === 200) {
-            console.log(res)
             this.$emit('success')
           } else {
             this.$message.warning(res.message)

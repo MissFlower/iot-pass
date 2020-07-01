@@ -399,12 +399,12 @@
             },
             // 批次管理列表
             getUpgradeList () {
-                let formData = new FormData()
-                formData.append('pageNum', this.batchManage.pageNum)
-                formData.append('pageSize', this.batchManage.pageSize)
-                formData.append('fmId', this.fmId)
-                formData.append('id', this.batchManage.id)
-                upgradeList (formData).then ( res => {
+                // let formData = new FormData()
+                // formData.append('pageNum', this.batchManage.pageNum)
+                // formData.append('pageSize', this.batchManage.pageSize)
+                // formData.append('fmId', this.fmId)
+                // formData.append('id', this.batchManage.id)
+                upgradeList (this.batchManage).then ( res => {
                     if (res.code === 200) {
                         this.batchManage.batchList = res.data.list
                         this.batchManage.total = res.data.total

@@ -26,6 +26,11 @@ export default {
       }
     }
   },
+  watch: {
+    'dataType' () {
+      // console.log("---=--=")
+    }
+  },
   mounted () {
     // console.log(this.dataType)
   },

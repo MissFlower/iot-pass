@@ -84,9 +84,9 @@ export default {
         this.$router.push("add-product");
       },
       //分页
-     changePage(){      
-      this.getList()
-    },
+      changePage(){      
+        this.getList()
+      },
   },
 };
 </script>

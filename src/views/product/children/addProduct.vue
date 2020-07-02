@@ -145,7 +145,7 @@ export default {
         pageCount: 0, //总页数
         total: 0, // 总条数
         pageSize: 10, //一页大小
-        pageNum: 1, // 第几页 从0开始           
+        pageNum: 1, // 第几页 从0开始        
        
       },
       
@@ -244,6 +244,8 @@ export default {
     getCategoryPage(){
       categoryPage(Object.assign(this.tableData,{domainId: this.standardSelectValue,name: this.standardSelectSearch})).then(res => {
           if(res.code === 200){
+            let {data,...pagination} =  res.data;
+            this.tableData = pagination;
             this.standardSelectTlData = res.data.data
           }else {
             this.$message.warning(res.message);

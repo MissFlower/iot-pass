@@ -65,10 +65,8 @@ export default {
       //产品列表
       getList(){
         this.loading = true;
-        tableList(Object.assign(this.tableData,{productName: this.productName})).then(res => {
-            setTimeout(() => {
-              this.loading = false;
-            },1000)
+        tableList(Object.assign(this.tableData,{productName: this.productName})).then(res => {            
+            this.loading = false;            
             if(res.code === 200){
               let {data,...pagination} =  res.data;
               this.tableData = pagination;
@@ -86,9 +84,9 @@ export default {
         this.$router.push("add-product");
       },
       //分页
-     changePage(){      
-      this.getList()
-    },
+      changePage(){      
+        this.getList()
+      },
   },
 };
 </script>

@@ -37,7 +37,7 @@ export default {
   },
   methods: {
     handleGo() {
-      this.$router.push("/verify");
+      this.$router.push("/verify?flag=1");
     },
     handleNext() {
       this.$cookie.setValue("emailStatus", 2);

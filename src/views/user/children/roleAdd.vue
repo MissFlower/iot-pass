@@ -70,7 +70,7 @@ export default {
     this.getData();
   },
   methods: {
-    getData() {
+    getData() { // 获取用户的角色列表
       this.loading = true;
       this.roleList = [];
       this.selectIds = [];
@@ -98,12 +98,12 @@ export default {
         });
     },
     close() {
-      this.$emit("close");
+      this.$emit("close");//  触发父级函数
     },
     handleCancel() {
       this.close();
     },
-    handleSave() {
+    handleSave() { // 角色配置提交
       if (this.selectIds.length > 10) {
         this.$message.warning("一个用户最多配置10个角色");
         return;

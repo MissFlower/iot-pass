@@ -106,18 +106,23 @@ export default {
       this.$refs.form.validateField("phone", (valid) => {
         if (!valid) {
           this.loading = true;
-          sendCode({
-            phone: this.formData.phone,
-            type: 6
-          }).then(res => {
-            if (res.code === 200) {
-              this.seconds = 61;
-              this.timer();
-            } else {
-              this.$message.error(res.message);
-            }
-            this.loading = false;
-          });
+          if (this.seconds === 0) {
+            sendCode({
+              phone: this.formData.phone,
+              type: 6
+            }).then(res => {
+              if (res.code === 200) {
+                this.seconds = 61;
+                this.timer();
+              } else {
+                this.$message.error(res.message);
+              }
+              this.loading = false;
+            }).catch(() => {
+              this.$message.warning('验证码获取失败')
+              this.loading = false
+            })
+          }
         }
       })
     },

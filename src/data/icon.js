@@ -1,3 +1,7 @@
+/**
+ * 项目中的icon
+ */
+
 export default {
   icons: [
     "user",

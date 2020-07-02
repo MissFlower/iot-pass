@@ -39,6 +39,7 @@
 <script>
 import { delBreadCrumbFun } from "@/data/fun";
 import { getUserInfo, logout } from "@/api";
+import { resetRouter } from "@/router"
 export default {
   data() {
     return {
@@ -117,6 +118,8 @@ export default {
           this.$store.dispatch("setLoginStatus", false);
           this.$cookie.removeValue("emailStatus");
           localStorage.removeItem("info")
+          this.$store.dispatch('setRouters', null)
+          resetRouter()
           let path = "/index";
           if (this.$route.path !== path) {
             path = `${path}?redirect=${this.$route.path}`;
@@ -125,6 +128,9 @@ export default {
         } else {
           this.$message.error(res.message)
         }
+        this.$store.dispatch("setLoading", false)
+      }).catch(() => {
+        this.$message.warning('退出失败')
         this.$store.dispatch("setLoading", false)
       })
       

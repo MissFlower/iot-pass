@@ -1,3 +1,9 @@
+<!-- 
+文件作者：mawenjuan
+创建日期：2020.6.18
+文件说明：菜单部分
+ -->
+
 <template>
   <div id="menu">
     <side-bar class="sidebar-container" :list="list"></side-bar>

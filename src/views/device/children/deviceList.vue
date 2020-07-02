@@ -280,10 +280,14 @@ export default {
     batchEnable  批量启用、禁用
     */
     deviceEnable(devices,batchEnable){
-
       if(this.authArr.indexOf('device_enable')<0) return;
 
       this.loading = true;
+
+      if(!batchEnable) {
+        let value = devices[0];
+        batchEnable = value.enable==0?'1':'0';
+      }
 
       let ids = devices.map(function(value){
         return value.id;

@@ -149,7 +149,8 @@ export default {
       this.loading = true;
       verifyCode({
         code: this.code,
-        phone: this.phone
+        phone: this.phone,
+        type: this.type
       })
         .then(res => {
           if (res.code === 200) {

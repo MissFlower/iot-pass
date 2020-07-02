@@ -30,9 +30,11 @@
             <!-- 安全性高的密码可以使帐号更安全。建议您定期更换密码，设置一个包含字母，符号或数字且长度超过8位的密码。 -->
           </div>
           <div class="op">
-            <svg-icon :icon-class="userInfo.email ? 'success' : 'warning'" :class="userInfo.email ? 'success' : 'orange'"></svg-icon>
-            <span class="ml5 mr20" :class="userInfo.email ? 'success' : 'orange'">{{userInfo.email ? '已' : '未'}}设置</span>
-            <span class="blue hand" @click="goToVerify(3)">{{userInfo.email ? '修改' : '设置'}}</span>
+            <svg-icon icon-class="success" class="success"></svg-icon>
+            <!-- <span class="ml5 mr20" :class="userInfo.email ? 'success' : 'orange'">{{userInfo.email ? '已' : '未'}}设置</span>
+            <span class="blue hand" @click="goToVerify(3)">{{userInfo.email ? '修改' : '设置'}}</span> -->
+            <span class="ml5 mr20 success">已设置</span>
+            <span class="blue hand" @click="goToVerify(3)">修改</span>
           </div>
         </div>
         <div class="set-con-item df ai_c">

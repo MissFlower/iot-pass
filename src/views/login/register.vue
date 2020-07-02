@@ -126,7 +126,8 @@ export default {
           this.loading = true;
           verifyCode({
             code: this.code,
-            phone: this.formData.phone
+            phone: this.formData.phone,
+            type: 1
           })
             .then(res => {
               if (res.code === 200) {

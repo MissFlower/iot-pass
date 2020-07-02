@@ -7,9 +7,9 @@
     <div class="details" v-if="JSON.stringify(batchDetailList) !== '{}'">
         <div class="details-tit clearfix">
             <h2>
-                <span class="go_back" @click="goBack"><i class="el-icon-back"></i></span>{{batchDetailList.upgrade.id}}
+                <span class="go_back" @click="goBack"><i class="el-icon-back"></i></span>{{batchDetailList.id}}
             </h2>
-            <el-tag :type="deviceType" class="el_tag">{{batchDetailList.upgrade.ugStatus === 1 ? '待升级' : batchDetailList.upgrade.ugStatus === 2 ? '升级中' : batchDetailList.upgrade.ugStatus === 3 ? '已完成': '已取消'}}</el-tag>
+            <el-tag :type="deviceType" class="el_tag">{{batchDetailList.ugStatus === 1 ? '待升级' : batchDetailList.ugStatus === 2 ? '升级中' : batchDetailList.ugStatus === 3 ? '已完成': '已取消'}}</el-tag>
         </div>
         <div>
             <el-tabs v-model="tab" type="card">
@@ -45,7 +45,7 @@
                                     批次ID
                                 </div>
                                 <div class="edit_info-rf">
-                                    {{batchDetailList.upgrade.id}}
+                                    {{batchDetailList.id}}
                                 </div>
                             </div>
                         </el-col>
@@ -55,7 +55,7 @@
                                     所属产品
                                 </div>
                                 <div class="edit_info-rf">
-                                    {{batchDetailList.firmware.productName}}
+                                    {{productName}}
                                 </div>
                             </div>
                         </el-col>
@@ -65,7 +65,7 @@
                                     升级前固件版本号
                                 </div>
                                 <div class="edit_info-rf">
-                                    {{batchDetailList.upgrade.srcVersion}}
+                                    {{batchDetailList.srcVersion}}
                                 </div>
                             </div>
                         </el-col>
@@ -75,7 +75,7 @@
                                     升级后固件版本号
                                 </div>
                                 <div class="edit_info-rf">
-                                    {{batchDetailList.upgrade.destVersion}}
+                                    {{batchDetailList.destVersion}}
                                 </div>
                             </div>
                         </el-col>
@@ -85,7 +85,7 @@
                                     升级策略
                                 </div>
                                 <div class="edit_info-rf">
-                                    {{batchDetailList.upgrade.ugType === 1 ? '静态升级' : '动态升级'}}
+                                    {{batchDetailList.ugType === 1 ? '静态升级' : '动态升级'}}
                                 </div>
                             </div>
                         </el-col>
@@ -95,7 +95,7 @@
                                     升级范围
                                 </div>
                                 <div class="edit_info-rf">
-                                    {{batchDetailList.upgrade.scope === 0 ? '全部': batchDetailList.upgrade.scope ===1 ? '定向': batchDetailList.upgrade.scope === 2 ? '区域': '灰度'}}
+                                    {{batchDetailList.scope === 0 ? '全部': batchDetailList.scope ===1 ? '定向': batchDetailList.scope === 2 ? '区域': '灰度'}}
                                 </div>
                             </div>
                         </el-col>
@@ -105,7 +105,7 @@
                                     升级时间
                                 </div>
                                 <div class="edit_info-rf">
-                                    {{batchDetailList.upgrade.updateTime}}
+                                    {{batchDetailList.updateTime}}
                                 </div>
                             </div>
                         </el-col>
@@ -115,7 +115,7 @@
                                     固件推送速率
                                 </div>
                                 <div class="edit_info-rf">
-                                    {{batchDetailList.upgrade.ugDeviceCount}}
+                                    {{batchDetailList.ugDeviceCount}}
                                 </div>
                             </div>
                         </el-col>
@@ -125,7 +125,7 @@
                                     升级失败重试时间间隔
                                 </div>
                                 <div class="edit_info-rf">
-                                    {{batchDetailList.upgrade.retryInterval}}
+                                    {{batchDetailList.retryInterval}}
                                 </div>
                             </div>
                         </el-col>
@@ -135,7 +135,7 @@
                                     设备升级超时时间
                                 </div>
                                 <div class="edit_info-rf">
-                                    {{batchDetailList.upgrade.timeOut}}
+                                    {{batchDetailList.timeOut}}
                                 </div>
                             </div>
                         </el-col>
@@ -171,38 +171,41 @@
                 }
             }
         },
-        created () {
+        mounted () {
             this.batchManage.fmId = this.$route.query.id
             this.upgradeId = this.$route.query.upgradeId
+            this.productName = this.$route.query.productName
             this.getDetails()
             this.getDeviceList()
         },
         methods: {
             // 获取详情
             getDetails () {
-                // let formData = new FormData()
-                // formData.append('pageNum', this.batchManage.pageNum)
-                // formData.append('pageSize', this.batchManage.pageSize)
-                // formData.append('fmId', this.batchManage.fmId)
-                // formData.append('id', this.upgradeId)
-                upgradeList (this.batchManage).then ( res => {
+                let data = {
+                    'pageNum': this.batchManage.pageNum,
+                    'pageSize': this.batchManage.pageSize,
+                    'fmId': this.batchManage.fmId,
+                    'id': this.upgradeId
+                };
+                upgradeList (data).then ( res => {
                     if (res.code === 200) {
-                        this.batchDetailList = res.data.list[0]
+                        this.batchDetailList = res.data.data[0] || {};
                     }
                 })
             },
             // 获取设备列表
             getDeviceList () {
-                let formData = new FormData()
+                let data = {
+                  upgradeId: this.upgradeId,
+                  pageNum: this.devManage.pageNum,
+                  pageSize: this.devManage.pageSize
+                };
                 if (this.devManage.deviceName) {
-                    formData.append('deviceName', this.devManage.deviceName)
+                    data.deviceName = this.devManage.deviceName;
                 }
-                formData.append('upgradeId', this.upgradeId)
-                formData.append('pageNum', this.devManage.pageNum)
-                formData.append('pageSize', this.devManage.pageSize)
-                upgradeDeviceList (formData).then( res => {
+                upgradeDeviceList (data).then( res => {
                     if (res.code === 200) {
-                        this.devManage.devList = res.data.list
+                        this.devManage.devList = res.data.data
                     } else {
                         this.$message.error(res.message);
                     }

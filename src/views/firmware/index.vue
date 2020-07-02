@@ -84,7 +84,7 @@
                 >批量升级</a
               >
               |
-              <a class="oprate_btn" @click="toDetails(scope.row.id)">查看</a> |
+              <a class="oprate_btn" @click="toDetails(scope.row.id, scope.row.productName)">查看</a> |
               <a class="oprate_btn" @click="delItem(scope.row.id)">删除</a>
             </template>
           </el-table-column>
@@ -361,11 +361,12 @@ export default {
       this.fetchFmList();
     },
     // 查看详情
-    toDetails(id) {
+    toDetails(id, productName) {
       this.$router.push({
         path: "details",
         query: {
-          id: id
+          id: id,
+          productName: productName
         }
       });
     },

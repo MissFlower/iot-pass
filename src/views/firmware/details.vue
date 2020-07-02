@@ -487,7 +487,8 @@
                     path: 'batchDetails',
                     query: {
                         id: this.fmId,
-                        upgradeId: upgradeId
+                        upgradeId: upgradeId,
+                        productName: this.$route.query.productName
                     }
                 })
             },

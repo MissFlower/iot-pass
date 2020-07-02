@@ -28,9 +28,12 @@
         <el-tab-pane label="产品信息" name="product">
           <product-info :product-data="productData" :btn-type="btnType" @changeProName="changeProName"/>
         </el-tab-pane>
-        <el-tab-pane label="功能定义" name="second">
-          <product-ability v-if="productData.productKey && activeName == 'second'" :productKey="productData.productKey"></product-ability>
+
+        <el-tab-pane label="Topic类列表" name="topic">
+          <product-topic  :productId="productData.id"/>
         </el-tab-pane>
+
+        <el-tab-pane label="功能定义" name="second"></el-tab-pane>
        
       </el-tabs>
     </div>
@@ -57,11 +60,11 @@
 <script>
 import { findSecret, getProduct, cancelRelease, release } from "@/api/product"
 import productInfo from './info'
-import productAbility from '@/views/model/modelTab'
+import productTopic from './topic/topic'
 export default { 
   components: {
     productInfo,
-    productAbility
+    productTopic
   },
   data() {
     return {
@@ -185,10 +188,8 @@ export default {
     //获取产品详情数据
     getProDetail(){
       this.loading = true
-      getProduct({productKey: this.productKey}).then(res => {
-        setTimeout(() => {
-          this.loading = false;
-        },1000)
+      getProduct({productKey: this.productKey}).then(res => {        
+        this.loading = false;        
         if(res.code === 200){        
           this.productName = res.data.productName;  
           this.productData = res.data;

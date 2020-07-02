@@ -8,7 +8,7 @@
   <div id="dataSelectPart">
     <el-form ref="dataSelectPartForm" :model="formData" :rules="rules">
       <el-form-item label="数据类型" prop="type">
-        <el-select v-model="formData.type" @change="handleChange" :disabled="info && info.type ? true : false">
+        <el-select v-model="formData.type" @change="handleChange" :disabled="(info && info.type ? true : false) || showFlag">
           <el-option v-for="(item, index) in dataTypeArr" :key="index" :value="item.value" :label="item.label"></el-option>
         </el-select>
       </el-form-item>
@@ -16,18 +16,18 @@
         <div><span class="red mr5">*</span>取值范围</div>
         <div class="df ai_c mt10">
           <el-form-item prop="min">
-            <el-input v-model="formData.specs.min" placeholder="最小值" class="w150 mr10" @input="rangeValueFun"></el-input>
+            <el-input v-model="formData.specs.min" placeholder="最小值" class="w150 mr10" @input="rangeValueFun" :disabled="showFlag"></el-input>
             <span class="mr10">~</span>
           </el-form-item>
           <el-form-item prop="max">
-            <el-input v-model="formData.specs.max" placeholder="最大值" class="w150" @input="rangeValueFun"></el-input>
+            <el-input v-model="formData.specs.max" placeholder="最大值" class="w150" @input="rangeValueFun" :disabled="showFlag"></el-input>
           </el-form-item>
         </div>
         <el-form-item label="步长" prop="step">
-          <el-input v-model="formData.specs.step" placeholder="请输入步长"></el-input>
+          <el-input v-model="formData.specs.step" placeholder="请输入步长" :disabled="showFlag"></el-input>
         </el-form-item>
         <el-form-item label="单位" placeholder="请选择单位">
-          <el-select v-model="formData.specs.unit" filterable>
+          <el-select v-model="formData.specs.unit" filterable :disabled="showFlag">
             <el-option v-for="item in unitArr" :key="item.symbol" :value="item.symbol" :label="`${item.name} /${item.symbol}`"></el-option>
           </el-select>
         </el-form-item>
@@ -52,31 +52,31 @@
         </div>
         <div v-for="(item, index) in enumArr" :key="index" class="df enumItem">
           <el-form-item class="flex1">
-            <el-input v-model="item.key" placeholder="编号如’0‘" class="w150 mr10" @input="enumKeyChange(index)"></el-input>
+            <el-input v-model="item.key" placeholder="编号如’0‘" class="w150 mr10" @input="enumKeyChange(index)" :disabled="showFlag"></el-input>
             <span class="mr10">~</span>
             <div class="red f12 lh14 pr20" v-if="item.errorKey">{{item.errorKey}}</div>
           </el-form-item>
           <el-form-item class="flex1">
-            <el-input v-model="item.desc" placeholder="对该枚举项的描述" class="w150" @input="enumDescChange(index)"></el-input>
-            <el-button type="text" v-if="enumArr.length > 1" class="ml2 hand" @click="delectEnum(index)">删除</el-button>
+            <el-input v-model="item.desc" placeholder="对该枚举项的描述" class="w150" @input="enumDescChange(index)" :disabled="showFlag"></el-input>
+            <el-button type="text" v-if="enumArr.length > 1 && !showFlag" class="ml2 hand" @click="delectEnum(index)">删除</el-button>
             <div class="red f12 lh14 pr20" v-if="item.errorDesc">{{item.errorDesc}}</div>
           </el-form-item>
         </div>
-        <span @click="addEnumItem" class="blue f12"><i class="el-icon-plus mr10"></i>添加枚举项</span>
+        <span @click="addEnumItem" class="blue f12" v-if="!showFlag"><i class="el-icon-plus mr10"></i>添加枚举项</span>
       </div>
       <div v-if="formData.type == '4'">
         <div class="mb10"><span class="red mr5">*</span>布尔值</div>
         <el-form-item prop="bool0">
           <span class="dib w30 tc">0 -</span>
-          <el-input v-model="boolObj[0]" placeholder="如：关" class="ml20" style="width: calc(100% - 50px)"></el-input>
+          <el-input v-model="boolObj[0]" placeholder="如：关" class="ml20" style="width: calc(100% - 50px)" :disabled="showFlag"></el-input>
         </el-form-item>
         <el-form-item>
           <span class="dib w30 tc">1 -</span>
-          <el-input v-model="boolObj[1]" placeholder="如：开" class="ml20" style="width: calc(100% - 50px)"></el-input>
+          <el-input v-model="boolObj[1]" placeholder="如：开" class="ml20" style="width: calc(100% - 50px)" :disabled="showFlag"></el-input>
         </el-form-item>
       </div>
       <el-form-item label="数据长度" v-if="formData.type == '5'">
-        <el-input placeholder="请输入内容" v-model="text">
+        <el-input placeholder="请输入内容" v-model="text" :disabled="showFlag">
           <template slot="append">字节</template>
         </el-input>
       </el-form-item>
@@ -87,20 +87,20 @@
         <div v-for="(item, index) in formData.specs" :key="index" class="df ai_c json_item">
           <div class="flex1">参数名称： {{item.name}}</div>
           <div>
-            <el-link type="primary" :underline="false" class="f12 mr10" @click.stop="editSturct(item, index)">编辑</el-link>
-            <el-link type="primary" :underline="false" class="f12" @click.stop="deleteStruct(index)">删除</el-link>
+            <el-link type="primary" :underline="false" class="f12 mr10" @click.stop="editSturct(item, index)" v-if="!showFlag">编辑</el-link>
+            <el-link type="primary" :underline="false" class="f12" @click.stop="deleteStruct(index)" v-if="!showFlag">删除</el-link>
           </div>
         </div>
-        <el-button type="text" icon="el-icon-plus" @click="addStruct">新增参数</el-button>
+        <el-button v-if="!showFlag" type="text" icon="el-icon-plus" @click="addStruct">新增参数</el-button>
       </el-form-item>
       <div v-if="formData.type == '8'">
         <el-form-item label="元素类型">
-          <el-radio-group v-model="arrObj.type">
+          <el-radio-group v-model="arrObj.type" :disabled="showFlag">
             <el-radio v-for="(item, index) in arrTypes" :key="index" :label="item.value">{{item.text}}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="元素个数">
-          <el-input v-model="arrObj.num" placeholder="请输入元素个数"></el-input>
+          <el-input v-model="arrObj.num" placeholder="请输入元素个数" :disabled="showFlag"></el-input>
         </el-form-item>
       </div>
     </el-form>
@@ -116,7 +116,7 @@ import dataObj from '@/data/data'
 export default {
   name: 'DatatypeSelectpart',
   components: {addParam},
-  props: ['type', 'info', 'specs'],
+  props: ['type', 'info', 'specs', 'showFlag'],
   data () {
     const validateValueRangeMin = (rule, value, callback) => {
       let str = this.numMinMaxDealFun(this.formData.specs.min)

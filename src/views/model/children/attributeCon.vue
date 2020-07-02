@@ -6,11 +6,11 @@
 
 <template>
   <div id="attributeCon">
-    <datatype-selectpart ref="form" :info="formData.dataType" @success="handleSuccess"></datatype-selectpart>
+    <datatype-selectpart ref="form" :info="formData.dataType" :showFlag="showFlag" @success="handleSuccess"></datatype-selectpart>
     <div><span class="red mr5">*</span>读写类型</div>
     <el-form-item>
-      <el-radio v-model="formData.accessMode" label="0">读写</el-radio>
-      <el-radio v-model="formData.accessMode" label="1">只读</el-radio>
+      <el-radio v-model="formData.accessMode" label="0" :disabled="showFlag">读写</el-radio>
+      <el-radio v-model="formData.accessMode" label="1" :disabled="showFlag">只读</el-radio>
     </el-form-item>
   </div>
 </template>
@@ -18,7 +18,7 @@
 <script>
 import dataObj from '@/data/data'
 export default {
-  props: ['dataType', 'accessMode'],
+  props: ['dataType', 'accessMode', 'showFlag'],
   data() {
     return {
       formData: {

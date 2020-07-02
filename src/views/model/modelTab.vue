@@ -37,12 +37,12 @@
       <el-table-column label="标识符" prop="identifier"></el-table-column>
       <el-table-column label="数据类型">
         <template slot-scope="scope">
-          {{scope.row.dataType ? dataTypeTextObj[scope.row.dataType.type] : ''}}
+          ({{scope.row.dataType ? dataTypeTextObj[scope.row.dataType.type] : ''}})
         </template>
       </el-table-column>
       <el-table-column label="数据定义">
         <template slot-scope="scope">
-          {{scope.row.dataType ? scope.row.dataType.specs : ''}}
+          <div class="ellipsis">{{scope.row.dataType ? scope.row.dataType.specs : ''}}</div>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="80" align="center">
@@ -109,6 +109,12 @@ export default {
                     }
                     if (key.indexOf('Eve') > -1) {
                       item.abilityType = '3' // 3 事件
+                    }
+                    item.accessMode_ = item.accessMode
+                    if (item.accessMode === 'rw') {
+                      item.accessMode = '0'
+                    } else if(item.accessMode == 'r') {
+                      item.accessMode = '1'
                     }
                   })
                   this.list = this.list.concat(arr)

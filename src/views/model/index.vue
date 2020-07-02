@@ -86,7 +86,7 @@
       </el-table-column>
       <el-table-column label="数据定义">
         <template slot-scope="scope">
-          {{scope.row.dataType ? scope.row.dataType.specs : ''}}
+          <div class="ellipsis">{{scope.row.dataType ? scope.row.dataType.specs : ''}}</div>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="90" align="center">

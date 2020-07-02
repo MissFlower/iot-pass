@@ -154,7 +154,7 @@ export default {
 <style lang="scss">
 .dialogVisibleDialog {
   .el-dialog__body {
-    padding: 0 20px;
+    padding: 0 20px 20px;
   }
   .con {
     height: 400px;

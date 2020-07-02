@@ -30,7 +30,7 @@
             <div slot="content" class="f12 c9 w200">必填，支持中文、大小写字母、数字、短划线、下划线和小数点，必须以中文、英文或数字开头，不超过30个字符。</div>
           </el-tooltip>
         </span>
-        <el-input v-model="formData.modelData.name" placeholder="请输入您的功能名称"></el-input>
+        <el-input v-model="formData.modelData.name" placeholder="请输入您的功能名称" :disabled="showFlag"></el-input>
       </el-form-item>
       <el-form-item prop="identifier">
         <span slot="label">
@@ -40,16 +40,16 @@
             <div slot="content" class="f12 c9 w200">必填，支持大小写字母、数字和下划线、不超过50个字符。</div>
           </el-tooltip>
         </span>
-        <el-input v-model="formData.modelData.identifier" placeholder="请输入您的标识符" :disabled="editAbility ? true : false"></el-input>
+        <el-input v-model="formData.modelData.identifier" placeholder="请输入您的标识符" :disabled="(editAbility || showFlag) ? true : false"></el-input>
       </el-form-item>
       <!--不同类型对应不同模块-->
-      <attribute-con ref="attDataSelectPart"  v-if="formData.abilityType == 1" :dataType="formData.modelData.dataType" :accessMode="formData.modelData.accessMode" @callBack="callBackForAttribute"></attribute-con>
+      <attribute-con ref="attDataSelectPart"  v-if="formData.abilityType == 1" :dataType="formData.modelData.dataType" :showFlag="showFlag" :accessMode="formData.modelData.accessMode" @callBack="callBackForAttribute"></attribute-con>
 
       <service-con ref="servivePart" v-if="formData.abilityType == 2" @success="servivePartSuccess"></service-con>
 
       <event-con ref="eventPart" v-if="formData.abilityType == 3" @success="eventPartSuccess"></event-con>
       <el-form-item label="描述">
-        <el-input v-model="formData.modelData.description" type="textarea" placeholder="请输入描述" :rows="4" maxlength="100" show-word-limit></el-input>
+        <el-input v-model="formData.modelData.description" type="textarea" placeholder="请输入描述" :rows="4" maxlength="100" show-word-limit :disabled="showFlag"></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer">

@@ -60,7 +60,7 @@ export default {
     }
   },
   methods: {
-    handleCancel() {},
+    // 提交函数
     handleSave() {
       let promise = null;
       let str = "";
@@ -87,6 +87,7 @@ export default {
           this.loading = false;
         });
     },
+    // 取消函数
     handleClose() {
       // this.$parent.editFlag = false;
       this.$emit("close");

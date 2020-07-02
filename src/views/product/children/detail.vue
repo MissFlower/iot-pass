@@ -94,6 +94,11 @@ export default {
       return this.$store.state.app.functionArr;
     }
   },
+  mounted () {
+    if (this.$route.query.activetab) {
+      this.activeName = this.$route.query.activetab
+    }
+  },
   methods: {
     //复制文本内容
      copyContent(text){         

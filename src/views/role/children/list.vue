@@ -80,14 +80,14 @@ export default {
     };
   },
   watch: {
-    "formData.name": function() {
+    "formData.name": function() { // 监控name字段
       if (this.$fun.trim(this.formData.name === "")) {
         this.handleCurrentChange(1);
       }
     }
   },
   computed: {
-    authArr() {
+    authArr() {// 页面权限
       return this.$store.state.app.functionArr;
     }
   },
@@ -95,14 +95,15 @@ export default {
     this.getData();
   },
   methods: {
+    // 获取角色列表
     getData() {
       this.loading = true;
       this.list = [];
       roleList(this.formData)
         .then(res => {
           if (res.code === 200) {
-            if (res.data && res.data.list && res.data.list.length > 0) {
-              res.data.list.forEach(item => {
+            if (res.data && res.data.data && res.data.data.length > 0) {
+              res.data.data.forEach(item => {
                 item.createTime_ = item.createTime
                   ? this.$fun.dateFormat(
                       new Date(item.createTime),
@@ -110,7 +111,7 @@ export default {
                     )
                   : "";
               });
-              this.list = res.data.list;
+              this.list = res.data.data;
             }
             this.total = res.data.total;
             this.loading = false;
@@ -124,22 +125,27 @@ export default {
           this.loading = false;
         });
     },
+    // 筛选函数
     searchFun() {
       if (this.$fun.trim(this.formData.name === "")) {
         return;
       }
       this.handleCurrentChange(1);
     },
+    // 选择页
     handleCurrentChange(page) {
       this.formData.pageNum = page;
       this.getData();
     },
+    // 主题切换
     handleShowCon(key, row) {
       this.$parent.switchCon(key, row);
     },
+    // 编辑函数
     handleShowEdit(row) {
       this.$parent.showEditRole(row);
     },
+    // 删除函数，触发提示
     handleDelete(row) {
       const str = "确认删除该角色吗？";
       this.$confirm(str, "提示", {

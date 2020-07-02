@@ -37,6 +37,7 @@ export default {
     };
   },
   methods: {
+    // 主题显示切换函数
     switchCon(key, row) {
       if (row) {
         this.selectRow = row;
@@ -45,10 +46,12 @@ export default {
       }
       this.activeIndex = key;
     },
+    // 显示编辑、添加角色弹框
     showEditRole(row) {
       this.selectRow = row;
       this.editFlag = true;
     },
+    // 关闭编辑、添加角色弹框
     handleCloseEditRole() {
       this.editFlag = false;
       this.$refs.list.getData();

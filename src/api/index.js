@@ -101,6 +101,23 @@ export function updatePassword(data) {
     data: Qs.stringify(data)
   });
 }
+
+
+/*
+忘记密码账号密码
+
+    account	  string	是	账号
+    password	string	是	密码
+*/
+export function forgetPassword (data) {
+  // 忘记密码
+  return request({
+    url: "/user/forgetPassword",
+    method: "post",
+    headers: headerFrom,
+    data: Qs.stringify(data)
+  });
+}
 /*
 获取个人信息，
   无参数

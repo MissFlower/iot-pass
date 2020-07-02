@@ -54,12 +54,17 @@ const router = {
   actions: {
     setRouters ({ commit }, menus) {
       return new Promise((resolve) => {
-        const {list, funArr} = dealMenus(menus);
-        functionArr = funArr
-        if (list.length > 0) {
-          const asyncList = filterFun(list);
-          commit('SET_ROUTERS', asyncList);
-          resolve(asyncList);
+        if (menus) {
+          const {list, funArr} = dealMenus(menus);
+          functionArr = funArr
+          if (list.length > 0) {
+            const asyncList = filterFun(list);
+            commit('SET_ROUTERS', asyncList);
+            resolve(asyncList);
+          } else {
+            commit('SET_ROUTERS', []);
+            resolve()
+          }
         } else {
           commit('SET_ROUTERS', []);
           resolve()

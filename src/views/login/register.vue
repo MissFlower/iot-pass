@@ -102,7 +102,7 @@ export default {
       },
       msg: "发送验证码",
       code: "",
-      seconds: 61,
+      seconds: 0,
       rules: {
         account: [{ required: true, message: "请输入用户名", trigger: "blur" }],
         password: [{ required: true, validator: validatePassword, trigger: "blur" }],
@@ -133,10 +133,12 @@ export default {
                 this.submitFun();
               } else {
                 this.$message.warning(res.message);
+                this.loading = false
               }
             })
             .catch(() => {
               this.$message.warning("注册失败");
+              this.loading = false
             });
         }
       });
@@ -155,23 +157,36 @@ export default {
         })
         .catch(() => {
           this.$message.warning("注册失败");
+          this.loading = false;
         });
     },
     handleRedister() {
       this.$router.push("register");
     },
     handleSendCode() {
-      sendCode({
-        phone: this.formData.phone,
-        type: 1
-      }).then(res => {
-        if (res.code === 200) {
-          this.seconds = 61;
-          this.timer();
-        } else {
-          this.$message.error(res.message);
+      this.$refs.form.validateField('phone', (valid) => {
+        if (valid === '') {
+          if (this.seconds === 0) {
+            this.loading = true
+            sendCode({
+              phone: this.formData.phone,
+              type: 1
+            }).then(res => {
+              if (res.code === 200) {
+                this.seconds = 61;
+                this.timer();
+              } else {
+                this.$message.error(res.message);
+              }
+              this.loading = false
+            }).catch(() => {
+              this.seconds = 0
+              this.$message.error('验证码获取失败')
+              this.loading = false
+            })
+          }
         }
-      });
+      })
     },
     timer() {
       if (this.seconds > 1) {

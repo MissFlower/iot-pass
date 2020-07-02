@@ -32,8 +32,9 @@
 </template>
 
 <script>
-import { updatePassword } from "@/api";
+import { updatePassword, forgetPassword } from "@/api";
 export default {
+  props: ['flag'],
   data() {
     const validatePassword = (value, rule, callback) => {
       if (this.formData.password === "") {
@@ -89,8 +90,12 @@ export default {
     submit () {
       this.$refs.form.validate(valid => {
         if (valid) {
+          let promise = updatePassword
+          if (this.flag * 1 === 4) {
+            promise = forgetPassword
+          }
           this.loading = true;
-          updatePassword(this.formData)
+          promise(this.formData)
             .then(res => {
               if (res.code === 200) {
                 this.$message.success("密码修改成功");

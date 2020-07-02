@@ -190,3 +190,13 @@ export function getDeviceList(data) {
     data: Qs.stringify(data)
   });
 }
+/**
+ * 固件详情 上方数据
+ */
+export function statistics() {
+  return request({
+    url: "upgrade/statistics",
+    method: "post",
+    headers: headerFrom
+  });
+}

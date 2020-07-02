@@ -217,6 +217,8 @@ export default {
       uploadFile(fromData)
         .then(res => {
             if (res.data.fmUrl) {
+                let fmName = res.data.fmName;
+                this.ruleForm.fmName = fmName ? fmName.slice(0, fmName.lastIndexOf('.')) : this.ruleForm.fmName;
                 this.ruleForm.fmUrl = res.data.fmUrl;
                 this.ruleForm.fmSign = res.data.fmSign;
                 this.ruleForm.fmSize = res.data.fmSize;

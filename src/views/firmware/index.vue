@@ -181,7 +181,7 @@ export default {
       activeTag: "first",
       form: {
         fmName: "",
-        productName: "",
+        productId: "",
         pageSize: 20,
         pageNum: 1
       },
@@ -223,7 +223,7 @@ export default {
       let formData = {
         "pageNum": this.form.pageNum,
         "pageSize": this.form.pageSize,
-        "productName": this.form.productName,
+        "productId": this.form.productId,
         "fmName": this.form.fmName
       };
       getFmList(formData)
@@ -259,8 +259,8 @@ export default {
     },
     // 获取产品列表
     getProductList() {
-      this.form.productName = this.productsValue.split("|")[1]
-        ? this.productsValue.split("|")[1]
+      this.form.productId = this.productsValue.split("|")[0]
+        ? this.productsValue.split("|")[0]
         : "";
       let data = this.productForm;
       getProducts(data).then(res => {
@@ -269,7 +269,7 @@ export default {
       });
     },
     changeSelect() {
-      this.form.productName = this.productsValue.split("|")[1];
+      this.form.productId = this.productsValue.split("|")[0];
       this.searchList();
     },
     /**

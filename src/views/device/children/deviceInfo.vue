@@ -100,7 +100,9 @@
           </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="Topic列表" name="second">Topic列表</el-tab-pane>
+      <el-tab-pane label="Topic列表" name="topic">
+        <device-topic  :deviceId="deviceObj.id"/>
+      </el-tab-pane>
       <el-tab-pane label="物模型数据" name="third">物模型数据</el-tab-pane>
     </el-tabs>
 
@@ -151,9 +153,13 @@
 
 <script>
 import deviceNameEdit from "./deviceNameEdit";
-import { deviceInfo,topicList } from "@/api/deviceRequest";
+import deviceTopic from './topic/topic'
+import { deviceInfo } from "@/api/deviceRequest";
 export default {
-  components: { deviceNameEdit },
+  components: { 
+    deviceNameEdit,
+    deviceTopic
+  },
   data() {
     return {
       deviceObj: {},
@@ -173,7 +179,6 @@ export default {
 
   mounted() {
     this.getDeviceInfo();
-    this.getTopicList();
   },
 
   methods: {
@@ -210,22 +215,6 @@ export default {
         })
         .catch(() => {
           this.loading = false;
-        });
-    },
-
-    //获取topic列表
-    getTopicList(){
-
-      topicList({
-        id: this.$route.query.id
-      })
-        .then(res => {
-          if (res.code === 200) {
-            console.log(JSON.stringify(res.data));
-            this.topicList = res.data;
-          }
-        })
-        .catch(() => {
         });
     },
 

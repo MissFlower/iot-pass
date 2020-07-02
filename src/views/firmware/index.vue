@@ -220,15 +220,16 @@ export default {
   methods: {
     // 获取固件列表
     fetchFmList() {
-      let formData = new FormData();
-      formData.append("pageNum", this.form.pageNum);
-      formData.append("pageSize", this.form.pageSize);
-      formData.append("productName", this.form.productName);
-      formData.append("fmName", this.form.fmName);
+      let formData = {
+        "pageNum": this.form.pageNum,
+        "pageSize": this.form.pageSize,
+        "productName": this.form.productName,
+        "fmName": this.form.fmName
+      };
       getFmList(formData)
         .then(res => {
           if (res.code === 200) {
-            this.list = res.data.list;
+            this.list = res.data.data;
             this.fmTotal = res.data.total;
             this.loading = false;
           } else if (res.code === 9321) {
@@ -291,7 +292,7 @@ export default {
       formData.append("versions", versions);
       getVerifyFirmInfo(formData).then(res => {
         if (res.code === 200) {
-            this.fmDeviceList = res.data.deviceList
+            this.fmDeviceList = res.data;
             this.checkFmVisible = true;
         } else if (res.code === 9003) {
           this.$alert(res.message, "提示", {

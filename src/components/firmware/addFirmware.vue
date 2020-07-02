@@ -139,6 +139,7 @@ export default {
       },
       typelTag: "1",
       products: [],
+      productMap: {},
       productsType: {},
       timeout: null,
       productForm: {
@@ -168,9 +169,9 @@ export default {
     addFmSubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-            let formData = new FormData()
+            let formData = {};
             for (let item in this.ruleForm) {
-                formData.append(item, this.ruleForm[item])
+                formData[item] = this.ruleForm[item];
             }
           saveFm(formData)
             .then(res => {
@@ -192,21 +193,15 @@ export default {
       });
     },
     // 获取固件产品类型
-    getFmType() {
-      let formData = new FormData();
-      formData.append('productId', this.ruleForm.productId)
-      getFmType(formData).then(res => {
-        if (res.code === 200) {
-            // this.productsType = { //测试数据
-            //   HW: "0",
-            //   YOS: "1",
-            //   DEMEAN: "2"
-            // };
-            this.productsType = res.data
-        } else {
-            this.$message.warning(res.message);
-        }
-      });
+    getFmType(fmTypes) {
+      let productType = {};
+      if(fmTypes) {
+        fmTypes.split(",").forEach(function (item, index) {
+          productType[item] = index;
+        });
+      }
+      this.productsType = productType;
+      this.ruleForm.type = "";
     },
     closeDialog() {
       this.$refs["ruleForm"].resetFields(); // 清空弹出框校验
@@ -223,7 +218,6 @@ export default {
             if (res.data.fmUrl) {
                 this.ruleForm.fmUrl = res.data.fmUrl;
                 this.ruleForm.fmSign = res.data.fmSign;
-                this.ruleForm.fmName = res.data.fmName;
                 this.ruleForm.fmSize = res.data.fmSize;
                 this.uploadText = "重新上传";
                 this.uploadStatus = true
@@ -255,13 +249,17 @@ export default {
       let data = this.productForm;
       getProducts(data).then(res => {
         this.products = res.data.data;
+        this.products.forEach(item => {
+          this.productMap[item.id + ""] = item;
+        });
         this.userFilter();
       });
     },
     changeSelect() {
       this.ruleForm.productId = this.productsValue.split("|")[0];
       this.ruleForm.productName = this.productsValue.split("|")[1];
-      this.getFmType();
+      let curPrd = this.productMap[this.ruleForm.productId+""];
+      this.getFmType(curPrd.fmTypes);
     }
   },
   computed: {

@@ -15,8 +15,8 @@ export function deviceList(data) {
     return request({
         url: "/device/listByPage",
         method: "post",
-        headers: headerFrom,
-        data: Qs.stringify(data)
+        headers: headerFrom_json,
+        data: data
     });
 }
 
@@ -45,8 +45,8 @@ export function createDevice(data) {
     return request({
         url: "/device/createDevice",
         method: "post",
-        headers: headerFrom,
-        data: Qs.stringify(data)
+        headers: headerFrom_json,
+        data: data
     });
 }
 
@@ -79,3 +79,78 @@ export function deviceBatchEnable(data) {
         data: data
     });
 }
+
+export function deviceStatistics(data) {
+    // 指定产品设备统计
+    return request({
+        url: "/device/statistics",
+        method: "get",
+        headers: headerFrom_Get,
+        params: data
+    });
+}
+
+export function topicList(data) {
+    // 获取topic列表
+    return request({
+        url: "/device/sysTopic",
+        method: "get",
+        headers: headerFrom_Get,
+        params: data
+    });
+}
+
+
+/**
+ * 设备自定义topic新增、编辑
+ * @param {
+    *   topicName	String	是	topic名称
+    *   productKey	String	是	产品 productKey
+    *   topicAccess	int	是	topic权限，1：订阅，2：发布，3：订阅+发布  
+    *    
+    *  --- 编辑加上topicId ---
+    *   topicId	Long	是	topic Id
+    * }
+    */
+  export function topicCustomEdit(data) { 
+    return request({
+      url: "topic/customEdit",
+      method: "post",
+      headers: headerFrom,
+      data: Qs.stringify(data)
+    });
+  }
+  
+   /**
+   * 设备自定义topic删除
+   * @param {
+    *   topicId	Long	是	topic Id
+    *   productKey	String	是	产品 productKey
+    * }
+    */
+  export function topicDelete(data) { 
+    return request({
+      url: "topic/customDelete",
+      method: "post",
+      headers: headerFrom,
+      data: Qs.stringify(data)
+    });
+  }
+  
+  
+  /**
+   * 设备自定义topic列表 * 
+    *   
+    * @param {
+      *   pageNum	Long	否	分页页数，默认：1
+      *   pageSize	Long	否	分页条数，默认：20
+      *   productKey	String	是	产品 productKey      
+      * }
+      */
+     export function topicCustomList(data) { 
+      return request({
+        url: "topic/customList",
+        method: "get",
+        params: data  
+      });
+    }

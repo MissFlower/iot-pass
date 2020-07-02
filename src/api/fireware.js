@@ -8,6 +8,9 @@ import Qs from "qs";
 const headerFrom = {
   "Content-Type": "application/x-www-form-urlencoded"
 };
+const headerFrom_json = {
+  "Content-Type": "application/json"
+};
 
 /**
  * 获取固件列表
@@ -17,6 +20,7 @@ export function getFmList(data) {
   return request({
     url: "/fm/list",
     method: "post",
+    headers: headerFrom_json,
     data
   });
 }
@@ -51,6 +55,7 @@ export function saveFm(data) {
   return request({
     url: "/fm/save",
     method: "post",
+    headers: headerFrom_json,
     data
   });
 }
@@ -109,6 +114,7 @@ export function addVerify(data) {
   return request({
     url: "/upgrade/addVerify",
     method: "post",
+    headers: headerFrom_json,
     data
   });
 }
@@ -155,6 +161,7 @@ export function upgradeList(data) {
   return request({
     url: "upgrade/list",
     method: "post",
+    headers: headerFrom_json,
     data
   });
 }
@@ -167,6 +174,7 @@ export function upgradeDeviceList(data) {
   return request({
     url: "upgrade/upgradeDevicelist",
     method: "post",
+    headers: headerFrom_json,
     data
   });
 }

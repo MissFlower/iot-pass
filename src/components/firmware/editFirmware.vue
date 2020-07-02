@@ -87,10 +87,10 @@ export default {
         this.ruleForm.fmDesc = this.detailInfo.fmDesc;
       }
       let formData = new FormData();
-      formData.append("fmName", this.ruleForm.fmName);
-      formData.append("id", this.ruleForm.id);
-      formData.append("fmDesc", this.ruleForm.fmDesc);
-      updateFm(formData)
+      // formData.append("fmName", this.ruleForm.fmName);
+      // formData.append("id", this.ruleForm.id);
+      // formData.append("fmDesc", this.ruleForm.fmDesc);
+      updateFm(this.ruleForm)
         .then(res => {
           if (res.code === 200) {
             this.$emit("changeVisible", this.EditDialogVisible);

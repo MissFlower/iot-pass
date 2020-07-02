@@ -70,7 +70,7 @@
             chooseSubmit () {
                 let multipleDeviceId = []
                 this.multipleSelection.map(item => {
-                    multipleDeviceId.push(item.id)
+                    multipleDeviceId.push(item.deviceId)
                 })
                 this.$emit('multipleDevice', multipleDeviceId)
                 this.$emit('deviceVisible', this.chooseDeviceVisible)

@@ -174,10 +174,12 @@ export const asyncRoutes =[
     path: "/model",
     redirect: "/model/index",
     component: Layout,
+    meta: { name: "物模型管理", code: "model" },
     children: [
       {
         path: "index",
-        component: resolve => require(["@/views/model/index"], resolve)
+        component: resolve => require(["@/views/model/index"], resolve),
+        meta: { name: "物模型管理", code: "model" },
       }
     ]
   },
@@ -196,7 +198,7 @@ export const asyncRoutes =[
         path: "deviceInfo",
         component: resolve =>
           require(["@/views/device/children/deviceInfo"], resolve),
-        meta: { name: "设备详情", code: "deviceInfo" }
+        meta: { name: "设备详情", code: "device_detail" }
       }
     ]
   },
@@ -214,12 +216,12 @@ export const asyncRoutes =[
       {
         path: "details",
         component: resolve => require(["@/views/firmware/details"], resolve),
-        meta: { name: "固件管理及升级" }
+        meta: { name: "固件管理及升级", code: "fm_details"}
       },
       {
         path: "batchDetails",
         component: resolve => require(["@/views/firmware/batchDetails"], resolve),
-        meta: { name: "固件管理及升级", code: "fm_details" }
+        meta: { name: "固件管理及升级" }
       }
     ]
   },

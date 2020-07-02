@@ -155,11 +155,11 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.form.fmId = this.checkFmId;
-          let formData = new FormData()
-            for (let item in this.form) {
-                formData.append(item, this.form[item])
-            }
-          saveUpgrade(formData).then(res => {
+          // let formData = new FormData()
+          //   for (let item in this.form) {
+          //       formData.append(item, this.form[item])
+          //   }
+          saveUpgrade(this.form).then(res => {
             if (res.code === 200) {
               this.$emit("upgradeVisible", this.upgradeFmVisible);
             } else {

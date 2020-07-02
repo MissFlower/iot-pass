@@ -132,12 +132,20 @@ export default {
         account: this.$fun.trim(this.formData.account)
       }).then(res => {
         if (res.code === 200) {
-          this.flag = 1;
+          // this.flag = 1;
+          this.$store.dispatch('setUserInfo', {
+            account: this.formData.account,
+            phone: res.data
+          })
+          this.$router.push('/verify?flag=4')
         } else {
           this.$message.warning(res.message);
         }
         this.loading = false;
-      });
+      }).catch(() => {
+        this.$message.error('账户名验证失败')
+        this.loading = false
+      })
     },
     submit() {
       this.loading = true;

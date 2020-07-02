@@ -53,13 +53,13 @@
         prop="email"
         align="center"
       ></el-table-column>
-      <el-table-column label="状态" align="center">
+      <!-- <el-table-column label="状态" align="center">
         <template slot-scope="scope">
           <span :class="scope.row.status == 0 ? 'success' : 'red'">
             {{ scope.row.status == 0 ? "启用" : "禁用" }}
           </span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
           <svg-icon
@@ -138,14 +138,14 @@ export default {
     this.getData();
   },
   methods: {
-    getData() {
+    getData() { // 列表数据获取
       this.loading = true;
       this.list = [];
       userList(this.formData)
         .then(res => {
           if (res.code === 200) {
-            if (res.data && res.data.list) {
-              this.list = res.data.list;
+            if (res.data && res.data.data) {
+              this.list = res.data.data;
             }
             this.total = res.data.total;
           } else {
@@ -158,19 +158,19 @@ export default {
           this.loading = false;
         });
     },
-    searchAccountFun() {
+    searchAccountFun() { // 账户名筛选函数
       if (this.$fun.trim(this.formData.account === "")) {
         return;
       }
       this.handleCurrentChange(1);
     },
-    searchPhoneFun() {
+    searchPhoneFun() {// 手机号筛选函数
       if (this.$fun.trim(this.formData.phone === "")) {
         return;
       }
       this.handleCurrentChange(1);
     },
-    handleCurrentChange(page) {
+    handleCurrentChange(page) { // 页面切换函数
       this.formData.pageNum = page;
       this.getData();
     },
@@ -180,7 +180,7 @@ export default {
     handleShowAddRole(row) {
       this.$parent.showAddRole(row);
     },
-    handleClose(row) {
+    handleClose(row) { // 用户删除
       const str = "确认删除该用户吗？";
       this.$confirm(str, "提示", {
         confirmButtonText: "确定",

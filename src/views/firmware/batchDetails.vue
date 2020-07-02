@@ -180,12 +180,12 @@
         methods: {
             // 获取详情
             getDetails () {
-                let formData = new FormData()
-                formData.append('pageNum', this.batchManage.pageNum)
-                formData.append('pageSize', this.batchManage.pageSize)
-                formData.append('fmId', this.batchManage.fmId)
-                formData.append('id', this.upgradeId)
-                upgradeList (formData).then ( res => {
+                // let formData = new FormData()
+                // formData.append('pageNum', this.batchManage.pageNum)
+                // formData.append('pageSize', this.batchManage.pageSize)
+                // formData.append('fmId', this.batchManage.fmId)
+                // formData.append('id', this.upgradeId)
+                upgradeList (this.batchManage).then ( res => {
                     if (res.code === 200) {
                         this.batchDetailList = res.data.list[0]
                     }
@@ -219,9 +219,11 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
-                    let formData = new FormData()
-                    formData.append('upgradeId', upgradeId)
-                    retryPublishUpdateMsg(formData).then(res => {
+                    // let formData = new FormData()
+                    // formData.append('upgradeId', upgradeId)
+                    retryPublishUpdateMsg({
+                        upgradeId: upgradeId
+                    }).then(res => {
                         if (res.code === 200) {
                             this.getDeviceList()
                         }

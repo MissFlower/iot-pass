@@ -8,7 +8,7 @@
   <div id="dataSelectPart">
     <el-form ref="dataSelectPartForm" :model="formData" :rules="rules">
       <el-form-item label="数据类型" prop="type">
-        <el-select v-model="formData.type" @change="handleChange" :disabled="info ? true : false">
+        <el-select v-model="formData.type" @change="handleChange" :disabled="info && info.type ? true : false">
           <el-option v-for="(item, index) in dataTypeArr" :key="index" :value="item.value" :label="item.label"></el-option>
         </el-select>
       </el-form-item>
@@ -87,8 +87,8 @@
         <div v-for="(item, index) in formData.specs" :key="index" class="df ai_c json_item">
           <div class="flex1">参数名称： {{item.name}}</div>
           <div>
-            <el-link type="primary" :underline="false" class="f12 mr10" disabled>编辑</el-link>
-            <el-link type="primary" :underline="false" class="f12" disabled>删除</el-link>
+            <el-link type="primary" :underline="false" class="f12 mr10" @click.stop="editSturct(item, index)">编辑</el-link>
+            <el-link type="primary" :underline="false" class="f12" @click.stop="deleteStruct(index)">删除</el-link>
           </div>
         </div>
         <el-button type="text" icon="el-icon-plus" @click="addStruct">新增参数</el-button>
@@ -111,6 +111,8 @@
 <script>
 import addParam from "@/views/model/children/addParam"
 import units from "@/data/unit"
+
+import dataObj from '@/data/data'
 export default {
   name: 'DatatypeSelectpart',
   components: {addParam},
@@ -218,6 +220,7 @@ export default {
       ],
       flag: 0, // 新增参数的标记
       structInfo: null, // 编辑新增参数
+      structIndex: -1,
       rules: {
         type: [
           {required: true, message: "数据类型不能为空", trigger: 'change' }
@@ -235,7 +238,13 @@ export default {
           {required: true, validator: validateBool0, trigger: 'change'}
         ]
       },
-      unitArr: units
+      unitArr: units,
+      dataTypeObj: dataObj.dataTypeObj
+    }
+  },
+  watch: {
+    info() {
+      this.dealDataByInfo()
     }
   },
   mounted () {
@@ -249,8 +258,42 @@ export default {
         return !item.hidden
       })
     }
+    if (this.info) {
+      this.dealDataByInfo()
+    }
   },
   methods: {
+    // 根据info 数据处理
+    dealDataByInfo () {
+      if (this.info && JSON.stringify(this.info) !== '{}') {
+        this.formData = JSON.parse(JSON.stringify(this.info))
+        switch(this.formData.type) {
+          case '3':
+            this.enumArr = []
+            for (let key in this.formData.specs){
+              this.enumArr.push({
+                key: key,
+                desc: this.formData.specs[key],
+                errorKey: '',
+                errorMenu: ''
+              })
+            }
+            break
+          case '4':
+            this.boolObj = this.formData.specs
+            break
+          case '5':
+            this.text = this.formData.specs.length
+            break
+          case '8':
+            this.arrObj = {
+              type: this.dataTypeObj[this.formData.specs.item.type],
+              num: this.formData.specs.size
+            }
+            break
+        }
+      }
+    },
     // 最大、小值的验证
     numMinMaxDealFun (value) {
       let str = ''
@@ -388,16 +431,6 @@ export default {
     delectEnum(index) {
       this.enumArr.splice(index, 1)
     },
-    successAddParams (data) { // 新增参数的成功的返回函数
-      if (data) {
-        this.formData.specs.push(data)
-      }
-    },
-    // 新增参数弹框的close函数
-    clodeAddParams () {
-      this.flag = 0
-      console.log(this.flag)
-    },
     // 返回数据到父级，为父级组件调用
     getDataForParent () {
       this.$refs.dataSelectPartForm.validate(valid => {
@@ -416,6 +449,9 @@ export default {
                 length: this.text
               }
               break
+            case '6':
+              this.formData.specs = {}
+              break
             case '7':
               // this.formData.specs = []
               break
@@ -432,6 +468,30 @@ export default {
           this.$emit('success', null)
         }
       })
+    },
+    successAddParams (data) { // 新增参数的成功的返回函数
+      if (data) {
+        if (this.structInfo) {
+          this.formData.specs.splice(this.structIndex, 1, data)
+          this.structIndex = -1
+          this.structInfo = null
+        } else {
+          this.formData.specs.push(data)
+        }
+      }
+    },
+    // 新增参数弹框的close函数
+    clodeAddParams () {
+      this.flag = 0
+    },
+    // 新增参数的编辑
+    editSturct (row, index) {
+      this.structInfo = JSON.parse(JSON.stringify(row))
+      this.structIndex = index
+      this.addStruct()
+    },
+    deleteStruct (index) {
+      this.formData.specs.splice(index, 1)
     }
   }
 }
@@ -446,13 +506,6 @@ export default {
     .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item {
       margin-bottom: 10px;
     }
-  }
-  .json_item {
-    background: #e3f2fd;
-    padding: 0 8px;
-    margin-bottom: 8px;
-    color: #555;
-    font-size: 12px;
   }
 }
 </style>

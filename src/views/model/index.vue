@@ -22,8 +22,8 @@
     <div class="mb10">
       <el-button type="primary" size="mini" @click="handleShowAddStdAbility">添加标准功能</el-button>
       <el-button size="mini" @click="handleShowAdd()">添加自定义功能</el-button>
-      <el-button size="mini" disabled>快速导入</el-button>
-      <el-button size="mini" disabled>物模型 TSL</el-button>
+      <el-button size="mini" @click="showImport">快速导入</el-button>
+      <el-button size="mini" @click="showCheck">物模型 TSL</el-button>
       <el-button size="mini" disabled>历史版本</el-button>
       <div v-if="list.length > 0 && !loading" class="info df ai_c mb5 mt10 c9">
         <i class="el-icon-warning blue mr5"></i>
@@ -42,42 +42,36 @@
           </div>
         </div>
       </div>
-      <el-table-column label="功能类型" prop="type">
+      <el-table-column label="功能类型">
         <template slot-scope="scope">
           {{abilityTypeObj[scope.row.abilityType]}}
         </template>
       </el-table-column>
       <el-table-column prop="name">
         <span slot="header">
-          功能名称（全部）
-          <!-- <span class="header-popover">
-            <svg-icon icon-class="screen" class="hand" @click="visible = !visible"></svg-icon>
-            <div class="conHeader">
-              <div v-for="(item, key) in typeObj" :key="key">{{item}}</div>
-            </div>
-          </span> -->
-          <el-popover
+          功能名称（{{type ? `${typeObj[type]}` : '全部'}}）
+          <!-- <el-popover
             placement="bottom"
             width="100"
             trigger="click"
-            v-if="visible"
+            @show="selectType = type"
             >
             <div class="conHeader">
-              <div>
-                <i class="mr10 blue dib w20" :class="type == '' ? 'el-icon-check' : ''"></i>
+              <div @click.stop="setSelectType('')">
+                <i class="mr10 blue dib w20" :class="selectType == '' ? 'el-icon-check' : ''"></i>
                 <span>全部</span>
               </div>
-              <div v-for="(item, key) in typeObj" :key="key">
-                <i class="mr10 blue dib w20" :class="type == key ? 'el-icon-check' : ''"></i>
-                <span>{{item}}</span>
+              <div v-for="(item, key) in typeObj" :key="key" @click.stop="setSelectType(key)">
+                <i class="mr10 blue dib w20" :class="selectType == key ? 'el-icon-check' : ''"></i>
+                <span>{{item}}{{selectType}}</span>
               </div>
               <div class="mt10 tc">
-                <el-button type="primary" size="mini">确认</el-button>
-                <el-button size="mini">重置</el-button>
+                <el-button type="primary" size="mini" @click="setSelectTypeConfrim">确认</el-button>
+                <el-button size="mini" @click="resetSelectType">重置</el-button>
               </div>
             </div>
-            <svg-icon icon-class="screen" slot="reference" @click="handle"></svg-icon>
-          </el-popover>
+            <svg-icon icon-class="screen" slot="reference"></svg-icon>
+          </el-popover> -->
         </span>
         <template slot-scope="scope">
           {{scope.row.name}}
@@ -87,7 +81,7 @@
       <el-table-column label="标识符" prop="identifier"></el-table-column>
       <el-table-column label="数据类型">
         <template slot-scope="scope">
-          {{scope.row.dataType ? scope.row.dataType.type : ''}}
+          {{scope.row.dataType ? dataTypeTextObj[scope.row.dataType.type] : ''}}
         </template>
       </el-table-column>
       <el-table-column label="数据定义">
@@ -103,18 +97,22 @@
       </el-table-column>
     </el-table>
     <add-custom-ability v-if="addFlag" :productKey="productKey" :editAbility="editAbility" @close="closeAddCustomAbility" @success="successAddCustomAbility"></add-custom-ability>
-    <add-std-ability v-if="addStdAbilityFlag"></add-std-ability>
+    <add-std-ability v-if="addStdAbilityFlag" :productKey="productKey" @close="closeAddStdAbility"></add-std-ability>
+    <import-ability v-if="importFlag" @close="closeImport"></import-ability>
+    <check-model v-if="checkFlag" :productKey='productKey' @close="closeCheck"></check-model>
   </div>
 </template>
 
 <script>
-import { getModelByproductKey } from '@/api/model'
+import { getModelByproductKey, deleteAbility } from '@/api/model'
 import addCustomAbility from './addCustomAbility'
 import addStdAbility from './addStdAbility'
+import importAbility from './importAbility'
+import checkModel from './checkModel'
 
 import dataObj from '@/data/data'
 export default {
-  components: {addCustomAbility, addStdAbility},
+  components: {addCustomAbility, addStdAbility, importAbility, checkModel},
   data () {
     return {
       loading: false,
@@ -125,9 +123,12 @@ export default {
       addStdAbilityFlag: false,
       abilityTypeObj: dataObj.abilityTypeObj,
       typeObj: dataObj.typeObj,
+      dataTypeTextObj: dataObj.dataTypeTextObj,
       type: '', // 用于列表功能类型筛选
-      visible: true,
-      allData: null
+      selectType: '',
+      allData: null,
+      importFlag: false,
+      checkFlag: false
     }
   },
   mounted () {
@@ -143,12 +144,6 @@ export default {
       this.list = []
       getModelByproductKey({productKey: this.productKey}).then(res => {
         if (res.code === 200) {
-          // console.log(res)
-          // if (res.data && res.data.allJson) {
-          //   this.list = this.list.concat(res.data.allJson.events)
-          //   this.list = this.list.concat(res.data.allJson.properties)
-          //   this.list = this.list.concat(res.data.allJson.services)
-          // }
           if (res.data) {
             for (let key in res.data) {
               if (key.indexOf('Json') > -1 && key !== 'allJson') {
@@ -159,7 +154,7 @@ export default {
                       item.type = '1' // 1 标准
                     }
                     if (key.indexOf('custom') > -1) {
-                      item.type = '0' // 0 自定义
+                      item.type = '2' // 0 自定义
                     }
                     if (key.indexOf('Pro') > -1) {
                       item.abilityType = '1' // 1 属性
@@ -220,12 +215,66 @@ export default {
     goBack () {
       this.$router.push({path: `/product/detail/${this.productKey}?activetab=second`})
     },
-    handle () {
-      if (this.visible) {
-        this.visible = false
-      } else {
-        this.visible = true
-      }
+    showDelete (row) {
+      const str = "确认删除该功能吗？";
+      this.$confirm(str, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.loading = true;
+          deleteAbility({
+            productKey: this.productKey,
+            abilityType: row.abilityType,
+            identifier: row.identifier
+          })
+            .then(res => {
+              if (res.code === 200) {
+                this.$message.success("功能删除成功");
+                this.getData();
+              } else {
+                this.$message.error(res.message);
+              }
+              this.loading = false;
+            })
+            .catch(() => {
+              this.$message.error("功能删除失败");
+              this.loading = false;
+            });
+        })
+        .catch(() => {
+          this.$message("操作已取消");
+        });
+    },
+    // 关闭添加标准功能的回调
+    closeAddStdAbility () {
+      this.addStdAbilityFlag = false
+    },
+  
+    setSelectType (key) {
+      console.log('-------')
+      this.selectType = key
+      this.$forceUpdate()
+      console.log(this.selectType)
+    },
+    setSelectTypeConfrim () {},
+    resetSelectType() {},
+    // 导入弹框展示
+    showImport () {
+      this.importFlag = true
+    },
+    // 导入弹框的关闭回调
+    closeImport () {
+      this.importFlag = false
+    },
+    // 查看弹框展示
+    showCheck () {
+      this.checkFlag = true
+    },
+    // 查看弹框关闭回调
+    closeCheck () {
+      this.checkFlag = false
     }
   }
 }

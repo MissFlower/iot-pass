@@ -5,7 +5,7 @@
  -->
 
 <template>
-  <el-dialog id="addParam" title="新增参数" :visible.sync="dialogVisible" append-to-body  width="400px">
+  <el-dialog id="addParam" :title="title" :visible.sync="dialogVisible" append-to-body  width="400px" @close="close">
     <el-form ref="form" :model="formData" :rules="rules">
       <el-form-item prop="name">
         <span slot="label">
@@ -25,9 +25,9 @@
             <div slot="content" class="f12 c9 w200">必填，支持大小写字母、数字和下划线、不超过50个字符。</div>
           </el-tooltip>
         </span>
-        <el-input v-model="formData.identifier" placeholder="请输入您的标识符"></el-input>
+        <el-input v-model="formData.identifier" placeholder="请输入您的标识符" :disabled="info ? true : false"></el-input>
       </el-form-item>
-      <datatype-selectpart ref="dataSelect" :type="`addParam`" :specs="specs" :info="info" @success="handleSuccess"></datatype-selectpart>
+      <datatype-selectpart ref="dataSelect" :type="`addParam`" :info="formData.dataType" @success="handleSuccess"></datatype-selectpart>
     </el-form>
     <div slot="footer">
       <el-button type="primary" @click="handleSave">确认</el-button>
@@ -43,7 +43,7 @@ export default {
     const validateIdentifier = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('参数标识符不能为空'))
-      } else if (this.specsArr.indexOf(value) > -1) {
+      } else if (this.specsArr.indexOf(value) > -1 && !this.info) {
         callback(new Error('参数标识符已存在'))
       } else {
         callback()
@@ -51,6 +51,7 @@ export default {
     } 
     return {
       dialogVisible: true,
+      title: '',
       formData: {
         name: '',
         identifier: '',
@@ -72,7 +73,12 @@ export default {
       this.specs.forEach(item => {
         this.specsArr.push(item.identifier)
       })
-      console.log(this.specsArr)
+    }
+    if (this.info) {
+      this.formData = JSON.parse(JSON.stringify(this.info))
+      this.title = '编辑参数'
+    } else {
+      this.title = '新增参数'
     }
   },
   methods: {

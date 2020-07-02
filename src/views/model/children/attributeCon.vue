@@ -16,23 +16,28 @@
 </template>
 
 <script>
+import dataObj from '@/data/data'
 export default {
-  props: ['dataType'],
+  props: ['dataType', 'accessMode'],
   data() {
     return {
       formData: {
         accessMode: '0',
         dataType: null
-      }
-    }
-  },
-  watch: {
-    'dataType' () {
-      // console.log("---=--=")
+      },
+      dataTypeObj: dataObj.dataTypeObj
     }
   },
   mounted () {
-    // console.log(this.dataType)
+    if (this.accessMode) {
+      this.formData.accessMode = this.accessMode
+    }
+    if (this.dataType) {
+      if (this.dataType.type) {
+        this.dataType.type = this.dataTypeObj[this.dataType.type] ? this.dataTypeObj[this.dataType.type] : this.dataType.type
+      }
+      this.formData.dataType = JSON.parse(JSON.stringify(this.dataType))
+    }
   },
   methods: {
     // 数据选择成功的回调

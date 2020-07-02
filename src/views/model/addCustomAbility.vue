@@ -43,9 +43,11 @@
         <el-input v-model="formData.modelData.identifier" placeholder="请输入您的标识符" :disabled="editAbility ? true : false"></el-input>
       </el-form-item>
       <!--不同类型对应不同模块-->
-      <attribute-con ref="attDataSelectPart"  v-if="formData.abilityType == 1" :dataType="formData.dataType" @callBack="callBackForAttribute"></attribute-con>
-      <service-con v-if="formData.abilityType == 2"></service-con>
-      <event-con v-if="formData.abilityType == 3"></event-con>
+      <attribute-con ref="attDataSelectPart"  v-if="formData.abilityType == 1" :dataType="formData.modelData.dataType" :accessMode="formData.modelData.accessMode" @callBack="callBackForAttribute"></attribute-con>
+
+      <service-con ref="servivePart" v-if="formData.abilityType == 2" @success="servivePartSuccess"></service-con>
+
+      <event-con ref="eventPart" v-if="formData.abilityType == 3" @success="eventPartSuccess"></event-con>
       <el-form-item label="描述">
         <el-input v-model="formData.modelData.description" type="textarea" placeholder="请输入描述" :rows="4" maxlength="100" show-word-limit></el-input>
       </el-form-item>
@@ -62,7 +64,7 @@ import attributeCon from "./children/attributeCon";
 import serviceCon from "./children/serviceCon";
 import eventCon from "./children/eventCon";
 
-import { addCustomAbility } from '@/api/model'
+import { addCustomAbility, updateCustomAbility } from '@/api/model'
 import dataObj from '@/data/data'
 export default {
   components: {attributeCon, serviceCon, eventCon},
@@ -87,7 +89,7 @@ export default {
       loading: false,
       formData: {
         productKey: '',
-        abilityType: 1,
+        abilityType: 0,
         modelData: {
           identifier: 'test',
           name: '测试',
@@ -109,26 +111,29 @@ export default {
     }
   },
   mounted () {
-    console.log(this.editAbility)
     if (this.editAbility) {
       this.title = '编辑功能'
       for (let key in this.formData) {
-        console.log(key)
         if (key !== 'modelData') {
           this.formData[key] = this.editAbility[key]
         } else {
           const row = this.formData[key]
           for (let key_row in row) {
-            row[key_row] = this.editAbility[key_row]
+            if (this.editAbility[key_row]) {
+              row[key_row] = this.editAbility[key_row]
+            }
           }
         }
       }
+      this.formData = JSON.parse(JSON.stringify(this.formData))
     } else {
+      this.formData.abilityType = 1
       this.title = '添加自定义功能'
     }
     this.formData.productKey = this.productKey
   },
   methods: {
+    // 切换功能type
     changeAblityTypeFun (index) {
       this.$refs.addCustomAbilityForm.resetFields()
       this.formData.abilityType = index
@@ -136,33 +141,75 @@ export default {
     handleSave () {
       this.$refs.addCustomAbilityForm.validate(valid => {
         if (valid) {
-          this.$refs.attDataSelectPart.getDataForParent()
+          if (this.formData.abilityType * 1 === 1) {
+            this.$refs.attDataSelectPart.getDataForParent()
+          } else if (this.formData.abilityType * 1 === 2) {
+            this.$refs.servivePart.getDataForParent()
+          } else if (this.formData.abilityType * 1 === 3) {
+            this.$refs.eventPart.getDataForParent()
+          }
         }
       })
     },
+    // 属性的成功回调
     callBackForAttribute (data) {
       if (data) {
         for (let key in data) {
           this.formData.modelData[key] = data[key]
         }
         const obj = {
-          modelData: JSON.stringify(this.formData.modelData),
+          modelData: this.formData.modelData,
           abilityType: this.formData.abilityType * 1,
           productKey: this.formData.productKey
         }
-        this.loading = true
-        addCustomAbility(obj).then(res => {
-          if (res.code === 200) {
-            this.$emit('success')
-          } else {
-            this.$message.warning(res.message)
-          }
-          this.loading = false
-        }).catch(() => {
-          this.loading = false
-          this.$message.error('功能添加失败')
-        })
+        this.submitFun(obj)
       }
+    },
+    // 服务的成功回调
+    servivePartSuccess (data) {
+      if (data) {
+        const obj = JSON.parse(JSON.stringify(data))
+        obj.name = this.formData.modelData.name
+        obj.identifier = this.formData.modelData.identifier
+        obj.method = `thing.service.${obj.identifier}`
+        this.formData.modelData = obj
+        this.submitFun(this.formData)
+      }
+    },
+    eventPartSuccess (data) {
+      if (data) {
+        const obj = JSON.parse(JSON.stringify(data))
+        obj.name = this.formData.modelData.name
+        obj.identifier = this.formData.modelData.identifier
+        obj.method = `thing.event.${obj.identifier}.post`
+        this.formData.modelData = obj
+        this.submitFun(this.formData)
+      }
+    },
+    // 提交函数
+    submitFun (obj) {
+      this.loading = true
+      let promise = addCustomAbility
+      let str = '添加'
+      if (this.editAbility) {
+        promise = updateCustomAbility
+        str = '编辑'
+        obj.modelType = this.editAbility.type * 1
+        obj.modelData.index = 0
+      }
+      obj.modelData = JSON.stringify(obj.modelData)
+      promise(obj).then(res => {
+        if (res.code === 200) {
+          this.$message.success(`功能${str}成功`)
+          this.$emit('success')
+        } else {
+          this.$message.warning(res.message)
+        }
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+        this.$message.error(`功能${str}失败`)
+      })
     },
     close () {
       this.$emit('close')

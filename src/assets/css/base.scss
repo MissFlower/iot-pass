@@ -32,6 +32,7 @@ body {
   .mr5 { margin-right: 5px; }
   .mr10 { margin-right: 10px; }
   .mr20 { margin-right: 20px; }
+  .mt5 { margin-top: 5px;}
   .mt10 { margin-top: 10px; }
   .mt15 { margin-top: 15px; }
   .mt20 { margin-top: 20px; }
@@ -48,6 +49,7 @@ body {
   .w50 { width: 50px; }
   .w80 { width: 80px; }
   .w100 { width: 100px; }
+  .wp80 { width: 80%; }
   .wp100 { width: 100%; }
   .w120 { width: 120px; }
   .w150 { width: 150px; }
@@ -103,6 +105,8 @@ body {
   .c6 { color: #666;}
   .ce2 { color: #E2E2E2;}
   .wba {word-break: break-all;}
+
+  .vh { visibility: hidden; }
 
   .bb1 {border-bottom: 1px solid #E9E9E9;}
   .bt1 {border-top: 1px solid #E9E9E9;}

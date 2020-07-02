@@ -20,8 +20,21 @@ const headerFrom_json = {
     method: "get",
     params: data
   });
-
  }
+/**
+ * 查看产品的物模型
+ * 
+ * productKey	string	是	产品key
+ */
+
+export function getModel (data) {
+  return request({
+    url: "model/getModel",
+    method: "get",
+    params: data
+  });
+ }
+
 /**
  * 增加自定义功能
  * 
@@ -73,8 +86,8 @@ export function updateCustomAbility (data) {
   return request({
     url: "/model/update",
     method: "post",
-    headers: headerFrom,
-    data: Qs.stringify(data)
+    // headers: headerFrom,
+    data
   });
 }
 
@@ -106,6 +119,6 @@ export function deleteAbility (data) {
   return request({
     url: '/model/deleteAbility',
     method: 'post',
-    data
+    params: data
   })
 }

@@ -13,7 +13,7 @@
         当前展示的是已发布到线上的功能定义，如需修改，请点击
         <el-link :underline="false" type="primary" class="f12" @click="handleEdit">编辑草稿</el-link>
       </div>
-      <el-button size="mini" disabled>物模型 TSL</el-button>
+      <el-button size="mini" @click="showCheck">物模型 TSL</el-button>
       <el-button size="mini" disabled>生成设备端代码</el-button>
     </div>
     <el-table :data="list" :max-height="maxHeight" border>
@@ -37,7 +37,7 @@
       <el-table-column label="标识符" prop="identifier"></el-table-column>
       <el-table-column label="数据类型">
         <template slot-scope="scope">
-          {{scope.row.dataType ? scope.row.dataType.type : ''}}
+          {{scope.row.dataType ? dataTypeTextObj[scope.row.dataType.type] : ''}}
         </template>
       </el-table-column>
       <el-table-column label="数据定义">
@@ -51,14 +51,20 @@
         </template>
       </el-table-column>
     </el-table>
+    <add-custom-ability v-if="showFlag" :productKey="productKey" :editAbility="editAbility" @close="closeAddCustomAbility" @success="successAddCustomAbility" :showFlag="true"></add-custom-ability>
+    <check-model v-if="checkFlag" :productKey='productKey' @close="closeCheck"></check-model>
   </div>
 </template>
 
 <script>
 import { getModelByproductKey } from '@/api/model'
 
+import addCustomAbility from './addCustomAbility'
+import checkModel from './checkModel'
+
 import dataObj from "@/data/data"
 export default {
+  components: { addCustomAbility, checkModel },
   props: ['productKey'],
   data () {
     return {
@@ -66,7 +72,11 @@ export default {
       list: [],
       maxHeight:  window.innerHeight - 18 - 15 - 20 - 40,
       abilityTypeObj: dataObj.abilityTypeObj,
-      typeObj: dataObj.typeObj
+      typeObj: dataObj.typeObj,
+      dataTypeTextObj: dataObj.dataTypeTextObj,
+      showFlag: false,
+      editAbility: null,
+      checkFlag: false
     }
   },
   mounted () {
@@ -115,11 +125,24 @@ export default {
         this.loading = false
       })
     },
-    showDetail (item) {
-      console.log(item)
+    showDetail (row) {
+      this.editAbility = JSON.parse(JSON.stringify(row))
+      this.showFlag = true
+    },
+    closeAddCustomAbility () {
+      this.editAbility = null
+      this.showFlag = false
     },
     handleEdit () {
       this.$router.push(`/model/index?key=${this.productKey}`)
+    },
+    // 查看弹框展示
+    showCheck () {
+      this.checkFlag = true
+    },
+    // 查看弹框关闭回调
+    closeCheck () {
+      this.checkFlag = false
     }
   }
 }

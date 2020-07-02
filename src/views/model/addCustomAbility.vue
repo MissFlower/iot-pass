@@ -53,7 +53,7 @@
       </el-form-item>
     </el-form>
     <div slot="footer">
-      <el-button type="primary" @click="handleSave">确认</el-button>
+      <el-button type="primary" @click="handleSave" :disabled="showFlag">确认</el-button>
       <el-button @click="close">取消</el-button>
     </div>
   </el-dialog>
@@ -68,7 +68,7 @@ import { addCustomAbility, updateCustomAbility } from '@/api/model'
 import dataObj from '@/data/data'
 export default {
   components: {attributeCon, serviceCon, eventCon},
-  props: ['productKey', 'editAbility'],
+  props: ['productKey', 'editAbility', 'showFlag'],
   data () {
     const validateName = (rule, value, callback) => {
       if (this.formData.modelData.name === '') {
@@ -113,6 +113,9 @@ export default {
   mounted () {
     if (this.editAbility) {
       this.title = '编辑功能'
+      if (this.showFlag) {
+        this.title = '查看功能'
+      }
       for (let key in this.formData) {
         if (key !== 'modelData') {
           this.formData[key] = this.editAbility[key]
@@ -221,7 +224,7 @@ export default {
 <style lang="scss">
 .addCustomAbility {
   .el-dialog__body {
-    padding: 10px 20px 0;
+    padding: 0 20px;
   }
   .el-form-item--small .el-form-item__content, .el-form-item--small .el-form-item__label {
     float: none;

@@ -3,18 +3,22 @@
     <div class="con df ai_c">
       <div class="pr" style="width: 45%">
         <div class="f12 mb5">选择功能</div>
-        <div class="con-item">
-          <el-radio-group v-model="type">
-            <el-radio-button label="自定义品类"></el-radio-button>
-            <el-radio-button label="其他类型"></el-radio-button>
+        <div class="con-item" v-loading="loading">
+          <el-radio-group v-model="type" @change="handleChange">
+            <el-radio-button label="1">自定义品类</el-radio-button>
+            <el-radio-button label="2">其他类型</el-radio-button>
           </el-radio-group>
-          <el-input placeholder="请输入功能名称" suffix-icon="el-icon-search"></el-input>
+          <el-input v-model="name" placeholder="请输入功能名称" suffix-icon="el-icon-search" @keyup.enter.native="handleChange" :clearable="name"></el-input>
           <div v-for="(item, index) in list" :key="index" class="con-item-ability wp100 df ai_c hand" @click.stop="selectAbility(item)">
             <div class="w20 blue mr5 b f18"><i class="el-icon-check" :class="selelectIds.indexOf(item.id) > -1 ? '' : 'vh'"></i></div>
             <div class="pr wp100">
-              <div>{{item.name}}<span class="dib blue f12">{{item.type}}</span></div>
-              <div class="f12 c9 mt5 ellipsis" style="width: calc(100% - 40px)">标识符： {{item.ids}}</div>
+              <div>{{item.name}}<span class="tag dib blue ml10" :class="`tag${item.type}`">{{abilityTypeObj[item.type]}}</span></div>
+              <div class="f12 c9 mt5 ellipsis" style="width: calc(100% - 40px)">标识符： {{item.identifier}} 所属品类： {{item.categoryName}}</div>
             </div>
+          </div>
+          <div v-if="list.length == 0" class="tc f12" style="margin-top: 100px">
+            <svg-icon icon-class="empty1" class="empty"></svg-icon>
+            <div>无符合功能</div>
           </div>
         </div>
       </div>
@@ -30,8 +34,8 @@
         <div class="con-item">
           <div v-for="(item, index) in selelectList" :key="index" class="con-item-ability wp100 df ai_c">
             <div class="pr wp80 flex1">
-              <div>{{item.name}}<span class="dib blue f12">{{item.type}}</span></div>
-              <div class="f12 c9 mt5 ellipsis" style="width: calc(100% - 40px)">标识符： {{item.ids}}</div>
+              <div>{{item.name}}<span class="tag dib blue ml10" :class="`tag${item.type}`">{{abilityTypeObj[item.type]}}</span></div>
+              <div class="f12 c9 mt5 ellipsis" style="width: calc(100% - 40px)">标识符： {{item.identifier}} 所属品类： {{item.categoryName}}</div>
             </div>
             <div class="w20 mr5 b f18" @click.stop="deleteAbility(index)"><i class="el-icon-close"></i></div>
           </div>
@@ -46,42 +50,42 @@
 </template>
 
 <script>
-import { addStdAbility } from "@/api/model"
+import { addStdAbility, baseModelList } from "@/api/model"
+
+import dataObj from "@/data/data"
 
 export default {
   props: ['productKey'],
   data () {
     return {
       dialogVisible: true,
-      type: '',
-      list: [
-        {
-          name: 'ceshi',
-          id: 'ceshi',
-          type: '1',
-          ids: ['sad', 'dsaa1213213431233333333333333333333333333333333333']
-        }, {
-          name: 'ceshi1',
-          id: 'ceshi1',
-          type: '1',
-          ids: ['sad', 'dsaa']
-        }, {
-          name: 'ceshi',
-          id: 'ceshi2',
-          type: '1',
-          ids: ['sad', 'dsaa111111111111111sddddddddddddddddddddddd']
-        }
-      ],
+      loading: false,
+      type: '1',
+      name: '',
+      list: [],
       submitObj: {
-        productKey: '',
+        productKey: ''
+      },
+      baseModelIds: {
         propertyIds: [],
         serviceIds: [],
         eventIds: []
       },
       selelectList: [],
-      selelectIds: []
-
+      selelectIds: [],
+      abilityTypeObj: dataObj.abilityTypeObj
     }
+  },
+  watch: {
+    name (newVal) {
+      if (newVal === '') {
+        this.handleChange()
+      }
+    }
+  },
+  mounted () {
+    this.submitObj.productKey = this.productKey
+    this.handleChange()
   },
   methods: {
     close () {
@@ -104,21 +108,88 @@ export default {
         this.selelectIds = []
       }
     },
-    handleSave () {}
+    handleChange () {
+      if (this.type === '1') {
+        this.list = []
+      } else {
+        this.getData()
+      }
+    },
+    getData () {
+      this.list = []
+      this.loading = true
+      baseModelList({
+        name: this.name
+      }).then(res => {
+        if (res.code === 200) {
+          this.list = res.data
+        } else {
+          this.$message.error(res.message)
+        }
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+        this.$message.error('列表获取失败')
+      })
+    },
+    handleSave () {
+      this.selelectList.forEach(item => {
+        if (item.type === '1') {
+          this.baseModelIds.propertyIds.push(item.id)
+        } else if (item.type === '2') {
+          this.baseModelIds.serviceIds.push(item.id)
+        } else if(item.type === '3') {
+          this.baseModelIds.eventIds.push(item.id)
+        }
+      })
+      this.submitObj.baseModelIds = JSON.stringify(this.selelectIds)
+      addStdAbility(this.submitObj).then(res => {
+        console.log(res)
+      })
+    }
   }
 }
 </script>
 
 <style lang="scss">
 .dialogVisibleDialog {
+  .el-dialog__body {
+    padding: 0 20px;
+  }
   .con {
     height: 400px;
     width: 100%;
+    .svg-icon{
+      width: 50px;
+      height: 50px;
+    }
     .con-item {
       height: 360px;
       border: 1px solid #d7d8d9;
       padding: 12px 16px;
       overflow-y: auto;
+      .tag {
+        border: 1px solid;
+        min-width: 40px;
+        height: 16px;
+        font-size: 12px;
+        text-align: center;
+        line-height: 16px;
+        display: inline-block;
+        border-radius: 14px;
+      }
+      .tag1 {
+        color: #1890FF;
+        border-color: #1890FF;
+      }
+      .tag3 {
+        color: #44cb42;
+        border-color: #44cb42;
+      }
+      .tag2 {
+        color: #ff8a00;
+        border-color: #ff8a00;
+      }
       .el-radio-group {
         width: 100%;
         margin-bottom: 5px;

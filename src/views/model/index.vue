@@ -154,7 +154,7 @@ export default {
                       item.type = '1' // 1 标准
                     }
                     if (key.indexOf('custom') > -1) {
-                      item.type = '2' // 0 自定义
+                      item.type = '2' // 2 自定义
                     }
                     if (key.indexOf('Pro') > -1) {
                       item.abilityType = '1' // 1 属性
@@ -253,7 +253,6 @@ export default {
     },
   
     setSelectType (key) {
-      console.log('-------')
       this.selectType = key
       this.$forceUpdate()
       console.log(this.selectType)

@@ -33,7 +33,9 @@
           <product-topic  :productId="productData.id"/>
         </el-tab-pane>
 
-        <el-tab-pane label="功能定义" name="second"></el-tab-pane>
+        <el-tab-pane label="功能定义" name="second">
+          <product-ability v-if="productData.productKey && activeName == 'second'" :productKey="productData.productKey"></product-ability>
+        </el-tab-pane>
        
       </el-tabs>
     </div>
@@ -61,10 +63,12 @@
 import { findSecret, getProduct, cancelRelease, release } from "@/api/product"
 import productInfo from './info'
 import productTopic from './topic/topic'
+import productAbility from '@/views/model/modelTab'
 export default { 
   components: {
     productInfo,
-    productTopic
+    productTopic,
+    productAbility
   },
   data() {
     return {

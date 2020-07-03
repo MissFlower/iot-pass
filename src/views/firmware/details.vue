@@ -145,8 +145,8 @@
                        </el-form-item>
                    </el-form>
                    <el-table :data="devManage.devList" border stripe>
-                       <el-table-column label="deviceName" prop="deviceName"></el-table-column>
-                       <el-table-column label="设备所属产品" prop="productName"></el-table-column>
+                       <el-table-column label="deviceId" prop="deviceId"></el-table-column>
+                       <el-table-column label="设备所属产品">{{productName}}</el-table-column>
                        <el-table-column
                            label="升级批次ID"
                            prop="upgradeId"
@@ -154,6 +154,7 @@
                        <el-table-column
                            label="当前版本号"
                            prop="destVersion"
+                           :formatter="formatDestVersion"
                        ></el-table-column>
                        <el-table-column
                            label="升级状态"
@@ -321,6 +322,7 @@
     export default {
         data () {
             return {
+                productName: "",
                 details: {
                     deviceType: 'info',
                     deviceName: '未验证',
@@ -365,6 +367,7 @@
         },
         mounted () {
             this.fmId = String(this.$route.query.id)
+            this.productName = this.$route.query.productName
             this.getDetails()
             this.getUpgradeList() // 批次管理
             this.getStatistics()     // 获取 标签页 上方数据
@@ -422,7 +425,7 @@
             },
             // 获取 标签页 上方数据
             getStatistics () {
-                statistics().then ( res => {
+                statistics({ 'fmId': this.fmId }).then ( res => {
                     if (res.code === 200) {
                         this.nums.targetFail = res.data.targetFail;
                         this.nums.targetSucess = res.data.targetSucess;
@@ -453,7 +456,6 @@
             },
             // 获取设备列表
             getDeviceList () {
-              console.log(this.devManage);
                 let data = {
                   'fmId': this.fmId,
                   'upgradeId': this.devManage.upgradeId,
@@ -506,7 +508,7 @@
                     query: {
                         id: this.fmId,
                         upgradeId: upgradeId,
-                        productName: this.$route.query.productName
+                        productName: this.productName
                     }
                 })
             },
@@ -524,8 +526,11 @@
             formatUgStatus (row) {
                 return row.ugStatus === 1 ? "待升级" : row.ugStatus === 2 ? "升级中" : row.ugStatus === 3 ? "升级完成": "已取消"
             },
+            formatDestVersion (row) {
+              return row.upgradeStatus == 2 ? row.descVersion : row.srcVersion;
+            },
             formatUpgradeStatus (row) {
-                return row.upgradeStatus === 0 ? "待升级" : row.ugStatus === 1 ? "升级中" : row.ugStatus === 2 ? "已完成": "升级失败"
+                return row.upgradeStatus == 1 ? "升级中" : row.upgradeStatus == 2 ? "已完成" : row.upgradeStatus == 3 ? "升级失败": "待升级"
             },
             formatCreateTime (row) {
                 return row.createTime ? this.$fun.dateFormat(

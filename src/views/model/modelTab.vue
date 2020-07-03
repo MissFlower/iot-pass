@@ -104,7 +104,7 @@ export default {
                       item.modelType = '1' // 1 标准
                     }
                     if (key.indexOf('custom') > -1) {
-                      item.modelType = '0' // 0 自定义
+                      item.modelType = '2' // 0 自定义
                     }
                     if (key.indexOf('Pro') > -1) {
                       item.abilityType = '1' // 1 属性

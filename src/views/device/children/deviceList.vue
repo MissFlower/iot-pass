@@ -270,9 +270,6 @@ export default {
       //清空设备名称、固件版本筛选条件
       this.searchInputValue = '';
       this.fmVersionValue = '';
-
-      //获取指定产品设备列表
-      this.getDeviceList();
     },
 
 
@@ -351,6 +348,8 @@ export default {
             }
             //获取设备统计信息
             this.getDeviceStatistics();
+            //获取指定产品设备列表
+            this.getDeviceList();
           }
           this.$message({
             type: res.code == 200?"success":'warning',
@@ -419,6 +418,8 @@ export default {
       if (updata) {
         //获取设备统计信息
         this.getDeviceStatistics();
+        //获取指定产品设备列表
+        this.getDeviceList();
       }
     },
 

@@ -47,7 +47,7 @@
                     <div class="grid-content">
                         <dl class="details_line">
                             <dt>目标设备总数</dt>
-                            <dd>0</dd>
+                            <dd>{{nums.targetTotal}}</dd>
                         </dl>
                     </div>
                 </el-col>
@@ -55,7 +55,7 @@
                     <div class="grid-content">
                         <dl class="details_line">
                             <dt>目标成功数</dt>
-                            <dd>0</dd>
+                            <dd>{{nums.targetSucess}}</dd>
                         </dl>
                     </div>
                 </el-col>
@@ -63,7 +63,7 @@
                     <div class="grid-content">
                         <dl class="details_line">
                             <dt>目标失败数</dt>
-                            <dd>0</dd>
+                            <dd>{{nums.targetFail}}</dd>
                         </dl>
                     </div>
                 </el-col>
@@ -314,7 +314,7 @@
     </div>
 </template>
 <script>
-    import { getFmDetails, upgradeList, upgradeDeviceList } from '@/api/fireware'
+    import { getFmDetails, upgradeList, upgradeDeviceList, statistics } from '@/api/fireware'
     import EditFirmware from '@/components/firmware/editFirmware'
     import CheckFirmware from "@/components/firmware/checkFirmware";
     import UpgradeFirmware from "@/components/firmware/upgradeFirmware";
@@ -327,6 +327,11 @@
                     detailList: {}
                 },
                 detailsTab: 'first',
+                nums: { // 标签栏上方的数量
+                    targetFail: 0,
+                    targetSucess: 0,
+                    targetTotal: 0,
+                },
                 batchManage: { // 批次管理参数
                     batchList: [],
                     pageNum: 1,
@@ -362,6 +367,7 @@
             this.fmId = String(this.$route.query.id)
             this.getDetails()
             this.getUpgradeList() // 批次管理
+            this.getStatistics()     // 获取 标签页 上方数据
         },
         methods: {
             // tab切换方法
@@ -409,6 +415,18 @@
                     if (res.code === 200) {
                         this.batchManage.batchList = res.data.data;
                         this.batchManage.total = res.data.total;
+                    } else {
+                        this.$message.error(res.message);
+                    }
+                })
+            },
+            // 获取 标签页 上方数据
+            getStatistics () {
+                statistics().then ( res => {
+                    if (res.code === 200) {
+                        this.nums.targetFail = res.data.targetFail;
+                        this.nums.targetSucess = res.data.targetSucess;
+                        this.nums.targetTotal = res.data.targetTotal;
                     } else {
                         this.$message.error(res.message);
                     }
@@ -487,7 +505,8 @@
                     path: 'batchDetails',
                     query: {
                         id: this.fmId,
-                        upgradeId: upgradeId
+                        upgradeId: upgradeId,
+                        productName: this.$route.query.productName
                     }
                 })
             },

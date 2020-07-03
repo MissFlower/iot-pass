@@ -8,7 +8,7 @@
     <el-dialog
       title="添加固件"
       :visible.sync="dialogFormVisible"
-      width="30%"
+      width="40%"
       :before-close="closeDialog"
     >
       <el-form
@@ -85,11 +85,11 @@
             :limit="3"
             :file-list="fileList"
             :show-file-list="false"
-            accept=".zip,.tar,.tar.gz,.gzip,.bin,.hex"
+            accept=".zip,.tar,.gz,.tar.gz,.gzip,.bin,.hex"
           >
             <el-button size="small">{{ uploadText }}</el-button>
             <div slot="tip" class="el-upload__tip">
-              仅支持bin、tar、gz、tar.gz、zip、gzip类型的文件
+              仅支持bin、tar、gz、tar.gz、zip、gzip、hex类型的文件
             </div>
           </el-upload>
           <el-progress v-if="uploadProgressShow" :percentage="100" :status="uploadStatus ? 'success':'exception'"></el-progress>
@@ -213,9 +213,12 @@ export default {
     beforeUpload(file) {
       let fromData = new FormData();
       fromData.append("file", file);
+      this.uploadProgressShow = false;
       uploadFile(fromData)
         .then(res => {
             if (res.data.fmUrl) {
+                let fmName = res.data.fmName;
+                this.ruleForm.fmName = fmName ? fmName.slice(0, fmName.lastIndexOf('.')) : this.ruleForm.fmName;
                 this.ruleForm.fmUrl = res.data.fmUrl;
                 this.ruleForm.fmSign = res.data.fmSign;
                 this.ruleForm.fmSize = res.data.fmSize;

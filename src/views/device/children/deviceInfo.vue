@@ -101,9 +101,9 @@
         </div>
       </el-tab-pane>
       <el-tab-pane label="Topic列表" name="topic">
-        <device-topic  :deviceId="deviceObj.id"/>
+        <device-topic  :deviceObj="deviceObj"/>
       </el-tab-pane>
-      <el-tab-pane label="物模型数据" name="third">
+      <el-tab-pane label="物模型数据" name="third" v-if="modelShow">
         <!-- 二级标签页 -->
         <el-radio-group v-model="modelType">
           <el-radio-button label="runState">运行状态</el-radio-button>
@@ -180,6 +180,7 @@ export default {
       loading: false,
       burnShow: false,
       modelType: "runState",
+      modelShow: false
     };
   },
 

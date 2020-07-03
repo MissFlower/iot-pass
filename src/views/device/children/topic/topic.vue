@@ -15,7 +15,7 @@
     </div>
 
     <div v-show="topicRadio === '自定义Topic'">
-      <custom />
+      <custom :customData="customData"/>
     </div>
   </div>
 </template>
@@ -26,7 +26,7 @@ import model from './model'
 import custom from './custom'
 import { topicList } from "@/api/deviceRequest";
   export default {
-    props: ['deviceId'],
+    props: ['deviceObj'],
     components: {
       basics,
       model,
@@ -36,12 +36,16 @@ import { topicList } from "@/api/deviceRequest";
       return {
         topicRadio: '基础通信Topic',
         basicsData: [],
-        modelData: []
+        modelData: [],
+        customData: {
+          productKey:this.deviceObj.productKey,
+          deviceName:this.deviceObj.deviceName
+        }
       };
     },      
     watch: {
-      deviceId(id){
-        topicList({id}).then(res => {          
+      deviceObj(obj){
+        topicList({id:obj.id}).then(res => {          
           if(res.code === 200){
               this.basicsData = res.data.base_communication_topic;
               this.modelData = res.data.model_communication_topic;

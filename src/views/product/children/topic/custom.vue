@@ -46,7 +46,7 @@
     <el-dialog title="定义Topic类" :visible.sync="dialogFormVisible">
       <el-form ref="customDialog" :model="customForm" label-position="top" :rules="customRules">
          <el-form-item label="设备操作权限" prop="topicAccess">
-          <el-select v-model="customForm.topicAccess" style="width:100%">
+          <el-select v-model="customForm.topicAccess" style="width:100%" @change="topicAccessChange">
             <el-option label="发布" :value="1"></el-option>
             <el-option label="订阅" :value="2"></el-option>
             <el-option label="发布和订阅" :value="3"></el-option>
@@ -79,6 +79,53 @@
       Pagination
     },  
     data() {
+      var accessFlag = true;
+      var validateName = (rule, value, callback) => {
+        var res1 = /^[/]|[/]$/g;
+        var res2 = /^[\w/]{1,64}$/;    
+        accessFlag = true;
+        if(value.indexOf('//')!= -1){
+            accessFlag = false;
+        }
+        if(this.customForm.topicAccess === 2){  
+            res2 = /^[\w/+#]{1,64}$/;         
+            let sy = value.indexOf('#');
+            if(sy >= 0){
+                let sy_ct1 = value.charAt(sy - 1) === '' || value.charAt(sy - 1) === '/';
+                let sy_ct2 = value.charAt(sy + 1) === '';
+                
+                if(!sy_ct1 || !sy_ct2){
+                  accessFlag = false;
+                }  
+            }
+           
+            for(let i = 0; i < value.length; i++){
+              if(value[i] === '+'){
+                if(value[i - 1] && value[i - 1] != '/'){
+                  console.log(value[i - 1])
+                  accessFlag = false;
+                  break;
+                }
+                if(value[i + 1] && value[i + 1] != '/'){
+                  accessFlag = false;
+                  break;
+                }
+              }
+            }
+
+        }
+        if (value === '') {          
+          callback(new Error('请输入您的Topic类名'));
+        }else if(res1.test(value)){
+          callback(new Error('Topic类名用/分割，支持英文字母、数字、下划线、+和#（仅权限是订阅时支持），长度限制64'));
+        }else if(!res2.test(value)){
+          callback(new Error('Topic类名用/分割，支持英文字母、数字、下划线、+和#（仅权限是订阅时支持），长度限制64'));
+        }else if(!accessFlag){
+          callback(new Error('Topic类名用/分割，支持英文字母、数字、下划线、+和#（仅权限是订阅时支持），长度限制64'));
+        } else {         
+          callback();
+        }
+      };
       return {
         loading: false,
         submitTopicId: '',
@@ -95,7 +142,7 @@
             { required: true, message: '请选择设备操作权限', trigger: 'change' }
           ],
           topicName: [
-            { required: true, message: '请输入您的Topic类名', trigger: 'blur' },
+            {required: true,validator: validateName ,trigger: 'change' },
           ]
         },       
          tableData:{        
@@ -111,6 +158,10 @@
       this.customList()
     },
     methods: {
+      //选择设备操作权限
+      topicAccessChange(){
+          this.$refs['customDialog'].validateField('topicName') 
+      },
       //编辑topic
       editTopic(row){
         this.dialogFormVisible = true;

@@ -35,8 +35,8 @@
     </div>
   </el-dialog>
 </template>
-
 <script>
+import dataObj from '@/data/data'
 export default {
   props: ['specs', 'info'],
   data () {
@@ -65,17 +65,21 @@ export default {
           { required: true, validator: validateIdentifier, trigger: 'change' },
         ]
       },
-      specsArr: []
+      specsArr: [],
+      dataTypeObj: dataObj.dataTypeObj
     }
   },
   mounted () {
-    if (this.specs) {
+    if (this.specs && Array.isArray(this.specs)) {
       this.specs.forEach(item => {
         this.specsArr.push(item.identifier)
       })
     }
     if (this.info) {
       this.formData = JSON.parse(JSON.stringify(this.info))
+      if (this.dataTypeObj[this.formData.dataType.type]) {
+        this.formData.dataType.type = this.dataTypeObj[this.formData.dataType.type]
+      }
       this.title = '编辑参数'
     } else {
       this.title = '新增参数'

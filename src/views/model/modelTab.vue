@@ -33,11 +33,16 @@
           {{abilityTypeObj[scope.row.abilityType]}}
         </template>
       </el-table-column>
-      <el-table-column label="功能名称（全部）" prop="name"></el-table-column>
+      <el-table-column label="功能名称（全部）" prop="name">
+        <template slot-scope="scope">
+          {{scope.row.name}}
+          <el-tag>{{typeObj[scope.row.modelType]}}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="标识符" prop="identifier"></el-table-column>
       <el-table-column label="数据类型">
         <template slot-scope="scope">
-          ({{scope.row.dataType ? dataTypeTextObj[scope.row.dataType.type] : ''}})
+          {{scope.row.dataType ? dataTypeTextObj[scope.row.dataType.type] : ''}}
         </template>
       </el-table-column>
       <el-table-column label="数据定义">
@@ -51,7 +56,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <add-custom-ability v-if="showFlag" :productKey="productKey" :editAbility="editAbility" @close="closeAddCustomAbility" @success="successAddCustomAbility" :showFlag="true"></add-custom-ability>
+    <add-custom-ability v-if="showFlag" :productKey="productKey" :editAbility="editAbility" @close="closeAddCustomAbility" :showFlag="true"></add-custom-ability>
     <check-model v-if="checkFlag" :productKey='productKey' @close="closeCheck"></check-model>
   </div>
 </template>
@@ -96,10 +101,10 @@ export default {
                 if (Array.isArray(arr)) {
                   arr.forEach(item => {
                     if (key.indexOf('base') > -1) {
-                      item.type = '1' // 1 标准
+                      item.modelType = '1' // 1 标准
                     }
                     if (key.indexOf('custom') > -1) {
-                      item.type = '0' // 0 自定义
+                      item.modelType = '0' // 0 自定义
                     }
                     if (key.indexOf('Pro') > -1) {
                       item.abilityType = '1' // 1 属性

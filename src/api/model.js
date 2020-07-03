@@ -35,6 +35,19 @@ export function getModel (data) {
   });
  }
 
+ /**
+  * 获取产品的精简物模型
+  * 
+  * productKey	string	是	产品key
+  */
+ export function getSimpleModel (data) {
+  return request({
+    url: "model/simpleModel",
+    method: "get",
+    params: data
+  });
+ }
+
 /**
  * 增加自定义功能
  * 

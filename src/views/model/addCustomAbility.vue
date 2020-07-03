@@ -45,9 +45,9 @@
       <!--不同类型对应不同模块-->
       <attribute-con ref="attDataSelectPart"  v-if="formData.abilityType == 1" :dataType="formData.modelData.dataType" :showFlag="showFlag" :accessMode="formData.modelData.accessMode" @callBack="callBackForAttribute"></attribute-con>
 
-      <service-con ref="servivePart" v-if="formData.abilityType == 2" @success="servivePartSuccess"></service-con>
+      <service-con ref="servivePart" v-if="formData.abilityType == 2" :info="editAbility" @success="servivePartSuccess"></service-con>
 
-      <event-con ref="eventPart" v-if="formData.abilityType == 3" @success="eventPartSuccess"></event-con>
+      <event-con ref="eventPart" v-if="formData.abilityType == 3" :info="editAbility" @success="eventPartSuccess"></event-con>
       <el-form-item label="描述">
         <el-input v-model="formData.modelData.description" type="textarea" placeholder="请输入描述" :rows="4" maxlength="100" show-word-limit :disabled="showFlag"></el-input>
       </el-form-item>
@@ -91,8 +91,8 @@ export default {
         productKey: '',
         abilityType: 0,
         modelData: {
-          identifier: 'test',
-          name: '测试',
+          identifier: '',
+          name: '',
           description: '',
           accessMode: '',
           dataType: {}
@@ -138,8 +138,12 @@ export default {
   methods: {
     // 切换功能type
     changeAblityTypeFun (index) {
-      this.$refs.addCustomAbilityForm.resetFields()
+      this.formData.modelData.identifier = ''
+      this.formData.modelData.name = ''
       this.formData.abilityType = index
+      this.$nextTick(() => {
+        this.$refs.addCustomAbilityForm.clearValidate()
+      })
     },
     handleSave () {
       this.$refs.addCustomAbilityForm.validate(valid => {

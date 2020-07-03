@@ -144,10 +144,11 @@ export default {
             if (res.code === 200) {
               this.$cookie.setValue("emailStatus", 1);
               this.$store.dispatch("getUserInfo")
-              this.$router.push({
-                name: "success",
-                params: { id: 1 }
-              })
+              // this.$router.push({
+              //   name: "success",
+              //   params: { id: 1 }
+              // })
+              this.$router.push(`/success?flag=1`)
             } else {
               this.$message.error(res.message);
             }

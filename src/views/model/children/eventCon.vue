@@ -31,6 +31,7 @@
 import addParam from "./addParam"
 export default {
   components: {addParam},
+  props: ['info'],
   data () {
     return {
       flag: 0,
@@ -44,6 +45,13 @@ export default {
         ]
       },
       structInfo: null
+    }
+  },
+  mounted () {
+    if (this.info) {
+      for(let key in this.formData) {
+        this.formData[key] = this.info[key]
+      }
     }
   },
   methods: {

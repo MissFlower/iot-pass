@@ -49,7 +49,7 @@ export const constantRoutes = [
         meta: { name: "身份验证" }
       },
       {
-        path: "success/:id",
+        path: "success",
         name: "success",
         component: resolve => require(["@/views/children/success"], resolve),
         meta: { name: "验证成功" }

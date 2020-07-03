@@ -27,7 +27,7 @@
     <el-table :data="list" border>
       <el-table-column label="ID" prop="roleId"></el-table-column>
       <el-table-column label="角色名" prop="name"></el-table-column>
-      <el-table-column label="排序"></el-table-column>
+      <!-- <el-table-column label="排序"></el-table-column> -->
       <el-table-column label="描述" prop="description"></el-table-column>
       <el-table-column label="创建时间" prop="createTime_"></el-table-column>
       <el-table-column label="操作" align="center">

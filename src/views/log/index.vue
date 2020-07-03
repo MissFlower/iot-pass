@@ -8,7 +8,7 @@
     <!-- 搜索部分 -->
     <el-form :inline="true" :model="formInline" size="mini">
       <el-form-item>
-        <el-input v-model="formInline.productKey" placeholder="产品key查询"></el-input>
+        <el-input v-model="formInline.productKey" clearable prefix-icon="el-icon-search" placeholder="产品key查询"></el-input>
       </el-form-item>
       <el-form-item>
         <el-select v-model="formInline.logType" placeholder="日志类型">
@@ -19,10 +19,10 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="formInline.deviceName" placeholder="设备名称"></el-input>
+        <el-input v-model="formInline.deviceName" clearable prefix-icon="el-icon-search" placeholder="设备名称"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="formInline.keyword" placeholder="关键字"></el-input>
+        <el-input v-model="formInline.keyword" clearable prefix-icon="el-icon-search" placeholder="关键字"></el-input>
       </el-form-item>
       <el-form-item>
         <el-date-picker type="datetime" v-model="formInline.startTime" value-format="yyyy-MM-dd HH:mm:ss" placeholder="开始时间"></el-date-picker>
@@ -31,7 +31,7 @@
         <el-date-picker type="datetime" v-model="formInline.endTime" value-format="yyyy-MM-dd HH:mm:ss" placeholder="截止时间"></el-date-picker>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="formInline.messageId" placeholder="消息id"></el-input>
+        <el-input v-model="formInline.messageId" clearable prefix-icon="el-icon-search" placeholder="消息id"></el-input>
       </el-form-item>
       <el-form-item>
         <el-select v-model="formInline.status" placeholder="上下行状态">
@@ -41,6 +41,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="search">查询</el-button>
+        <el-button @click="reset">重置</el-button>
       </el-form-item>
     </el-form>
     <!-- 日志列表 -->
@@ -89,7 +90,7 @@
         this.loading = true;
         tableList(Object.assign(this.tableData, this.formInline))
           .then(res => {
-            setTimeout(() => { this.loading = false; },1000);
+            this.loading = false;
             if(res.code === 200){
               this.tableData.pageNum = res.data.pageNum;
               this.tableData.total = res.data.total;
@@ -112,6 +113,13 @@
       search(event){
         this.tableData.pageNum = 1;
         this.getList();
+      },
+      //重置
+      reset(event){
+        for (var key in this.formInline) {
+          this.formInline[key] = key == "logType" ? "1" : "";
+        }
+        this.search();
       }
     }
   };

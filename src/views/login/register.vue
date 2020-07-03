@@ -25,9 +25,10 @@
           <el-form-item prop="password">
             <el-input
               v-model="formData.password"
-              placeholder="请输出密码"
+              placeholder="密码必须由8到14个字符包括大小写字母、数字组成"
               show-password
             />
+            <!-- <span class="f12 c6">密码必须由8到14个字符包括大小写字母、数字组成</span> -->
           </el-form-item>
           <el-form-item prop="phone">
             <el-input v-model="formData.phone" placeholder="请输出手机号" />
@@ -105,7 +106,10 @@ export default {
       seconds: 0,
       rules: {
         account: [{ required: true, message: "请输入用户名", trigger: "blur" }],
-        password: [{ required: true, validator: validatePassword, trigger: "blur" }],
+        password: [
+          { required: true, validator: validatePassword, trigger: "blur" },
+          { min: 8, max: 14, message: '长度在 8 到 14 个字符', trigger: 'blur' }
+        ],
         phone: [{ required: true, validator: validatePhone, trigger: "blur" }],
         code: [
           { required: true, validator: validateCode, trigger: "blur" },

@@ -102,6 +102,16 @@
         <el-form-item label="元素个数">
           <el-input v-model="arrObj.num" placeholder="请输入元素个数" :disabled="showFlag"></el-input>
         </el-form-item>
+        <el-form-item label="JSON对象：" v-if="arrObj.type == '7'">
+          <div v-for="(item, index) in structsForArrar" :key="index" class="df ai_c json_item">
+            <div class="flex1">参数名称： {{item.name}}</div>
+            <div>
+              <el-link type="primary" :underline="false" class="f12 mr10" @click.stop="editSturct(item, index)" v-if="!showFlag">编辑</el-link>
+              <el-link type="primary" :underline="false" class="f12" @click.stop="deleteStruct(index)" v-if="!showFlag">删除</el-link>
+            </div>
+          </div>
+          <el-button v-if="!showFlag" type="text" icon="el-icon-plus" @click="addStruct">新增参数</el-button>
+        </el-form-item>
       </div>
     </el-form>
     <add-param v-if="flag == 1" :specs="formData.specs" :info="structInfo" @success="successAddParams" @close="clodeAddParams"></add-param>
@@ -167,7 +177,7 @@ export default {
       text: '',
       dataText: 'String类型的UTC时间戳（毫秒）',
       arrObj: {
-        type: '1',
+        type: '0',
         num: 10
       },
       dataTypeArr: [
@@ -239,7 +249,9 @@ export default {
         ]
       },
       unitArr: units,
-      dataTypeObj: dataObj.dataTypeObj
+      dataTypeObj: dataObj.dataTypeObj,
+      structsForArrar: [],
+      dataTypeNumObj: dataObj.dataTypeNumObj
     }
   },
   watch: {
@@ -290,6 +302,7 @@ export default {
               type: this.dataTypeObj[this.formData.specs.item.type],
               num: this.formData.specs.size
             }
+            this.structsForArrar = this.formData.specs.item.specs
             break
         }
       }
@@ -456,10 +469,16 @@ export default {
               // this.formData.specs = []
               break
             case '8':
+              if (this.structsForArrar.length > 0) {
+                this.structsForArrar.forEach(item => {
+                  item.dataType.type = this.dataTypeNumObj[item.dataType.type]
+                })
+              }
               this.formData.specs = {
                 size: this.arrObj.num,
                 item: {
-                  type: this.arrObj.type
+                  type: this.arrObj.type,
+                  specs: this.structsForArrar
                 }
               }
           }
@@ -471,12 +490,16 @@ export default {
     },
     successAddParams (data) { // 新增参数的成功的返回函数
       if (data) {
+        let specs = this.formData.specs
+        if (this.formData.type === '8') {
+          specs = this.structsForArrar
+        }
         if (this.structInfo) {
-          this.formData.specs.splice(this.structIndex, 1, data)
+          specs.splice(this.structIndex, 1, data)
           this.structIndex = -1
           this.structInfo = null
         } else {
-          this.formData.specs.push(data)
+          specs.push(data)
         }
       }
     },
@@ -491,7 +514,11 @@ export default {
       this.addStruct()
     },
     deleteStruct (index) {
-      this.formData.specs.splice(index, 1)
+      let specs = this.formData.specs
+        if (this.formData.type === '8') {
+          specs = this.structsForArrar
+        }
+      specs.splice(index, 1)
     }
   }
 }

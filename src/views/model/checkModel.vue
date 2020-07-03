@@ -19,13 +19,13 @@
       height="200"
     ></editor>
     <div slot="footer">
-      <el-button type="primary" @click="handleImport">导出物模型</el-button>
+      <el-button type="primary" @click="handleImport" disabled>导出物模型</el-button>
     </div>
   </el-dialog>
 </template>
 
 <script>
-import { getModel } from '@/api/model'
+import { getModel, getSimpleModel } from '@/api/model'
 export default {
   components: {
     editor: require('vue2-ace-editor')
@@ -41,52 +41,6 @@ export default {
       productList: [],
       src: '',
       activeName: '1',
-      JsonData: {
-        'code': 200,
-        'message': 'succeed !',
-        'data': [
-          {
-            'uuid': '76254DDB-A8EA-46CB-B3D7-6EEBD13BB2E6',
-            'version': 1,
-            'code': '401',
-            'message': '请求无权限',
-            'createId': 'dev',
-            'createDate': '2018-12-03T00:00:00',
-            'modifyId': null,
-            'modifyDate': null
-          },
-          {
-            'uuid': 'B0415CC2-F0E0-4B0C-A3BA-50ABAEE98BB9',
-            'version': 1,
-            'code': '500',
-            'message': '服务器错误',
-            'createId': 'dev',
-            'createDate': '2018-12-03T00:00:00',
-            'modifyId': null,
-            'modifyDate': null
-          },
-          {
-            'uuid': 'B70692E0-CCB7-4C44-B59B-7B75B16FA9FE',
-            'version': 1,
-            'code': '200',
-            'message': '请求成功',
-            'createId': 'dev',
-            'createDate': '2018-12-03T15:06:54.717',
-            'modifyId': null,
-            'modifyDate': null
-          },
-          {
-            'uuid': 'C8A37C2D-0842-423B-AEBA-976C106A3E90',
-            'version': 1,
-            'code': '202',
-            'message': '请求失败',
-            'createId': 'dev',
-            'createDate': '2018-12-03T00:00:00',
-            'modifyId': null,
-            'modifyDate': null
-          }
-        ]
-      },
       content: '', // json转化用这个，直接使用JSON.stringify(data)表现的只有一行
       options: {
         // 编辑框的一些配置
@@ -108,7 +62,11 @@ export default {
     getData () {
       this.content = ''
       this.loading = true
-      getModel({
+      let promise = getModel
+      if (this.activeName === '2') {
+        promise = getSimpleModel
+      }
+      promise({
         productKey: this.productKey
       }).then(res => {
         if (res.code === 200) {
@@ -128,11 +86,27 @@ export default {
       this.$emit('close')
     },
     handleClick () {
-      if (this.activeName === '1') {
-        this.getData()
-      } else {
-        this.content = ''
+      this.content = ''
+      this.loading = true
+      let promise = getModel
+      if (this.activeName === '2') {
+        promise = getSimpleModel
       }
+      promise({
+        productKey: this.productKey
+      }).then(res => {
+        if (res.code === 200) {
+          if (res.data) {
+            this.content = JSON.stringify(res.data, null, '\t')
+          } else {
+            this.$message.error(res.message)
+          }
+        }
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+        this.$message.error('物模型获取失败')
+      })
     },
     handleImport () {},
     editorInit: function () {

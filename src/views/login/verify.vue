@@ -185,7 +185,7 @@ export default {
     height: auto;
     margin-top: 40px;
     .info {
-      margin: 30px 80px;
+      margin: 30px 65px;
       color: #6c6c6c;
       .title {
         border-bottom: 1px solid #b9b9b9;

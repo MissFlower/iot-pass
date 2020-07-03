@@ -30,9 +30,9 @@ import { login } from "@/api";
 export default {
   data() {
     return {
-      account: "iot_test",
+      account: "",
       phone: "",
-      password: "111111"
+      password: ""
     };
   },
   mounted() {
@@ -73,7 +73,7 @@ export default {
                 }
               }
             }
-          } else if (res.code === 9321) {
+          } else {
             this.$message.warning(res.message);
           }
           this.$store.dispatch("setLoading", false);

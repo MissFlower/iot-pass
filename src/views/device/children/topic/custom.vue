@@ -42,37 +42,11 @@
     </el-table>
     <!-- 分页-->
     <pagination :data="tableData" @pagination="changePage" class="tr"/>
-    <!-- 定义or编辑 topic -->
-    <el-dialog title="定义Topic类" :visible.sync="dialogFormVisible">
-      <el-form ref="customDialog" :model="customForm" label-position="top" :rules="customRules">
-         <el-form-item label="设备操作权限" prop="topicAccess">
-          <el-select v-model="customForm.topicAccess" style="width:100%">
-            <el-option label="发布" :value="1"></el-option>
-            <el-option label="订阅" :value="2"></el-option>
-            <el-option label="发布和订阅" :value="3"></el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="Topic类" prop="topicName">
-          <div>/{{productKey}}/${deviceName}/user/</div>
-          <el-input v-model="customForm.topicName" autocomplete="off"></el-input>
-        </el-form-item>
-
-        <el-form-item label="描述">           
-          <el-input v-model="customForm.topicDescribe" autocomplete="off" type="textarea" rows="5" placeholder="请输入描述"></el-input>
-        </el-form-item>
-       
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="cancelCustomForm('customDialog')">取 消</el-button>
-        <el-button type="primary" @click="submitTopic" :loading="loading">确 定</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-  import { topicCustomEdit, topicDelete, topicCustomList } from '@/api/deviceRequest'
+  import { topicCustomList } from '@/api/deviceRequest'
   import Pagination from "@/components/Pagination"
   export default { 
     props: ['deviceObj'],
@@ -108,46 +82,10 @@
       
       };
     },   
-    created() {
+    mounted() {
       this.customList()
     },
     methods: {
-      //编辑topic
-      editTopic(row){
-        this.dialogFormVisible = true;
-        console.log(row)
-        this.customForm.topicAccess = row.topicAccess;
-        this.customForm.topicName = row.topicName;
-        this.customForm.topicDescribe = row.topicDescribe || '';
-        this.submitTopicId = row.topicId;
-      },
-      //定义topic
-      customDialog(){
-        this.dialogFormVisible = true;
-        this.submitTopicId = '';
-        this.$nextTick(()=>{
-          this.$refs['customDialog'].resetFields()
-        })
-      },
-      //取消自定义弹窗
-      cancelCustomForm(formName){
-        this.dialogFormVisible = false;
-        this.$refs[formName].resetFields()
-      },
-      //删除topic
-      deleteTopic(topicId){
-        topicDelete({topicId, productKey: this.productKey}).then(res => {
-            if(res.code === 200){
-               this.$message({
-                message: '删除成功',
-                type: 'success'
-              });
-              this.customList()
-            }
-        }).catch(err => {
-
-        })
-      },
       //列表数据
       customList(){
         this.loading = true;
@@ -162,39 +100,10 @@
           this.loading = false;
         })
       },
-      //自定义topic新增、编辑
-      submitTopic(id){
-        var obj = {};
-        console.log(this.submitTopicId)
-        if(this.submitTopicId){
-          obj = Object.assign({},obj,{topicId: this.submitTopicId})
-        }
-               
-        this.$refs['customDialog'].validate((valid) => {                    
-          if (valid) {               
-              this.loading = true;            
-              topicCustomEdit(Object.assign({},obj,{productKey: this.productKey},this.customForm)).then(res => {
-                this.loading = false;
-                if(res.code === 200){
-                  this.customList();
-                  this.dialogFormVisible = false;
-                }else {
-                  this.$message.warning(res.message);
-                }
-              }).catch(err => {
-                this.loading = false;
-                this.$message.error(err);  
-              })
-          } else {            
-              return false;
-          }
-        });
-        
-      },
-       //分页
-      changePage(){      
-        this.customList()
-      },
+
+      changePage(){
+        this.customList();
+      }
     }
   };
 </script>

@@ -37,12 +37,15 @@ import { topicList } from "@/api/deviceRequest";
         topicRadio: '基础通信Topic',
         basicsData: [],
         modelData: [],
-        customData: {
+        customData: {}
+      };
+    },   
+    mounted() {
+        this.customData = {
           productKey:this.deviceObj.productKey,
           deviceName:this.deviceObj.deviceName
         }
-      };
-    },      
+    },   
     watch: {
       deviceObj(obj){
         topicList({id:obj.id}).then(res => {          

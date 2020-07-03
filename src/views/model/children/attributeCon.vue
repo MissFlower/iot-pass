@@ -6,7 +6,7 @@
 
 <template>
   <div id="attributeCon">
-    <datatype-selectpart ref="form" :info="formData.dataType" :showFlag="showFlag" @success="handleSuccess"></datatype-selectpart>
+    <datatype-selectpart ref="form" :info="formData.dataType" :showFlag="showFlag" :allFlag="allFlag" @success="handleSuccess"></datatype-selectpart>
     <div><span class="red mr5">*</span>读写类型</div>
     <el-form-item>
       <el-radio v-model="formData.accessMode" label="0" :disabled="showFlag">读写</el-radio>
@@ -25,7 +25,8 @@ export default {
         accessMode: '0',
         dataType: null
       },
-      dataTypeObj: dataObj.dataTypeObj
+      dataTypeObj: dataObj.dataTypeObj,
+      allFlag: 0
     }
   },
   mounted () {

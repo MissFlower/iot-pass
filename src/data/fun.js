@@ -4,7 +4,9 @@
 
 import store from "@/store";
 import router from "@/router";
+import { resetRouter } from "@/router"
 import { Message } from "element-ui"
+import Cookie from "@/utils/cookie.js";
 
 export function addBreadCrumbFun(data) {
   const list = JSON.parse(JSON.stringify(store.state.app.breadcrumdList));
@@ -114,7 +116,6 @@ export function dealUserTreeFun(list) {
 
 // 处理权限数组
 
-
 export function dealMenus (menus) {
   const list = [];
   const funArr = [];
@@ -143,4 +144,18 @@ export function dealMenus (menus) {
     list,
     funArr
   }
+}
+
+
+// 清除登录数据
+
+export function clearLoginInfo () {
+  Cookie.removeValue("access_token");
+  Cookie.removeValue("userName");
+  store.dispatch("setUserInfo", null);
+  store.dispatch("setLoginStatus", false);
+  Cookie.removeValue("emailStatus");
+  localStorage.removeItem("info")
+  store.dispatch('setRouters', null)
+  resetRouter()
 }

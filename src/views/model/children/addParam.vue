@@ -27,7 +27,7 @@
         </span>
         <el-input v-model="formData.identifier" placeholder="请输入您的标识符" :disabled="info ? true : false"></el-input>
       </el-form-item>
-      <datatype-selectpart ref="dataSelect" :type="`addParam`" :info="formData.dataType" @success="handleSuccess"></datatype-selectpart>
+      <datatype-selectpart ref="dataSelect" :info="formData.dataType" :allFlag="allFlag" @success="handleSuccess"></datatype-selectpart>
     </el-form>
     <div slot="footer">
       <el-button type="primary" @click="handleSave">确认</el-button>
@@ -38,7 +38,7 @@
 <script>
 import dataObj from '@/data/data'
 export default {
-  props: ['specs', 'info'],
+  props: ['specs', 'info', 'allFlag'],
   data () {
     const validateIdentifier = (rule, value, callback) => {
       if (value === '') {

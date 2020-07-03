@@ -140,7 +140,6 @@ export default {
     }
   },
   methods: {
-    
     // 获取功能列表
     getData() {
       this.loading = true

@@ -25,7 +25,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="固件名称" prop="fmName" required>
-          <el-input type="text" v-model="ruleForm.fmName"></el-input>
+          <el-input type="text" v-model="ruleForm.fmName" :readonly="true"></el-input>
         </el-form-item>
         <el-form-item label="所属产品" required>
           <el-select
@@ -150,7 +150,7 @@ export default {
       productsValue: "",
       rules: {
           fmName: [
-              { required: true, message: '请输入固件名称', trigger: 'blur' }
+              { required: true, message: '请选择固件上传', trigger: 'blur' }
           ],
           srcVersion: [
               { required: true, message: '请输入待升级版本号', trigger: 'blur' }
@@ -217,8 +217,7 @@ export default {
       uploadFile(fromData)
         .then(res => {
             if (res.data.fmUrl) {
-                let fmName = res.data.fmName;
-                this.ruleForm.fmName = fmName ? fmName.slice(0, fmName.lastIndexOf('.')) : this.ruleForm.fmName;
+                this.ruleForm.fmName = res.data.fmName || this.ruleForm.fmName;
                 this.ruleForm.fmUrl = res.data.fmUrl;
                 this.ruleForm.fmSign = res.data.fmSign;
                 this.ruleForm.fmSize = res.data.fmSize;

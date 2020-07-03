@@ -261,8 +261,6 @@ export default {
     }
   },
   mounted () {
-    console.log('------')
-    console.log(this.allFlag)
     if (this.allFlag > 0) {
       this.dataTypeArr.forEach(item => {
         if (item.value === '7' || item.value === '8') {

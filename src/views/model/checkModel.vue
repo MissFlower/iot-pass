@@ -118,7 +118,7 @@ export default {
       require('brace')
       require('brace/mode/json')
       require('brace/snippets/json')
-      require('brace/snippets/html')
+      require('brace/theme/chrome')
     }
   }
 }
@@ -136,9 +136,6 @@ export default {
   }
   .el-tabs__header {
     margin: 0;
-  }
-  .ace-github {
-    // border: 1px solid red;
   }
 }
 </style>

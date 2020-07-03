@@ -37,9 +37,9 @@
 </template>
 
 <script>
-import { delBreadCrumbFun } from "@/data/fun";
+import { delBreadCrumbFun, clearLoginInfo } from "@/data/fun";
 import { getUserInfo, logout } from "@/api";
-import { resetRouter } from "@/router"
+// import { resetRouter } from "@/router"
 export default {
   data() {
     return {
@@ -107,33 +107,31 @@ export default {
       this.$store.dispatch("setBreadcrumb", list);
     },
     logoutFun() {
-      this.$store.dispatch("setLoading", true)
-      logout({
-        userId: this.userInfo.id
-      }).then(res => {
-        if (res.code === 200) {
-          this.$cookie.removeValue("access_token");
-          this.$cookie.removeValue("userName");
-          this.$store.dispatch("setUserInfo", null);
-          this.$store.dispatch("setLoginStatus", false);
-          this.$cookie.removeValue("emailStatus");
-          localStorage.removeItem("info")
-          this.$store.dispatch('setRouters', null)
-          resetRouter()
-          let path = "/index";
-          if (this.$route.path !== path) {
-            path = `${path}?redirect=${this.$route.path}`;
+      if (this.userInfo && this.userInfo.id) {
+        this.$store.dispatch("setLoading", true)
+        logout({
+          userId: this.userInfo.id
+        }).then(res => {
+          clearLoginInfo()
+          if (res.code === 200) {
+            let path = "/index";
+            if (this.$route.path !== path) {
+              path = `${path}?redirect=${this.$route.path}`;
+            }
+            this.$router.push(path);
+          } else {
+            this.$router.push('/index');
+            // this.$message.error(res.message)
           }
-          this.$router.push(path);
-        } else {
-          this.$message.error(res.message)
-        }
-        this.$store.dispatch("setLoading", false)
-      }).catch(() => {
-        this.$message.warning('退出失败')
-        this.$store.dispatch("setLoading", false)
-      })
-      
+          this.$store.dispatch("setLoading", false)
+        }).catch(() => {
+          this.$message.warning('退出失败')
+          this.$store.dispatch("setLoading", false)
+        })
+      } else {
+        clearLoginInfo()
+        this.$router.push('/index');
+      }
     },
     handleLogin() {
       this.$router.push("/login");

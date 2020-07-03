@@ -176,9 +176,14 @@
       //定义topic
       customDialog(){
         this.dialogFormVisible = true;
-        this.submitTopicId = '';
-        this.$nextTick(()=>{
-          this.$refs['customDialog'].resetFields()
+        this.submitTopicId = '';        
+        this.customForm = {
+          topicAccess: 1,
+          topicName: '',
+          topicDescribe: ''
+        }
+        setTimeout(() => {
+          this.$refs['customDialog'].clearValidate();
         })
       },
       //取消自定义弹窗

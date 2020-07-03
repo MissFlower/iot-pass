@@ -527,7 +527,7 @@
                 return row.ugStatus === 1 ? "待升级" : row.ugStatus === 2 ? "升级中" : row.ugStatus === 3 ? "升级完成": "已取消"
             },
             formatDestVersion (row) {
-              return row.upgradeStatus == 2 ? row.descVersion : row.srcVersion;
+              return row.upgradeStatus == 2 ? row.destVersion : row.srcVersion;
             },
             formatUpgradeStatus (row) {
                 return row.upgradeStatus == 1 ? "升级中" : row.upgradeStatus == 2 ? "已完成" : row.upgradeStatus == 3 ? "升级失败": "待升级"

@@ -197,7 +197,7 @@ export function statistics(data) {
   return request({
     url: "upgrade/statistics",
     method: "post",
-    headers: headerFrom_json,
-    data
+    headers: headerFrom,
+    data: Qs.stringify(data)
   });
 }

@@ -40,11 +40,11 @@ export default {
     }
   },
   mounted() {
-    this.flag = this.$route.params.id;
+    this.flag = this.$route.query.flag;
   },
   methods: {
     back () {
-      this.$route.push("/home");
+      this.$router.push("/home");
     },
     login () {
       this.$cookie.removeValue("access_token");

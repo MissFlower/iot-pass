@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="dialogVisible" class="dialogVisibleDialog" title="添加标准功能" @close="close">
+  <el-dialog :visible.sync="dialogVisible" class="dialogVisibleDialog" title="添加标准功能" @close="close" v-loading="loading">
     <div class="con df ai_c">
       <div class="pr" style="width: 45%">
         <div class="f12 mb5">选择功能</div>
@@ -9,7 +9,7 @@
             <el-radio-button label="2">其他类型</el-radio-button>
           </el-radio-group>
           <el-input v-model="name" placeholder="请输入功能名称" suffix-icon="el-icon-search" @keyup.enter.native="handleChange" :clearable="name"></el-input>
-          <div v-for="(item, index) in list" :key="index" class="con-item-ability wp100 df ai_c hand" @click.stop="selectAbility(item)">
+          <div v-for="(item, index) in list" :key="index" class="con-item-ability wp100 df ai_c hand" @click.stop="selectAbility(item)" :class="identifiers.indexOf(item.identifier) > -1 ? 'dn' : ''">
             <div class="w20 blue mr5 b f18"><i class="el-icon-check" :class="selelectIds.indexOf(item.id) > -1 ? '' : 'vh'"></i></div>
             <div class="pr wp100">
               <div>{{item.name}}<span class="tag dib blue ml10" :class="`tag${item.type}`">{{abilityTypeObj[item.type]}}</span></div>
@@ -55,7 +55,7 @@ import { addStdAbility, baseModelList } from "@/api/model"
 import dataObj from "@/data/data"
 
 export default {
-  props: ['productKey'],
+  props: ['productKey', 'identifiers'],
   data () {
     return {
       dialogVisible: true,
@@ -143,8 +143,18 @@ export default {
         }
       })
       this.submitObj.baseModelIds = JSON.stringify(this.selelectIds)
+      this.loading = true
       addStdAbility(this.submitObj).then(res => {
-        console.log(res)
+        if (res.code === 200) {
+          this.$message.success('功能添加成功')
+          this.$emit('success')
+        } else {
+          this.$message.error(res.message)
+        }
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+        this.$message.error('标准功能添加失败')
       })
     }
   }

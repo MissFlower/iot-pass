@@ -5,7 +5,7 @@
 -->
 <template>
   <el-dialog
-    :title="`${editItem.menuId ? '编辑' : '新建'}角色`"
+    :title="`${editItem.roleId ? '编辑' : '新建'}角色`"
     :visible.sync="dialogVisible"
     :close-on-press-escape="false"
     :close-on-click-modal="false"
@@ -14,7 +14,7 @@
     v-loading="loading"
   >
     <div class="df ai_c mb20">
-      <div class="w100 tr">角色名称：</div>
+      <div class="w100 tr"><span class="red">*</span>角色名称：</div>
       <el-input v-model="editItem.name" placeholder="请输入角色名称"></el-input>
     </div>
     <div class="df">
@@ -62,6 +62,10 @@ export default {
   methods: {
     // 提交函数
     handleSave() {
+      if (this.editItem.name === '') {
+        this.$message.warning('请输入角色名')
+        return
+      }
       let promise = null;
       let str = "";
       if (this.info) {

@@ -193,10 +193,11 @@ export function getDeviceList(data) {
 /**
  * 固件详情 上方数据
  */
-export function statistics() {
+export function statistics(data) {
   return request({
     url: "upgrade/statistics",
     method: "post",
-    headers: headerFrom
+    headers: headerFrom_json,
+    data
   });
 }

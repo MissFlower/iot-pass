@@ -31,7 +31,7 @@
                             :formatter="formatUpgradeStatus"
                         ></el-table-column>
                         <el-table-column label="操作">
-                            <template scope="scope">
+                            <template slot-scope="scope">
                                 <a class="oprate_btn" v-if="scope.row.upgradeStatus===2 || scope.row.upgradeStatus===3" @click="upgrade(scope.row.upgradeId)">重升级</a>
                             </template>
                         </el-table-column>

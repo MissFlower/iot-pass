@@ -24,6 +24,17 @@
     'struct': '7',
     'array': '8',
   },
+  dataTypeNumObj: {
+    '0': 'int',
+    '1': 'float',
+    '2': 'double',
+    '3': 'enum',
+    '4': 'bool',
+    '5': 'text',
+    '6': 'date',
+    '7': 'struct',
+    '8': 'array'
+  },
   dataTypeTextObj: {
     'int': 'int32 (整数型)',
     'float': 'float (单精度浮点型)',

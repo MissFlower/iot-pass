@@ -75,7 +75,7 @@
         </span>
         <template slot-scope="scope">
           {{scope.row.name}}
-          <el-tag>{{typeObj[scope.row.type]}}</el-tag>
+          <el-tag>{{typeObj[scope.row.modelType]}}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="标识符" prop="identifier"></el-table-column>
@@ -97,7 +97,7 @@
       </el-table-column>
     </el-table>
     <add-custom-ability v-if="addFlag" :productKey="productKey" :editAbility="editAbility" @close="closeAddCustomAbility" @success="successAddCustomAbility"></add-custom-ability>
-    <add-std-ability v-if="addStdAbilityFlag" :productKey="productKey" @close="closeAddStdAbility"></add-std-ability>
+    <add-std-ability v-if="addStdAbilityFlag" :productKey="productKey" :identifiers="identifiers" @close="closeAddStdAbility" @success="successAtdAbility"></add-std-ability>
     <import-ability v-if="importFlag" @close="closeImport"></import-ability>
     <check-model v-if="checkFlag" :productKey='productKey' @close="closeCheck"></check-model>
   </div>
@@ -111,6 +111,7 @@ import importAbility from './importAbility'
 import checkModel from './checkModel'
 
 import dataObj from '@/data/data'
+import { test} from '@/api'
 export default {
   components: {addCustomAbility, addStdAbility, importAbility, checkModel},
   data () {
@@ -128,7 +129,8 @@ export default {
       selectType: '',
       allData: null,
       importFlag: false,
-      checkFlag: false
+      checkFlag: false,
+      identifiers: []
     }
   },
   mounted () {
@@ -138,10 +140,12 @@ export default {
     }
   },
   methods: {
+    
     // 获取功能列表
     getData() {
       this.loading = true
       this.list = []
+      this.categoryIds = []
       getModelByproductKey({productKey: this.productKey}).then(res => {
         if (res.code === 200) {
           if (res.data) {
@@ -151,10 +155,11 @@ export default {
                 if (Array.isArray(arr)) {
                   arr.forEach(item => {
                     if (key.indexOf('base') > -1) {
-                      item.type = '1' // 1 标准
+                      item.modelType = '1' // 1 标准
+                      this.identifiers.push(item.identifier)
                     }
                     if (key.indexOf('custom') > -1) {
-                      item.type = '2' // 2 自定义
+                      item.modelType = '2' // 2 自定义
                     }
                     if (key.indexOf('Pro') > -1) {
                       item.abilityType = '1' // 1 属性
@@ -171,6 +176,7 @@ export default {
                     } else if(item.accessMode == 'r') {
                       item.accessMode = '1'
                     }
+                    
                   })
                   this.list = this.list.concat(arr)
                 }
@@ -185,10 +191,6 @@ export default {
         this.$message.error('功能列表获取失败')
         this.loading = false
       })
-    },
-    // 详情查看
-    showDetail (item) {
-      console.log(item)
     },
     // 添加自定义功能、编辑功能
     handleShowAdd (row) {
@@ -251,11 +253,14 @@ export default {
     closeAddStdAbility () {
       this.addStdAbilityFlag = false
     },
-  
+    // 添加标准功能成功的回调
+    successAtdAbility () {
+      this.closeAddStdAbility()
+      this.getData()
+    },
     setSelectType (key) {
       this.selectType = key
       this.$forceUpdate()
-      console.log(this.selectType)
     },
     setSelectTypeConfrim () {},
     resetSelectType() {},

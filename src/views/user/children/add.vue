@@ -26,7 +26,7 @@
           show-password
           class="w200"
         ></el-input>
-        <span class="f12 ml20 c6">密码中必须包含大小写字母、数字</span>
+        <span class="f12 ml20 c6">密码必须由8到14个字符包括大小写字母、数字组成</span>
       </el-form-item>
       <el-form-item label="姓名：">
         <el-input v-model="editItem.name" placeholder="请输入姓名" class="w200"></el-input>

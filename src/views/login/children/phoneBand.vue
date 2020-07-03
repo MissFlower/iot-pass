@@ -170,10 +170,11 @@ export default {
       updateUser(row).then(res => {
         if (res.code === 200) {
           this.$store.dispatch("getUserInfo")
-          this.$router.push({
-            name: "success",
-            params: { id: 2 }
-          })
+          // this.$router.push({
+          //   name: "success",
+          //   params: { id: 2 }
+          // })
+          this.$router.push(`/success?flag=2`)
         } else {
           this.$message.error(res.message)
         }

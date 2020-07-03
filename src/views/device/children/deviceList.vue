@@ -49,7 +49,10 @@
         <el-input class="ml10 mr10 w150" placeholder="固件版本" v-model="fmVersionValue" @change="searchBtnTouch"></el-input>
         <el-button icon="el-icon-search" @click="searchBtnTouch"></el-button>
       </div>
-      <el-button v-if="authArr.indexOf('device_new')>-1" type="primary" @click="toNewDevice">新建设备</el-button>
+      <div>
+        <el-button v-if="authArr.indexOf('device_new')>-1" type="primary" @click="toNewDevice(false)">添加设备</el-button>
+        <el-button v-if="authArr.indexOf('device_batchNew')>-1" type="primary" @click="toNewDevice(true)">批量添加</el-button>
+      </div>
     </div>
     <el-table :data="list" border @selection-change="handleSelectionChange" ref="multipleTable">
       <el-table-column type="selection" width="40"></el-table-column>
@@ -90,17 +93,20 @@
       <!-- 分页-->
       <pagination :data="tableData" @pagination="handleCurrentChange" class="tr"/>
     </div>
-    <!-- 新建设备 -->
+    <!-- 添加设备 -->
     <newDevice v-if="showNewDevice" :appointProduck="selProduck"></newDevice>
+    <!-- 批量 -->
+    <batchNewDevice v-if="showBatchNewDevice" :appointProduck="selProduck"></batchNewDevice>
   </div>
 </template>
 
 <script>
 import newDevice from "./newDevice";
+import batchNewDevice from "./batchNewDevice";
 import Pagination from "@/components/Pagination"
 import { deviceList, deleteDevice, deviceBatchEnable, productList,deviceStatistics } from "@/api/deviceRequest";
 export default {
-  components: { newDevice,Pagination },
+  components: { newDevice,Pagination,batchNewDevice },
   data() {
     return {
       list: [],
@@ -122,6 +128,7 @@ export default {
       searchInputValue: "",
       fmVersionValue: "",
       showNewDevice: false,
+      showBatchNewDevice: false,
       loading: false,
       deviceSelection: [],
       bottomSeleDis: true,
@@ -342,7 +349,8 @@ export default {
             if(this.tableData.pageNum!=1&&this.tableData.pageNum==this.tableData.pageCount && devices.length==this.tableData.total%this.tableData.pageSize){
               this.tableData.pageNum--;
             }
-            this.getDeviceList();
+            //获取设备统计信息
+            this.getDeviceStatistics();
           }
           this.$message({
             type: res.code == 200?"success":'warning',
@@ -390,10 +398,15 @@ export default {
       }
     },
 
-    //新建设备
-    toNewDevice(){
+    //添加设备
+    toNewDevice(batch){
       this.selProduck = this.productList[this.productSelIndex];
-      this.showNewDevice = true;
+
+      if(batch){//批量添加
+        this.showBatchNewDevice = true;
+      }else{//单个添加
+        this.showNewDevice = true;
+      }
     },
 
     /*
@@ -402,8 +415,10 @@ export default {
     */
     newDeviceClose(updata) {
       this.showNewDevice = false;
+      this.showBatchNewDevice = false;
       if (updata) {
-        this.getDeviceList();
+        //获取设备统计信息
+        this.getDeviceStatistics();
       }
     },
 

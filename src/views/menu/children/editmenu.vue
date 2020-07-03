@@ -58,13 +58,13 @@
           <el-radio label="N">否</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="排序">
+      <!-- <el-form-item label="排序">
         <el-input
           v-model="info.sort"
           placeholder="请输入菜单排序"
           class="w200"
         ></el-input>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="图标">
         <el-input
           v-model="info.icon"
@@ -115,18 +115,6 @@ export default {
         icon: "",
         frontPath: ""
       },
-      updateRow: {
-        menuId: "",
-        name: "",
-        code: "",
-        pid: "",
-        pcode: "",
-        pcodeName: "",
-        menuFlag: "",
-        url: "",
-        icon: "",
-        sort: ""
-      },
       info: null,
       rules: {
         name: [{ required: true, message: "请输入菜单", trigger: "blur" }],
@@ -146,7 +134,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.activeItem)
     this.into();
   },
   methods: {
@@ -160,12 +147,19 @@ export default {
       }).then(res => {
         if (res.code === 200) {
           if (res.data.data) {
+            let listData = res.data.data
             if (res.data.data.length > 0) {
               // 处理返回父级菜单数组
               res.data.data.forEach(item => {
                 this.menuObj[item.code] = item.menuId;
                 if (item.menuFlag === "N") {
                   item.disabled = true;
+                } else if (this.activeItem && this.activeItem.pcodes) {
+                  let str = `[${item.pcode}]`
+                  let pcodes = this.activeItem.pcodes.split(',')
+                  if (pcodes.length > 2 && pcodes[pcodes.length - 2] === str) {
+                    item.disabled = true
+                  }
                 }
               });
             }
@@ -177,6 +171,7 @@ export default {
               for (const key in this.info) {
                 this.info[key] = this.activeItem[key];
               }
+              console.log(this.activeItem.pcodes)
               this.info.pid = this.findMenuIds(this.activeItem.pcodes);
             } else {
               if (this.list && this.list.length > 0) {

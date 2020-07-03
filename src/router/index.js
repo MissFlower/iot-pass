@@ -49,7 +49,7 @@ export const constantRoutes = [
         meta: { name: "身份验证" }
       },
       {
-        path: "success/:id",
+        path: "success",
         name: "success",
         component: resolve => require(["@/views/children/success"], resolve),
         meta: { name: "验证成功" }
@@ -216,12 +216,12 @@ export const asyncRoutes =[
       {
         path: "details",
         component: resolve => require(["@/views/firmware/details"], resolve),
-        meta: { name: "固件管理及升级", code: "fm_details"}
+        meta: { name: "固件管理及升级", code: "fm_details" }
       },
       {
         path: "batchDetails",
         component: resolve => require(["@/views/firmware/batchDetails"], resolve),
-        meta: { name: "固件管理及升级", code: "firmware" }
+        meta: { name: "固件管理及升级", code: "fm_batchDetails" }
       }
     ]
   },

@@ -14,7 +14,7 @@
             class="w200"
             show-password
           ></el-input>
-          <span class="f12 c9 ml20">密码中必须包含大小写字母、数字</span>
+          <span class="f12 ml20 c6">密码必须由8到14个字符包括大小写字母、数字组成</span>
         </el-form-item>
         <el-form-item label="确认新的登录密码" prop="newpassword">
           <el-input
@@ -99,10 +99,11 @@ export default {
             .then(res => {
               if (res.code === 200) {
                 this.$message.success("密码修改成功");
-                this.$router.push({
-                  name: "success",
-                  params: { id: 3 }
-                })
+                // this.$router.push({
+                //   name: "success",
+                //   params: { id: 3 }
+                // })
+                this.$router.push(`/success?flag=3`)
               } else {
                 this.$message.warning(res.message);
               }

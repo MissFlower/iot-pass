@@ -13,14 +13,16 @@
         </template>
       </el-table-column>
 
-      <el-table-column
-        prop="pess"
+      <el-table-column        
         label="操作权限"
         width="100">
+        <template slot-scope="scope">          
+          {{scope.row.topicAccess === 1 ? '发布' : (scope.row.topicAccess === 2 ? '订阅' : '发布和订阅')}}             
+        </template>
       </el-table-column>
 
       <el-table-column
-        prop="des"
+        prop="topicDescribe"
         label="描述">
       </el-table-column>
 

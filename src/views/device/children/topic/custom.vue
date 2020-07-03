@@ -1,6 +1,6 @@
 <template>
   <div v-loading="loading">
-    <div class="mt20 mb10 f14"><el-button type="primary" @click="customDialog">定义Topic类</el-button></div>
+    <div class="mt20 mb20 f14">自定义Topic</div>
     <el-table
       :data="customData"
       style="width: 100%"
@@ -75,6 +75,7 @@
   import { topicCustomEdit, topicDelete, topicCustomList } from '@/api/deviceRequest'
   import Pagination from "@/components/Pagination"
   export default { 
+    props: ['deviceObj'],
     components: {
       Pagination
     },  
@@ -150,7 +151,7 @@
       //列表数据
       customList(){
         this.loading = true;
-        topicCustomList(Object.assign(this.tableData, {productKey: this.productKey})).then(res => {
+        topicCustomList(Object.assign(this.tableData, this.deviceObj)).then(res => {
           this.loading = false;
           if(res.code === 200){
             let {data,...pagination} =  res.data;

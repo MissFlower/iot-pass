@@ -5,7 +5,7 @@
  -->
 <template>
   <el-dialog
-    title="添加设备"
+    title="批量添加设备"
     :visible.sync="dialogVisible"
     width="500px"
     @close="handleClose"
@@ -22,11 +22,8 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="设备名称：" prop="deviceName">
-        <el-input v-model="ruleForm.deviceName" placeholder="请输入设备名称"></el-input>
-      </el-form-item>
-      <el-form-item label="备注名称：" prop="nickName">
-        <el-input v-model="ruleForm.nickName" placeholder="请输入备注名称"></el-input>
+      <el-form-item label="设备数量：" prop="deviceCount">
+        <el-input v-model="ruleForm.deviceCount" placeholder="请输入设备数量" oninput="value=value.replace(/[^\d]/g,'');value=parseInt(value)>1000?'1000':value;"></el-input>
       </el-form-item>
       <el-form-item class="mt20 tr" style="margin-bottom:0;">
         <el-button @click="handleCancel">取 消</el-button>
@@ -37,7 +34,7 @@
 </template>
 
 <script>
-import { productList,createDevice } from "@/api/deviceRequest";
+import { productList,batchCreateDevice } from "@/api/deviceRequest";
 export default {
   props: {
     appointProduck: {
@@ -45,6 +42,15 @@ export default {
     }
   },
   data() {
+
+    const validatorDeviceCount = (rule, value, callback) => {
+      if (parseInt(value)<1) {
+        callback(new Error('设备数量必须大于0'))
+      } else {
+        callback()
+      }
+    }
+
     return {
       dialogVisible: true,
       productList: [],
@@ -59,13 +65,9 @@ export default {
         productSelIndex: [
           { required: true, message: '请选择产品', trigger: 'change' }
         ],
-        deviceName: [
-          { required: true, message: '请输入设备名称', trigger: 'blur' },
-          { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
-        ],
-        nickName: [
-          { required: true, message: '请输入备注名称', trigger: 'blur' },
-          { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+        deviceCount: [
+          { required: true, message: '请输入设备数量', trigger: 'blur' },
+          { required: true, validator: validatorDeviceCount, trigger: 'change' }
         ]
       }
     };
@@ -126,11 +128,9 @@ export default {
         productObj = this.appointProduck;
       }
       
-      createDevice({
-        productId: productObj.id,
+      batchCreateDevice({
         productKey: productObj.productKey,
-        deviceName: this.ruleForm.deviceName,
-        nickName: this.ruleForm.nickName,
+        count: this.ruleForm.deviceCount,
       })
         .then(res => {
           this.loading = false;

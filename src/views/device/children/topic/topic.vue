@@ -15,7 +15,7 @@
     </div>
 
     <div v-show="topicRadio === '自定义Topic'">
-      <custom :customData="customData"/>
+      <custom :customObj="customObj"/>
     </div>
   </div>
 </template>
@@ -37,12 +37,9 @@ import { topicList } from "@/api/deviceRequest";
         topicRadio: '基础通信Topic',
         basicsData: [],
         modelData: [],
-        customData: {
-          productKey:this.deviceObj.productKey,
-          deviceName:this.deviceObj.deviceName
-        }
+        customObj: {}
       };
-    },      
+    },     
     watch: {
       deviceObj(obj){
         topicList({id:obj.id}).then(res => {          
@@ -53,6 +50,11 @@ import { topicList } from "@/api/deviceRequest";
         }).catch(err => {
 
         })
+
+        this.customObj = {
+          productKey:this.deviceObj.productKey,
+          deviceName:this.deviceObj.deviceName
+        }
       }
     },   
     methods: {

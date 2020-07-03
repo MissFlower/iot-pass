@@ -159,3 +159,17 @@ export function deleteAbility (data) {
      params: data
    })
  }
+
+ /**
+ * 
+ * 下载产品物模型，包括完整物模型和精简物模型
+ *  productKey	  string	是	产品key
+    type	        int	    是	下载类型 1:下载完整物模型 2:下载精简物模型
+ */
+//  export function downLoadModel (data) {
+//   return request({
+//     url: '/model/downLoadModel',
+//     method: 'get',
+//     params: data
+//   })
+//  }

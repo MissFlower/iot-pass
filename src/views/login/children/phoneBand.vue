@@ -84,7 +84,7 @@ export default {
       areaObj: phoneAreaObj,
       timerVal: null,
       msg: "点此免费获取",
-      seconds: 61,
+      seconds: 0,
       rules: {
         phone: [{ required: true, validator: validatePhone, trigger: "blur" }],
         code: [
@@ -105,8 +105,8 @@ export default {
     getCode() {
       this.$refs.form.validateField("phone", (valid) => {
         if (!valid) {
-          this.loading = true;
           if (this.seconds === 0) {
+            this.loading = true;
             sendCode({
               phone: this.formData.phone,
               type: 6

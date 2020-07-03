@@ -23,7 +23,7 @@
         <el-button type="text" icon="el-icon-plus" @click="addStruct">新增参数</el-button>
       </el-form-item>
     </el-form>
-    <add-param v-if="flag == 1" :specs="formData.outputData" :info="structInfo" @close="closeAddParam" @success="successAddParams"></add-param>
+    <add-param v-if="flag == 1" :specs="formData.outputData" :info="structInfo" @close="closeAddParam" @success="successAddParams" :allFlag="0"></add-param>
   </div>
 </template>
 

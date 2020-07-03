@@ -19,13 +19,13 @@
       height="200"
     ></editor>
     <div slot="footer">
-      <el-button type="primary" @click="handleImport" disabled>导出物模型</el-button>
+      <el-button type="primary" @click="handleImport">导出物模型</el-button>
     </div>
   </el-dialog>
 </template>
 
 <script>
-import { getModel, getSimpleModel } from '@/api/model'
+import { getModel, getSimpleModel, downLoadModel } from '@/api/model'
 export default {
   components: {
     editor: require('vue2-ace-editor')
@@ -51,11 +51,13 @@ export default {
         readOnly: true,
         showPrintMargin: false // 去除编辑器里的竖线
       },
-      loading: false
+      loading: false,
+      url: ''
     }
   },
   mounted () {
-    this.content = JSON.stringify(this.JsonData, null, '\t')
+    this.url = process.env.VUE_APP_BASE_URL
+    // this.content = JSON.stringify(this.JsonData, null, '\t')
     this.handleClick()
   },
   methods: {
@@ -108,7 +110,9 @@ export default {
         this.$message.error('物模型获取失败')
       })
     },
-    handleImport () {},
+    handleImport () {
+      window.open(`${this.url}/model/downLoadModel?productKey=${this.productKey}&type=${this.activeName}`)
+    },
     editorInit: function () {
       require('brace/ext/language_tools')
       require('brace')

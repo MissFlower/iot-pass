@@ -45,12 +45,12 @@
         </el-form-item>
         <el-form-item label="固件产品类型" required>
           <el-select
-            v-model="ruleForm.type"
+            v-model="ruleForm.moduleType"
             placeholder="固件产品类型"
             :disabled="typeDisabled"
           >
             <el-option
-              v-for="(key, value) in productsType"
+              v-for="(key, value) in moduleTypeMap"
               :key="key"
               :label="value"
               :value="key"
@@ -125,7 +125,7 @@ export default {
         fmType: 1, // 固件名称 1整包、2差分
         productId: "", // 固件所属产品id
         productName: "", // 固件所属产品名称
-        type: "", // 固件产品类型
+        moduleType: "", // 固件产品类型
         srcVersion: "", // 待升级版本号
         destVersion: "", // 升级后固定版本
         fmName: "", // 固件名称
@@ -140,7 +140,7 @@ export default {
       typelTag: "1",
       products: [],
       productMap: {},
-      productsType: {},
+      moduleTypeMap: {},
       timeout: null,
       productForm: {
         pageNum: 1,
@@ -194,14 +194,14 @@ export default {
     },
     // 获取固件产品类型
     getFmType(fmTypes) {
-      let productType = {};
+      let moduleTypeMap = {};
       if(fmTypes) {
-        fmTypes.split(",").forEach(function (item, index) {
-          productType[item] = index;
+        fmTypes.split(",").forEach(item => {
+          moduleTypeMap[item] = item;
         });
       }
-      this.productsType = productType;
-      this.ruleForm.type = "";
+      this.moduleTypeMap = moduleTypeMap;
+      this.ruleForm.moduleType = "";
     },
     closeDialog() {
       this.$refs["ruleForm"].resetFields(); // 清空弹出框校验

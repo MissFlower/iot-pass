@@ -75,7 +75,7 @@ export function deviceUpdate(data) {
   return request({
     url: "/device/updateDevice",
     method: "post",
-    headers: headerFrom,
+    headers: headerFrom_json,
     data: Qs.stringify(data)
   });
 }
@@ -111,12 +111,12 @@ export function topicList(data) {
 }
 
 /**
- * 设备自定义topic列表 * 
-  *   
+ * 设备自定义topic列表 *
+  *
   * @param {
     *   pageNum	Long	否	分页页数，默认：1
     *   pageSize	Long	否	分页条数，默认：20
-    *   productKey	String	是	产品 productKey      
+    *   productKey	String	是	产品 productKey
     * }
     */
 export function topicCustomList(data) {

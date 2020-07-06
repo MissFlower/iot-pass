@@ -55,7 +55,7 @@
                     <div class="grid-content">
                         <dl class="details_line">
                             <dt>目标成功数</dt>
-                            <dd>{{nums.targetSucess}}</dd>
+                            <dd>{{nums.targetSuccess}}</dd>
                         </dl>
                     </div>
                 </el-col>
@@ -94,8 +94,8 @@
                        </el-form-item>
                    </el-form>
                    <el-table :data="batchManage.batchList" border stripe>
-                       <el-table-column label="批次ID" prop="id"></el-table-column>
-                       <el-table-column label="批次类型" prop="type" :formatter="formatType"></el-table-column>
+                       <el-table-column label="批次ID" prop="batchNo"></el-table-column>
+                       <el-table-column label="批次类型" prop="taskType" :formatter="formatTaskType"></el-table-column>
                        <el-table-column
                            label="升级策略"
                            prop="ugType"
@@ -103,8 +103,8 @@
                        ></el-table-column>
                        <el-table-column
                            label="状态"
-                           prop="ugStatus"
-                           :formatter="formatUgStatus"
+                           prop="taskStatus"
+                           :formatter="formatTaskStatus"
                        ></el-table-column>
                        <el-table-column
                            label="添加时间"
@@ -138,7 +138,7 @@
                        </el-form-item>
                        <el-form-item>
                            <el-input
-                               v-model="devManage.upgradeId"
+                               v-model="devManage.batchNo"
                                placeholder="请输入批次ID"
                                @keyup.enter.native="searchDevManage"
                            ></el-input>
@@ -149,7 +149,7 @@
                        <el-table-column label="设备所属产品">{{productName}}</el-table-column>
                        <el-table-column
                            label="升级批次ID"
-                           prop="upgradeId"
+                           prop="batchNo"
                        ></el-table-column>
                        <el-table-column
                            label="当前版本号"
@@ -158,8 +158,8 @@
                        ></el-table-column>
                        <el-table-column
                            label="升级状态"
-                           prop="upgradeStatus"
-                           :formatter="formatUpgradeStatus"
+                           prop="status"
+                           :formatter="formatJobStatus"
                        ></el-table-column>
                        <el-table-column label="操作">
                            <template slot-scope="scope">
@@ -344,7 +344,7 @@
                 },
                 devManage: { // 设备列表参数
                     deviceName: '',
-                    upgradeId: '',
+                    batchNo: '',
                     devList: [],
                     total: 0,
                     pageNum: 1,
@@ -428,7 +428,7 @@
                 statistics({ 'fmId': this.fmId }).then ( res => {
                     if (res.code === 200) {
                         this.nums.targetFail = res.data.targetFail;
-                        this.nums.targetSucess = res.data.targetSucess;
+                        this.nums.targetSuccess = res.data.targetSuccess;
                         this.nums.targetTotal = res.data.targetTotal;
                     } else {
                         this.$message.error(res.message);
@@ -458,7 +458,7 @@
             getDeviceList () {
                 let data = {
                   'fmId': this.fmId,
-                  'upgradeId': this.devManage.upgradeId,
+                  'batchNo': this.devManage.batchNo,
                   'deviceName': this.devManage.deviceName,
                   'pageNum': this.devManage.pageNum,
                   'pageSize': this.devManage.pageSize,
@@ -517,20 +517,20 @@
                 this.$router.go(-1)
             },
             // 格式化表格内容
-            formatType (row) {
-                return row.type === 0 ? "验证固件" : "批量升级"
+            formatTaskType (row) {
+                return row.taskType === 0 ? "验证固件" : "批量升级"
             },
             formatUgType (row) {
                 return row.ugType === 1 ? "静态升级" : "动态升级"
             },
-            formatUgStatus (row) {
-                return row.ugStatus === 1 ? "待升级" : row.ugStatus === 2 ? "升级中" : row.ugStatus === 3 ? "升级完成": "已取消"
+            formatTaskStatus (row) {
+                return row.taskStatus === 0 ? "待升级" : row.taskStatus === 1 ? "升级中" : row.taskStatus === 2 ? "升级完成": "已取消"
             },
             formatDestVersion (row) {
-              return row.upgradeStatus == 2 ? row.destVersion : row.srcVersion;
+              return row.status == 4 ? row.destVersion : row.srcVersion;
             },
-            formatUpgradeStatus (row) {
-                return row.upgradeStatus == 1 ? "升级中" : row.upgradeStatus == 2 ? "已完成" : row.upgradeStatus == 3 ? "升级失败": "待升级"
+            formatJobStatus (row) {
+                return row.status == 3 ? "升级中" : row.status == 4 ? "已完成" : row.status == 5 ? "升级失败" : row.status == 2 ? "已推送" : "待推送"
             },
             formatCreateTime (row) {
                 return row.createTime ? this.$fun.dateFormat(

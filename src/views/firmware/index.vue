@@ -287,12 +287,15 @@ export default {
     },
     // 验证固件前校验是否存在设备
     getVerifyFirmInfo(fmId, versions) {
-      let formData = new FormData();
-      formData.append("fmId", fmId);
-      formData.append("versions", versions);
-      getVerifyFirmInfo(formData).then(res => {
+      let data = {
+        "pageNum": 1,
+        "pageSize": 10,
+        "fmId": fmId,
+        "srcVersions": versions
+      };
+      getVerifyFirmInfo(data).then(res => {
         if (res.code === 200) {
-            this.fmDeviceList = res.data;
+            this.fmDeviceList = res.data.data;
             this.checkFmVisible = true;
         } else if (res.code === 9003) {
           this.$alert(res.message, "提示", {

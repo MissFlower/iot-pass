@@ -103,6 +103,7 @@ export default {
                 //   name: "success",
                 //   params: { id: 3 }
                 // })
+                this.$cookie.setValue("access_token", res.data)
                 this.$router.push(`/success?flag=3`)
               } else {
                 this.$message.warning(res.message);

@@ -99,7 +99,7 @@
         >
         </el-pagination>
       </el-tab-pane>
-      <el-tab-pane label="版本分布" name="second" :disabled="tabDisabled">
+      <!-- <el-tab-pane label="版本分布" name="second" :disabled="tabDisabled">
         <div>
           <el-form
             :label-position="labelPosition"
@@ -140,7 +140,7 @@
             <el-table-column label="固件版本" prop="version"></el-table-column>
           </el-table>
         </div>
-      </el-tab-pane>
+      </el-tab-pane> -->
     </el-tabs>
     <AddFirmware
       :dialogFormVisible="dialogFormVisible"

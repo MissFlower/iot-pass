@@ -1,7 +1,8 @@
 import axios from "axios";
 import cookie from "@/utils/cookie.js";
-import { Message } from "element-ui";
+// import { Message } from "element-ui";
 import router from "@/router"
+import { clearLoginInfo } from "@/data/fun";
 
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_URL,
@@ -24,10 +25,12 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     const res = response.data ? response.data : {};
-    // if (res.code === 401) {
-    //   Message.error(res.message)
-    //   router.push("/login")
-    // }
+    if (res.code === 401) {
+      // Message.error(res.message)
+      // router.push("/login")
+      // clearLoginInfo()
+      // router.push("/login")
+    }
     return res;
   },
   error => {

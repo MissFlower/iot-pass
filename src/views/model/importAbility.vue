@@ -42,6 +42,7 @@
 </template>
 
 <script>
+import { tableList } from '@/api/product'
 export default {
   data () {
     return {

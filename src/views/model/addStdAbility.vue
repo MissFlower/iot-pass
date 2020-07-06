@@ -8,7 +8,7 @@
             <el-radio-button label="1">自定义品类</el-radio-button>
             <el-radio-button label="2">其他类型</el-radio-button>
           </el-radio-group>
-          <el-input v-model="name" placeholder="请输入功能名称" suffix-icon="el-icon-search" @keyup.enter.native="handleChange" :clearable="name"></el-input>
+          <el-input v-model="name" placeholder="请输入功能名称" suffix-icon="el-icon-search" @keyup.enter.native="handleChange" :clearable="name ? true : false"></el-input>
           <div v-for="(item, index) in list" :key="index" class="con-item-ability wp100 df ai_c hand" @click.stop="selectAbility(item)" :class="identifiers.indexOf(item.identifier) > -1 ? 'dn' : ''">
             <div class="w20 blue mr5 b f18"><i class="el-icon-check" :class="selelectIds.indexOf(item.id) > -1 ? '' : 'vh'"></i></div>
             <div class="pr wp100">
@@ -167,14 +167,14 @@ export default {
     padding: 0 20px 20px;
   }
   .con {
-    height: 400px;
+    height: 370px;
     width: 100%;
     .svg-icon{
       width: 50px;
       height: 50px;
     }
     .con-item {
-      height: 360px;
+      height: 300px;
       border: 1px solid #d7d8d9;
       padding: 12px 16px;
       overflow-y: auto;

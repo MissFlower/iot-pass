@@ -95,7 +95,7 @@
       </el-form-item>
       <div v-if="formData.type == '8'">
         <el-form-item label="元素类型">
-          <el-radio-group v-model="arrObj.type" :disabled="showFlag">
+          <el-radio-group v-model="arrObj.type" :disabled="showFlag" @change="arrayTypeChange">
             <el-radio v-for="(item, index) in arrTypes" :key="index" :label="item.value">{{item.text}}</el-radio>
           </el-radio-group>
         </el-form-item>
@@ -114,7 +114,7 @@
         </el-form-item>
       </div>
     </el-form>
-    <add-param v-if="flag == 1" :specs="formData.specs" :info="structInfo" @success="successAddParams" @close="clodeAddParams"></add-param>
+    <add-param v-if="flag == 1" :specs="formData.specs" :info="structInfo" :allFlag="allFlag_" @success="successAddParams" @close="clodeAddParams"></add-param>
   </div>
 </template>
 
@@ -126,7 +126,7 @@ import dataObj from '@/data/data'
 export default {
   name: 'DatatypeSelectpart',
   components: {addParam},
-  props: ['type', 'info', 'specs', 'showFlag'],
+  props: ['info', 'specs', 'showFlag', 'allFlag'],
   data () {
     const validateValueRangeMin = (rule, value, callback) => {
       let str = this.numMinMaxDealFun(this.formData.specs.min)
@@ -251,7 +251,8 @@ export default {
       unitArr: units,
       dataTypeObj: dataObj.dataTypeObj,
       structsForArrar: [],
-      dataTypeNumObj: dataObj.dataTypeNumObj
+      dataTypeNumObj: dataObj.dataTypeNumObj,
+      allFlag_: 0
     }
   },
   watch: {
@@ -260,7 +261,7 @@ export default {
     }
   },
   mounted () {
-    if (this.type) {
+    if (this.allFlag > 0) {
       this.dataTypeArr.forEach(item => {
         if (item.value === '7' || item.value === '8') {
           item.hidden = true
@@ -273,6 +274,7 @@ export default {
     if (this.info) {
       this.dealDataByInfo()
     }
+    this.allFlag_ = this.allFlag
   },
   methods: {
     // 根据info 数据处理
@@ -395,6 +397,18 @@ export default {
         case '7':
           this.formData.specs = []
           break
+      }
+      if (this.formData.type === '8') {
+        this.allFlag_ = this.allFlag
+      } else {
+        this.allFlag_ = this.allFlag + 1
+      }
+    },
+    arrayTypeChange () {
+      if (this.arrObj.type === '7') {
+        this.allFlag_ = this.allFlag + 1
+      } else {
+        this.allFlag_ = this.allFlag
       }
     },
     // 添加枚举项

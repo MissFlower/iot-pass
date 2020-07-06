@@ -24,7 +24,7 @@
           </el-form-item>
         </div>
         <el-form-item label="步长" prop="step">
-          <el-input v-model="formData.specs.step" placeholder="请输入步长" :disabled="showFlag"></el-input>
+          <el-input v-model="formData.specs.step" placeholder="请输入步长" :disabled="showFlag" @input="stepChange"></el-input>
         </el-form-item>
         <el-form-item label="单位" placeholder="请选择单位">
           <el-select v-model="formData.specs.unit" filterable :disabled="showFlag">
@@ -70,12 +70,14 @@
           <span class="dib w30 tc">0 -</span>
           <el-input v-model="boolObj[0]" placeholder="如：关" class="ml20" style="width: calc(100% - 50px)" :disabled="showFlag"></el-input>
         </el-form-item>
-        <el-form-item>
-          <span class="dib w30 tc">1 -</span>
-          <el-input v-model="boolObj[1]" placeholder="如：开" class="ml20" style="width: calc(100% - 50px)" :disabled="showFlag"></el-input>
-        </el-form-item>
+        <div>
+          <el-form-item prop="bool1">
+            <span class="dib w30 tc">1 -</span>
+            <el-input v-model="boolObj[1]" placeholder="如：开" class="ml20" style="width: calc(100% - 50px)" :disabled="showFlag"></el-input>
+          </el-form-item>
+        </div>
       </div>
-      <el-form-item label="数据长度" v-if="formData.type == '5'">
+      <el-form-item label="数据长度" v-if="formData.type == '5'" prop="text">
         <el-input placeholder="请输入内容" v-model="text" :disabled="showFlag">
           <template slot="append">字节</template>
         </el-input>
@@ -83,16 +85,20 @@
       <el-form-item label="时间格式" v-if="formData.type == '6'">
         <el-input disabled v-model="dataText"></el-input>
       </el-form-item>
-      <el-form-item label="JSON对象：" v-if="formData.type == '7'">
-        <div v-for="(item, index) in formData.specs" :key="index" class="df ai_c json_item">
-          <div class="flex1">参数名称： {{item.name}}</div>
-          <div>
-            <el-link type="primary" :underline="false" class="f12 mr10" @click.stop="editSturct(item, index)" v-if="!showFlag">编辑</el-link>
-            <el-link type="primary" :underline="false" class="f12" @click.stop="deleteStruct(index)" v-if="!showFlag">删除</el-link>
+      <div v-if="formData.type == '7'">
+        <div class="mb10"><span class="red mr5">*</span>JSON对象：</div>
+        <el-form-item>
+          <div v-for="(item, index) in formData.specs" :key="index" class="df ai_c json_item">
+            <div class="flex1">参数名称： {{item.name}}</div>
+            <div>
+              <el-link type="primary" :underline="false" class="f12 mr10" @click.stop="editSturct(item, index)" v-if="!showFlag">编辑</el-link>
+              <el-link type="primary" :underline="false" class="f12" @click.stop="deleteStruct(index)" v-if="!showFlag">删除</el-link>
+            </div>
           </div>
-        </div>
-        <el-button v-if="!showFlag" type="text" icon="el-icon-plus" @click="addStruct">新增参数</el-button>
-      </el-form-item>
+          <div v-if="structFlag" class="f12 red ml5">struct不能为空</div>
+          <el-button v-if="!showFlag" type="text" icon="el-icon-plus" @click="addStruct">新增参数</el-button>
+        </el-form-item>
+      </div>
       <div v-if="formData.type == '8'">
         <el-form-item label="元素类型">
           <el-radio-group v-model="arrObj.type" :disabled="showFlag" @change="arrayTypeChange">
@@ -102,16 +108,20 @@
         <el-form-item label="元素个数">
           <el-input v-model="arrObj.num" placeholder="请输入元素个数" :disabled="showFlag"></el-input>
         </el-form-item>
-        <el-form-item label="JSON对象：" v-if="arrObj.type == '7'">
-          <div v-for="(item, index) in structsForArrar" :key="index" class="df ai_c json_item">
-            <div class="flex1">参数名称： {{item.name}}</div>
-            <div>
-              <el-link type="primary" :underline="false" class="f12 mr10" @click.stop="editSturct(item, index)" v-if="!showFlag">编辑</el-link>
-              <el-link type="primary" :underline="false" class="f12" @click.stop="deleteStruct(index)" v-if="!showFlag">删除</el-link>
+        <div v-if="arrObj.type == '7'">
+          <div class="mb10"><span class="red mr5">*</span>JSON对象：</div>
+          <el-form-item>
+            <div v-for="(item, index) in structsForArrar" :key="index" class="df ai_c json_item">
+              <div class="flex1">参数名称： {{item.name}}</div>
+              <div>
+                <el-link type="primary" :underline="false" class="f12 mr10" @click.stop="editSturct(item, index)" v-if="!showFlag">编辑</el-link>
+                <el-link type="primary" :underline="false" class="f12" @click.stop="deleteStruct(index)" v-if="!showFlag">删除</el-link>
+              </div>
             </div>
-          </div>
-          <el-button v-if="!showFlag" type="text" icon="el-icon-plus" @click="addStruct">新增参数</el-button>
-        </el-form-item>
+            <div v-if="structFlag" class="f12 red ml5">struct不能为空</div>
+            <el-button v-if="!showFlag" type="text" icon="el-icon-plus" @click="addStruct">新增参数</el-button>
+          </el-form-item>
+        </div>
       </div>
     </el-form>
     <add-param v-if="flag == 1" :specs="formData.specs" :info="structInfo" :allFlag="allFlag_" @success="successAddParams" @close="clodeAddParams"></add-param>
@@ -145,17 +155,37 @@ export default {
       }
     }
     const validateStep = (rule, value, callback) => {
-      if (this.formData.specs.step === '') {
+      const step = this.formData.specs.step
+      if (step === '') {
         callback(new Error('步长不能为空'))
       } else {
         callback()
       }
     }
     const validateBool0 = (rule, value, callback) => {
-      if (this.boolObj[0] === '') {
-        callback(new Error('布尔值不能为空'))
+      let str = this.validateBool(this.boolObj[0])
+      if (str) {
+        callback(new Error(str))
       } else {
-        // 布尔值支持中文、英文字母、数字和下划线，第一位不能为下划线
+        callback()
+      }
+    }
+    const validateBool1 = (rule, value, callback) => {
+      let str = this.validateBool(this.boolObj[1])
+      if (str) {
+        callback(new Error(str))
+      } else {
+        callback()
+      }
+    }
+    const validateTextLength = (rule, value, callback) => {
+      if (this.text === '') {
+        callback(new Error('数据长度不能为空'))
+      } else if (!Number.isInteger(this.text * 1)) {
+        callback(new Error('字符串应为整数类型'))
+      } else if (this.text < 1 || this.text > 2048) {
+        callback(new Error('字符串长度应为1-2048'))
+      } else {
         callback()
       }
     }
@@ -228,6 +258,7 @@ export default {
           text: 'struct'
         }
       ],
+      structFlag: false, // struct是否添加参数
       flag: 0, // 新增参数的标记
       structInfo: null, // 编辑新增参数
       structIndex: -1,
@@ -246,6 +277,12 @@ export default {
         ],
         bool0: [
           {required: true, validator: validateBool0, trigger: 'change'}
+        ],
+        bool1: [
+          {required: true, validator: validateBool1, trigger: 'change'}
+        ],
+        text: [
+          {required: true, validator: validateTextLength, trigger: 'change'}
         ]
       },
       unitArr: units,
@@ -277,6 +314,32 @@ export default {
     this.allFlag_ = this.allFlag
   },
   methods: {
+    // 步长输入的控制
+    stepChange () {
+      let step = this.formData.specs.step
+      let arr = step.split('')
+      arr = arr.filter(val => {
+        return Number.isInteger(val * 1) || (val === '.' && this.formData.type * 1 > 0)
+      })
+      this.formData.specs.step = arr.join('')
+    },
+    // bool值验证
+    validateBool (value) {
+      let str = ''
+      if (value === '') {
+        str = '布尔值不能为空'
+      } else if (value.length > 10) {
+        str = '布尔值最大长度不能超过10个字符'
+      } else {
+        let reg = /^(?!_)[a-zA-Z0-9_\u4e00-\u9fa5]+$/
+        if (reg.test(value[0])) {
+          str = ''
+        } else {
+          str = '布尔值支持中文、英文字母、数字和下划线，第一位不能为下划线'
+        }
+      }
+      return str
+    },
     // 根据info 数据处理
     dealDataByInfo () {
       if (this.info && JSON.stringify(this.info) !== '{}') {
@@ -387,8 +450,8 @@ export default {
           break
         case '4':
           this.boolObj = {
-            '0': '',
-            '1': ''
+            '1': '',
+            '0': ''
           }
           break
         case '5':
@@ -396,6 +459,10 @@ export default {
           break
         case '7':
           this.formData.specs = []
+          this.structFlag = false
+          break
+        case '8':
+          this.structFlag = false
           break
       }
       if (this.formData.type === '8') {
@@ -404,6 +471,7 @@ export default {
         this.allFlag_ = this.allFlag + 1
       }
     },
+    // 数组类型选择更换的函数
     arrayTypeChange () {
       if (this.arrObj.type === '7') {
         this.allFlag_ = this.allFlag + 1
@@ -448,10 +516,13 @@ export default {
       const enumDesc = row.desc
       if (enumDesc === '') {
         row.errorDesc = '参数描述不能为空'
-      } else if (enumDesc.length > 20) {
-        row.errorDesc = '支持中文、英文大小写、数字下划线和短划线，必须以中文、英文或数字开头，不超过20个字符'
       } else {
-        row.errorDesc = ''
+        let reg = /^(?!_)(?!-)[a-zA-Z0-9_\u4e00-\u9fa5\\-]+$/
+        if (!reg.test(enumDesc) || enumDesc.length > 20) {
+          row.errorDesc = '支持中文、英文大小写、数字下划线和短划线，必须以中文、英文或数字开头，不超过20个字符'
+        } else {
+          row.errorDesc = ''
+        }
       }
     },
     // 删除枚举项
@@ -462,11 +533,18 @@ export default {
     getDataForParent () {
       this.$refs.dataSelectPartForm.validate(valid => {
         if (valid) {
+          let submitFlag = true
           switch (this.formData.type) {
             case '3':
-              this.enumArr.forEach(item => {
+              for (let i = 0; i < this.enumArr.length; i++) {
+                const item = this.enumArr[i]
+                if (!item.key || !item.desc) {
+                  this.enumKeyChange(i)
+                  this.enumDescChange(i)
+                  submitFlag = false
+                }
                 this.formData.specs[item.key] = item.desc
-              })
+              }
               break
             case '4':
               this.formData.specs = this.boolObj
@@ -481,12 +559,24 @@ export default {
               break
             case '7':
               // this.formData.specs = []
+              if (this.formData.specs.length === 0) {
+                this.structFlag = true
+                submitFlag = false
+              } else {
+                this.structFlag = false
+                submitFlag = true
+              }
               break
             case '8':
               if (this.structsForArrar.length > 0) {
                 this.structsForArrar.forEach(item => {
                   item.dataType.type = this.dataTypeNumObj[item.dataType.type]
                 })
+                this.structFlag = false
+                submitFlag = true
+              } else {
+                this.structFlag = true
+                submitFlag = false
               }
               this.formData.specs = {
                 size: this.arrObj.num,
@@ -496,7 +586,11 @@ export default {
                 }
               }
           }
-          this.$emit('success', this.formData)
+          if (submitFlag) {
+            this.$emit('success', this.formData)
+          } else {
+            this.$emit('success', null)
+          }
         } else {
           this.$emit('success', null)
         }
@@ -504,6 +598,7 @@ export default {
     },
     successAddParams (data) { // 新增参数的成功的返回函数
       if (data) {
+        this.structFlag = false
         let specs = this.formData.specs
         if (this.formData.type === '8') {
           specs = this.structsForArrar

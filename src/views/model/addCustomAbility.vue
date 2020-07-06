@@ -5,7 +5,7 @@
  -->
 
 <template>
-  <el-dialog :visible.sync="dialogVisible" :title="title" width="400px" class="addCustomAbility" @close="close" v-loading="loading">
+  <el-dialog :visible.sync="dialogVisible" :title="title" width="400px" :close-on-press-escape="false" :close-on-click-modal="false" class="addCustomAbility" @close="close" v-loading="loading">
     <el-form ref="addCustomAbilityForm" :model="formData" :rules="rules">
       <el-form-item prop="abilityType">
         <span slot="label">
@@ -71,17 +71,29 @@ export default {
   props: ['productKey', 'editAbility', 'showFlag'],
   data () {
     const validateName = (rule, value, callback) => {
-      if (this.formData.modelData.name === '') {
+      let name = this.formData.modelData.name
+      if (name === '') {
         callback(new Error('该名称不能为空'))
       } else {
-        callback()
+        let reg = /^(?!\.)(?!_)(?!-)[0-9a-zA-Z\u4e00-\u9fa5_.\\-]+$/
+        if (!reg.test(name) || name.length > 30) {
+          callback(new Error('必填，支持中文、大小写字母、数字、短划线、下划线和小数点，必须以中文、英文或数字开头，不超过30个字符。'))
+        } else {
+          callback()
+        }
       }
     }
     const validateIdentifier = (rule, value, callback) => {
-      if (this.formData.modelData.identifier === '') {
+      const identifier = this.formData.modelData.identifier
+      if (identifier === '') {
         callback(new Error('标识符不能为空'))
       } else {
-        callback()
+        let reg = /^[a-zA-Z0-9_]+$/
+        if (!reg.test(identifier) || identifier.length > 50) {
+          callback(new callback('必填，支持大小写字母、数字和下划线、不超过50个字符'))
+        } else {
+          callback()
+        }
       }
     }
     return {
@@ -201,7 +213,7 @@ export default {
       if (this.editAbility) {
         promise = updateCustomAbility
         str = '编辑'
-        obj.modelType = this.editAbility.type * 1
+        obj.modelType = this.editAbility.modelType * 1
         obj.modelData.index = 0
       }
       obj.modelData = JSON.stringify(obj.modelData)

@@ -22,7 +22,7 @@
     <div class="mb10">
       <el-button type="primary" size="mini" @click="handleShowAddStdAbility">添加标准功能</el-button>
       <el-button size="mini" @click="handleShowAdd()">添加自定义功能</el-button>
-      <el-button size="mini" @click="showImport">快速导入</el-button>
+      <el-button size="mini" @click="showImport" disabled>快速导入</el-button>
       <el-button size="mini" @click="showCheck">物模型 TSL</el-button>
       <el-button size="mini" disabled>历史版本</el-button>
       <div v-if="list.length > 0 && !loading" class="info df ai_c mb5 mt10 c9">

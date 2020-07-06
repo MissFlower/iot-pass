@@ -4,17 +4,17 @@
       <i class="el-icon-warning blue"></i>
       注：导入的物模型会覆盖原来的功能。
     </div>
-    <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+    <el-tabs v-model="activeName" type="card" @tab-click="handleClick" v-loading="loading">
       <el-tab-pane label="拷贝产品" name="1">
         <el-form :model="formData">
           <el-form-item label="选择产品">
             <el-select v-model="formData.product" placeholder="请选择产品">
-              <el-option v-for="(item, index) in productList" :key="index" :value="item.id">{{item.name}}</el-option>
+              <el-option v-for="(item, index) in productList" :key="index" :value="item.id" :label="item.productName"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="选择版本">
-            <el-select v-model="formData.product" placeholder="请选择产品">
-              <el-option v-for="(item, index) in productList" :key="index" :value="item.id">{{item.name}}</el-option>
+            <el-select v-model="formData.version" placeholder="请选择产品">
+              <el-option v-for="(item, index) in versionList" :key="index" :value="item.id">{{item.name}}</el-option>
             </el-select>
           </el-form-item>
         </el-form>
@@ -47,14 +47,34 @@ export default {
   data () {
     return {
       dialogVisible: true,
+      loading: false,
       formData: {
         product: '',
         version: ''
       },
       productList: [],
       src: '',
-      activeName: '1'
+      activeName: '1',
+      versionList: []
     }
+  },
+  mounted () {
+    this.loading = true
+    tableList({
+      pageSize: 1000,
+      pageNum: 1,
+      productName: ''
+    }).then(res => {
+      if (res.code === 200) {
+        this.productList = res.data.data
+      } else {
+        this.$message.error(res.message)
+      }
+      this.loading = false
+    }).catch(() => {
+      this.loading = false
+      this.$message.error('产品列表获取失败')
+    })
   },
   methods: {
     close () {

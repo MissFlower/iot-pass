@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="dialogVisible" class="dialogVisibleDialog" title="添加标准功能" @close="close" v-loading="loading">
+  <el-dialog :visible.sync="dialogVisible" class="dialogVisibleDialog" title="添加标准功能" @close="close" v-loading="loading" :close-on-press-escape="false" :close-on-click-modal="false">
     <div class="con df ai_c">
       <div class="pr" style="width: 45%">
         <div class="f12 mb5">选择功能</div>

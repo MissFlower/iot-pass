@@ -213,7 +213,16 @@
             },
             // 格式化表格内容
             formatUpgradeStatus (row) {
-                return row.upgradeStatus === 0 ? "待升级" : row.ugStatus === 1 ? "升级中" : row.ugStatus === 2 ? "已完成": "升级失败"
+                switch (row.upgradeStatus) {
+                    case 0:
+                      return "待升级";
+                  case 1:
+                    return "升级中";
+                  case 2:
+                    return "已完成";
+                  case 3:
+                    return "升级失败";
+                }
             },
             // 重新升级
             upgrade(upgradeId) {

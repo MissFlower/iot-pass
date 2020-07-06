@@ -88,7 +88,7 @@ export default {
       form: {
         fmId: "",
         srcVersions: "",
-        deviceNames: "",
+        deviceIds: [],
         showDeviceNames: []
       },
       chooseDeviceVisible: false,
@@ -106,15 +106,11 @@ export default {
       // 提交验证固件
     verifySubmit() {
       this.form.fmId = this.checkFmId;
-      this.form.srcVersions = this.srcVersion
-      this.form.showDeviceNames.map(item => {
-          this.form.deviceNames += item + ','
-      })
-      this.form.deviceNames = this.form.deviceNames.slice(0, -1)
+      this.form.srcVersions = this.srcVersion;
       let data = {
         "fmId": this.form.fmId,
         "srcVersions": this.form.srcVersions,
-        "deviceNames": this.form.deviceNames
+        "deviceIds": this.form.deviceIds
       };
       addVerify(data).then(res => {
         this.progressVisible = true;
@@ -145,12 +141,23 @@ export default {
     },
       // 关闭弹窗
     closeDialog() {
+      this.form = {
+        fmId: "",
+        srcVersions: "",
+        deviceIds: [],
+        showDeviceNames: []
+      };
       this.$refs["ruleForm"].resetFields(); // 清空弹出框校验
       this.$emit("checkVisible", this.checkFmVisible);
     },
     // 获取选中的设备
-    multipleDevice(val) {
-      this.form.showDeviceNames = val;
+    multipleDevice(checkedDeviceList) {
+      this.form.showDeviceNames = [];
+      this.form.deviceIds = [];
+      checkedDeviceList.forEach(item => {
+        this.form.showDeviceNames.push(item.deviceName);
+        this.form.deviceIds.push(item.deviceId);
+      })
     },
     selectDevice() {
       this.chooseDeviceVisible = true;

@@ -68,11 +68,11 @@
         methods: {
             // 选择设备
             chooseSubmit () {
-                let multipleDeviceId = []
+                let checkedDeviceList = []
                 this.multipleSelection.map(item => {
-                    multipleDeviceId.push(item.deviceId)
+                  checkedDeviceList.push(item)
                 })
-                this.$emit('multipleDevice', multipleDeviceId)
+                this.$emit('multipleDevice', checkedDeviceList)
                 this.$emit('deviceVisible', this.chooseDeviceVisible)
             },
             // 取消选中

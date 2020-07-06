@@ -126,6 +126,7 @@ export function getVerifyFirmInfo(data) {
     return request({
         url: "/upgrade/getVerifyFirmInfo",
         method: "post",
+        headers: headerFrom_json,
         data
     });
 }

@@ -202,4 +202,10 @@ body {
   .svg-icon + .svg-icon {
     margin-left: 20px;
   }
+  .searchInput .el-input__suffix-inner {
+    line-height: 32px;
+    [class^=el-icon-] + [class^=el-icon-] {
+      margin-left: 5px;
+    }
+  }
 }

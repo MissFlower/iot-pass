@@ -11,19 +11,25 @@
         <el-input
           v-model="formData.name"
           placeholder="请输入菜单名"
-          class="w200 mr20"
-          suffix-icon="el-icon-search"
+          class="w200 mr20 searchInput"
           @keyup.enter.native="searchNameFun"
-          :clearable="formData.name != ''"
-        ></el-input>
+        >
+          <span slot="suffix">
+            <i class="el-icon-search hand" @click="searchNameFun"></i>
+            <i class="el-icon-close hand" v-if="formData.name != ''" @click="clearFun('name')"></i>
+          </span>
+        </el-input>
         <el-input
           v-model="formData.code"
           placeholder="请输入菜单编号"
-          class="w200"
-          suffix-icon="el-icon-search"
+          class="w200 searchInput"
           @keyup.enter.native="searchCodeFun"
-          :clearable="formData.code != ''"
-        ></el-input>
+        >
+          <span slot="suffix">
+            <i class="el-icon-search hand" @click="searchCodeFun"></i>
+            <i class="el-icon-close hand" v-if="formData.code != ''" @click="clearFun('code')"></i>
+          </span>
+        </el-input>
       </div>
       <el-button
         v-if="authArr.indexOf('menu_add') > -1"
@@ -193,6 +199,9 @@ export default {
           this.$message("操作已取消");
         });
     },
+    clearFun(key) {
+      this.formData[key] = ''
+    },
     searchNameFun() { // 筛选
       if (this.$fun.trim(this.formData.name) !== "") {
         this.handleCurrentChange(1);
@@ -211,10 +220,16 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 #menu {
   position: relative;
   height: 100%;
   width: 100%;
+  .el-input__suffix-inner {
+    line-height: 32px;
+    [class^=el-icon-] + [class^=el-icon-] {
+      margin-left: 5px;
+    }
+  }
 }
 </style>

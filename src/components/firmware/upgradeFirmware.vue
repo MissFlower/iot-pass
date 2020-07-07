@@ -70,7 +70,7 @@
           required
         >
           <el-input
-            v-model="form.rate"
+            v-model.number="form.rate"
             auto-complete="off"
             placeholder="请输入每分钟推送的设备数"
           ></el-input>
@@ -96,7 +96,7 @@
           prop="timeOut"
         >
           <el-input
-            v-model="form.timeOut"
+            v-model.number="form.timeOut"
             auto-complete="off"
             placeholder="请输入升级超时时间（分钟）"
           ></el-input>
@@ -138,14 +138,19 @@ export default {
       },
       rules: {
         rate: [
-              { required: true, message: '请输入固件推送速率', trigger: 'blur' }
+            { required: true, message: '请输入固件推送速率', trigger: 'blur' },
+            { type: 'number', message: '推送速率必须为数字值' }
           ],
           srcVersion: [
               { required: true, message: '请输入待升级版本号', trigger: 'blur' }
           ],
           destVersion: [
               { required: true, message: '请输入升级后版本号', trigger: 'blur' }
-          ]
+          ],
+          timeOut: [
+            { required: true, message: '请输入设备升级超时时间', trigger: 'blur' },
+            { type: 'number', message: '设备升级超时时间必须为数字值' }
+          ],
       }
     };
   },

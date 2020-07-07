@@ -17,7 +17,7 @@
     <div class="con mt20 p20">
       <div class="f14">开始接入物联网设备</div>
       <div class="m_con df">
-        <div v-for="(item, index) in mArr" :key="index" class="m_item">
+        <div v-for="(item, index) in mArr" :key="index" class="m_item" @click="goToPath(item)">
           <div class="text">
             <span>{{ item.name }}</span>
             <svg-icon icon-class="arrow" class="blue ml5"></svg-icon>
@@ -69,12 +69,12 @@ export default {
         {
           name: "创建产品",
           desc: "创建并定义产品功能 （设备模型）",
-          path: ""
+          path: "/product/add-product"
         },
         {
           name: "添加设备",
           desc: "创建并定义产品功能 （设备模型）",
-          path: ""
+          path: "/device/deviceManage"
         },
         {
           name: "设备烧录与激活",
@@ -83,6 +83,13 @@ export default {
         }
       ]
     };
+  },
+  methods: {
+    goToPath (item) {
+      if (item.path) {
+        this.$router.push(item.path)
+      }
+    }
   }
 };
 </script>

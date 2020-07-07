@@ -7,6 +7,7 @@
   <div id="editAccount" v-loading="loading">
     <div class="pl20 pb20">{{ editItem.id ? "编辑" : "新建" }}用户</div>
     <el-form
+      ref="form"
       :model="editItem"
       label-width="120px"
       class="mt20"
@@ -15,7 +16,7 @@
       <el-form-item label="账号：" prop="account">
         <el-input
           v-model="editItem.account"
-          placeholder="请输入用户名:"
+          placeholder="请输入用户名"
           class="w200"
         ></el-input>
       </el-form-item>
@@ -119,29 +120,33 @@ export default {
     },
     // 保存函数
     handleSave() {
-      this.loading = true;
-      let promise = null;
-      let str = "";
-      if (this.info) {
-        promise = updateUser;
-        str = "编辑";
-      } else {
-        promise = createUser;
-        str = "创建";
-      }
-      promise(this.editItem)
-        .then(res => {
-          if (res.code === 200) {
-            this.$parent.switchCon(0);
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          this.loading = true;
+          let promise = null;
+          let str = "";
+          if (this.info) {
+            promise = updateUser;
+            str = "编辑";
           } else {
-            this.$message.error(res.message);
+            promise = createUser;
+            str = "创建";
           }
-          this.loading = false;
-        })
-        .catch(() => {
-          this.$message.error(`用户${str}失败`);
-          this.loading = false;
-        });
+          promise(this.editItem)
+            .then(res => {
+              if (res.code === 200) {
+                this.$parent.switchCon(0);
+              } else {
+                this.$message.error(res.message);
+              }
+              this.loading = false;
+            })
+            .catch(() => {
+              this.$message.error(`用户${str}失败`);
+              this.loading = false;
+            });
+        }
+      })
     }
   }
 };

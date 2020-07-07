@@ -28,7 +28,7 @@ export function phoneValidate(value) {
   if (!value && value === "") {
     return "手机号不能为空";
   } else {
-    let reg = 11 && /^((1)\d{10})$/;
+    let reg = /^((1)\d{10})$/;
     if (!reg.test(value)) {
       return "手机格式不正确";
     } else {

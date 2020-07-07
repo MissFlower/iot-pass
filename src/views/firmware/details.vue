@@ -145,7 +145,7 @@
                        </el-form-item>
                    </el-form>
                    <el-table :data="devManage.devList" border stripe>
-                       <el-table-column label="deviceId" prop="deviceId"></el-table-column>
+                       <el-table-column label="deviceName" prop="deviceName"></el-table-column>
                        <el-table-column label="设备所属产品">{{productName}}</el-table-column>
                        <el-table-column
                            label="升级批次ID"

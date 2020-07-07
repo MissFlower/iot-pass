@@ -25,7 +25,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="固件名称" prop="fmName" required>
-          <el-input type="text" v-model="ruleForm.fmName" :readonly="true"></el-input>
+          <el-input type="text" v-model="ruleForm.fmName"></el-input>
         </el-form-item>
         <el-form-item label="所属产品" required>
           <el-select
@@ -85,9 +85,10 @@
             :limit="3"
             :file-list="fileList"
             :show-file-list="false"
+            :disabled="ruleForm.fmName == '' ? true : false"
             accept=".zip,.tar,.gz,.tar.gz,.gzip,.bin,.hex"
           >
-            <el-button size="small">{{ uploadText }}</el-button>
+            <el-button size="small" @click="beforeSelectFile">{{ uploadText }}</el-button>
             <div slot="tip" class="el-upload__tip">
               仅支持bin、tar、gz、tar.gz、zip、gzip、hex类型的文件
             </div>
@@ -150,7 +151,7 @@ export default {
       productsValue: "",
       rules: {
           fmName: [
-              { required: true, message: '请选择固件上传', trigger: 'blur' }
+              { required: true, message: '请输入固件名称', trigger: 'blur' }
           ],
           srcVersion: [
               { required: true, message: '请输入待升级版本号', trigger: 'blur' }
@@ -209,15 +210,21 @@ export default {
       this.uploadProgressShow = false
       this.$emit("changeVisible", this.dialogFormVisible);
     },
+    beforeSelectFile () {
+      if (this.ruleForm.fmName === '') {
+        this.$refs.ruleForm.validateField('fmName')
+      }
+    },
     // 上传文件
     beforeUpload(file) {
       let fromData = new FormData();
       fromData.append("file", file);
+      fromData.append("fmName", this.ruleForm.fmName)
       this.uploadProgressShow = false;
       uploadFile(fromData)
         .then(res => {
             if (res.data.fmUrl) {
-                this.ruleForm.fmName = res.data.fmName || this.ruleForm.fmName;
+                // this.ruleForm.fmName = res.data.fmName || this.ruleForm.fmName;
                 this.ruleForm.fmUrl = res.data.fmUrl;
                 this.ruleForm.fmSign = res.data.fmSign;
                 this.ruleForm.fmSize = res.data.fmSize;

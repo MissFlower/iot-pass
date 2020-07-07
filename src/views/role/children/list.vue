@@ -11,10 +11,14 @@
         <el-input
           v-model="formData.name"
           placeholder="角色名称"
-          suffix-icon="el-icon-search"
-          class="w200"
+          class="w200 searchInput"
           @keyup.enter.native="searchFun"
-        ></el-input>
+        >
+          <span slot="suffix">
+            <i class="el-icon-search hand" @click="searchFun"></i>
+            <i class="el-icon-close hand" v-if="formData.name != ''" @click="clearFun('name')"></i>
+          </span>
+        </el-input>
       </div>
       <el-button
         v-if="authArr.indexOf('role_add') > -1"
@@ -124,6 +128,9 @@ export default {
           this.$message.error("角色列表获取失败");
           this.loading = false;
         });
+    },
+    clearFun(key) {
+      this.formData[key] = ''
     },
     // 筛选函数
     searchFun() {

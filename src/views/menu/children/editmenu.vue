@@ -171,7 +171,6 @@ export default {
               for (const key in this.info) {
                 this.info[key] = this.activeItem[key];
               }
-              console.log(this.activeItem.pcodes)
               this.info.pid = this.findMenuIds(this.activeItem.pcodes);
             } else {
               if (this.list && this.list.length > 0) {

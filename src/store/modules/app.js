@@ -2,6 +2,7 @@ import router from "@/router"
 import { getUserInfo } from "@/api";
 import Cookie from "@/utils/cookie.js";
 import { Message } from 'element-ui'
+import { clearLoginInfo } from "@/data/fun"
 
 const app = {
   state: {
@@ -68,6 +69,7 @@ const app = {
             commit("SET_LOADING", false)
             Message.warning(res.message)
             localStorage.setItem("info", null)
+            clearLoginInfo()
             router.push("/login");
             resolve()
           }

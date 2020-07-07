@@ -30,7 +30,7 @@
         您正在编辑的是草稿，需点击发布后，物模型才会正式生效
       </div>
     </div>
-    <el-table :data="list" border>
+    <el-table :data="list" border v-if="!loading">
       <div slot="empty" class="mt30 mb20 df jc_c">
         <svg-icon icon-class="empty" class="empty"></svg-icon>
         <div class="lh16 w300 tl ml20">
@@ -47,32 +47,7 @@
           {{abilityTypeObj[scope.row.abilityType]}}
         </template>
       </el-table-column>
-      <el-table-column prop="name">
-        <span slot="header">
-          功能名称（{{type ? `${typeObj[type]}` : '全部'}}）
-          <!-- <el-popover
-            placement="bottom"
-            width="100"
-            trigger="click"
-            @show="selectType = type"
-            >
-            <div class="conHeader">
-              <div @click.stop="setSelectType('')">
-                <i class="mr10 blue dib w20" :class="selectType == '' ? 'el-icon-check' : ''"></i>
-                <span>全部</span>
-              </div>
-              <div v-for="(item, key) in typeObj" :key="key" @click.stop="setSelectType(key)">
-                <i class="mr10 blue dib w20" :class="selectType == key ? 'el-icon-check' : ''"></i>
-                <span>{{item}}{{selectType}}</span>
-              </div>
-              <div class="mt10 tc">
-                <el-button type="primary" size="mini" @click="setSelectTypeConfrim">确认</el-button>
-                <el-button size="mini" @click="resetSelectType">重置</el-button>
-              </div>
-            </div>
-            <svg-icon icon-class="screen" slot="reference"></svg-icon>
-          </el-popover> -->
-        </span>
+      <el-table-column :render-header="renderName">
         <template slot-scope="scope">
           {{scope.row.name}}
           <el-tag>{{typeObj[scope.row.modelType]}}</el-tag>
@@ -118,6 +93,7 @@ export default {
     return {
       loading: false,
       list: [],
+      // tableFlag: true,
       addFlag: false,
       productKey: '',
       editAbility: null,
@@ -126,7 +102,9 @@ export default {
       typeObj: dataObj.typeObj,
       dataTypeTextObj: dataObj.dataTypeTextObj,
       type: '', // 用于列表功能类型筛选
-      selectType: '',
+      selectType: {
+        type: ''
+      },
       allData: null,
       importFlag: false,
       checkFlag: false,
@@ -148,39 +126,8 @@ export default {
       getModelByproductKey({productKey: this.productKey}).then(res => {
         if (res.code === 200) {
           if (res.data) {
-            for (let key in res.data) {
-              if (key.indexOf('Json') > -1 && key !== 'allJson') {
-                const arr = res.data[key]
-                if (Array.isArray(arr)) {
-                  arr.forEach(item => {
-                    if (key.indexOf('base') > -1) {
-                      item.modelType = '1' // 1 标准
-                      this.identifiers.push(item.identifier)
-                    }
-                    if (key.indexOf('custom') > -1) {
-                      item.modelType = '2' // 2 自定义
-                    }
-                    if (key.indexOf('Pro') > -1) {
-                      item.abilityType = '1' // 1 属性
-                    }
-                    if (key.indexOf('Ser') > -1) {
-                      item.abilityType = '2' // 2 服务
-                    }
-                    if (key.indexOf('Eve') > -1) {
-                      item.abilityType = '3' // 3 事件
-                    }
-                    item.accessMode_ = item.accessMode
-                    if (item.accessMode === 'rw') {
-                      item.accessMode = '0'
-                    } else if(item.accessMode == 'r') {
-                      item.accessMode = '1'
-                    }
-                    
-                  })
-                  this.list = this.list.concat(arr)
-                }
-              }
-            }
+            this.allData = res.data
+            this.dealDataByType()
           }
         } else {
           this.$message.error(res.message)
@@ -190,6 +137,47 @@ export default {
         this.$message.error('功能列表获取失败')
         this.loading = false
       })
+    },
+    dealDataByType () {
+      for (let key in this.allData) {
+        if (key.indexOf('Json') > -1 && key !== 'allJson') {
+          let arr = this.allData[key]
+          if (Array.isArray(arr)) {
+            arr.forEach(item => {
+              if (key.indexOf('base') > -1) {
+                item.modelType = '1' // 1 标准
+                this.identifiers.push(item.identifier)
+              }
+              if (key.indexOf('custom') > -1) {
+                item.modelType = '2' // 2 自定义
+              }
+              if (key.indexOf('Pro') > -1) {
+                item.abilityType = '1' // 1 属性
+              }
+              if (key.indexOf('Ser') > -1) {
+                item.abilityType = '2' // 2 服务
+              }
+              if (key.indexOf('Eve') > -1) {
+                item.abilityType = '3' // 3 事件
+              }
+              item.accessMode_ = item.accessMode
+              if (item.accessMode === 'rw') {
+                item.accessMode = '0'
+              } else if(item.accessMode == 'r') {
+                item.accessMode = '1'
+              }
+            })
+            arr = arr.filter(item => {
+              if (this.type) {
+                return item.modelType * 1 === this.type * 1
+              } else {
+                return item
+              }
+            })
+            this.list = this.list.concat(arr)
+          }
+        }
+      }
     },
     // 添加自定义功能、编辑功能
     handleShowAdd (row) {
@@ -257,12 +245,95 @@ export default {
       this.closeAddStdAbility()
       this.getData()
     },
-    setSelectType (key) {
-      this.selectType = key
-      this.$forceUpdate()
+    popoverShow () {
+      this.selectType = {
+        type: this.type
+      }
     },
-    setSelectTypeConfrim () {},
-    resetSelectType() {},
+    // 头部渲染函数
+    renderName (h) {
+      return h('span', {}, [
+        h('span', {class: 'mr10'}, `功能名称（${this.type ? this.typeObj[this.type] : '全部'}）`),
+        h('el-popover', {
+          props: { width: '180', trigger: 'click' },
+          on: {
+            show: this.popoverShow
+          }
+        }, [
+          h('div', { attrs: {
+            class: 'conHeader'
+            }
+          }, [
+            h('div', {
+              class: 'hand',
+              on: {
+                click: () => {
+                  this.setSelectType('')
+                }
+              }
+            }, [
+              h('i', {
+                class: `${this.selectType.type == '' ? 'el-icon-check' : ''} mr10 blue dib w20`
+              }, ''),
+              h('span', {attrs: { class: 'f12'}}, '全部')
+            ]),
+            h('div', {class: 'hand', on: {
+                click: () => {
+                  this.setSelectType('1')
+                }
+              }}, [
+              h('i', {
+                class: `${this.selectType.type == '1' ? 'el-icon-check' : ''} mr10 blue dib w20`
+              }, ''),
+              h('span', {attrs: { class: 'f12'}}, '标准功能')
+            ]),
+            h('div', {class: 'hand', on: {
+                click: () => {
+                  this.setSelectType('2')
+                }
+              }}, [
+              h('i', {
+                class: `${this.selectType.type == '2' ? 'el-icon-check mr10 blue dib w20' : ''} mr10 blue dib w20`
+              }, ''),
+              h('span', {attrs: { class: 'f12'}}, '自定义功能')
+            ]),
+            h('div', {class: 'tc mt10'}, [
+              h('el-button', { attrs: {
+                type: 'primary',
+                size: 'mini'
+              }, on: {
+                click: () => {
+                  this.setSelectTypeConfrim()
+                }
+              }}, '确认'),
+              h('el-button', { attrs: {
+                size: 'mini'
+              }, on: {
+                click: () => {
+                  this.resetSelectType()
+                }
+              }}, '重置')
+            ])
+          ]),
+          h('svg-icon', { slot: 'reference', attrs: {
+            'icon-class': 'screen'
+          }}, '')
+        ])
+       ])
+    },
+    setSelectType (key) {
+      this.selectType = {
+        type: key
+      }
+    },
+    setSelectTypeConfrim () {
+      this.type = this.selectType.type
+      this.getData()
+    },
+    resetSelectType () {
+      this.type = ''
+      this.getData()
+    },
     // 导入弹框展示
     showImport () {
       this.importFlag = true
@@ -301,8 +372,14 @@ export default {
   .el-link + .el-link {
     margin-left: 10px;
   }
+  .conHeader {
+      width: 180px;
+      position: absolute;
+      border: 1px solid #efefef;
+      top: 0px;
+      z-index: 1;
+    }
   .header-popover {
-    // position: relative;
     color: red;
     .conHeader {
       width: 180px;

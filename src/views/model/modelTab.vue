@@ -16,7 +16,7 @@
       <el-button size="mini" @click="showCheck">物模型 TSL</el-button>
       <el-button size="mini" disabled>生成设备端代码</el-button>
     </div>
-    <el-table :data="list" :max-height="maxHeight" border>
+    <el-table :data="list" border v-if="!loading">
       <div slot="empty" class="mt30 mb20 df jc_c">
         <svg-icon icon-class="empty"></svg-icon>
         <div class="lh16 w300 tl ml20">
@@ -33,7 +33,7 @@
           {{abilityTypeObj[scope.row.abilityType]}}
         </template>
       </el-table-column>
-      <el-table-column label="功能名称（全部）" prop="name">
+      <el-table-column :render-header="renderName">
         <template slot-scope="scope">
           {{scope.row.name}}
           <el-tag>{{typeObj[scope.row.modelType]}}</el-tag>
@@ -75,13 +75,17 @@ export default {
     return {
       loading: false,
       list: [],
-      maxHeight:  window.innerHeight - 18 - 15 - 20 - 40,
       abilityTypeObj: dataObj.abilityTypeObj,
       typeObj: dataObj.typeObj,
       dataTypeTextObj: dataObj.dataTypeTextObj,
       showFlag: false,
       editAbility: null,
-      checkFlag: false
+      checkFlag: false,
+      type: '', // 用于列表功能类型筛选
+      selectType: {
+        type: ''
+      },
+      allData: []
     }
   },
   mounted () {
@@ -95,37 +99,8 @@ export default {
         if (res.code === 200) {
           // console.log(res)
           if (res.data) {
-            for (let key in res.data) {
-              if (key.indexOf('Json') > -1 && key !== 'allJson') {
-                const arr = res.data[key]
-                if (Array.isArray(arr)) {
-                  arr.forEach(item => {
-                    if (key.indexOf('base') > -1) {
-                      item.modelType = '1' // 1 标准
-                    }
-                    if (key.indexOf('custom') > -1) {
-                      item.modelType = '2' // 0 自定义
-                    }
-                    if (key.indexOf('Pro') > -1) {
-                      item.abilityType = '1' // 1 属性
-                    }
-                    if (key.indexOf('Ser') > -1) {
-                      item.abilityType = '2' // 2 服务
-                    }
-                    if (key.indexOf('Eve') > -1) {
-                      item.abilityType = '3' // 3 事件
-                    }
-                    item.accessMode_ = item.accessMode
-                    if (item.accessMode === 'rw') {
-                      item.accessMode = '0'
-                    } else if(item.accessMode == 'r') {
-                      item.accessMode = '1'
-                    }
-                  })
-                  this.list = this.list.concat(arr)
-                }
-              }
-            }
+            this.allData = res.data
+            this.dealDataByType()
           }
         } else {
           this.$message.error(res.message)
@@ -135,6 +110,46 @@ export default {
         this.$message.error('功能列表获取失败')
         this.loading = false
       })
+    },
+    dealDataByType () {
+      for (let key in this.allData) {
+        if (key.indexOf('Json') > -1 && key !== 'allJson') {
+          let arr = this.allData[key]
+          if (Array.isArray(arr)) {
+            arr.forEach(item => {
+              if (key.indexOf('base') > -1) {
+                item.modelType = '1' // 1 标准
+              }
+              if (key.indexOf('custom') > -1) {
+                item.modelType = '2' // 0 自定义
+              }
+              if (key.indexOf('Pro') > -1) {
+                item.abilityType = '1' // 1 属性
+              }
+              if (key.indexOf('Ser') > -1) {
+                item.abilityType = '2' // 2 服务
+              }
+              if (key.indexOf('Eve') > -1) {
+                item.abilityType = '3' // 3 事件
+              }
+              item.accessMode_ = item.accessMode
+              if (item.accessMode === 'rw') {
+                item.accessMode = '0'
+              } else if(item.accessMode == 'r') {
+                item.accessMode = '1'
+              }
+            })
+            arr = arr.filter(item => {
+              if (this.type) {
+                return item.modelType * 1 === this.type * 1
+              } else {
+                return item
+              }
+            })
+            this.list = this.list.concat(arr)
+          }
+        }
+      }
     },
     showDetail (row) {
       this.editAbility = JSON.parse(JSON.stringify(row))
@@ -154,6 +169,95 @@ export default {
     // 查看弹框关闭回调
     closeCheck () {
       this.checkFlag = false
+    },
+    popoverShow () {
+      this.selectType = {
+        type: this.type
+      }
+    },
+    // 头部渲染函数
+    renderName (h) {
+      return h('span', {}, [
+        h('span', {class: 'mr10'}, `功能名称（${this.type ? this.typeObj[this.type] : '全部'}）`),
+        h('el-popover', {
+          props: { width: '180', trigger: 'click' },
+          on: {
+            show: this.popoverShow
+          }
+        }, [
+          h('div', { attrs: {
+            class: 'conHeader'
+            }
+          }, [
+            h('div', {
+              class: 'hand',
+              on: {
+                click: () => {
+                  this.setSelectType('')
+                }
+              }
+            }, [
+              h('i', {
+                class: `${this.selectType.type == '' ? 'el-icon-check' : ''} mr10 blue dib w20`
+              }, ''),
+              h('span', {attrs: { class: 'f12'}}, '全部')
+            ]),
+            h('div', {class: 'hand', on: {
+                click: () => {
+                  this.setSelectType('1')
+                }
+              }}, [
+              h('i', {
+                class: `${this.selectType.type == '1' ? 'el-icon-check' : ''} mr10 blue dib w20`
+              }, ''),
+              h('span', {attrs: { class: 'f12'}}, '标准功能')
+            ]),
+            h('div', {class: 'hand', on: {
+                click: () => {
+                  this.setSelectType('2')
+                }
+              }}, [
+              h('i', {
+                class: `${this.selectType.type == '2' ? 'el-icon-check mr10 blue dib w20' : ''} mr10 blue dib w20`
+              }, ''),
+              h('span', {attrs: { class: 'f12'}}, '自定义功能')
+            ]),
+            h('div', {class: 'tc mt10'}, [
+              h('el-button', { attrs: {
+                type: 'primary',
+                size: 'mini'
+              }, on: {
+                click: () => {
+                  this.setSelectTypeConfrim()
+                }
+              }}, '确认'),
+              h('el-button', { attrs: {
+                size: 'mini'
+              }, on: {
+                click: () => {
+                  this.resetSelectType()
+                }
+              }}, '重置')
+            ])
+          ]),
+          h('svg-icon', { slot: 'reference', attrs: {
+            'icon-class': 'screen'
+          }}, '')
+        ])
+       ])
+    },
+    setSelectType (key) {
+      this.selectType = {
+        type: key
+      }
+    },
+    setSelectTypeConfrim () {
+      this.type = this.selectType.type
+      this.getData()
+    },
+    resetSelectType () {
+      this.type = ''
+      this.getData()
     }
   }
 }

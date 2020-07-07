@@ -31,10 +31,10 @@
         <el-form-item
           label="升级策略"
           label-width="150px"
-          prop="ugType"
+          prop="ugStrategy"
           required
         >
-          <el-select v-model="form.ugType" placeholder="请选择升级策略">
+          <el-select v-model="form.ugStrategy" placeholder="请选择升级策略">
             <el-option label="静态升级" value="1"></el-option>
             <el-option label="动态升级" value="2"></el-option>
           </el-select>
@@ -42,10 +42,10 @@
         <el-form-item
           label="升级范围"
           label-width="150px"
-          prop="scope"
+          prop="scopeType"
           required
         >
-          <el-select v-model="form.scope" placeholder="请选择升级范围">
+          <el-select v-model="form.scopeType" placeholder="请选择升级范围">
             <el-option label="全部" value="0"></el-option>
             <el-option label="定向" value="1"></el-option>
             <el-option label="区域" value="2"></el-option>
@@ -66,11 +66,11 @@
         <el-form-item
           label="固件推送速率"
           label-width="150px"
-          prop="ugDeviceCount"
+          prop="rate"
           required
         >
           <el-input
-            v-model="form.ugDeviceCount"
+            v-model="form.rate"
             auto-complete="off"
             placeholder="请输入每分钟推送的设备数"
           ></el-input>
@@ -82,12 +82,12 @@
           required
         >
           <el-select v-model="form.retryInterval">
-            <el-option label="不重试" value="1"></el-option>
-            <el-option label="立即重试" value="2"></el-option>
-            <el-option label="10分钟后重试" value="3"></el-option>
-            <el-option label="30分钟后重试" value="4"></el-option>
-            <el-option label="1小时后重试" value="5"></el-option>
-            <el-option label="24小时后重试" value="6"></el-option>
+            <el-option label="不重试" value="-1"></el-option>
+            <el-option label="立即重试" value="0"></el-option>
+            <el-option label="10分钟后重试" value="10"></el-option>
+            <el-option label="30分钟后重试" value="30"></el-option>
+            <el-option label="1小时后重试" value="60"></el-option>
+            <el-option label="24小时后重试" value="1440"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item
@@ -129,15 +129,15 @@ export default {
         serialVersionUID: 1,
         srcVersion: "",
         destVersion: "",
-        ugType: "1",
-        scope: "1",
+        ugStrategy: "1",
+        scopeType: "1",
         ugTimeType: "1",
         timeOut: "",
-        retryInterval: "1",
-        ugDeviceCount: ""
+        retryInterval: "0",
+        rate: ""
       },
       rules: {
-          ugDeviceCount: [
+        rate: [
               { required: true, message: '请输入固件推送速率', trigger: 'blur' }
           ],
           srcVersion: [

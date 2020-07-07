@@ -37,6 +37,7 @@
     </el-dialog>
 </template>
 <script>
+    import { upgradeDeviceList } from '@/api/fireware'
     export default {
         props: {
             chooseDeviceVisible: {
@@ -66,6 +67,17 @@
             }
         },
         methods: {
+             // 获取设备列表
+            getDeviceList () {
+              upgradeDeviceList(this.deviceForm).then(res => {
+                    this.deviceList = res.data.data
+                    this.deviceTotal = res.data.total
+                })
+            },
+            // 搜索设备
+            searchDev () {
+                this.getDeviceList()
+            },
             // 选择设备
             chooseSubmit () {
                 let checkedDeviceList = []

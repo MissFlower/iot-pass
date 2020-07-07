@@ -9,7 +9,7 @@
     <div class="mb20 df">
       <div class="flex1">
         <el-input
-          v-model="formData.name"
+          v-model.trim="formData.name"
           placeholder="角色名称"
           class="w200 searchInput"
           @keyup.enter.native="searchFun"

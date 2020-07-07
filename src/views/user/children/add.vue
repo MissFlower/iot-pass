@@ -20,10 +20,19 @@
           class="w200"
         ></el-input>
       </el-form-item>
-      <el-form-item label="密码：" prop="password">
+      <el-form-item label="密码：" prop="password" v-if="info">
         <el-input
           v-model="editItem.password"
-          :placeholder="info ? '不输入保持原来的密码' : '请输入密码'"
+          placeholder="不输入保持原来的密码"
+          show-password
+          class="w200"
+        ></el-input>
+        <span class="f12 ml20 c6">密码必须由8到14个字符包括大小写字母、数字组成</span>
+      </el-form-item>
+      <el-form-item label="密码：" prop="passwordAdd" v-else>
+        <el-input
+          v-model="editItem.password"
+          placeholder="请输入密码"
           show-password
           class="w200"
         ></el-input>
@@ -54,11 +63,15 @@ export default {
   props: ["info"],
   data() {
     const validatePassword = (value, rule, callback) => {
-      const pwdRegex = new RegExp('(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])');
-      if (!pwdRegex.test(this.editItem.password) && this.editItem.password !== "") {
-        callback(new Error("您的密码复杂度太低"));
+      if (!this.editItem.password && this.info) {
+        callback()
       } else {
-        callback();
+        const pwdRegex = new RegExp('(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])');
+        if (!pwdRegex.test(this.editItem.password) && this.editItem.password !== "") {
+          callback(new Error("您的密码复杂度太低"));
+        } else {
+          callback();
+        }
       }
     };
     const validatePhone = (rule, value, callback) => {
@@ -91,6 +104,12 @@ export default {
         ],
         password: [
           { required: false, validator: validatePassword, trigger: "blur" },
+          {
+            min: 8, max: 14, message: '长度在 8 到 14 个字符', trigger: 'blur'
+          }
+        ],
+        passwordAdd: [
+          { required: true, validator: validatePassword, trigger: "blur" },
           {
             min: 8, max: 14, message: '长度在 8 到 14 个字符', trigger: 'blur'
           }

@@ -9,19 +9,27 @@
     <div class="mb20 df">
       <div class="flex1">
         <el-input
-          v-model="formData.account"
+          v-model.trim="formData.account"
           placeholder="请输入账号名"
-          class="w200 mr20"
-          suffix-icon="el-icon-search"
+          class="w200 mr20 searchInput"
           @keyup.enter.native="searchAccountFun"
-        ></el-input>
+        >
+          <span slot="suffix">
+            <i class="el-icon-search hand" @click="searchAccountFun"></i>
+            <i class="el-icon-close hand" v-if="formData.account != ''" @click="clearFun('account')"></i>
+          </span>
+        </el-input>
         <el-input
-          v-model="formData.phone"
+          v-model.trim="formData.phone"
           placeholder="请输入手机号"
-          class="w200"
-          suffix-icon="el-icon-search"
+          class="w200 searchInput"
           @keyup.enter.native="searchPhoneFun"
-        ></el-input>
+        >
+          <span slot="suffix">
+            <i class="el-icon-search hand" @click="searchPhoneFun"></i>
+            <i class="el-icon-close hand" v-if="formData.phone != ''" @click="clearFun('phone')"></i>
+          </span>
+        </el-input>
       </div>
       <el-button
         v-if="authArr.indexOf('mgr_add') > -1"
@@ -157,6 +165,9 @@ export default {
           this.$message.error("用户列表获取失败");
           this.loading = false;
         });
+    },
+    clearFun(key) {
+      this.formData[key] = ''
     },
     searchAccountFun() { // 账户名筛选函数
       if (this.$fun.trim(this.formData.account === "")) {

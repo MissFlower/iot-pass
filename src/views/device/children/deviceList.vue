@@ -34,7 +34,7 @@
 
     <div class="mb20 df jc_sb">
       <div class="df">
-        <el-input placeholder="请输入名称" v-model="searchInputValue" @change="searchBtnTouch">
+        <el-input placeholder="请输入名称" v-model="searchInputValue" class="searchInput" @change="searchBtnTouch">
           <el-select
             class="w120"
             v-model="searchTypeSelect"
@@ -45,9 +45,18 @@
             <el-option label="设备名称" value="1"></el-option>
             <el-option label="备注名称" value="2"></el-option>
           </el-select>
+          <span slot="suffix">
+            <i class="el-icon-search hand" @click="searchBtnTouch"></i>
+            <i class="el-icon-close hand" v-if="searchInputValue != ''" @click="clearFun('searchInputValue')"></i>
+          </span>
         </el-input>
-        <el-input class="ml10 mr10 w150" placeholder="固件版本" v-model="fmVersionValue" @change="searchBtnTouch"></el-input>
-        <el-button icon="el-icon-search" @click="searchBtnTouch"></el-button>
+        <el-input class="ml10 mr10 w150 searchInput" placeholder="固件版本" v-model="fmVersionValue" @change="searchBtnTouch">
+          <span slot="suffix">
+            <i class="el-icon-search hand" @click="searchBtnTouch"></i>
+            <i class="el-icon-close hand" v-if="fmVersionValue != ''" @click="clearFun('fmVersionValue')"></i>
+          </span>
+        </el-input>
+        <!-- <el-button icon="el-icon-search" @click="searchBtnTouch"></el-button> -->
       </div>
       <div>
         <el-button v-if="authArr.indexOf('device_new')>-1" type="primary" @click="toNewDevice(false)">添加设备</el-button>
@@ -271,8 +280,11 @@ export default {
       this.searchInputValue = '';
       this.fmVersionValue = '';
     },
-
-
+    // 清除按钮
+    clearFun(key) {
+      this[key] = ''
+      this.getDeviceList()
+    },
     //搜索按钮
     searchBtnTouch() {
       this.getDeviceList();

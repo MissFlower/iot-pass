@@ -9,7 +9,7 @@
     <div class="mb20 df">
       <div class="flex1">
         <el-input
-          v-model="formData.name"
+          v-model.trim="formData.name"
           placeholder="请输入菜单名"
           class="w200 mr20 searchInput"
           @keyup.enter.native="searchNameFun"
@@ -20,7 +20,7 @@
           </span>
         </el-input>
         <el-input
-          v-model="formData.code"
+          v-model.trim="formData.code"
           placeholder="请输入菜单编号"
           class="w200 searchInput"
           @keyup.enter.native="searchCodeFun"

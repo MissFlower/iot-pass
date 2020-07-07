@@ -5,7 +5,7 @@
  -->
 <template>
   <div id="menu_right_con" v-loading="loading">
-    <div class="mb20">{{ activeItem ? "编辑" : "创建" }}菜单</div>
+    <div class="mb20 ml20">{{ activeItem ? "编辑" : "创建" }}菜单</div>
     <el-form
       ref="form"
       :model="info"

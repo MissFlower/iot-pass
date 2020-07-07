@@ -10,11 +10,13 @@
       <div class="search_box">
         <el-input
           placeholder="请输入产品名称查询"
-          prefix-icon="el-icon-search"
-          clearable
-          v-model="productName"
-          @clear="queryProduct"
+          v-model.trim="productName"
+          class="searchInput"
           @keyup.enter.native="queryProduct">
+          <span slot="suffix">
+            <i class="el-icon-search hand" @click="queryProduct"></i>
+            <i class="el-icon-close hand" v-if="productName != ''" @click="clearFun"></i>
+          </span>
         </el-input>
       </div>
       
@@ -48,6 +50,13 @@ export default {
       loading:false,  
     }
   },
+  watch: {
+    productName: function (newVal, oldVal) {
+      if (newVal === '' && oldVal !== '') {
+        this.queryProduct()
+      }
+    }
+  },
   created() {     
     this.getList();
   },
@@ -57,6 +66,10 @@ export default {
     }
   },
   methods: {
+      clearFun () {
+        this.productName = ''
+        this.queryProduct()
+      },
       //产品名称搜索
       queryProduct(){
         this.tableData.pageNum = 1;
@@ -79,8 +92,9 @@ export default {
                     )
                   : "";
                 })
-                this.listData = res.data.data;  
               }
+              this.listData = res.data.data;  
+              this.tableData.total = res.data.total
             }else {
               this.$message.warning(res.message);
             }

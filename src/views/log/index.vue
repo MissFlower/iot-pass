@@ -8,7 +8,12 @@
     <!-- 搜索部分 -->
     <el-form :inline="true" :model="formInline" size="mini">
       <el-form-item>
-        <el-input v-model="formInline.productKey" clearable prefix-icon="el-icon-search" placeholder="产品key查询"></el-input>
+        <el-input v-model="formInline.productKey" class="searchInput" placeholder="产品key查询">
+          <span slot="suffix">
+            <i class="el-icon-search hand" @click="search"></i>
+            <i class="el-icon-close hand" v-if="formInline.productKey != ''" @click="clearFun('productKey')"></i>
+          </span>
+        </el-input>
       </el-form-item>
       <el-form-item>
         <el-select v-model="formInline.logType" placeholder="日志类型">
@@ -19,10 +24,20 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="formInline.deviceName" clearable prefix-icon="el-icon-search" placeholder="设备名称"></el-input>
+        <el-input v-model="formInline.deviceName" class="searchInput" placeholder="设备名称">
+          <span slot="suffix">
+            <i class="el-icon-search hand" @click="search"></i>
+            <i class="el-icon-close hand" v-if="formInline.deviceName != ''" @click="clearFun('deviceName')"></i>
+          </span>
+        </el-input>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="formInline.keyword" clearable prefix-icon="el-icon-search" placeholder="关键字"></el-input>
+        <el-input v-model="formInline.keyword" class="searchInput" placeholder="关键字">
+          <span slot="suffix">
+            <i class="el-icon-search hand" @click="search"></i>
+            <i class="el-icon-close hand" v-if="formInline.keyword != ''" @click="clearFun('keyword')"></i>
+          </span>
+        </el-input>
       </el-form-item>
       <el-form-item>
         <el-date-picker type="datetime" v-model="formInline.startTime" value-format="yyyy-MM-dd HH:mm:ss" placeholder="开始时间"></el-date-picker>
@@ -31,7 +46,12 @@
         <el-date-picker type="datetime" v-model="formInline.endTime" value-format="yyyy-MM-dd HH:mm:ss" placeholder="截止时间"></el-date-picker>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="formInline.messageId" clearable prefix-icon="el-icon-search" placeholder="消息id"></el-input>
+        <el-input v-model="formInline.messageId" class="searchInput" placeholder="消息id">
+          <span slot="suffix">
+            <i class="el-icon-search hand" @click="search"></i>
+            <i class="el-icon-close hand" v-if="formInline.messageId != ''" @click="clearFun('messageId')"></i>
+          </span>
+        </el-input>
       </el-form-item>
       <el-form-item>
         <el-select v-model="formInline.status" placeholder="上下行状态">
@@ -108,6 +128,10 @@
       //分页
       changePage(){
         this.getList()
+      },
+      clearFun (key) {
+        this.formInline[key] = ''
+        this.search()
       },
       //搜索
       search(event){

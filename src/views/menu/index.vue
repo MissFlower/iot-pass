@@ -6,6 +6,11 @@
 
 <template>
   <div id="menu">
+    <i
+      v-if="activeIndex == 2"
+      class="el-icon-back b pre-icon"
+      @click="showCon(1)"
+    ></i>
     <menu-list ref="list" v-if="activeIndex == 1"></menu-list>
     <edit-menu
       v-if="activeIndex == 2"

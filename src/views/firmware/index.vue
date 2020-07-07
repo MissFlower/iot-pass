@@ -39,8 +39,14 @@
             <el-input
               v-model="form.fmName"
               placeholder="请输入固件名称"
+              class="searchInput"
               @keyup.enter.native="searchList"
-            ></el-input>
+            >
+              <span slot="suffix">
+                <i class="el-icon-search hand" @click="searchList"></i>
+                <i class="el-icon-close hand" v-if="form.fmName != ''" @click="clearFun"></i>
+              </span>
+            </el-input>
           </el-form-item>
         </el-form>
         <el-table :data="list" border stripe v-loading="loading">
@@ -241,6 +247,10 @@ export default {
         .catch(error => {
           this.$message.error(error);
         });
+    },
+    clearFun () {
+      this.form.fmName = ''
+      this.searchList()
     },
     // 搜索固件列表
     searchList() {

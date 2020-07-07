@@ -89,7 +89,7 @@
         if(value.indexOf('//')!= -1){
             accessFlag = false;
         }
-        if(this.customForm.topicAccess === 2){  
+        if(this.customForm.topicAccess === 1){  
             res2 = /^[\w/+#]{1,64}$/;         
             let sy = value.indexOf('#');
             if(sy >= 0){

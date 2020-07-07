@@ -9,6 +9,12 @@ module.exports = {
     proxy: null
   },
   chainWebpack: config => {
+    config
+      .plugin('html')
+      .tap(args => {
+        args[0].title= 'IOT管理系统'
+        return args
+      })
     // 一个规则里的 基础Loader
     // svg是个基础loader
     const svgRule = config.module.rule("svg");

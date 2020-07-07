@@ -70,7 +70,17 @@ export default {
             if(res.code === 200){
               let {data,...pagination} =  res.data;
               this.tableData = pagination;
-              this.listData = res.data.data;          
+              if (res.data && res.data.data.length > 0) {
+                res.data.data.forEach(item => {
+                  item.createTime_ = item.createTime
+                  ? this.$fun.dateFormat(
+                      this.$fun.strFormatDate(item.createTime),
+                      "yyyy-MM-dd hh:mm:ss"
+                    )
+                  : "";
+                })
+                this.listData = res.data.data;  
+              }
             }else {
               this.$message.warning(res.message);
             }

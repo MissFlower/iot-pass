@@ -345,7 +345,7 @@ export default {
     },
     formatCreateTime (row) {
       return row.createTime ? this.$fun.dateFormat(
-          new Date(row.createTime),
+          this.$fun.strFormatDate(row.createTime),
           "yyyy-MM-dd hh:mm:ss"
       ): ''
     },

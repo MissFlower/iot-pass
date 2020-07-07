@@ -19,7 +19,7 @@
           <el-form-item prop="account">
             <el-input
               v-model="formData.account"
-              placeholder="请输出账户名"
+              placeholder="请输入账户名"
             ></el-input>
           </el-form-item>
           <el-form-item prop="password">
@@ -31,13 +31,13 @@
             <!-- <span class="f12 c6">密码必须由8到14个字符包括大小写字母、数字组成</span> -->
           </el-form-item>
           <el-form-item prop="phone">
-            <el-input v-model="formData.phone" placeholder="请输出手机号" />
+            <el-input v-model="formData.phone" placeholder="请输入手机号" />
           </el-form-item>
           <el-form-item prop="code">
             <div class="pr wp100 df ai_c">
               <el-input
                 v-model="code"
-                placeholder="请输出验证码"
+                placeholder="请输入验证码"
                 class="flex1"
               />
               <el-button class="ml10 w100" @click="handleSendCode">

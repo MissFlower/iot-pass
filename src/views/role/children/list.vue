@@ -106,7 +106,7 @@ export default {
               res.data.data.forEach(item => {
                 item.createTime_ = item.createTime
                   ? this.$fun.dateFormat(
-                      new Date(item.createTime),
+                      this.$fun.strFormatDate(item.createTime),
                       "yyyy-MM-dd hh:mm:ss"
                     )
                   : "";

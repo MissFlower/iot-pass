@@ -17,7 +17,7 @@
         label="操作权限"
         width="100">
         <template slot-scope="scope">          
-          {{scope.row.topicAccess === 1 ? '发布' : (scope.row.topicAccess === 2 ? '订阅' : '发布和订阅')}}             
+          {{scope.row.topicAccess === 1 ? '订阅' : (scope.row.topicAccess === 2 ? '发布' : '发布和订阅')}}             
         </template>
       </el-table-column>
 
@@ -49,8 +49,8 @@
       <el-form ref="customDialog" :model="customForm" label-position="top" :rules="customRules">
          <el-form-item label="设备操作权限" prop="topicAccess">
           <el-select v-model="customForm.topicAccess" style="width:100%" @change="topicAccessChange">
-            <el-option label="发布" :value="1"></el-option>
-            <el-option label="订阅" :value="2"></el-option>
+            <el-option label="订阅" :value="1"></el-option>
+            <el-option label="发布" :value="2"></el-option>
             <el-option label="发布和订阅" :value="3"></el-option>
           </el-select>
         </el-form-item>
@@ -104,7 +104,6 @@
             for(let i = 0; i < value.length; i++){
               if(value[i] === '+'){
                 if(value[i - 1] && value[i - 1] != '/'){
-                  console.log(value[i - 1])
                   accessFlag = false;
                   break;
                 }
@@ -167,9 +166,11 @@
       //编辑topic
       editTopic(row){
         this.dialogFormVisible = true;
-        console.log(row)
         this.customForm.topicAccess = row.topicAccess;
-        this.customForm.topicName = row.topicName;
+        let arr = row.topicName.split('/')
+        const index = arr.indexOf('user')
+        arr = arr.splice(index+1, arr.length - index - 1)
+        this.customForm.topicName = arr.join('/');
         this.customForm.topicDescribe = row.topicDescribe || '';
         this.submitTopicId = row.topicId;
       },
@@ -222,7 +223,6 @@
       //自定义topic新增、编辑
       submitTopic(id){
         var obj = {};
-        console.log(this.submitTopicId)
         if(this.submitTopicId){
           obj = Object.assign({},obj,{topicId: this.submitTopicId})
         }

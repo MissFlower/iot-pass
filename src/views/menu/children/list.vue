@@ -14,6 +14,7 @@
           class="w200 mr20"
           suffix-icon="el-icon-search"
           @keyup.enter.native="searchNameFun"
+          :clearable="formData.name != ''"
         ></el-input>
         <el-input
           v-model="formData.code"
@@ -21,6 +22,7 @@
           class="w200"
           suffix-icon="el-icon-search"
           @keyup.enter.native="searchCodeFun"
+          :clearable="formData.code != ''"
         ></el-input>
       </div>
       <el-button

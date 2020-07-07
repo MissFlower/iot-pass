@@ -4,7 +4,7 @@
       <el-table-column label="ID" prop="id"></el-table-column>
       <el-table-column label="产品KEY" prop="productKey"></el-table-column>
       <el-table-column label="产品名称" prop="productName"></el-table-column>
-      <el-table-column label="创建时间" prop="createTime"></el-table-column>
+      <el-table-column label="创建时间" prop="createTime_" width="150"></el-table-column>
       <el-table-column label="节点类型">
         <template slot-scope="scope">
           {{nodeTypeData(scope.row.nodeType)}}

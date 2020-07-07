@@ -86,7 +86,7 @@ export default {
       if (!this.ruleForm.fmDesc) {
         this.ruleForm.fmDesc = this.detailInfo.fmDesc;
       }
-      let formData = new FormData();
+      // let formData = new FormData();
       // formData.append("fmName", this.ruleForm.fmName);
       // formData.append("id", this.ruleForm.id);
       // formData.append("fmDesc", this.ruleForm.fmDesc);

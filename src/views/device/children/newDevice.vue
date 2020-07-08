@@ -64,7 +64,7 @@ export default {
           { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
         ],
         nickName: [
-          { required: true, message: '请输入备注名称', trigger: 'blur' },
+          { required: false, message: '请输入备注名称', trigger: 'blur' },
           { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
         ]
       }

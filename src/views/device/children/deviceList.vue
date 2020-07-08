@@ -7,12 +7,12 @@
   <div v-loading="loading">
     <h2>设备管理</h2>
     <div class="mb20 df ai_c">
-      <el-select class="w200" v-model="productSelIndex" placeholder="请选择产品" @change="getDeviceStatistics">
+      <el-select class="w200" v-model="productId" placeholder="请选择产品" @change="changeProductFun">
         <el-option
           v-for="(item,index) in productList"
           :key="index"
           :label="item.productName"
-          :value="index">
+          :value="item.id">
         </el-option>
       </el-select>
 
@@ -130,7 +130,8 @@ export default {
         pageSize: 10, //一页大小
         pageNum: 0, // 第几页 从0开始
       },
-      productSelIndex: 0,
+      // productSelIndex: 0,
+      productId: '',
       productList: [{productName:'全部产品'}],
       selProduck: '',
       searchTypeSelect: "1",
@@ -152,36 +153,25 @@ export default {
   },
 
   mounted() {
+    if (this.$route.query.productId) {
+      this.productId = this.$route.query.productId
+    }
     //获取产品列表
     this.getProductList();
-    //获取指定产品设备统计
-    this.getDeviceStatistics();
-
-    let productId = this.$route.query.productId;
-    if(productId==undefined || !productId.length){
-      //获取设备列表
-      this.getDeviceList();
-    }
+    this.changeProductFun()
   },
 
   methods: {
     //获取设备列表
     getDeviceList() {
       this.loading = true;
-
-      //获取所选产品
-      var productId = '';
-      if(this.productSelIndex != 0){
-        productId = this.productList[this.productSelIndex].id;
-      }
-
       deviceList({
         deviceName: this.searchTypeSelect == "1" ? this.searchInputValue : "",
         nickName: this.searchTypeSelect == "2" ? this.searchInputValue : "",
         fmVersion: this.fmVersionValue,
         pageNum: this.tableData.pageNum,
         pageSize: this.tableData.pageSize,
-        productId
+        productId: this.productId
       })
         .then(res => {
           if (res.code === 200) {
@@ -215,10 +205,8 @@ export default {
         });
     },
 
-
     //获取产品列表
     getProductList(){
-      let productId = this.$route.query.productId;
       productList({
         pageNum: 1,
         pageSize: 100,
@@ -229,39 +217,25 @@ export default {
           if (res.data) {
             var list = res.data.data;
             list.unshift({productName:'全部产品'});
-            var selIndex = 0;
-            if(productId){
-              list.map(function(value,index){
-                if(value.id == productId){
-                  selIndex = index;
-                }
-              });
-            }
             this.productList = list;
-            this.productSelIndex = selIndex;
-
-            if(productId){
-              this.getDeviceList();
-            }
           }
         }
       })
       .catch(() => {
       });
     },
-
-
+    // 产品选择改变调用函数，也是初始函数化调用的函数
+    changeProductFun () {
+      this.tableData.pageNum = 1
+      //获取设备列表
+      this.getDeviceList();
+      //获取指定产品设备统计
+      this.getDeviceStatistics();
+    },
     //获取指定产品设备统计
     getDeviceStatistics(){
-
-      //获取所选产品
-      var productId = '';
-      if(this.productSelIndex != 0){
-        productId = this.productList[this.productSelIndex].id;
-      }
-
       deviceStatistics({
-        productId
+        productId: this.productId
       })
       .then(res => {
         if (res.code === 200) {
@@ -275,7 +249,6 @@ export default {
       })
       .catch(() => {
       });
-
       //清空设备名称、固件版本筛选条件
       this.searchInputValue = '';
       this.fmVersionValue = '';

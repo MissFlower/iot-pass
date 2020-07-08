@@ -5,12 +5,11 @@
  -->
 <template>
   <div id="account">
-    <svg-icon
-      v-if="activeIndex == 3"
-      icon-class="pre"
-      class="pre-icon"
+    <i
+      v-if="activeIndex == 3 || activeIndex == 1"
+      class="el-icon-back b pre-icon"
       @click="switchCon(0)"
-    ></svg-icon>
+    ></i>
     <account-list v-if="activeIndex == 0"></account-list>
     <add-account v-if="activeIndex == 1" :info="selectRow"></add-account>
     <role-list

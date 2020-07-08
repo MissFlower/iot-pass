@@ -118,19 +118,23 @@ export default {
   },
   data() {
     const validSrcVersion = (rule, value, callback) => {
-      if (value !== '') {
+      if (value === '') {
+        callback(new Error('请输入待升级版本号'))
+      } else if (value !== '') {
         if (this.ruleForm.destVersion !== '') {
           this.$refs.ruleForm.validateField('destVersion');
+        }  else {
+          callback()
         }
-      } else {
-        callback
       }
     }
     const validDrcVersion = (rule, value, callback) => {
-      if (this.ruleForm.srcVersion !== '' && this.ruleForm.destVersion !== '' && this.ruleForm.srcVersion === this.ruleForm.destVersion) {
+      if (value === '') {
+        callback(new Error('请输入升级后版本号'))
+      } else if (this.ruleForm.srcVersion !== '' && this.ruleForm.destVersion !== '' && this.ruleForm.srcVersion === this.ruleForm.destVersion) {
         callback(new Error('升级前后版本号不能相同'))
       } else {
-        callback
+        callback()
       }
     }
     return {
@@ -171,11 +175,11 @@ export default {
           ],
           srcVersion: [
               { required: true, message: '请输入待升级版本号', trigger: 'blur' },
-              { validator: validSrcVersion, trigger: 'change'}
+              // { required: true,validator: validSrcVersion, trigger: 'change'}
           ],
           destVersion: [
               { required: true, message: '请输入升级后版本号', trigger: 'blur' },
-              { validator: validDrcVersion, trigger: 'change'}
+              // {required: true, validator: validDrcVersion, trigger: 'change'}
           ],
           productId: [
             { required: true, message: '请选择所属产品', trigger: 'blur' }
@@ -189,7 +193,9 @@ export default {
   methods: {
     // 提交新增固件
     addFmSubmit(formName) {
+      console.log('-------')
       this.$refs[formName].validate(valid => {
+        console.log(valid)
         if (valid) {
             let formData = {};
             for (let item in this.ruleForm) {

@@ -69,7 +69,7 @@ export default {
         }
       })
       const list = dealUserTreeFun(this.menuLists)
-      if (list.length > 0 && list[0].children) {
+      if (list && list.length > 0 && list[0].children) {
         this.list = this.baseList.concat(list[0].children)
       }
     }

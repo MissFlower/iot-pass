@@ -53,6 +53,9 @@ export default {
     // },
     permissionRouter() {
       return this.$store.state.router.addRoutes
+    },
+    menuLists () {
+      return this.$store.state.app.menuLists
     }
   },
   watch: {
@@ -62,6 +65,7 @@ export default {
   },
   mounted() {
     this.list = this.baseList.concat(this.permissionRouter)
+    console.log(this.menuLists)
   }
 };
 </script>

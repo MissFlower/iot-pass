@@ -24,6 +24,7 @@ function fun (routes, codeArr, list) {
       const len = codeArr.indexOf(item.meta.code);
       item.meta.icon = list[len].icon
       item.meta.name = list[len].name
+      list[len].path = item.path
       routerArr.push(item)
       if (!item.hidden && item.children && item.children.length > 0) {
         item.children = fun(item.children, codeArr, list)

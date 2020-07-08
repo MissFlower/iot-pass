@@ -216,7 +216,7 @@ export default {
         if (res.code === 200) {
           if (res.data) {
             var list = res.data.data;
-            list.unshift({productName:'全部产品'});
+            list.unshift({productName:'全部产品', id: ''});
             this.productList = list;
           }
         }
@@ -384,7 +384,14 @@ export default {
 
     //添加设备
     toNewDevice(batch){
-      this.selProduck = this.productList[this.productSelIndex];
+      for (let i = 0; i < this.productList.length; i++) {
+        const item = this.productList[i]
+        if (item.id === this.productId) {
+          this.selProduck = item
+          break
+        }
+      }
+      // this.selProduck = this.productList[this.productSelIndex];
 
       if(batch){//批量添加
         this.showBatchNewDevice = true;

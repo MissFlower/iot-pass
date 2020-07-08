@@ -34,6 +34,7 @@
       <!-- <el-table-column label="排序"></el-table-column> -->
       <el-table-column label="描述" prop="description"></el-table-column>
       <el-table-column label="创建时间" prop="createTime_"></el-table-column>
+      <el-table-column label="更新时间" prop="updateTime_"></el-table-column>
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
           <svg-icon
@@ -108,12 +109,8 @@ export default {
           if (res.code === 200) {
             if (res.data && res.data.data && res.data.data.length > 0) {
               res.data.data.forEach(item => {
-                item.createTime_ = item.createTime
-                  ? this.$fun.dateFormat(
-                      this.$fun.strFormatDate(item.createTime),
-                      "yyyy-MM-dd hh:mm:ss"
-                    )
-                  : "";
+                item.createTime_ = item.createTime ? this.$fun.dateFormat(this.$fun.strFormatDate(item.createTime), "yyyy-MM-dd hh:mm:ss") : "";
+                item.updateTime_ = item.updateTime ? this.$fun.dateFormat(this.$fun.strFormatDate(item.updateTime), "yyyy-MM-dd hh:mm:ss") : "";
               });
               this.list = res.data.data;
             }

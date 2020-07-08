@@ -7,7 +7,7 @@
     <div class="details" v-if="JSON.stringify(batchDetailList) !== '{}'">
         <div class="details-tit clearfix">
             <h2>
-                <span class="go_back" @click="goBack"><i class="el-icon-back"></i></span>{{batchDetailList.id}}
+                <span class="go_back" @click="goBack"><i class="el-icon-back"></i></span>{{batchDetailList.batchNo}}
             </h2>
             <el-tag :type="deviceType" class="el_tag">{{batchDetailList.ugStatus === 1 ? '待升级' : batchDetailList.ugStatus === 2 ? '升级中' : batchDetailList.ugStatus === 3 ? '已完成': '已取消'}}</el-tag>
         </div>
@@ -19,20 +19,24 @@
                         <el-table-column label="产品" prop="productName"></el-table-column>
                         <el-table-column
                             label="当前版本号"
-                            prop="destVersion"
-                        ></el-table-column>
+                        >
+                            <template slot-scope="scope">
+                                {{scope.row.status == 4 ? scope.row.destVersion : scope.row.srcVersion}}
+                            </template>
+                        </el-table-column>
                         <el-table-column
                             label="状态更新时间"
                             prop="updateTime"
                         ></el-table-column>
                         <el-table-column
                             label="状态"
-                            prop="upgradeStatus"
-                            :formatter="formatUpgradeStatus"
-                        ></el-table-column>
+                            prop="status"
+                        >
+                            <template slot-scope="scope">{{upgradeStatusObj[scope.row.status] ? upgradeStatusObj[scope.row.status] : scope.row.status}}</template>
+                        </el-table-column>
                         <el-table-column label="操作">
                             <template slot-scope="scope">
-                                <a class="oprate_btn" v-if="scope.row.upgradeStatus===2 || scope.row.upgradeStatus===3" @click="upgrade(scope.row.upgradeId)">重升级</a>
+                                <a class="oprate_btn" v-if="scope.row.upgradeStatus == 2 || scope.row.upgradeStatus == 3" @click="upgrade(scope.row.upgradeId)">重升级</a>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -45,7 +49,7 @@
                                     批次ID
                                 </div>
                                 <div class="edit_info-rf">
-                                    {{batchDetailList.id}}
+                                    {{batchDetailList.batchNo}}
                                 </div>
                             </div>
                         </el-col>
@@ -85,7 +89,7 @@
                                     升级策略
                                 </div>
                                 <div class="edit_info-rf">
-                                    {{batchDetailList.ugType === 1 ? '静态升级' : '动态升级'}}
+                                    {{batchDetailList.ugStrategy == 1 ? '静态升级' : (batchDetailList.ugStrategy == 2 ? '动态升级' : batchDetailList.ugStrategy)}}
                                 </div>
                             </div>
                         </el-col>
@@ -95,7 +99,7 @@
                                     升级范围
                                 </div>
                                 <div class="edit_info-rf">
-                                    {{batchDetailList.scope === 0 ? '全部': batchDetailList.scope ===1 ? '定向': batchDetailList.scope === 2 ? '区域': '灰度'}}
+                                    {{batchDetailList.scopeType == 0 ? '全部': (batchDetailList.scopeType == 1 ? '定向': (batchDetailList.scopeType == 2 ? '区域': '灰度'))}}
                                 </div>
                             </div>
                         </el-col>
@@ -105,7 +109,7 @@
                                     升级时间
                                 </div>
                                 <div class="edit_info-rf">
-                                    {{batchDetailList.updateTime}}
+                                    {{batchDetailList.ugTimeType}}
                                 </div>
                             </div>
                         </el-col>
@@ -115,7 +119,7 @@
                                     固件推送速率
                                 </div>
                                 <div class="edit_info-rf">
-                                    {{batchDetailList.ugDeviceCount}}
+                                    {{batchDetailList.rate}}
                                 </div>
                             </div>
                         </el-col>
@@ -159,7 +163,8 @@
                     id: '', // 批次id
                     pageSize: 20,
                     pageNum: 1,
-                    total: 0
+                    total: 0,
+                    batchNo: ''
                 },
                 devManage: { // 设备列表参数
                     deviceName: '',
@@ -168,12 +173,23 @@
                     total: 0,
                     pageNum: 1,
                     pageSize: 20
+                },
+                batchNo: '',
+                // 升级状态
+                upgradeStatusObj: {
+                    0: '初始',
+                    1: '待推送',
+                    2: '已推送',
+                    3: '升级中',
+                    4: '成功',
+                    5: '失败'
                 }
             }
         },
         mounted () {
             this.batchManage.fmId = this.$route.query.id
-            this.upgradeId = this.$route.query.upgradeId
+            // this.upgradeId = this.$route.query.upgradeId
+            this.batchManage.batchNo = this.$route.query.batchNo
             this.productName = this.$route.query.productName
             this.getDetails()
             this.getDeviceList()
@@ -185,7 +201,7 @@
                     'pageNum': this.batchManage.pageNum,
                     'pageSize': this.batchManage.pageSize,
                     'fmId': this.batchManage.fmId,
-                    'id': this.upgradeId
+                    'batchNo': this.batchManage.batchNo
                 };
                 upgradeList (data).then ( res => {
                     if (res.code === 200) {
@@ -196,7 +212,8 @@
             // 获取设备列表
             getDeviceList () {
                 let data = {
-                  upgradeId: this.upgradeId,
+                  fmId: this.batchManage.fmId,
+                  batchNo: this.batchManage.batchNo,
                   pageNum: this.devManage.pageNum,
                   pageSize: this.devManage.pageSize
                 };
@@ -210,19 +227,6 @@
                         this.$message.error(res.message);
                     }
                 })
-            },
-            // 格式化表格内容
-            formatUpgradeStatus (row) {
-                switch (row.upgradeStatus) {
-                    case 0:
-                      return "待升级";
-                  case 1:
-                    return "升级中";
-                  case 2:
-                    return "已完成";
-                  case 3:
-                    return "升级失败";
-                }
             },
             // 重新升级
             upgrade(upgradeId) {

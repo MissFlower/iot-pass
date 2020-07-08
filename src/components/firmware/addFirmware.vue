@@ -27,7 +27,7 @@
         <el-form-item label="固件名称" prop="fmName" required>
           <el-input type="text" v-model="ruleForm.fmName" placeholder="请输入固件名称"></el-input>
         </el-form-item>
-        <el-form-item label="所属产品" required>
+        <el-form-item label="所属产品" prop="productId" required>
           <el-select
             v-model="productsValue"
             filterable
@@ -64,10 +64,10 @@
         <!--<el-option label="default" value="1"></el-option>-->
         <!--</el-select>-->
         <!--</el-form-item>-->
-        <el-form-item label="待升级版本号" prop="srcVersion" required>
+        <el-form-item label="待升级版本号" prop="srcVersion">
           <el-input type="text" v-model="ruleForm.srcVersion"></el-input>
         </el-form-item>
-        <el-form-item label="升级后版本号" prop="destVersion" required>
+        <el-form-item label="升级后版本号" prop="destVersion">
           <el-input type="text" v-model="ruleForm.destVersion"></el-input>
         </el-form-item>
         <el-form-item label="签名算法" required>
@@ -117,6 +117,22 @@ export default {
     }
   },
   data() {
+    const validSrcVersion = (rule, value, callback) => {
+      if (value !== '') {
+        if (this.ruleForm.destVersion !== '') {
+          this.$refs.ruleForm.validateField('destVersion');
+        }
+      } else {
+        callback
+      }
+    }
+    const validDrcVersion = (rule, value, callback) => {
+      if (this.ruleForm.srcVersion !== '' && this.ruleForm.destVersion !== '' && this.ruleForm.srcVersion === this.ruleForm.destVersion) {
+        callback(new Error('升级前后版本号不能相同'))
+      } else {
+        callback
+      }
+    }
     return {
       fileList: [],
       uploadText: "点击上传",
@@ -154,10 +170,15 @@ export default {
               { required: true, message: '请输入固件名称', trigger: 'blur' }
           ],
           srcVersion: [
-              { required: true, message: '请输入待升级版本号', trigger: 'blur' }
+              { required: true, message: '请输入待升级版本号', trigger: 'blur' },
+              { validator: validSrcVersion, trigger: 'change'}
           ],
           destVersion: [
-              { required: true, message: '请输入升级后版本号', trigger: 'blur' }
+              { required: true, message: '请输入升级后版本号', trigger: 'blur' },
+              { validator: validDrcVersion, trigger: 'change'}
+          ],
+          productId: [
+            { required: true, message: '请选择所属产品', trigger: 'blur' }
           ]
       }
     };

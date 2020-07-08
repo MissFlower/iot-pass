@@ -51,7 +51,12 @@
         </el-form>
         <el-table :data="list" border stripe v-loading="loading">
           <el-table-column label="固件ID" prop="id"></el-table-column>
-          <el-table-column label="固件名称" prop="fmName"></el-table-column>
+          <el-table-column label="固件名称" prop="fmName">
+            <template slot-scope="scope">
+              {{scope.row.fmName}}
+              <el-tag type="primary">{{scope.row.fmType == 1 ? '整包' : (scope.row.fmType == 2 ? '差分' : scope.row.fmType)}}</el-tag>
+            </template>
+          </el-table-column>
           <el-table-column
             label="产品名称"
             prop="productName"
@@ -344,6 +349,8 @@ export default {
     },
     upgradeVisible() {
       this.upgradeFmVisible = false;
+      // this.form.pageNum = 1
+      // this.handleCurrentChange()
     },
     // 格式化表格数据
     formatFmStatus(row) {

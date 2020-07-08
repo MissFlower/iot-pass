@@ -240,6 +240,20 @@ export const asyncRoutes =[
   }
 ];
 
+export const nofund = [{
+  path: '/404',
+  component: LayoutI,
+  children: [{
+    path: '',
+    component: resolve => require(["@/views/404"], resolve),
+    meta: { name: "404页面" }
+  }]
+  
+}, {
+  path: '*',
+  redirect: '/404'
+}]
+
 const createRouter = () => new Router({
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes

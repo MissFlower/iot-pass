@@ -202,3 +202,19 @@ export function statistics(data) {
     data: Qs.stringify(data)
   });
 }
+
+/**
+ * 
+ * 固件详情中的下载
+ * 
+ * 
+ */
+
+ export function getUploadFilePath (data) {
+   return request({
+     url: '/fm/getUploadFilePath',
+     method: 'post',
+     headers: headerFrom,
+     data: Qs.stringify(data)
+   })
+ }

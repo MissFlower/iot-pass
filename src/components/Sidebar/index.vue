@@ -24,7 +24,7 @@
 <script>
 import SidebarItem from "./SidebarItem";
 // import variables from "@/styles/variables.scss";
-// import { dealUserTreeFun } from "@/data/fun";
+import { dealUserTreeFun } from "@/data/fun";
 
 export default {
   components: { SidebarItem },
@@ -32,10 +32,8 @@ export default {
     return {
       baseList: [
         {
-          meta: {
-            icon: "home",
-            name: "首页"
-          },
+          icon: "home",
+          name: "首页",
           path: "/home"
         }
       ],
@@ -51,21 +49,30 @@ export default {
     // showLogo() {
     //   return this.$store.state.settings.sidebarLogo;
     // },
-    permissionRouter() {
-      return this.$store.state.router.addRoutes
-    },
     menuLists () {
       return this.$store.state.app.menuLists
     }
   },
   watch: {
-    permissionRouter() {
-      this.list = this.baseList.concat(this.permissionRouter)
+    menuLists () {
+      this.menuListDealFun()
     }
   },
   mounted() {
-    this.list = this.baseList.concat(this.permissionRouter)
-    console.log(this.menuLists)
+    this.menuListDealFun()
+  },
+  methods: {
+    menuListDealFun () {
+      this.menuLists.forEach(item => {
+        if (!item.path) {
+          item.path = '404'
+        }
+      })
+      const list = dealUserTreeFun(this.menuLists)
+      if (list.length > 0 && list[0].children) {
+        this.list = this.baseList.concat(list[0].children)
+      }
+    }
   }
 };
 </script>

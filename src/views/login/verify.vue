@@ -31,7 +31,8 @@
           </el-form-item>
           <div class="mt20">
             <div class="w120 tr dib"></div>
-            <el-button @click="submit">确定</el-button>
+            <el-button @click="cancel">取消</el-button>
+            <el-button type="primary" @click="submit">确定</el-button>
           </div>
         </el-form>
       </div>
@@ -141,6 +142,11 @@ export default {
         this.seconds = 0;
       }
     },
+    // 取消操作
+    cancel () {
+      this.$router.go(-1)
+    },
+    // 提交函数
     submit() {
       if (this.code === "") {
         this.$message.warning("请输入验证码");

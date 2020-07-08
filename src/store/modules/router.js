@@ -1,4 +1,4 @@
-import { asyncRoutes, constantRoutes } from '@/router'
+import { asyncRoutes, constantRoutes, nofund } from '@/router'
 // import routerObj from "@/router";
 import { deepClone } from '@/utils/validate'
 import { dealMenus } from "@/data/fun"
@@ -22,9 +22,14 @@ function fun (routes, codeArr, list) {
     const item  = routes[i]
     if (item.meta && item.meta.code && codeArr.indexOf(item.meta.code) > -1) {
       const len = codeArr.indexOf(item.meta.code);
-      item.meta.icon = list[len].icon
-      item.meta.name = list[len].name
-      list[len].path = item.path
+      item.meta.icon = list[len].icon ? list[len].icon : ''
+      item.meta.name = list[len].name ? list[len].name : ''
+      if (list[len].path) {
+        list[len].path = list[len].path + '/' + item.path
+      } else {
+        list[len].path = item.path
+      }
+      list[len].meta = item.meta
       routerArr.push(item)
       if (!item.hidden && item.children && item.children.length > 0) {
         item.children = fun(item.children, codeArr, list)
@@ -60,8 +65,8 @@ const router = {
           functionArr = funArr
           if (list.length > 0) {
             const asyncList = filterFun(list);
-            commit('SET_ROUTERS', asyncList);
-            resolve(asyncList);
+            commit('SET_ROUTERS', asyncList.concat(nofund));
+            resolve(asyncList.concat(nofund));
           } else {
             commit('SET_ROUTERS', []);
             resolve()

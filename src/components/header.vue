@@ -38,7 +38,7 @@
 
 <script>
 import { delBreadCrumbFun, clearLoginInfo } from "@/data/fun";
-import { getUserInfo, logout } from "@/api";
+import { logout } from "@/api";
 // import { resetRouter } from "@/router"
 export default {
   data() {

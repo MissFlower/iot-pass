@@ -123,7 +123,7 @@ export function dealMenus (menus) {
   if (menus.length > 0) {
     menus.forEach(item => {
       if (item.menuFlag === "Y") {
-        item.path = item.frontPath ? item.frontPath : "/";
+        // item.path = item.frontPath ? item.frontPath : "/";
         list.push(item);
       } else {
         funArr.push(item.code);

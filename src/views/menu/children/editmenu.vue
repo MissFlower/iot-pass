@@ -155,11 +155,11 @@ export default {
                 if (item.menuFlag === "N") {
                   item.disabled = true;
                 } else if (this.activeItem && this.activeItem.pcodes) {
-                  let str = `[${item.pcode}]`
-                  let pcodes = this.activeItem.pcodes.split(',')
-                  if (pcodes.length > 2 && pcodes[pcodes.length - 2] === str) {
-                    item.disabled = true
-                  }
+                  // let str = `[${item.pcode}]`
+                  // let pcodes = this.activeItem.pcodes.split(',')
+                  // if (pcodes.length > 2 && pcodes[pcodes.length - 2] === str) {
+                  //   item.disabled = true
+                  // }
                 }
               });
             }

@@ -113,7 +113,7 @@
                        ></el-table-column>
                        <el-table-column label="操作">
                            <template slot-scope="scope">
-                               <a class="oprate_btn" @click="toBatchDetails(scope.row.id)">查看</a>
+                               <a class="oprate_btn" @click="toBatchDetails(scope.row)">查看</a>
                            </template>
                        </el-table-column>
                    </el-table>
@@ -163,7 +163,7 @@
                        ></el-table-column>
                        <el-table-column label="操作">
                            <template slot-scope="scope">
-                            <a class="oprate_btn" @click="toBatchDetails(scope.row.upgradeId)">查看</a>
+                            <a class="oprate_btn" @click="toBatchDetails(scope.row)">查看</a>
                            </template>
                        </el-table-column>
                    </el-table>
@@ -414,6 +414,7 @@
                   'fmId': this.fmId,
                   'id': this.batchManage.id
                 };
+                this.batchManage.batchList = []
                 upgradeList (data).then ( res => {
                     if (res.code === 200) {
                         this.batchManage.batchList = res.data.data;
@@ -453,6 +454,7 @@
             // 批量升级
             upgradeVisible() {
                 this.upgradeFmVisible = false;
+                this.searchBatchManage()
             },
             // 获取设备列表
             getDeviceList () {
@@ -502,13 +504,14 @@
                 this.fetchFmList();
             },
             // 跳转批次详情
-            toBatchDetails (upgradeId) {
+            toBatchDetails (row) {
+                console.log(row)
                 this.$router.push({
                     path: 'batchDetails',
                     query: {
-                        id: this.fmId,
-                        upgradeId: upgradeId,
-                        productName: this.productName
+                        id: row.fmId,
+                        productName: this.productName,
+                        batchNo: row.batchNo
                     }
                 })
             },

@@ -13,7 +13,7 @@
             'submenu-title-noDropdown': !isNest
           }"
         >
-          <new-item :icon="onlyOneChild.meta.icon" :title="onlyOneChild.meta.name" />
+          <new-item :icon="onlyOneChild.icon" :title="onlyOneChild.name" />
         </el-menu-item>
       </app-link>
     </template>
@@ -25,7 +25,7 @@
       popper-append-to-body
     >
       <template slot="title">
-        <new-item :icon="item.meta.icon" :title="item.meta.name" />
+        <new-item :icon="item.icon" :title="item.name" />
       </template>
       <sidebar-item
         v-for="child in item.children"
@@ -80,12 +80,12 @@ export default {
         }
       });
 
-      if (showingChildren.length === 1) {
-        return true;
-      }
       // if (showingChildren.length === 1) {
-      //   return false;
+      //   return true;
       // }
+      if (showingChildren.length === 1) {
+        return false;
+      }
 
       if (showingChildren.length === 0) {
         this.onlyOneChild = {

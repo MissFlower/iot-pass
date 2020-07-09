@@ -6,7 +6,7 @@
 <template>
   <div id="passwordFind" v-loading="loading">
     <div class="con" v-if="flag < 3">
-      <div>请输入你需要找回登录密码的账户名</div>
+      <div>请输入你需要找回登录密码的账号名</div>
       <el-form
         ref="form"
         :model="formData"
@@ -14,7 +14,7 @@
         label-width="200px"
         class="mt30"
       >
-        <el-form-item label="账户名" prop="account">
+        <el-form-item label="账号名" prop="account">
           <el-input
             v-model="formData.account"
             placeholder="邮箱/用户名"
@@ -143,7 +143,7 @@ export default {
         }
         this.loading = false;
       }).catch(() => {
-        this.$message.error('账户名验证失败')
+        this.$message.error('账号名验证失败')
         this.loading = false
       })
     },

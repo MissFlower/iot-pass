@@ -12,6 +12,9 @@ function filterFun(list) {
   const codeArr = list.map(item => {
     return item.code
   })
+  if (codeArr.indexOf('system') === -1) {
+    return []
+  }
   const asyncList = fun(asyncRoutes_, codeArr, list) // 递归处理路由
   return asyncList
 }
@@ -65,8 +68,13 @@ const router = {
           functionArr = funArr
           if (list.length > 0) {
             const asyncList = filterFun(list);
-            commit('SET_ROUTERS', asyncList.concat(nofund));
-            resolve(asyncList.concat(nofund));
+            if (asyncList && asyncList.length > 0) {
+              commit('SET_ROUTERS', asyncList.concat(nofund));
+              resolve(asyncList.concat(nofund));
+            } else {
+              commit('SET_ROUTERS', []);
+              resolve()
+            }
           } else {
             commit('SET_ROUTERS', []);
             resolve()

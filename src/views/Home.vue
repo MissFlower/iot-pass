@@ -17,12 +17,14 @@
     <div class="con mt20 p20">
       <div class="f14">开始接入物联网设备</div>
       <div class="m_con df">
-        <div v-for="(item, index) in mArr" :key="index" class="m_item" @click="goToPath(item)">
-          <div class="text">
-            <span>{{ item.name }}</span>
-            <svg-icon icon-class="arrow" class="blue ml5"></svg-icon>
+        <div  v-for="(item, index) in mArr" :key="index">
+          <div class="m_item" @click="goToPath(item)" v-if="(item.auth && authArr.indexOf(item.auth) > -1) || !item.auth">
+            <div class="text">
+              <span>{{ item.name }}</span>
+              <svg-icon icon-class="arrow" class="blue ml5"></svg-icon>
+            </div>
+            <div class="desc">{{ item.desc }}</div>
           </div>
-          <div class="desc">{{ item.desc }}</div>
         </div>
       </div>
     </div>
@@ -69,12 +71,14 @@ export default {
         {
           name: "创建产品",
           desc: "创建并定义产品功能 （设备模型）",
-          path: "/product/add-product"
+          path: "/product/add-product",
+          auth: 'add_product'
         },
         {
           name: "添加设备",
           desc: "创建并定义产品功能 （设备模型）",
-          path: "/device/deviceManage"
+          path: "/device/deviceManage",
+          auth: 'device_new'
         },
         {
           name: "设备烧录与激活",
@@ -83,6 +87,11 @@ export default {
         }
       ]
     };
+  },
+  computed: {
+    authArr () {
+      return this.$store.state.app.functionArr
+    }
   },
   methods: {
     goToPath (item) {

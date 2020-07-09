@@ -1,7 +1,7 @@
 <!-- 
   文件作者：mawenjuan
   创建日期：2020.6.16
-  文件说明：账户密码重置
+  文件说明：账号密码重置
  -->
 <template>
   <div id="register" v-loading="loading">
@@ -19,7 +19,7 @@
           <el-form-item prop="account">
             <el-input
               v-model="formData.account"
-              placeholder="请输入账户名"
+              placeholder="请输入账号名"
             ></el-input>
           </el-form-item>
           <el-form-item prop="password">

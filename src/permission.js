@@ -1,6 +1,7 @@
 import router from "@/router";
 import Cookie from "@/utils/cookie.js";
 import store from '@/store'
+import { Message } from 'element-ui'
 
 const whiteList = ["/index", "/login", "/register", "/password-find", "/verify", "/success"]; // no redirect whitelist
 
@@ -21,6 +22,9 @@ router.beforeEach(async (to, from, next) => {
           if (asyncList) {
             router.addRoutes(asyncList)
             next({ ...to, replace: true })
+          } else {
+            Message.warning('账号没有菜单权限，请联系管理员')
+            next('/index')
           }
         } catch (error) {
           next(`/login?redirect=${to.path}`)

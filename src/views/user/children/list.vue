@@ -42,7 +42,7 @@
     <el-table :data="list" border v-loading="loading">
       <el-table-column label="ID" prop="id" align="center"></el-table-column>
       <el-table-column
-        label="账户名"
+        label="账号名"
         prop="account"
         align="center"
       ></el-table-column>
@@ -169,7 +169,7 @@ export default {
     clearFun(key) {
       this.formData[key] = ''
     },
-    searchAccountFun() { // 账户名筛选函数
+    searchAccountFun() { // 账号名筛选函数
       if (this.$fun.trim(this.formData.account === "")) {
         return;
       }

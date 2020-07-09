@@ -9,7 +9,7 @@
       <div class="showImg"></div>
       <div class="form-con">
         <div class="f24 b">登录</div>
-        <el-input v-model="account" placeholder="请输入账户名"></el-input>
+        <el-input v-model="account" placeholder="请输入账号名"></el-input>
         <el-input v-model="password" placeholder="请输入密码" show-password />
         <div class="wp100">
           <el-button type="primary" class="wp100" @click="handleSubmit"

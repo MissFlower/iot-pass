@@ -71,13 +71,13 @@ export function verifyCode(data) {
 
 
 /*
-验证账户名
+验证账号名
   // 找回密码之前，需要验证登录名是否正确，再做后续操作
 
   account	string	是	登录账号或邮箱
 */
 export function verifyAccount(data) {
-  // 验证账户名
+  // 验证账号名
   return request({
     url: "/user/verifyAccount",
     method: "post",

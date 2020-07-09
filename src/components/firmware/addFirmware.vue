@@ -79,14 +79,11 @@
         <el-form-item label="选择固件" required>
           <el-upload
             class="upload-demo"
-            action="111"
-            :before-upload="beforeUpload"
-            multiple
-            :limit="3"
-            :file-list="fileList"
+            action=""
+            :http-request="uploadFile"
+            accept=".zip,.tar,.gz,.tar.gz,.gzip,.bin,.hex"
             :show-file-list="false"
             :disabled="ruleForm.fmName == '' ? true : false"
-            accept=".zip,.tar,.gz,.tar.gz,.gzip,.bin,.hex"
           >
             <el-button size="small" @click="beforeSelectFile">{{ uploadText }}</el-button>
             <div slot="tip" class="el-upload__tip">
@@ -185,14 +182,14 @@ export default {
     };
   },
   mounted() {
+    this.url = process.env.VUE_APP_BASE_URL + '/fm/uploadFile'
+    console.log(this.url)
     this.getProductList();
   },
   methods: {
     // 提交新增固件
     addFmSubmit(formName) {
-      console.log('-------')
       this.$refs[formName].validate(valid => {
-        console.log(valid)
         if (valid) {
             let formData = {};
             for (let item in this.ruleForm) {
@@ -240,9 +237,9 @@ export default {
       }
     },
     // 上传文件
-    beforeUpload(file) {
+    uploadFile(data) {
       let fromData = new FormData();
-      fromData.append("file", file);
+      fromData.append("file", data.file);
       fromData.append("fmName", this.ruleForm.fmName)
       this.uploadProgressShow = false;
       uploadFile(fromData)

@@ -13,7 +13,7 @@
       </el-steps>
       <div v-if="active == 1" class="info f14">
         <div class="title pl10">
-          账户
+          账号
           <span class="red">{{ userInfo.account }}</span>
           为确认是你本人操作，请完成一下验证
         </div>

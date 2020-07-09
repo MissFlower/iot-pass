@@ -9,7 +9,8 @@
         prop="topicName"
         label="自定义topic">
         <template slot-scope="scope">
-          /{{scope.row.productKey}}/${deviceName}/user/{{scope.row.topicName}}
+          <!-- /{{scope.row.productKey}}/${deviceName}/user/ -->
+          {{scope.row.topicName}}
         </template>
       </el-table-column>
 

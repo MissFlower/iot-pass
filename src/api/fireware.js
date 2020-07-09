@@ -150,7 +150,8 @@ export function retryPublishUpdateMsg(data) {
   return request({
     url: "upgrade/retryPublishUpdateMsg",
     method: "post",
-    data
+    headers: headerFrom,
+    data: Qs.stringify(data)
   });
 }
 

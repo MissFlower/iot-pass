@@ -75,7 +75,7 @@
             placeholder="请输入每分钟推送的设备数"
           ></el-input>
         </el-form-item>
-        <el-form-item
+        <!-- <el-form-item
           label="升级失败重试间隔"
           label-width="150px"
           prop="retryInterval"
@@ -89,8 +89,8 @@
             <el-option label="1小时后重试" value="60"></el-option>
             <el-option label="24小时后重试" value="1440"></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item
+        </el-form-item> -->
+        <!-- <el-form-item
           label="设备升级超时时间（分钟）"
           label-width="150px"
           prop="timeOut"
@@ -100,7 +100,7 @@
             auto-complete="off"
             placeholder="请输入升级超时时间（分钟）"
           ></el-input>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="closeDialog">取 消</el-button>

@@ -93,7 +93,7 @@ export default {
             }else{
               this.$message({
                   type: 'error',
-                  message: '删除失败!'
+                  message: res.message
               });
             }
           }).catch(err => {

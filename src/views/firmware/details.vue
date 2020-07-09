@@ -22,7 +22,7 @@
                 <el-col :span="12">
                     <div class="grid-content">
                         <span class="info_left">固件签名</span>
-                        <span>{{details.detailList.fmSign}} <a :href="details.detailList.fmUrl" target="_blank" class="download">下载</a></span>
+                        <span>{{details.detailList.fmSign}} <el-link type="primary" :underline="false" class="f12 ml10" @click="downLoad">下载</el-link></span>
                     </div>
                 </el-col>
             </el-row>
@@ -104,8 +104,9 @@
                        <el-table-column
                            label="状态"
                            prop="taskStatus"
-                           :formatter="formatTaskStatus"
-                       ></el-table-column>
+                       >
+                        <template slot-scope="scope">{{taskStatusObj[scope.row.taskStatus]}}</template>
+                       </el-table-column>
                        <el-table-column
                            label="添加时间"
                            prop="=createTime"
@@ -159,8 +160,9 @@
                        <el-table-column
                            label="升级状态"
                            prop="status"
-                           :formatter="formatJobStatus"
-                       ></el-table-column>
+                       >
+                        <template slot-scope="scope">{{upgradeStatusObj[scope.row.status]}}</template>
+                       </el-table-column>
                        <el-table-column label="操作">
                            <template slot-scope="scope">
                             <a class="oprate_btn" @click="toBatchDetails(scope.row)">查看</a>
@@ -315,10 +317,12 @@
     </div>
 </template>
 <script>
-    import { getFmDetails, upgradeList, upgradeDeviceList, statistics } from '@/api/fireware'
+    import { getFmDetails, upgradeList, upgradeDeviceList, statistics, getUploadFilePath } from '@/api/fireware'
     import EditFirmware from '@/components/firmware/editFirmware'
     import CheckFirmware from "@/components/firmware/checkFirmware";
     import UpgradeFirmware from "@/components/firmware/upgradeFirmware";
+
+    import dataObj from '@/data/data'
     export default {
         data () {
             return {
@@ -357,7 +361,9 @@
                 fmId: '',
                 checkFmVisible: false,
                 upgradeFmVisible: false,
-                checkFmId: ''
+                checkFmId: '',
+                taskStatusObj: dataObj.taskStatusObj,
+                upgradeStatusObj: dataObj.upgradeStatusObj
             }
         },
         components: {
@@ -526,14 +532,8 @@
             formatUgType (row) {
                 return row.ugType === 1 ? "静态升级" : "动态升级"
             },
-            formatTaskStatus (row) {
-                return row.taskStatus === 0 ? "待升级" : row.taskStatus === 1 ? "升级中" : row.taskStatus === 2 ? "升级完成": "已取消"
-            },
             formatDestVersion (row) {
               return row.status == 4 ? row.destVersion : row.srcVersion;
-            },
-            formatJobStatus (row) {
-                return row.status == 3 ? "升级中" : row.status == 4 ? "已完成" : row.status == 5 ? "升级失败" : row.status == 2 ? "已推送" : "待推送"
             },
             formatCreateTime (row) {
                 return row.createTime ? this.$fun.dateFormat(
@@ -541,6 +541,20 @@
                     "yyyy-MM-dd hh:mm:ss"
                 ): ''
             },
+            // 下载
+            downLoad () {
+                getUploadFilePath({
+                    fileName: this.details.detailList.fmUrl
+                }).then(res => {
+                    if (res.code === 200) {
+                        if (res.data.fmUrl) {
+                            window.open(res.data.fmUrl)
+                        }
+                    } else {
+                        this.$message.error
+                    }
+                })
+            }
         }
     }
 </script>

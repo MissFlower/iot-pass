@@ -11,6 +11,9 @@
       <i v-else class="el-icon-edit blue fr" @click="handleEdit"></i>
     </div>
     <div class="main">
+      <!-- <el-checkbox-group v-model="ids" :disabled="!flag">
+        <selectPart :list="authData" :type="0"></selectPart>
+      </el-checkbox-group> -->
       <el-tree
         ref="tree"
         :data="authData"
@@ -34,9 +37,11 @@
 <script>
 import { getMenusTree, setAuthorityForRole } from "@/api/role";
 import { dealAuthTreeFun } from "@/data/fun";
+// import selectPart from './selectPart'
 export default {
   props: ["info"],
   inject: ["reload"],
+  // components: {selectPart},
   data() {
     return {
       flag: 0,
@@ -144,6 +149,10 @@ export default {
     background-color: #409eff;
     border-color: #409eff;
     opacity: 0.6;
+  }
+  .el-checkbox__label {
+    font-weight: 400;
+    color: #606266;
   }
   .el-tree-node__expand-icon.expanded {
     display: none;

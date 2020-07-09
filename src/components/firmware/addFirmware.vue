@@ -182,8 +182,6 @@ export default {
     };
   },
   mounted() {
-    this.url = process.env.VUE_APP_BASE_URL + '/fm/uploadFile'
-    console.log(this.url)
     this.getProductList();
   },
   methods: {

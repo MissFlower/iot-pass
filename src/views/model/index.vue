@@ -30,7 +30,7 @@
         您正在编辑的是草稿，需点击发布后，物模型才会正式生效
       </div>
     </div>
-    <el-table :data="list" border v-if="!loading">
+    <el-table :data="list" border v-if="!loading" class="mb20">
       <div slot="empty" class="mt30 mb20 df jc_c">
         <svg-icon icon-class="empty" class="empty"></svg-icon>
         <div class="lh16 w300 tl ml20">

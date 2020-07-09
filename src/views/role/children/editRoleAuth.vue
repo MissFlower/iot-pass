@@ -12,7 +12,7 @@
     </div>
     <div class="main">
       <!-- <el-checkbox-group v-model="ids" :disabled="!flag">
-        <selectPart :list="authData" :type="0"></selectPart>
+        <selectPart :list="authData" :type="0" :selects="ids"></selectPart>
       </el-checkbox-group> -->
       <el-tree
         ref="tree"
@@ -95,9 +95,6 @@ export default {
     },
     // 取消函数
     handleCancel() {
-      // this.allList.forEach(item => {
-      //   item.disabled = true;
-      // });
       this.getAuth();
       this.flag = 0;
     },
@@ -145,7 +142,7 @@ export default {
 
 <style lang="scss">
 #roleAuth {
-  .el-checkbox__input.is-disabled.is-checked .el-checkbox__inner {
+   .el-checkbox__input.is-disabled.is-checked .el-checkbox__inner {
     background-color: #409eff;
     border-color: #409eff;
     opacity: 0.6;
@@ -167,5 +164,24 @@ export default {
       height: 40px;
     }
   }
+  // .el-checkbox {
+    // display: flex;
+    // width: 100%;
+  //   .el-checkbox__label {
+  //     display: block;
+  //     white-space: nowrap;
+  //     overflow: hidden;
+  //     text-overflow: ellipsis;
+  //   }
+  // }
+  // .el-checkbox__input.is-disabled.is-checked .el-checkbox__inner {
+  //   background-color: #409eff;
+  //   border-color: #409eff;
+  //   opacity: 0.6;
+  // }
+  // .el-checkbox__label {
+  //   font-weight: 400;
+  //   color: #606266;
+  // }
 }
 </style>

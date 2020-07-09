@@ -154,6 +154,7 @@
       </el-tab-pane> -->
     </el-tabs>
     <AddFirmware
+      v-if="dialogFormVisible"
       :dialogFormVisible="dialogFormVisible"
       @changeVisible="changeVisible"
       @changeList="changeList"

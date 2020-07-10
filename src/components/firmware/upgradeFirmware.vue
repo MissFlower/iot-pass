@@ -26,7 +26,7 @@
           prop="destVersion"
           required
         >
-          <el-input v-model="form.destVersion" auto-complete="off"></el-input>
+          <el-input v-model="form.destVersion" auto-complete="off" :disabled="checkDestVersion != ''"></el-input>
         </el-form-item>
         <el-form-item
           label="升级策略"
@@ -36,7 +36,7 @@
         >
           <el-select v-model="form.ugStrategy" placeholder="请选择升级策略">
             <el-option label="静态升级" value="0"></el-option>
-            <el-option label="动态升级" value="1"></el-option>
+            <!-- <el-option label="动态升级" value="1"></el-option> -->
           </el-select>
         </el-form-item>
         <el-form-item
@@ -60,7 +60,7 @@
         >
           <el-select v-model="form.ugTimeType" placeholder="请选择升级时间类型">
             <el-option label="立即升级" value="1"></el-option>
-            <el-option label="定时" value="2"></el-option>
+            <!-- <el-option label="定时" value="2"></el-option> -->
           </el-select>
         </el-form-item>
         <el-form-item
@@ -120,6 +120,9 @@ export default {
     },
     checkFmId: {
       type: String
+    },
+    checkDestVersion: {
+      type: String
     }
   },
   data() {
@@ -153,6 +156,9 @@ export default {
           ],
       }
     };
+  },
+  mounted () {
+    this.form.destVersion = this.checkDestVersion
   },
   methods: {
     // 固件批量升级

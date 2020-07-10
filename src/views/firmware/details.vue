@@ -333,8 +333,10 @@
         ></CheckFirmware>
         <!--批量升级-->
         <UpgradeFirmware
+            v-if="upgradeFmVisible"
             :upgradeFmVisible="upgradeFmVisible"
             :checkFmId="checkFmId"
+            :checkDestVersion="checkDestVersion"
             @upgradeVisible="upgradeVisible"
         ></UpgradeFirmware>
     </div>
@@ -385,6 +387,7 @@
                 checkFmVisible: false,
                 upgradeFmVisible: false,
                 checkFmId: '',
+                checkDestVersion: '',
                 taskStatusObj: dataObj.taskStatusObj,
                 upgradeStatusObj: dataObj.upgradeStatusObj
             }
@@ -494,8 +497,9 @@
             },
             upgradeSubmit () {
                 if (this.details.detailList.fmStatus === 2) {
-                    this.upgradeFmVisible = true;
                     this.checkFmId = String(this.fmId);
+                    this.checkDestVersion = this.details.detailList.destVersion
+                    this.upgradeFmVisible = true;
                 }
             },
             // 批量升级

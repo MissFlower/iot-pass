@@ -10,8 +10,11 @@
       <el-button type="primary" size="mini" v-if="list.length == 0 && !loading" @click="handleEdit">编辑草稿</el-button>
       <div v-if="list.length > 0 && !loading" class="info df ai_c mb5">
         <i class="el-icon-warning blue mr5"></i>
-        当前展示的是已发布到线上的功能定义，如需修改，请点击
-        <el-link :underline="false" type="primary" class="f12" @click="handleEdit">编辑草稿</el-link>
+        当前展示的是已发布到线上的功能定义，
+        <span v-if="productStatus">如需编辑请先撤销发布</span>
+        <span v-else>如需修改，请点击
+          <el-link :underline="false" type="primary" class="f12" @click="handleEdit">编辑草稿</el-link>
+        </span>
       </div>
       <el-button size="mini" @click="showCheck">物模型 TSL</el-button>
       <el-button size="mini" disabled>生成设备端代码</el-button>
@@ -70,7 +73,7 @@ import checkModel from './checkModel'
 import dataObj from "@/data/data"
 export default {
   components: { addCustomAbility, checkModel },
-  props: ['productKey'],
+  props: ['productKey', 'productStatus'],
   data () {
     return {
       loading: false,

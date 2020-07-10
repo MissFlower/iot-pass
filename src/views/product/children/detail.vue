@@ -30,11 +30,11 @@
         </el-tab-pane>
 
         <el-tab-pane label="Topic类列表" name="topic">
-          <product-topic  :productId="productData.id"/>
+          <product-topic  :productId="productData.id" :productStatus="productData.productStatus"/>
         </el-tab-pane>
 
         <el-tab-pane label="功能定义" name="second">
-          <product-ability v-if="productData.productKey && activeName == 'second'" :productKey="productData.productKey"></product-ability>
+          <product-ability v-if="productData.productKey && activeName == 'second'" :productKey="productData.productKey" :productStatus="productData.productStatus"></product-ability>
         </el-tab-pane>
        
       </el-tabs>

@@ -84,7 +84,7 @@
                     inactive-text="关闭"
                     :active-value="1" 
                     :inactive-value="0"
-                    :disabled="!authArr.indexOf('dynamic_product') > -1"
+                    :disabled="authArr.indexOf('dynamic_product') === -1"
                     @change="dynRegisterChange">
                   </el-switch>
                 </div>

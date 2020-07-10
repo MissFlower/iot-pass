@@ -15,7 +15,7 @@
     </div>
 
     <div v-show="topicRadio === '自定义Topic'">
-      <custom />
+      <custom :productStatus="productStatus" />
     </div>
   </div>
 </template>
@@ -26,7 +26,7 @@ import model from './model'
 import custom from './custom'
 import { sysTopic } from '@/api/product'
   export default {
-    props: ['productId'],
+    props: ['productId', 'productStatus'],
     components: {
       basics,
       model,
@@ -50,9 +50,9 @@ import { sysTopic } from '@/api/product'
 
         })
       }
-    },   
-    methods: {
-      
+    },
+    mounted () {
+      console.log(this.productStatus)
     }
   };
 </script>

@@ -91,7 +91,7 @@
               <a
                 v-else
                 class="oprate_btn"
-                @click="upgradeList(scope.row.id, scope.row.fmStatus)"
+                @click="upgradeList(scope.row)"
                 >批量升级</a
               >
               |
@@ -168,8 +168,10 @@
       @refreshList="refreshList"
     ></CheckFirmware>
     <UpgradeFirmware
+      v-if="upgradeFmVisible"
       :upgradeFmVisible="upgradeFmVisible"
       :checkFmId="checkFmId"
+      :checkDestVersion="checkDestVersion"
       @upgradeVisible="upgradeVisible"
     ></UpgradeFirmware>
   </div>
@@ -342,10 +344,11 @@ export default {
       this.fetchFmList();
     },
     // 升级固件组件
-    upgradeList(fmId, fmStatus) {
-      if (fmStatus === 2) {
+    upgradeList(row, fmId, fmStatus) {
+      if (row.fmStatus === 2) {
+        this.checkFmId = String(row.fmId);
+        this.checkDestVersion = row.destVersion
         this.upgradeFmVisible = true;
-        this.checkFmId = String(fmId);
       }
     },
     upgradeVisible() {

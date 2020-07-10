@@ -16,7 +16,9 @@
                 <el-tab-pane label="设备列表" name="first">
                     <el-table :data="devManage.devList" border stripe>
                         <el-table-column label="DeviceName" prop="deviceName"></el-table-column>
-                        <el-table-column label="产品" prop="productName"></el-table-column>
+                        <el-table-column label="产品" prop="productName">
+                            <template>{{productName}}</template>
+                        </el-table-column>
                         <el-table-column
                             label="当前版本号"
                         >

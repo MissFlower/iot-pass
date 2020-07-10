@@ -1,9 +1,9 @@
 <template>
   <div v-loading="loading">
-    <div class="mt20 mb10 f14"><el-button type="primary" @click="customDialog">定义Topic类</el-button></div>
+    <div class="mt20 f14" v-if="!productStatus"><el-button type="primary" @click="customDialog">定义Topic类</el-button></div>
     <el-table
       :data="customData"
-      style="width: 100%"
+      class="mt10 wp100"
       :header-cell-style="{background:'#F5F7FA',color:'#606266'}">
       <el-table-column
         prop="topicName"
@@ -80,6 +80,7 @@
     components: {
       Pagination
     },  
+    props: ['productStatus'],
     data() {
       var accessFlag = true;
       var validateName = (rule, value, callback) => {

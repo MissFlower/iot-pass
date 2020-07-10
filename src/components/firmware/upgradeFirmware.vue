@@ -35,8 +35,8 @@
           required
         >
           <el-select v-model="form.ugStrategy" placeholder="请选择升级策略">
-            <el-option label="静态升级" value="1"></el-option>
-            <el-option label="动态升级" value="2"></el-option>
+            <el-option label="静态升级" value="0"></el-option>
+            <el-option label="动态升级" value="1"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item

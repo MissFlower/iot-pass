@@ -98,9 +98,11 @@
                        <el-table-column label="批次类型" prop="taskType" :formatter="formatTaskType"></el-table-column>
                        <el-table-column
                            label="升级策略"
-                           prop="ugType"
-                           :formatter="formatUgType"
-                       ></el-table-column>
+                       >
+                        <template slot-scope="scope">
+                            {{scope.row.ugStrategy == 0 ? '静态升级' : (scope.row.ugStrategy == 1 ? '动态升级' : scope.row.ugStrategy)}}
+                        </template>
+                       </el-table-column>
                        <el-table-column
                            label="状态"
                            prop="taskStatus"

@@ -89,7 +89,7 @@
                                     升级策略
                                 </div>
                                 <div class="edit_info-rf">
-                                    {{batchDetailList.ugStrategy == 1 ? '静态升级' : (batchDetailList.ugStrategy == 2 ? '动态升级' : batchDetailList.ugStrategy)}}
+                                    {{batchDetailList.ugStrategy == 0 ? '静态升级' : (batchDetailList.ugStrategy == 1 ? '动态升级' : batchDetailList.ugStrategy)}}
                                 </div>
                             </div>
                         </el-col>

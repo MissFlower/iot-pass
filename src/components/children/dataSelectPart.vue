@@ -158,6 +158,8 @@ export default {
       const step = this.formData.specs.step
       if (step === '') {
         callback(new Error('步长不能为空'))
+      } else if (this.formData.specs.max && this.formData.specs.min && step > (this.formData.specs.max - this.formData.specs.min)) {
+        callback(new Error('步长不能大于取值范围的差值'))
       } else {
         callback()
       }
@@ -381,7 +383,7 @@ export default {
           val = 2147483648
           if (value === '') {
             str = '不能为空'
-          }else if (this.formData.specs.max && this.formData.specs.min && (this.formData.specs.min > this.formData.specs.max)) {
+          }else if (this.formData.specs.max && this.formData.specs.min && (this.formData.specs.min > this.formData.specs.max || this.formData.specs.min === this.formData.specs.max)) {
             str = "最大值必须大于最小值，整数型不能有小数位，单精度有效位为7，双精度为16"
           } else if (value > -val && value < val) {
             str = ''

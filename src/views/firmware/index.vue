@@ -344,9 +344,9 @@ export default {
       this.fetchFmList();
     },
     // 升级固件组件
-    upgradeList(row, fmId, fmStatus) {
+    upgradeList(row) {
       if (row.fmStatus === 2) {
-        this.checkFmId = String(row.fmId);
+        this.checkFmId = String(row.id);
         this.checkDestVersion = row.destVersion
         this.upgradeFmVisible = true;
       }

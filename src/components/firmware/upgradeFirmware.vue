@@ -134,7 +134,7 @@ export default {
         destVersion: "",
         ugStrategy: "0",
         scopeType: "0",
-        ugTimeType: "1",
+        ugTimeType: "0",
         timeOut: "",
         retryInterval: "0",
         rate: ""

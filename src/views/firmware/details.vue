@@ -155,8 +155,11 @@
                        <el-table-column
                            label="当前版本号"
                            prop="destVersion"
-                           :formatter="formatDestVersion"
-                       ></el-table-column>
+                       >
+                        <template slot-scope="scope">
+                            {{scope.row.status == 4 ? scope.row.destVersion : scope.row.srcVersion}}
+                        </template>
+                       </el-table-column>
                        <el-table-column
                            label="升级状态"
                            prop="status"
@@ -515,7 +518,7 @@
                 this.$router.push({
                     path: 'batchDetails',
                     query: {
-                        id: row.fmId,
+                        id: row.fmId ? row.fmId : row.id,
                         productName: this.productName,
                         batchNo: row.batchNo
                     }

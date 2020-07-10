@@ -9,16 +9,14 @@
             <h2>
                 <span class="go_back" @click="goBack"><i class="el-icon-back"></i></span>{{batchDetailList.batchNo}}
             </h2>
-            <el-tag :type="deviceType" class="el_tag">{{batchDetailList.ugStatus === 1 ? '待升级' : batchDetailList.ugStatus === 2 ? '升级中' : batchDetailList.ugStatus === 3 ? '已完成': '已取消'}}</el-tag>
+            <el-tag :type="deviceType" class="el_tag">{{taskStatusObj[batchDetailList.taskStatus]}}</el-tag>
         </div>
         <div>
             <el-tabs v-model="tab" type="card">
                 <el-tab-pane label="设备列表" name="first">
                     <el-table :data="devManage.devList" border stripe>
                         <el-table-column label="DeviceName" prop="deviceName"></el-table-column>
-                        <el-table-column label="产品">
-                            <template>{{productName}}</template>
-                        </el-table-column>
+                        <el-table-column label="产品" prop="productName"></el-table-column>
                         <el-table-column
                             label="当前版本号"
                         >
@@ -38,7 +36,7 @@
                         </el-table-column>
                         <el-table-column label="操作">
                             <template slot-scope="scope">
-                                <a class="oprate_btn" @click="upgrade(scope.row.id)">重新升级</a>
+                                <a class="oprate_btn" v-if="scope.row.upgradeStatus == 4" @click="upgrade(scope.row.upgradeId)">重升级</a>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -115,7 +113,7 @@
                                 </div>
                             </div>
                         </el-col>
-                        <el-col :span="16">
+                        <el-col :span="8">
                             <div class="edit_info">
                                 <div class="edit_info-lf">
                                     固件推送速率
@@ -125,7 +123,7 @@
                                 </div>
                             </div>
                         </el-col>
-                        <!-- <el-col :span="8">
+                        <el-col :span="8">
                             <div class="edit_info">
                                 <div class="edit_info-lf">
                                     升级失败重试时间间隔
@@ -134,8 +132,8 @@
                                     {{batchDetailList.retryInterval}}
                                 </div>
                             </div>
-                        </el-col> -->
-                        <!-- <el-col :span="24">
+                        </el-col>
+                        <el-col :span="24">
                             <div class="edit_info">
                                 <div class="edit_info-lf">
                                     设备升级超时时间
@@ -144,17 +142,19 @@
                                     {{batchDetailList.timeOut}}
                                 </div>
                             </div>
-                        </el-col> -->
+                        </el-col>
                     </el-row>
                 </el-tab-pane>
             </el-tabs>
         </div>
     </div>
+    <div class="details" v-else>
+        无数据
+    </div>
 </template>
 <script>
     import { upgradeList, upgradeDeviceList, retryPublishUpdateMsg } from '@/api/fireware'
     import dataObj from '@/data/data'
-
     export default {
         data (){
             return {
@@ -180,7 +180,8 @@
                 },
                 batchNo: '',
                 // 升级状态
-                upgradeStatusObj: dataObj.upgradeStatusObj
+                upgradeStatusObj: dataObj.upgradeStatusObj,
+                taskStatusObj: dataObj.taskStatusObj
             }
         },
         mounted () {
@@ -226,14 +227,16 @@
                 })
             },
             // 重新升级
-            upgrade(id) {
+            upgrade(upgradeId) {
                 this.$confirm('确认要重新升级?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
+                    // let formData = new FormData()
+                    // formData.append('upgradeId', upgradeId)
                     retryPublishUpdateMsg({
-                        id: id
+                        upgradeId: upgradeId
                     }).then(res => {
                         if (res.code === 200) {
                             this.getDeviceList()

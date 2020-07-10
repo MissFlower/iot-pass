@@ -139,7 +139,7 @@ export default {
       rules: {
         rate: [
             { required: true, message: '请输入固件推送速率', trigger: 'blur' },
-            { type: 'number', message: '推送速率必须为数字值' }
+            { type: 'number', min: 1, message: '推送速率必须为大于0的数字值' }
           ],
           srcVersion: [
               { required: true, message: '请输入待升级版本号', trigger: 'blur' }

@@ -132,7 +132,7 @@ export default {
         serialVersionUID: 1,
         srcVersion: "",
         destVersion: "",
-        ugStrategy: "1",
+        ugStrategy: "0",
         scopeType: "0",
         ugTimeType: "1",
         timeOut: "",

@@ -140,6 +140,8 @@ export default {
                 type: 'success',
                 message: '撤销发布成功！'
               });
+              this.productData.productStatus = 0
+              this.productData = JSON.parse(JSON.stringify(this.productData))
             }else {
               this.$message.warning(res.message);
             }
@@ -164,6 +166,8 @@ export default {
                 type: 'success',
                 message: '发布成功!'
               });
+              this.productData.productStatus = 1
+              this.productData = JSON.parse(JSON.stringify(this.productData))
             }else {
               this.$message.warning(res.message);
             }

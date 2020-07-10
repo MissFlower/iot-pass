@@ -76,7 +76,7 @@ export function deviceUpdate(data) {
     url: "/device/updateDevice",
     method: "post",
     headers: headerFrom_json,
-    data: Qs.stringify(data)
+    data: data
   });
 }
 

@@ -4,8 +4,8 @@
 文件说明：批次详情
  -->
 <template>
-    <div class="details" v-if="JSON.stringify(batchDetailList) !== '{}'">
-        <div class="details-tit clearfix">
+    <div class="details" v-loading="loading">
+        <div class="details-tit clearfix" v-if="JSON.stringify(batchDetailList) != '{}'">
             <h2>
                 <span class="go_back" @click="goBack"><i class="el-icon-back"></i></span>{{batchDetailList.batchNo}}
             </h2>
@@ -42,7 +42,7 @@
                     </el-table>
                 </el-tab-pane>
                 <el-tab-pane label="批次信息" name="second">
-                    <el-row>
+                    <el-row v-if="JSON.stringify(batchDetailList) != '{}'">
                         <el-col :span="8">
                             <div class="edit_info">
                                 <div class="edit_info-lf">
@@ -99,7 +99,7 @@
                                     升级范围
                                 </div>
                                 <div class="edit_info-rf">
-                                    {{batchDetailList.scopeType == 0 ? '全部': (batchDetailList.scopeType == 1 ? '定向': (batchDetailList.scopeType == 2 ? '区域': '灰度'))}}
+                                    {{batchDetailList.scopeType && scopeTypeObj[batchDetailList.scopeType] ? scopeTypeObj[batchDetailList.scopeType] : batchDetailList.scopeType}}
                                 </div>
                             </div>
                         </el-col>
@@ -148,9 +148,6 @@
             </el-tabs>
         </div>
     </div>
-    <div class="details" v-else>
-        无数据
-    </div>
 </template>
 <script>
     import { upgradeList, upgradeDeviceList, retryPublishUpdateMsg } from '@/api/fireware'
@@ -158,6 +155,7 @@
     export default {
         data (){
             return {
+                loading: false,
                 batchDetailList: {},
                 tab: 'first',
                 deviceType: 'info',
@@ -181,7 +179,8 @@
                 batchNo: '',
                 // 升级状态
                 upgradeStatusObj: dataObj.upgradeStatusObj,
-                taskStatusObj: dataObj.taskStatusObj
+                taskStatusObj: dataObj.taskStatusObj,
+                scopeTypeObj: dataObj.scopeType
             }
         },
         mounted () {
@@ -195,16 +194,24 @@
         methods: {
             // 获取详情
             getDetails () {
+                this.loading = true
+                this.batchDetailList = {}
                 let data = {
                     'pageNum': this.batchManage.pageNum,
                     'pageSize': this.batchManage.pageSize,
                     'fmId': this.batchManage.fmId,
                     'batchNo': this.batchManage.batchNo
                 };
-                upgradeList (data).then ( res => {
+                upgradeList(data).then (res => {
                     if (res.code === 200) {
-                        this.batchDetailList = res.data.data[0] || {};
+                        if (res.data && res.data.data && res.data.data.length > 0) {
+                            this.batchDetailList = res.data.data[0]
+                            console.log(this.batchDetailList)
+                        }
                     }
+                    this.loading = false
+                }).catch(() =>{
+                    this.loading = false
                 })
             },
             // 获取设备列表
@@ -218,6 +225,7 @@
                 if (this.devManage.deviceName) {
                     data.deviceName = this.devManage.deviceName;
                 }
+                this.devManage.devList = []
                 upgradeDeviceList (data).then( res => {
                     if (res.code === 200) {
                         this.devManage.devList = res.data.data

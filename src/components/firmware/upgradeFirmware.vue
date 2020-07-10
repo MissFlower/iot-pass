@@ -47,9 +47,9 @@
         >
           <el-select v-model="form.scopeType" placeholder="请选择升级范围">
             <el-option label="全部" value="0"></el-option>
-            <el-option label="定向" value="1"></el-option>
-            <el-option label="区域" value="2"></el-option>
-            <el-option label="灰度" value="3"></el-option>
+            <!-- <el-option label="定向" value="1"></el-option> -->
+            <!-- <el-option label="区域" value="2"></el-option> -->
+            <!-- <el-option label="灰度" value="3"></el-option> -->
           </el-select>
         </el-form-item>
         <el-form-item
@@ -130,7 +130,7 @@ export default {
         srcVersion: "",
         destVersion: "",
         ugStrategy: "1",
-        scopeType: "1",
+        scopeType: "0",
         ugTimeType: "1",
         timeOut: "",
         retryInterval: "0",

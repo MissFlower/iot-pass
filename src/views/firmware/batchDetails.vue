@@ -101,7 +101,7 @@
                                     升级范围
                                 </div>
                                 <div class="edit_info-rf">
-                                    {{batchDetailList.scopeType && scopeTypeObj[batchDetailList.scopeType] ? scopeTypeObj[batchDetailList.scopeType] : batchDetailList.scopeType}}
+                                    {{scopeTypeObj[batchDetailList.scopeType] ? scopeTypeObj[batchDetailList.scopeType] : batchDetailList.scopeType}}
                                 </div>
                             </div>
                         </el-col>
@@ -111,7 +111,7 @@
                                     升级时间
                                 </div>
                                 <div class="edit_info-rf">
-                                    {{batchDetailList.ugTimeType}}
+                                    {{batchDetailList.ugTimeType == 0 ? '立即升级' : (batchDetailList.ugTimeType == 1 ? '定时升级' : batchDetailList.ugTimeType)}}
                                 </div>
                             </div>
                         </el-col>
@@ -182,7 +182,8 @@
                 // 升级状态
                 upgradeStatusObj: dataObj.upgradeStatusObj,
                 taskStatusObj: dataObj.taskStatusObj,
-                scopeTypeObj: dataObj.scopeType
+                scopeTypeObj: dataObj.scopeTypeObj,
+                productName: ''
             }
         },
         mounted () {
@@ -208,7 +209,6 @@
                     if (res.code === 200) {
                         if (res.data && res.data.data && res.data.data.length > 0) {
                             this.batchDetailList = res.data.data[0]
-                            console.log(this.batchDetailList)
                         }
                     }
                     this.loading = false

@@ -59,8 +59,8 @@
           required
         >
           <el-select v-model="form.ugTimeType" placeholder="请选择升级时间类型">
-            <el-option label="立即升级" value="1"></el-option>
-            <!-- <el-option label="定时" value="2"></el-option> -->
+            <el-option label="立即升级" value="0"></el-option>
+            <!-- <el-option label="定时" value="1"></el-option> -->
           </el-select>
         </el-form-item>
         <el-form-item

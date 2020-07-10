@@ -10,22 +10,10 @@
       <span v-if="flag" class="f12 blue ml20">(编辑中)</span>
       <i v-else class="el-icon-edit blue fr" @click="handleEdit"></i>
     </div>
-    <div class="main">
-      <!-- <el-checkbox-group v-model="ids" :disabled="!flag">
+    <div class="main" >
+      <el-checkbox-group v-model="ids" :disabled="!flag">
         <selectPart :list="authData" :type="0" :selects="ids"></selectPart>
-      </el-checkbox-group> -->
-      <el-tree
-        ref="tree"
-        :data="authData"
-        default-expand-all
-        show-checkbox
-        node-key="id"
-        :expand-on-click-node="false"
-        :default-checked-keys="ids"
-        :props="defaultProps"
-        check-strictly
-      >
-      </el-tree>
+      </el-checkbox-group>
     </div>
     <div v-if="flag" class="tc mt20">
       <el-button size="mini" @click="handleCancel">取消</el-button>
@@ -37,11 +25,11 @@
 <script>
 import { getMenusTree, setAuthorityForRole } from "@/api/role";
 import { dealAuthTreeFun } from "@/data/fun";
-// import selectPart from './selectPart'
+import selectPart from './selectPart'
 export default {
   props: ["info"],
   inject: ["reload"],
-  // components: {selectPart},
+  components: {selectPart},
   data() {
     return {
       flag: 0,
@@ -54,6 +42,16 @@ export default {
       ids: [],
       allList: null // 用户编辑状态的切换
     };
+  },
+  computed: {
+    auths () {
+      return this.$store.state.app.auths
+    }
+  },
+  watch: {
+    auths () {
+      this.ids = JSON.parse(JSON.stringify(this.auths))
+    }
   },
   mounted() {
     this.getAuth();
@@ -76,6 +74,7 @@ export default {
                 }
                 item.disabled = true;
               });
+              this.$store.dispatch('setAuths', this.ids)
               this.allList = res.data;
               this.authData = dealAuthTreeFun(res.data);
             }
@@ -100,7 +99,7 @@ export default {
     },
     // 提交函数
     handleSave() {
-      this.ids = this.$refs.tree.getCheckedKeys();
+      // this.ids = this.$refs.tree.getCheckedKeys();
       this.loading = true;
       setAuthorityForRole({
         roleId: this.info.roleId,
@@ -142,7 +141,17 @@ export default {
 
 <style lang="scss">
 #roleAuth {
-   .el-checkbox__input.is-disabled.is-checked .el-checkbox__inner {
+  .el-checkbox {
+    display: flex;
+    width: 100%;
+    .el-checkbox__label {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  .el-checkbox__input.is-disabled.is-checked .el-checkbox__inner {
     background-color: #409eff;
     border-color: #409eff;
     opacity: 0.6;
@@ -151,37 +160,5 @@ export default {
     font-weight: 400;
     color: #606266;
   }
-  .el-tree-node__expand-icon.expanded {
-    display: none;
-  }
-  .el-tree .el-tree-node__children > .el-tree-node .el-tree-node__children {
-    display: flex;
-    flex-wrap: wrap;
-    // align-items: center;
-  }
-  .el-tree {
-    .el-tree-node__content {
-      height: 40px;
-    }
-  }
-  // .el-checkbox {
-    // display: flex;
-    // width: 100%;
-  //   .el-checkbox__label {
-  //     display: block;
-  //     white-space: nowrap;
-  //     overflow: hidden;
-  //     text-overflow: ellipsis;
-  //   }
-  // }
-  // .el-checkbox__input.is-disabled.is-checked .el-checkbox__inner {
-  //   background-color: #409eff;
-  //   border-color: #409eff;
-  //   opacity: 0.6;
-  // }
-  // .el-checkbox__label {
-  //   font-weight: 400;
-  //   color: #606266;
-  // }
 }
 </style>

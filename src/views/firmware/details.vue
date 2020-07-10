@@ -90,7 +90,13 @@
                                v-model="batchManage.id"
                                placeholder="请输入批次ID"
                                @keyup.enter.native="searchBatchManage"
-                           ></el-input>
+                               class="searchInput"
+                           >
+                            <span slot="suffix">
+                                <i class="el-icon-search hand" @click="searchBatchManage"></i>
+                                <i class="el-icon-close hand" v-if="batchManage.id != ''" @click="clearFun('id')"></i>
+                            </span>
+                           </el-input>
                        </el-form-item>
                    </el-form>
                    <el-table :data="batchManage.batchList" border stripe>
@@ -137,14 +143,26 @@
                                v-model="devManage.deviceName"
                                placeholder="请输入deviceName"
                                @keyup.enter.native="searchDevManage"
-                           ></el-input>
+                               class="searchInput"
+                           >
+                            <span slot="suffix">
+                                <i class="el-icon-search hand" @click="searchDevManage"></i>
+                                <i class="el-icon-close hand" v-if="devManage.deviceName != ''" @click="clearFun('name')"></i>
+                            </span>
+                           </el-input>
                        </el-form-item>
                        <el-form-item>
                            <el-input
                                v-model="devManage.batchNo"
                                placeholder="请输入批次ID"
                                @keyup.enter.native="searchDevManage"
-                           ></el-input>
+                               class="searchInput"
+                           >
+                            <span slot="suffix">
+                                <i class="el-icon-search hand" @click="searchDevManage"></i>
+                                <i class="el-icon-close hand" v-if="devManage.batchNo != ''" @click="clearFun('batchNo')"></i>
+                            </span>
+                           </el-input>
                        </el-form-item>
                    </el-form>
                    <el-table :data="devManage.devList" border stripe>
@@ -423,7 +441,7 @@
                   'pageNum': this.batchManage.pageNum,
                   'pageSize': this.batchManage.pageSize,
                   'fmId': this.fmId,
-                  'id': this.batchManage.id
+                  'batchNo': this.batchManage.id
                 };
                 this.batchManage.batchList = []
                 upgradeList (data).then ( res => {
@@ -451,6 +469,24 @@
             searchBatchManage () {
                 this.batchManage.pageNum = 1
                 this.getUpgradeList()
+            },
+            clearFun (key) {
+                switch (key) {
+                    case 'id':
+                        this.batchManage.id = ''
+                        this.searchBatchManage()
+                        break
+                    case 'name':
+                        this.devManage.deviceName = ''
+                        this.searchDevManage()
+                        break
+                    case 'batchNo':
+                        this.devManage.batchNo = ''
+                        this.searchDevManage()
+
+                        break
+                }
+                
             },
             // 批次管理分页
             handleBatchChange () {

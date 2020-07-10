@@ -17,7 +17,8 @@ const app = {
     ],
     menuLists: [], // 用户的菜单列表
     functionLists: [], // 系统功能权限的具体项
-    functionArr: [] // 系统功能权限的code数组
+    functionArr: [], // 系统功能权限的code数组
+    auths: [] // 角色编辑已选的角色
   },
   mutations: {
     SET_USER_INFO: (state, info) => {
@@ -40,6 +41,9 @@ const app = {
     },
     SET_FUNCTION_LISTS: (state, list) => {
       state.functionLists = list;
+    },
+    SET_AUTHS: (state, auths) => {
+      state.auths = auths
     }
   },
   actions: {
@@ -110,6 +114,12 @@ const app = {
         commit("SET_FUNCTION_LISTS", list);
         resolve();
       });
+    },
+    setAuths({ commit }, auths) {
+      return new Promise(resolve => {
+        commit("SET_AUTHS", auths);
+        resolve()
+      })
     }
   }
 };

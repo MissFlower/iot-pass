@@ -12,7 +12,7 @@
         <i class="el-icon-warning blue mr5"></i>
         当前展示的是已发布到线上的功能定义，
         <span v-if="productStatus">如需编辑请先撤销发布</span>
-        <span v-else>如需修改，请点击
+        <span v-else class="df ai_c">如需修改，请点击
           <el-link :underline="false" type="primary" class="f12" @click="handleEdit">编辑草稿</el-link>
         </span>
       </div>

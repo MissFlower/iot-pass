@@ -50,9 +50,6 @@ import { sysTopic } from '@/api/product'
 
         })
       }
-    },
-    mounted () {
-      console.log(this.productStatus)
     }
   };
 </script>

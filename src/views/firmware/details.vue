@@ -486,7 +486,6 @@
                     case 'batchNo':
                         this.devManage.batchNo = ''
                         this.searchDevManage()
-
                         break
                 }
                 

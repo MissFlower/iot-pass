@@ -58,8 +58,7 @@
           <span>{{ scope.row.menuFlag == "Y" ? "是" : "否" }}</span>
         </template>
       </el-table-column>
-      <!-- <el-table-column label="路由" prop="frontPath"></el-table-column> -->
-      <!-- <el-table-column label="排序" prop="sort"></el-table-column> -->
+      <el-table-column label="排序" prop="sort"></el-table-column>
       <el-table-column label="图标" prop="icon"></el-table-column>
       <el-table-column label="状态" prop="status" width="80" align="center">
         <template slot-scope="scope">

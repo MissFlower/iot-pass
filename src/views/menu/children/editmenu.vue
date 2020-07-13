@@ -13,7 +13,6 @@
       class="mb20"
       :rules="rules"
       v-if="info"
-      
     >
       <el-form-item label="菜单名称" prop="name">
         <el-input
@@ -38,13 +37,6 @@
           placeholder="请选择上层菜单"
         ></el-cascader>
       </el-form-item>
-      <!-- <el-form-item label="前端地址">
-        <el-input
-          v-model="info.frontPath"
-          placeholder="请输入前端路由地址"
-          class="w200"
-        ></el-input>
-      </el-form-item> -->
       <el-form-item label="请求地址" prop="url">
         <el-input
           v-model="info.url"
@@ -58,13 +50,13 @@
           <el-radio label="N">否</el-radio>
         </el-radio-group>
       </el-form-item>
-      <!-- <el-form-item label="排序">
+      <el-form-item label="排序" prop="sort" v-if="info.menuFlag == 'Y'">
         <el-input
           v-model="info.sort"
           placeholder="请输入菜单排序"
           class="w200"
         ></el-input>
-      </el-form-item> -->
+      </el-form-item>
       <el-form-item label="图标">
         <el-input
           v-model="info.icon"
@@ -96,6 +88,19 @@ export default {
   props: ["activeItem"],
   inject: ["reload"],
   data() {
+    const validateSort = (rule, value, callback) => {
+      setTimeout(() => {
+        if (!Number.isInteger(value)) {
+          callback(new Error('请输入数字值'));
+        } else {
+          if (value < 1) {
+            callback(new Error('必须大于0'));
+          } else {
+            callback();
+          }
+        }
+      }, 1000);
+    }
     return {
       loading: false,
       show: false,
@@ -113,7 +118,8 @@ export default {
         menuFlag: "Y",
         url: "",
         icon: "",
-        frontPath: ""
+        frontPath: "",
+        sort: ''
       },
       info: null,
       rules: {
@@ -123,7 +129,11 @@ export default {
         menuFlag: [
           { required: true, message: "请选择菜单标记", trigger: "blur" }
         ],
-        url: [{ required: true, message: "请输入请求地址", trigger: "blur" }]
+        url: [{ required: true, message: "请输入请求地址", trigger: "blur" }],
+        sort: [
+          { required: true, message: "请输入菜单排序", trigger: "blur"},
+          { validator: 'validateSort', trigger: 'change'}
+        ]
       },
       menuObj: null
     };
@@ -167,11 +177,11 @@ export default {
             this.info = JSON.parse(JSON.stringify(this.createRow));
             if (this.activeItem) {
               this.info.menuId = null;
-              this.info.sort = 0;
               for (const key in this.info) {
                 this.info[key] = this.activeItem[key];
               }
               this.info.pid = this.findMenuIds(this.activeItem.pcodes);
+              this.info.sort = this.info.sort ? this.info.sort * 1 : 0
             } else {
               if (this.list && this.list.length > 0) {
                 this.info.pid = this.findMenuIds(`[0],[${this.list[0].code}],`);
@@ -208,6 +218,10 @@ export default {
       return arr;
     },
     handleSave() { // 保存函数
+    this.$refs.form.validate(valid => {
+      if (!valid) {
+        return
+      }
       this.loading = true;
       let promise = null;
       let str = "";
@@ -241,6 +255,7 @@ export default {
           this.$message.error(`菜单${str}失败`);
           this.loading = false;
         });
+      })
     },
     handleCancel() {
       this.$parent.showCon(1);

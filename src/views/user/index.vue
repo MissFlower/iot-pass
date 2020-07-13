@@ -55,7 +55,7 @@ export default {
         if (this.$refs.roleList) {
           this.$refs.roleList.getData();
         }
-      })
+      });
     }
   }
 };

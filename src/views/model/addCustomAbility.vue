@@ -49,7 +49,7 @@
 
       <event-con ref="eventPart" v-if="formData.abilityType == 3" :info="editAbility" @success="eventPartSuccess"></event-con>
       <el-form-item label="描述">
-        <el-input v-model="formData.modelData.description" type="textarea" placeholder="请输入描述" :rows="4" maxlength="100" show-word-limit :disabled="showFlag"></el-input>
+        <el-input v-model="formData.modelData.desc" type="textarea" placeholder="请输入描述" :rows="4" maxlength="100" show-word-limit :disabled="showFlag"></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer">

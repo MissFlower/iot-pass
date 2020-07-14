@@ -274,7 +274,7 @@
                                    添加时间
                                </div>
                                <div class="edit_info-rf">
-                                   {{new Date(fmInfo.fmInfoList.createTime).toLocaleString()}}
+                                   {{fmInfo.fmInfoList.createTime_}}
                                </div>
                            </div>
                        </el-col>
@@ -328,6 +328,7 @@
         <CheckFirmware
             :checkFmVisible="checkFmVisible"
             :checkFmId="fmId"
+            :srcVersion="srcVersion"
             @checkVisible="checkVisible"
             @refreshList="refreshList"
         ></CheckFirmware>
@@ -387,6 +388,7 @@
                 checkFmVisible: false,
                 upgradeFmVisible: false,
                 checkFmId: '',
+                srcVersion: '',
                 checkDestVersion: '',
                 taskStatusObj: dataObj.taskStatusObj,
                 upgradeStatusObj: dataObj.upgradeStatusObj
@@ -400,6 +402,7 @@
         mounted () {
             this.fmId = String(this.$route.query.id)
             this.productName = this.$route.query.productName
+            this.srcVersion = this.$route.query.srcVersion
             this.getDetails()
             this.getUpgradeList() // 批次管理
             this.getStatistics()     // 获取 标签页 上方数据
@@ -420,6 +423,7 @@
                 getFmDetails (formData).then( res => {
                     if (res.code === 200) {
                         this.details.detailList = res.data
+                        res.data.createTime_ = res.data.createTime ? new Date(res.data.createTime.replace(/-/g, "/")).toLocaleString() : ''
                         this.fmInfo.fmInfoList = res.data
                     } else {
                         this.$message.error(res.message);
@@ -581,7 +585,7 @@
             },
             formatCreateTime (row) {
                 return row.createTime ? this.$fun.dateFormat(
-                    new Date(row.createTime),
+                    new Date(row.createTime.replace(/-/g, "/")),
                     "yyyy-MM-dd hh:mm:ss"
                 ): ''
             },

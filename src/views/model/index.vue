@@ -59,9 +59,11 @@
           {{scope.row.dataType ? dataTypeTextObj[scope.row.dataType.type] : ''}}
         </template>
       </el-table-column>
-      <el-table-column label="数据定义">
+      <el-table-column label="数据定义" width="200">
         <template slot-scope="scope">
-          <div class="ellipsis">{{scope.row.dataType ? scope.row.dataType.specs : ''}}</div>
+          <div class="w180">
+            <div class="ellipsis">{{scope.row.dataType ? scope.row.dataType.specs : ''}}</div>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="90" align="center">

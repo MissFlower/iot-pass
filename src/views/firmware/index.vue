@@ -95,7 +95,7 @@
                 >批量升级</a
               >
               |
-              <a class="oprate_btn" @click="toDetails(scope.row.id, scope.row.productName)">查看</a> |
+              <a class="oprate_btn" @click="toDetails(scope.row.id, scope.row.productName, scope.row.srcVersion)">查看</a> |
               <a class="oprate_btn" @click="delItem(scope.row.id)">删除</a>
             </template>
           </el-table-column>
@@ -366,7 +366,7 @@ export default {
     },
     formatCreateTime (row) {
       return row.createTime ? this.$fun.dateFormat(
-          this.$fun.strFormatDate(row.createTime),
+          this.$fun.strFormatDate(row.createTime.replace(/-/g, "/")),
           "yyyy-MM-dd hh:mm:ss"
       ): ''
     },
@@ -385,12 +385,13 @@ export default {
       this.fetchFmList();
     },
     // 查看详情
-    toDetails(id, productName) {
+    toDetails(id, productName, srcVersion) {
       this.$router.push({
         path: "details",
         query: {
           id: id,
-          productName: productName
+          productName: productName,
+          srcVersion: srcVersion
         }
       });
     },

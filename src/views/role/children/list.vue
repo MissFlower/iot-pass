@@ -109,8 +109,8 @@ export default {
           if (res.code === 200) {
             if (res.data && res.data.data && res.data.data.length > 0) {
               res.data.data.forEach(item => {
-                item.createTime_ = item.createTime ? this.$fun.dateFormat(this.$fun.strFormatDate(item.createTime), "yyyy-MM-dd hh:mm:ss") : "";
-                item.updateTime_ = item.updateTime ? this.$fun.dateFormat(this.$fun.strFormatDate(item.updateTime), "yyyy-MM-dd hh:mm:ss") : "";
+                item.createTime_ = item.createTime ? this.$fun.dateFormat(this.$fun.strFormatDate(item.createTime.replace(/-/g, "/")), "yyyy-MM-dd hh:mm:ss") : "";
+                item.updateTime_ = item.updateTime ? this.$fun.dateFormat(this.$fun.strFormatDate(item.updateTime.replace(/-/g, "/")), "yyyy-MM-dd hh:mm:ss") : "";
               });
               this.list = res.data.data;
             }

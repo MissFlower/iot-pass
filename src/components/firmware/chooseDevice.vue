@@ -7,7 +7,7 @@
     <el-dialog title="请选择设备" :visible.sync="chooseDeviceVisible" width="30%" :before-close='closeDialog' :close-on-click-modal="closeModal">
         <el-form :model="form" ref="ruleForm" label-width="120px" class="demo-ruleForm" :inline="true">
             <el-form-item>
-                <el-input type="text" v-model="deviceForm.deviceName" placeholder="请输入设备名称" @keyup.enter.native="searchDev"></el-input>
+                <el-input type="text" v-model="deviceForm.deviceName" placeholder="请输入设备名称"></el-input>
             </el-form-item>
         </el-form>
         <el-table

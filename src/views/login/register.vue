@@ -28,7 +28,6 @@
               placeholder="密码必须由8到14个字符包括大小写字母、数字组成"
               show-password
             />
-            <!-- <span class="f12 c6">密码必须由8到14个字符包括大小写字母、数字组成</span> -->
           </el-form-item>
           <el-form-item prop="phone">
             <el-input v-model="formData.phone" placeholder="请输入手机号" />
@@ -57,13 +56,16 @@
         </div>
       </div>
     </div>
+    <send-code-verify v-if="verifyFlag" @close="closeVarifyDialog" @success="successVerifyDialog"></send-code-verify>
   </div>
 </template>
 
 <script>
+import sendCodeVerify from '@/components/sendCodeVerify'
 import { register, sendCode, verifyCode } from "@/api";
 import { phoneValidate } from "@/data/fun";
 export default {
+  components: {sendCodeVerify},
   data() {
     const validatePhone = (rule, value, callback) => {
       let str = phoneValidate(value);
@@ -115,7 +117,8 @@ export default {
           { required: true, validator: validateCode, trigger: "blur" },
           { type: 'number', message: '请输入正确的验证码', trigger: "blur"}
         ]
-      }
+      },
+      verifyFlag: false
     };
   },
   mounted() {
@@ -172,25 +175,30 @@ export default {
       this.$refs.form.validateField('phone', (valid) => {
         if (valid === '') {
           if (this.seconds === 0) {
-            this.loading = true
-            sendCode({
-              phone: this.formData.phone,
-              type: 1
-            }).then(res => {
-              if (res.code === 200) {
-                this.seconds = 61;
-                this.timer();
-              } else {
-                this.$message.error(res.message);
-              }
-              this.loading = false
-            }).catch(() => {
-              this.seconds = 0
-              this.$message.error('验证码获取失败')
-              this.loading = false
-            })
+            this.verifyFlag = true
           }
         }
+      })
+    },
+    sendCodeFun (data) {
+      this.loading = true
+      sendCode({
+        phone: this.formData.phone,
+        type: 1,
+        code: data.code,
+        uuid: data.uuid
+      }).then(res => {
+        if (res.code === 200) {
+          this.seconds = 61;
+          this.timer();
+        } else {
+          this.$message.error(res.message);
+        }
+        this.loading = false
+      }).catch(() => {
+        this.seconds = 0
+        this.$message.error('验证码获取失败')
+        this.loading = false
       })
     },
     timer() {
@@ -201,6 +209,17 @@ export default {
       } else {
         this.msg = "重新发送";
         this.seconds = 0;
+      }
+    },
+    // 图片验证码关闭回调
+    closeVarifyDialog () {
+      this.verifyFlag = false
+    },
+    // 图片验证码提交的回调
+    successVerifyDialog (data) {
+      this.closeVarifyDialog()
+      if (data) {
+        this.sendCodeFun(data)
       }
     }
   }

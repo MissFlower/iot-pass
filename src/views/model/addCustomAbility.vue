@@ -40,7 +40,7 @@
             <div slot="content" class="f12 c9 w200">必填，支持大小写字母、数字和下划线、不超过50个字符。</div>
           </el-tooltip>
         </span>
-        <el-input v-model="formData.modelData.identifier" placeholder="请输入您的标识符" :disabled="(editAbility || showFlag) ? true : false"></el-input>
+        <el-input v-model="formData.modelData.identifier" placeholder="请输入您的标识符" :disabled="showFlag ? true : false"></el-input>
       </el-form-item>
       <!--不同类型对应不同模块-->
       <attribute-con ref="attDataSelectPart"  v-if="formData.abilityType == 1" :dataType="formData.modelData.dataType" :showFlag="showFlag" :accessMode="formData.modelData.accessMode" @callBack="callBackForAttribute"></attribute-con>
@@ -105,7 +105,7 @@ export default {
         modelData: {
           identifier: '',
           name: '',
-          description: '',
+          desc: '',
           accessMode: '',
           dataType: {}
         }

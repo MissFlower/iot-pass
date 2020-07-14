@@ -42,17 +42,20 @@
         <password-update v-if="flag == 3 || flag == 4" :flag="flag"></password-update>
       </div>
     </div>
+    <send-code-verify v-if="verifyFlag" @close="closeVarifyDialog" @success="successVerifyDialog"></send-code-verify>
   </div>
 </template>
 
 <script>
 import { sendCode, verifyCode } from "@/api";
+
 import emailBand from "./children/emailBand";
 import phoneBand from "./children/phoneBand";
 import passwordUpdate from "./children/updatePassword";
+import sendCodeVerify from '@/components/sendCodeVerify'
 
 export default {
-  components: { emailBand, phoneBand, passwordUpdate },
+  components: { emailBand, phoneBand, passwordUpdate, sendCodeVerify },
   data() {
     return {
       loading: false,
@@ -65,6 +68,7 @@ export default {
       flag: null,
       title: "",
       type: 2,
+      verifyFlag: false
     };
   },
   computed: {
@@ -113,10 +117,16 @@ export default {
   methods: {
     getCode() {
       if (this.seconds === 0) {
-        this.loading = true;
+        this.verifyFlag = true
+      }
+    },
+    sendCodeFun (data) {
+      this.loading = true;
         sendCode({
           phone: this.phone,
-          type: this.type
+          type: this.type,
+          code: data.code,
+          uuid: data.uuid
         }).then(res => {
           if (res.code === 200) {
             this.seconds = 61;
@@ -129,8 +139,6 @@ export default {
           this.$message.warning('验证码获取失败')
           this.loading = false
         })
-      }
-      
     },
     timer() {
       if (this.seconds > 1) {
@@ -175,6 +183,17 @@ export default {
       if (this.active === 1) {
         this.active++;
         clearTimeout(this.timerVal);
+      }
+    },
+    // 图片验证码关闭回调
+    closeVarifyDialog () {
+      this.verifyFlag = false
+    },
+    // 图片验证码提交的回调
+    successVerifyDialog (data) {
+      this.closeVarifyDialog()
+      if (data) {
+        this.sendCodeFun(data)
       }
     }
   }

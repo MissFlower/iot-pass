@@ -45,16 +45,19 @@
         </div>
       </div>
     </div>
-    
+    <send-code-verify v-if="verifyFlag" @close="closeVarifyDialog" @success="successVerifyDialog"></send-code-verify>
   </div>
 </template>
 
 <script>
 import phoneAreaObj from "@/data/phone"
+import sendCodeVerify from '@/components/sendCodeVerify'
+
 import { sendCode, verifyCode } from "@/api";
 import { phoneValidate } from "@/data/fun";
 import { updateUser } from "@/api/user";
 export default {
+  components: {sendCodeVerify},
   data () {
     const validatePhone = (rule, value, callback) => {
       let str = phoneValidate(value);
@@ -91,7 +94,8 @@ export default {
           { required: true, validator: validateCode, trigger: "blur" },
           { type: 'number', message: '请输入正确的验证码', trigger: "blur"}
         ]
-      }
+      },
+      verifyFlag: false
     }
   },
   computed: {
@@ -106,24 +110,29 @@ export default {
       this.$refs.form.validateField("phone", (valid) => {
         if (!valid) {
           if (this.seconds === 0) {
-            this.loading = true;
-            sendCode({
-              phone: this.formData.phone,
-              type: 6
-            }).then(res => {
-              if (res.code === 200) {
-                this.seconds = 61;
-                this.timer();
-              } else {
-                this.$message.error(res.message);
-              }
-              this.loading = false;
-            }).catch(() => {
-              this.$message.warning('验证码获取失败')
-              this.loading = false
-            })
+            this.verifyFlag = true
           }
         }
+      })
+    },
+    sendCodeFun (data) {
+      this.loading = true;
+      sendCode({
+        phone: this.formData.phone,
+        type: 6,
+        code: data.code,
+        uuid: data.uuid
+      }).then(res => {
+        if (res.code === 200) {
+          this.seconds = 61;
+          this.timer();
+        } else {
+          this.$message.error(res.message);
+        }
+        this.loading = false;
+      }).catch(() => {
+        this.$message.warning('验证码获取失败')
+        this.loading = false
       })
     },
     timer() {
@@ -183,6 +192,17 @@ export default {
         this.$message.error("操作失败")
         this.loading = false
       })
+    },
+    // 图片验证码关闭回调
+    closeVarifyDialog () {
+      this.verifyFlag = false
+    },
+    // 图片验证码提交的回调
+    successVerifyDialog (data) {
+      this.closeVarifyDialog()
+      if (data) {
+        this.sendCodeFun(data)
+      }
     }
   }
 }

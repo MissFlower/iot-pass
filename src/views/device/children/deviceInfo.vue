@@ -14,6 +14,7 @@
     <div class="f20 b">
       <i class="el-icon-back" @click="back"></i>
       {{deviceObj.deviceName}}
+      <el-tag :type="deviceStatusType[deviceObj.deviceStatus]">{{deviceObj.deviceStatusStr}}</el-tag>
     </div>
     <div class="f12 c6 mt20 mb20 df fww">
       <div class="productInfo">
@@ -180,7 +181,10 @@ export default {
       loading: false,
       burnShow: false,
       modelType: "runState",
-      modelShow: false
+      modelShow: false,
+      deviceStatusType: {
+        "0": "info", "1": "success", "2": "error"
+      }
     };
   },
 

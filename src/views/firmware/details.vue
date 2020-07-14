@@ -556,11 +556,10 @@
             },
             // 跳转批次详情
             toBatchDetails (row) {
-                console.log(row)
                 this.$router.push({
                     path: 'batchDetails',
                     query: {
-                        id: row.fmId ? row.fmId : row.id,
+                        id: row.fmId,
                         productName: this.productName,
                         batchNo: row.batchNo
                     }

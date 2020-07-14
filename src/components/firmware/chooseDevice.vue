@@ -12,7 +12,7 @@
         </el-form>
         <el-table
             ref="multipleTable"
-            :data="fmDeviceList"
+            :data="fmDeviceList.filter(data => !deviceForm.deviceName || data.deviceName.toLowerCase().includes(deviceForm.deviceName.toLowerCase()))"
             tooltip-effect="dark"
             style="width: 100%"
             @selection-change="handleSelectionChange">
@@ -37,7 +37,7 @@
     </el-dialog>
 </template>
 <script>
-    import { upgradeDeviceList } from '@/api/fireware'
+    // import { upgradeDeviceList } from '@/api/fireware'
     export default {
         props: {
             chooseDeviceVisible: {
@@ -69,10 +69,10 @@
         methods: {
              // 获取设备列表
             getDeviceList () {
-              upgradeDeviceList(this.deviceForm).then(res => {
-                    this.deviceList = res.data.data
-                    this.deviceTotal = res.data.total
-                })
+            //   upgradeDeviceList(this.deviceForm).then(res => {
+            //         this.deviceList = res.data.data
+            //         this.deviceTotal = res.data.total
+            //     })
             },
             // 搜索设备
             searchDev () {
@@ -100,11 +100,8 @@
             handleSelectionChange(val) {
                 this.multipleSelection = val;
             },
-            handleDevChange () {
-                this.getDeviceList()
-            },
+            
             closeDialog () {
-                this.$emit('deviceVisible', this.chooseDeviceVisible)
                 this.toggleSelection()
             }
         }

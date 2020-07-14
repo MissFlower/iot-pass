@@ -9,7 +9,7 @@
             <h2>
                 <span class="go_back" @click="goBack"><i class="el-icon-back"></i></span>{{details.detailList.fmName}}
             </h2>
-            <el-tag :type="details.deviceType" class="el_tag">{{details.detailList.fmStatus === 0 ? '未验证' : details.detailList.fmStatus === 1 ? '验证中' : '已通过'}}</el-tag>
+            <el-tag :type="details.deviceType" class="el_tag">{{fmStatusObj[details.detailList.fmStatus]}}</el-tag>
         </div>
         <div class="detail_info">
             <el-row>
@@ -294,7 +294,7 @@
                                    固件状态
                                </div>
                                <div class="edit_info-rf">
-                                   {{fmInfo.fmInfoList.fmStatus === 0 ? '未验证' : fmInfo.fmInfoList.fmStatus === 1 ? '验证中' : '已通过'}}
+                                   {{fmStatusObj[fmInfo.fmInfoList.fmStatus]}}
                                </div>
                            </div>
                        </el-col>
@@ -391,7 +391,8 @@
                 srcVersion: '',
                 checkDestVersion: '',
                 taskStatusObj: dataObj.taskStatusObj,
-                upgradeStatusObj: dataObj.upgradeStatusObj
+                upgradeStatusObj: dataObj.upgradeStatusObj,
+                fmStatusObj: dataObj.fmStatusObj
             }
         },
         components: {

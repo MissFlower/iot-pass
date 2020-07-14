@@ -73,8 +73,9 @@
           <el-table-column
             label="固件状态"
             prop="fmStatus"
-            :formatter="formatFmStatus"
-          ></el-table-column>
+          >
+            <template slot-scope="scope">{{fmStatusObj[scope.row.fmStatus]}}</template>
+          </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
               <a class="oprate_btn" @click="checkFm(scope.row)">验证固件</a>
@@ -181,6 +182,8 @@
 import AddFirmware from "@/components/firmware/addFirmware";
 import CheckFirmware from "@/components/firmware/checkFirmware";
 import UpgradeFirmware from "@/components/firmware/upgradeFirmware";
+
+import dataObj from '@/data/data'
 import {
   getFmList,
   deleteFm,
@@ -219,7 +222,8 @@ export default {
       dialogFormVisible: false,
       checkFmVisible: false,
       upgradeFmVisible: false,
-      tabDisabled: true
+      tabDisabled: true,
+      fmStatusObj: dataObj.fmStatusObj
     };
   },
   components: {
@@ -335,10 +339,21 @@ export default {
       this.checkFmVisible = false;
     },
     openCheckFm(status) {
-      let title = status === 1 ? "固件验证中" : "固件验证成功";
+      let title = ''
+      switch (status) {
+        case 1:
+          title = '固件验证中'
+          break
+        case 2:
+          title = '固件验证成功'
+          break
+        case 3:
+          title = '固件验证失败'
+          break
+      }
       this.$alert(`${title}`, "验证固件", {
         confirmButtonText: "关闭"
-      });
+      }).then(() => {});
     },
     refreshList() {
       this.fetchFmList();

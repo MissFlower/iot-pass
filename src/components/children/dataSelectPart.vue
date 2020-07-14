@@ -300,6 +300,7 @@ export default {
   watch: {
     info() {
       this.dealDataByInfo()
+      console.log(this.info)
     }
   },
   mounted () {
@@ -349,7 +350,12 @@ export default {
     dealDataByInfo () {
       if (this.info && JSON.stringify(this.info) !== '{}') {
         this.formData = JSON.parse(JSON.stringify(this.info))
-        this.handleChange()
+        // this.handleChange()
+        if (this.formData.type === '8') {
+          this.allFlag_ = this.allFlag
+        } else {
+          this.allFlag_ = this.allFlag + 1
+        }
         switch(this.formData.type) {
           case '3':
             this.enumArr = []

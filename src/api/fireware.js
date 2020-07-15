@@ -219,3 +219,19 @@ export function statistics(data) {
      data: Qs.stringify(data)
    })
  }
+
+ /**
+  * 定向升级选择设备列表
+  *
+  * 
+  * deviceName	String	否	设备名称
+    srcVersions	String	否	版本筛选(带升级版本号,格式如:110,112,113)
+  */
+
+  export function getDirectedUpgradeList (data) {
+    return request({
+      url: '/upgrade/directedUpgradeList',
+      method: 'post',
+      data
+    })
+  }

@@ -11,7 +11,7 @@
       :before-close="closeDialog"
       width="25%"
     >
-      <el-form :model="form" ref="ruleFormUpgrade" :rules="rules">
+      <el-form :model="form" ref="ruleFormUpgrade" :rules="rules" label-width="150px">
         <el-form-item
           label="升级前版本号"
           label-width="150px"
@@ -22,7 +22,6 @@
         </el-form-item>
         <el-form-item
           label="升级后版本号"
-          label-width="150px"
           prop="destVersion"
           required
         >
@@ -30,7 +29,6 @@
         </el-form-item>
         <el-form-item
           label="升级策略"
-          label-width="150px"
           prop="ugStrategy"
           required
         >
@@ -41,20 +39,21 @@
         </el-form-item>
         <el-form-item
           label="升级范围"
-          label-width="150px"
           prop="scopeType"
           required
         >
           <el-select v-model="form.scopeType" placeholder="请选择升级范围">
-            <el-option label="全部" value="0"></el-option>
-            <!-- <el-option label="定向" value="1"></el-option> -->
-            <!-- <el-option label="区域" value="2"></el-option> -->
-            <!-- <el-option label="灰度" value="3"></el-option> -->
+            <el-option label="全部设备" value="0"></el-option>
+            <el-option label="定向升级" value="1"></el-option>
+            <!-- <el-option label="区域升级" value="2"></el-option> -->
+            <!-- <el-option label="灰度升级" value="3"></el-option> -->
           </el-select>
+        </el-form-item>
+        <el-form-item label="设备范围" v-if="form.scopeType == 1" prop="value1">
+          <el-select v-model="value1" multiple placeholder="请选择" @focus="handleFocus"></el-select>
         </el-form-item>
         <el-form-item
           label="升级时间"
-          label-width="150px"
           prop="ugTimeType"
           required
         >
@@ -109,11 +108,14 @@
         >
       </div>
     </el-dialog>
+    <select-device v-if="selectDeviceFlag" @close="closeDeviceDrawer"></select-device>
   </div>
 </template>
 <script>
 import { saveUpgrade } from "@/api/fireware";
+import selectDevice from "./selectDevice"
 export default {
+  components: { selectDevice },
   props: {
     upgradeFmVisible: {
       type: Boolean
@@ -154,7 +156,12 @@ export default {
             { required: true, message: '请输入设备升级超时时间', trigger: 'blur' },
             { type: 'number', message: '设备升级超时时间必须为数字值' }
           ],
-      }
+          value1: [
+            { required: true, message: '请选择设备范围', trigger: 'blur' }
+          ]
+      },
+      value1: '',
+      selectDeviceFlag: false
     };
   },
   mounted () {
@@ -186,6 +193,12 @@ export default {
     closeDialog() {
       this.$refs.ruleFormUpgrade.resetFields();
       this.$emit("upgradeVisible", this.upgradeFmVisible);
+    },
+    handleFocus () {
+      this.selectDeviceFlag = true
+    },
+    closeDeviceDrawer () {
+      this.selectDeviceFlag = false
     }
   }
 };

@@ -7,12 +7,12 @@
     <el-dialog title="请选择设备" :visible.sync="chooseDeviceVisible" width="30%" :before-close='closeDialog' :close-on-click-modal="closeModal">
         <el-form :model="form" ref="ruleForm" label-width="120px" class="demo-ruleForm" :inline="true">
             <el-form-item>
-                <el-input type="text" v-model="deviceForm.deviceName" placeholder="请输入设备名称" @keyup.enter.native="searchDev"></el-input>
+                <el-input type="text" v-model="deviceForm.deviceName" placeholder="请输入设备名称"></el-input>
             </el-form-item>
         </el-form>
         <el-table
             ref="multipleTable"
-            :data="fmDeviceList"
+            :data="list"
             tooltip-effect="dark"
             style="width: 100%"
             @selection-change="handleSelectionChange">
@@ -37,7 +37,7 @@
     </el-dialog>
 </template>
 <script>
-    import { upgradeDeviceList } from '@/api/fireware'
+    // import { upgradeDeviceList } from '@/api/fireware'
     export default {
         props: {
             chooseDeviceVisible: {
@@ -63,20 +63,31 @@
                     fmVersion: ''
                 },
                 deviceTotal: '',
-                closeModal: false
+                closeModal: false,
+                list: []
             }
         },
-        methods: {
-             // 获取设备列表
-            getDeviceList () {
-              upgradeDeviceList(this.deviceForm).then(res => {
-                    this.deviceList = res.data.data
-                    this.deviceTotal = res.data.total
-                })
+        watch: {
+            'deviceForm.deviceName': function () {
+                this.listFilterFun()
             },
-            // 搜索设备
-            searchDev () {
-                this.getDeviceList()
+            'fmDeviceList': function () {
+                this.listFilterFun()
+            }
+        },
+        mounted () {
+            this.list = this.fmDeviceList
+            this.listFilterFun()
+        },
+        methods: {
+            listFilterFun () {
+                let list = []
+                if (this.fmDeviceList && this.fmDeviceList.length > 0) {
+                     list = this.fmDeviceList.filter(data => {
+                         return !this.deviceForm.deviceName || data.deviceName.toLowerCase().includes(this.deviceForm.deviceName.toLowerCase())
+                     })
+                }
+                this.list = list
             },
             // 选择设备
             chooseSubmit () {
@@ -100,11 +111,8 @@
             handleSelectionChange(val) {
                 this.multipleSelection = val;
             },
-            handleDevChange () {
-                this.getDeviceList()
-            },
+            
             closeDialog () {
-                this.$emit('deviceVisible', this.chooseDeviceVisible)
                 this.toggleSelection()
             }
         }

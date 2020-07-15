@@ -9,7 +9,7 @@
             <h2>
                 <span class="go_back" @click="goBack"><i class="el-icon-back"></i></span>{{details.detailList.fmName}}
             </h2>
-            <el-tag :type="details.deviceType" class="el_tag">{{details.detailList.fmStatus === 0 ? '未验证' : details.detailList.fmStatus === 1 ? '验证中' : '已通过'}}</el-tag>
+            <el-tag :type="details.deviceType" class="el_tag">{{fmStatusObj[details.detailList.fmStatus]}}</el-tag>
         </div>
         <div class="detail_info">
             <el-row>
@@ -274,7 +274,7 @@
                                    添加时间
                                </div>
                                <div class="edit_info-rf">
-                                   {{new Date(fmInfo.fmInfoList.createTime).toLocaleString()}}
+                                   {{fmInfo.fmInfoList.createTime_}}
                                </div>
                            </div>
                        </el-col>
@@ -294,7 +294,7 @@
                                    固件状态
                                </div>
                                <div class="edit_info-rf">
-                                   {{fmInfo.fmInfoList.fmStatus === 0 ? '未验证' : fmInfo.fmInfoList.fmStatus === 1 ? '验证中' : '已通过'}}
+                                   {{fmStatusObj[fmInfo.fmInfoList.fmStatus]}}
                                </div>
                            </div>
                        </el-col>
@@ -328,6 +328,7 @@
         <CheckFirmware
             :checkFmVisible="checkFmVisible"
             :checkFmId="fmId"
+            :srcVersion="srcVersion"
             @checkVisible="checkVisible"
             @refreshList="refreshList"
         ></CheckFirmware>
@@ -387,9 +388,11 @@
                 checkFmVisible: false,
                 upgradeFmVisible: false,
                 checkFmId: '',
+                srcVersion: '',
                 checkDestVersion: '',
                 taskStatusObj: dataObj.taskStatusObj,
-                upgradeStatusObj: dataObj.upgradeStatusObj
+                upgradeStatusObj: dataObj.upgradeStatusObj,
+                fmStatusObj: dataObj.fmStatusObj
             }
         },
         components: {
@@ -400,6 +403,7 @@
         mounted () {
             this.fmId = String(this.$route.query.id)
             this.productName = this.$route.query.productName
+            this.srcVersion = this.$route.query.srcVersion
             this.getDetails()
             this.getUpgradeList() // 批次管理
             this.getStatistics()     // 获取 标签页 上方数据
@@ -420,6 +424,7 @@
                 getFmDetails (formData).then( res => {
                     if (res.code === 200) {
                         this.details.detailList = res.data
+                        res.data.createTime_ = res.data.createTime ? new Date(res.data.createTime.replace(/-/g, "/")).toLocaleString() : ''
                         this.fmInfo.fmInfoList = res.data
                     } else {
                         this.$message.error(res.message);
@@ -555,11 +560,10 @@
             },
             // 跳转批次详情
             toBatchDetails (row) {
-                console.log(row)
                 this.$router.push({
                     path: 'batchDetails',
                     query: {
-                        id: row.fmId ? row.fmId : row.id,
+                        id: row.fmId,
                         productName: this.productName,
                         batchNo: row.batchNo
                     }
@@ -581,7 +585,7 @@
             },
             formatCreateTime (row) {
                 return row.createTime ? this.$fun.dateFormat(
-                    new Date(row.createTime),
+                    new Date(row.createTime.replace(/-/g, "/")),
                     "yyyy-MM-dd hh:mm:ss"
                 ): ''
             },

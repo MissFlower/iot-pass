@@ -8,7 +8,7 @@
   <div id="dataSelectPart">
     <el-form ref="dataSelectPartForm" :model="formData" :rules="rules">
       <el-form-item label="数据类型" prop="type">
-        <el-select v-model="formData.type" @change="handleChange" :disabled="(info && info.type ? true : false) || showFlag">
+        <el-select v-model="formData.type" @change="handleChange" :disabled="showFlag">
           <el-option v-for="(item, index) in dataTypeArr" :key="index" :value="item.value" :label="item.label"></el-option>
         </el-select>
       </el-form-item>
@@ -91,6 +91,7 @@
           <div v-for="(item, index) in formData.specs" :key="index" class="df ai_c json_item">
             <div class="flex1">参数名称： {{item.name}}</div>
             <div>
+              <el-link type="primary" :underline="false" class="f12 mr10" @click.stop="editSturct(item, index)" v-if="showFlag">查看</el-link>
               <el-link type="primary" :underline="false" class="f12 mr10" @click.stop="editSturct(item, index)" v-if="!showFlag">编辑</el-link>
               <el-link type="primary" :underline="false" class="f12" @click.stop="deleteStruct(index)" v-if="!showFlag">删除</el-link>
             </div>
@@ -114,6 +115,7 @@
             <div v-for="(item, index) in structsForArrar" :key="index" class="df ai_c json_item">
               <div class="flex1">参数名称： {{item.name}}</div>
               <div>
+                <el-link type="primary" :underline="false" class="f12 mr10" @click.stop="editSturct(item, index)" v-if="showFlag">查看</el-link>
                 <el-link type="primary" :underline="false" class="f12 mr10" @click.stop="editSturct(item, index)" v-if="!showFlag">编辑</el-link>
                 <el-link type="primary" :underline="false" class="f12" @click.stop="deleteStruct(index)" v-if="!showFlag">删除</el-link>
               </div>
@@ -124,7 +126,7 @@
         </div>
       </div>
     </el-form>
-    <add-param v-if="flag == 1" :specs="formData.specs" :info="structInfo" :allFlag="allFlag_" @success="successAddParams" @close="clodeAddParams"></add-param>
+    <add-param v-if="flag == 1" :specs="structSpecs" :info="structInfo" :showFlag="showFlag" :allFlag="allFlag_" @success="successAddParams" @close="clodeAddParams"></add-param>
   </div>
 </template>
 
@@ -264,6 +266,7 @@ export default {
       flag: 0, // 新增参数的标记
       structInfo: null, // 编辑新增参数
       structIndex: -1,
+      structSpecs: null,
       rules: {
         type: [
           {required: true, message: "数据类型不能为空", trigger: 'change' }
@@ -297,6 +300,7 @@ export default {
   watch: {
     info() {
       this.dealDataByInfo()
+      console.log(this.info)
     }
   },
   mounted () {
@@ -346,10 +350,16 @@ export default {
     dealDataByInfo () {
       if (this.info && JSON.stringify(this.info) !== '{}') {
         this.formData = JSON.parse(JSON.stringify(this.info))
+        // this.handleChange()
+        if (this.formData.type === '8') {
+          this.allFlag_ = this.allFlag
+        } else {
+          this.allFlag_ = this.allFlag + 1
+        }
         switch(this.formData.type) {
           case '3':
             this.enumArr = []
-            for (let key in this.formData.specs){
+            for (let key in this.formData.specs) {
               this.enumArr.push({
                 key: key,
                 desc: this.formData.specs[key],
@@ -370,6 +380,7 @@ export default {
               num: this.formData.specs.size
             }
             this.structsForArrar = this.formData.specs.item.specs
+            this.arrayTypeChange()
             break
         }
       }
@@ -378,12 +389,12 @@ export default {
     numMinMaxDealFun (value) {
       let str = ''
       let val = null
-      switch (this.formData.type) {
+      switch (this.formData.type + '') {
         case '0':
           val = 2147483648
           if (value === '') {
             str = '不能为空'
-          }else if (this.formData.specs.max && this.formData.specs.min && (this.formData.specs.min > this.formData.specs.max || this.formData.specs.min === this.formData.specs.max)) {
+          }else if (this.formData.specs.max && this.formData.specs.min && (this.formData.specs.min * 1 > this.formData.specs.max * 1 || this.formData.specs.min === this.formData.specs.max)) {
             str = "最大值必须大于最小值，整数型不能有小数位，单精度有效位为7，双精度为16"
           } else if (value > -val && value < val) {
             str = ''
@@ -393,7 +404,7 @@ export default {
           break
         case '1':
           val = '2^128'
-          if (this.formData.specs.max && this.formData.specs.min && (this.formData.specs.min > this.formData.specs.max)) {
+          if (this.formData.specs.max && this.formData.specs.min && (this.formData.specs.min * 1 > this.formData.specs.max * 1 || this.formData.specs.min === this.formData.specs.max)) {
             str = "最大值必须大于最小值，整数型不能有小数位，单精度有效位为7，双精度为16"
           } else if (value > -(Math.pow(2, 128)) && value < Math.pow(2, 128)) {
             str = ''
@@ -493,6 +504,11 @@ export default {
     },
     // 显示新增参数的弹框
     addStruct () {
+      let specs = this.formData.specs
+      if (this.formData.type === '8') {
+        specs = this.structsForArrar
+      }
+      this.structSpecs = specs
       this.flag = 1
     },
     // 枚举项 key值得监控函数  验证信息的显示
@@ -601,28 +617,38 @@ export default {
     successAddParams (data) { // 新增参数的成功的返回函数
       if (data) {
         this.structFlag = false
-        let specs = this.formData.specs
-        if (this.formData.type === '8') {
-          specs = this.structsForArrar
-        }
+        // let specs = this.formData.specs
+        // if (this.formData.type === '8') {
+        //   specs = this.structsForArrar
+        // }
         if (this.structInfo) {
-          specs.splice(this.structIndex, 1, data)
+          this.structSpecs.splice(this.structIndex, 1, data)
           this.structIndex = -1
           this.structInfo = null
         } else {
-          specs.push(data)
+          this.structSpecs.push(data)
         }
       }
     },
     // 新增参数弹框的close函数
     clodeAddParams () {
       this.flag = 0
+      this.structInfo = null
     },
     // 新增参数的编辑
     editSturct (row, index) {
       this.structInfo = JSON.parse(JSON.stringify(row))
       this.structIndex = index
-      this.addStruct()
+      let specs = this.formData.specs
+      if (this.formData.type === '8') {
+        specs = this.structsForArrar
+      }
+      specs = specs.filter(item => {
+        return item.identifier !== row.identifier
+      })
+      this.structSpecs = specs
+      console.log(this.structSpecs)
+      this.flag = 1
     },
     deleteStruct (index) {
       let specs = this.formData.specs

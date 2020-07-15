@@ -43,7 +43,9 @@ export default {
   computed: {
     activeMenu() {
       const route = this.$route;
-      const { path } = route;
+      let { path } = route;
+      const pathArr = path.split('/')
+      path = '/' + pathArr[1]
       return path;
     },
     // showLogo() {

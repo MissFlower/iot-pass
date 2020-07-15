@@ -45,12 +45,15 @@
         </div>
       </div>
     </div>
+    <send-code-verify v-if="verifyFlag" @close="closeVarifyDialog" @success="successVerifyDialog"></send-code-verify>
   </div>
 </template>
 
 <script>
 import { sendMailCode, bandEmailFun } from "@/api";
+import sendCodeVerify from '@/components/sendCodeVerify'
 export default {
+  components: {sendCodeVerify},
   data() {
     const validateCode = (value, rules, callback) => {
       if (this.code === "") {
@@ -86,7 +89,8 @@ export default {
       },
       timerVal: null,
       msg: "获取邮箱验证码",
-      seconds: 0
+      seconds: 0,
+      verifyFlag: false
     };
   },
   computed: {
@@ -105,24 +109,29 @@ export default {
       // const email = this.$fun.trim(this.formData.email);
       this.$refs.form.validateField('email', (valid) => {
         if(!valid) {
-          this.loading = true;
           if (this.seconds === 0) {
-            sendMailCode({
-              email: this.formData.email
-            }).then(res => {
-              if (res.code === 200) {
-                this.seconds = 61
-                this.timer();
-              } else {
-                this.$message.warning(res.message);
-              }
-              this.loading = false;
-            }).catch(() => {
-              this.loading = false
-              this.$message.error('验证码发送失败')
-            })
+            this.verifyFlag = true
           }
         }
+      })
+    },
+    sendCodeFun (data) {
+      this.loading = true;
+      sendMailCode({
+        email: this.formData.email,
+        code: data.code,
+        uuid: data.uuid
+      }).then(res => {
+        if (res.code === 200) {
+          this.seconds = 61
+          this.timer();
+        } else {
+          this.$message.warning(res.message);
+        }
+        this.loading = false;
+      }).catch(() => {
+        this.loading = false
+        this.$message.error('验证码发送失败')
       })
     },
     timer() {
@@ -159,6 +168,17 @@ export default {
     },
     handleGoHome() {
       this.$router.push("/home");
+    },
+    // 图片验证码关闭回调
+    closeVarifyDialog () {
+      this.verifyFlag = false
+    },
+    // 图片验证码提交的回调
+    successVerifyDialog (data) {
+      this.closeVarifyDialog()
+      if (data) {
+        this.sendCodeFun(data)
+      }
     }
   }
 };

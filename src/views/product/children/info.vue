@@ -5,7 +5,7 @@
           <el-link icon="el-icon-edit" v-show="btnType" @click="dialogProEditBtn" v-if="authArr.indexOf('edit_product') > -1">编辑</el-link>
       </div>
       <div class="grid_wrp">
-        <el-row style="display: flex;flex-wrap: wrap">
+        <el-row>
           <el-col :span="8">
               <div class="grid-content ">
                 <div class="grid_col grid_left">
@@ -16,7 +16,6 @@
                 </div>
               </div>
           </el-col>
-          
            <el-col :span="8">
               <div class="grid-content ">
                 <div class="grid_col grid_left">
@@ -29,7 +28,7 @@
           </el-col>
 
            <el-col :span="8">
-              <div class="grid-content ">
+              <div class="grid-content">
                 <div class="grid_col grid_left" style="word-break: break-all;">
                   创建时间
                 </div>

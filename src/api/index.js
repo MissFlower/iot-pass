@@ -167,11 +167,18 @@ export function bandEmailFun(data) {
   userId  用户id
 */
 
-export function  logout(data) {
+export function logout(data) {
   return request({
     url: "/user/logout",
     method: "post",
     headers: headerFrom,
     data: Qs.stringify(data)
   });
+}
+
+export function getCodeImg () {
+  return request({
+    url: "/user/captcha.jpg",
+    method: 'get'
+  })
 }

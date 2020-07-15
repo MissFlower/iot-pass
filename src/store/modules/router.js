@@ -28,7 +28,7 @@ function fun (routes, codeArr, list) {
       item.meta.icon = list[len].icon ? list[len].icon : ''
       item.meta.name = list[len].name ? list[len].name : ''
       if (list[len].path) {
-        list[len].path = list[len].path + '/' + item.path
+        // list[len].path = list[len].path + '/' + item.path
       } else {
         list[len].path = item.path
       }

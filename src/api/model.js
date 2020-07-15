@@ -60,7 +60,7 @@ export function getModel (data) {
         dataType       {        对象	     是	
                       type      数据类型 0int32整数型 1float单精度浮点 2double双精度浮点 3enum枚举
                                     4bool布尔型     5text字符串 6date时间型 7struct结构体 8array数组
-                      specs	{   对象	     是	数据类型定义
+                      specs	{   对象	     是	数据类型定义 // 不同数据类型，里面具体值不同
                           unit	         string	  否	单位
                           step	         string	  是	步长
                           max	           string	  是	最大值

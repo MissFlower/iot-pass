@@ -82,7 +82,7 @@ export default {
             this.$message.success(`角色${str}成功`);
             this.handleClose();
           } else {
-            this.$message.error(`角色${str}失败`);
+            this.$message.error(res.message);
           }
           this.loading = false;
         })

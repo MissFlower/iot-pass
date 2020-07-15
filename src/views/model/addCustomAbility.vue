@@ -89,7 +89,7 @@ export default {
         callback(new Error('标识符不能为空'))
       } else {
         let reg = /^[a-zA-Z0-9_]+$/
-        if (!reg.test(identifier) || identifier.length > 50) {
+        if (identifier && (!reg.test(identifier) || identifier.length > 50)) {
           callback(new callback('必填，支持大小写字母、数字和下划线、不超过50个字符'))
         } else {
           callback()
@@ -160,6 +160,7 @@ export default {
     handleSave () {
       this.$refs.addCustomAbilityForm.validate(valid => {
         if (valid) {
+          this.loading = true
           if (this.formData.abilityType * 1 === 1) {
             this.$refs.attDataSelectPart.getDataForParent()
           } else if (this.formData.abilityType * 1 === 2) {
@@ -177,11 +178,13 @@ export default {
           this.formData.modelData[key] = data[key]
         }
         const obj = {
-          modelData: this.formData.modelData,
+          modelData: JSON.parse(JSON.stringify(this.formData.modelData)),
           abilityType: this.formData.abilityType * 1,
           productKey: this.formData.productKey
         }
         this.submitFun(obj)
+      } else {
+        this.loading = false
       }
     },
     // 服务的成功回调
@@ -193,6 +196,8 @@ export default {
         obj.method = `thing.service.${obj.identifier}`
         this.formData.modelData = obj
         this.submitFun(this.formData)
+      } else {
+        this.loading = false
       }
     },
     eventPartSuccess (data) {
@@ -203,6 +208,8 @@ export default {
         obj.method = `thing.event.${obj.identifier}.post`
         this.formData.modelData = obj
         this.submitFun(this.formData)
+      } else {
+        this.loading = false
       }
     },
     // 提交函数
@@ -217,7 +224,8 @@ export default {
         obj.modelData.index = 0
       }
       obj.modelData = JSON.stringify(obj.modelData)
-      promise(obj).then(res => {
+      const submitObj = JSON.parse(JSON.stringify(obj))
+      promise(submitObj).then(res => {
         if (res.code === 200) {
           this.$message.success(`功能${str}成功`)
           this.$emit('success')

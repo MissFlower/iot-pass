@@ -79,9 +79,9 @@ export default {
     srcVersion: {
       type: String
     },
-      fmDeviceList: {
-          type: Array
-      }
+    fmDeviceList: {
+        type: Array
+    }
   },
   data() {
     return {
@@ -101,6 +101,9 @@ export default {
   },
   components: {
     ChooseDevice
+  },
+  mounted () {
+    this.form.showDeviceNames = []
   },
   methods: {
       // 提交验证固件

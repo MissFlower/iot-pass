@@ -65,7 +65,10 @@
         <!--</el-select>-->
         <!--</el-form-item>-->
         <el-form-item label="待升级版本号" prop="srcVersion">
-          <el-input type="text" v-model="ruleForm.srcVersion"></el-input>
+          <!-- <el-input type="text" v-model="ruleForm.srcVersion"></el-input> -->
+          <el-select v-model="ruleForm.srcVersion" @focus="getVersionList">
+            <el-option ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="升级后版本号" prop="destVersion">
           <el-input type="text" v-model="ruleForm.destVersion"></el-input>
@@ -106,7 +109,7 @@
   </div>
 </template>
 <script>
-import { uploadFile, saveFm, getProducts, getFmType } from "@/api/fireware";
+import { uploadFile, saveFm, getProducts, getFmType, getSrcVersionList } from "@/api/fireware";
 export default {
   props: {
     dialogFormVisible: {
@@ -288,6 +291,19 @@ export default {
       this.ruleForm.productName = this.productsValue.split("|")[1];
       let curPrd = this.productMap[this.ruleForm.productId+""];
       this.getFmType(curPrd.fmTypes);
+    },
+    getVersionList () {
+      if (!this.ruleForm.productId) {
+        this.$message.warning('请选择所属产品')
+        return
+      } else if (!this.ruleForm.moduleType) {
+        this.$message.warning('请选择固件产品类型')
+        return
+      }
+      getSrcVersionList({
+        productId: this.ruleForm.productId,
+        moduleType: this.ruleForm.moduleType
+      })
     }
   },
   computed: {

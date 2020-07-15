@@ -235,3 +235,19 @@ export function statistics(data) {
       data
     })
   }
+
+  /**
+   * 
+   * 待升级版本列表
+   * 请求方式:post ,json格式
+      productId	  Long	  是	产品id
+      moduleType	String	是	选中的固件产品类型
+   */
+
+   export function getSrcVersionList (data) {
+     return request({
+       url: '/upgrade/getSrcVersionList',
+       method: 'post',
+       data
+     })
+   }

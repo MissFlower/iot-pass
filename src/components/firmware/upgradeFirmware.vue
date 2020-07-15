@@ -114,6 +114,7 @@
 <script>
 import { saveUpgrade } from "@/api/fireware";
 import selectDevice from "./selectDevice"
+
 export default {
   components: { selectDevice },
   props: {

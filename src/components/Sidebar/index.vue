@@ -65,12 +65,26 @@ export default {
   },
   methods: {
     menuListDealFun () {
+      let arr = new Array()
+      let arr1 = []
       this.menuLists.forEach(item => {
         if (!item.path) {
           item.path = '404'
         }
+        if (!item.sort) {
+          item.sort = 0
+        }
+        if (arr[item.sort]) {
+          arr.splice(item.sort, 0, item)
+        } else {
+          arr[item.sort] = item
+        }
       })
-      const list = dealUserTreeFun(this.menuLists)
+      arr = arr.filter(item => {
+        return item
+      })
+      arr.reverse()
+      const list = dealUserTreeFun(arr)
       if (list && list.length > 0 && list[0].children) {
         this.list = this.baseList.concat(list[0].children)
       }

@@ -17,6 +17,7 @@
         :rules="rules"
         label-width="120px"
         class="demo-ruleForm"
+        v-loading="loading"
       >
         <el-form-item label="固件类型" required>
           <el-radio-group v-model="ruleForm.fmType">
@@ -65,7 +66,10 @@
         <!--</el-select>-->
         <!--</el-form-item>-->
         <el-form-item label="待升级版本号" prop="srcVersion">
-          <el-input type="text" v-model="ruleForm.srcVersion"></el-input>
+          <!-- <el-input type="text" v-model="ruleForm.srcVersion"></el-input> -->
+          <el-select v-model="ruleForm.srcVersion" @focus="srcVersionFocus">
+            <el-option v-for="srcVersion in srcVersionList" :key="srcVersion" :label="srcVersion" :value="srcVersion"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="升级后版本号" prop="destVersion">
           <el-input type="text" v-model="ruleForm.destVersion"></el-input>
@@ -106,7 +110,7 @@
   </div>
 </template>
 <script>
-import { uploadFile, saveFm, getProducts, getFmType } from "@/api/fireware";
+import { uploadFile, saveFm, getProducts, getFmType, getSrcVersionList } from "@/api/fireware";
 export default {
   props: {
     dialogFormVisible: {
@@ -132,7 +136,7 @@ export default {
         }
     }
     return {
-      fileList: [],
+      loading: false,
       uploadText: "点击上传",
       uploadProgressShow: false,
       uploadStatus: true,
@@ -163,6 +167,7 @@ export default {
         productName: ""
       },
       productsValue: "",
+      srcVersionList: [], // 待升级版本列表
       rules: {
           fmName: [
               { required: true, message: '请输入固件名称', trigger: 'blur' }
@@ -180,6 +185,14 @@ export default {
           ]
       }
     };
+  },
+  watch: {
+    'ruleForm.moduleType': function () {
+      this.getVersionList()
+    },
+    'ruleForm.productId': function () {
+      this.getVersionList()
+    }
   },
   mounted() {
     this.getProductList();
@@ -287,7 +300,39 @@ export default {
       this.ruleForm.productId = this.productsValue.split("|")[0];
       this.ruleForm.productName = this.productsValue.split("|")[1];
       let curPrd = this.productMap[this.ruleForm.productId+""];
+      this.srcVersionList = []
+      this.ruleForm.srcVersion = ''
       this.getFmType(curPrd.fmTypes);
+    },
+    srcVersionFocus () {
+      if (this.srcVersionList.length === 0) {
+        if (!this.ruleForm.productId) {
+          this.$message.warning('请选择所属产品')
+        } else if (!this.ruleForm.moduleType) {
+          this.$message.warning('请选择固件产品类型')
+        }
+      }
+    },
+    getVersionList () {
+      if (!this.ruleForm.productId) {
+        // this.$message.warning('请选择所属产品')
+        return
+      } else if (!this.ruleForm.moduleType) {
+        // this.$message.warning('请选择固件产品类型')
+        return
+      }
+      this.loading = true
+      getSrcVersionList({
+        productId: this.ruleForm.productId,
+        moduleType: this.ruleForm.moduleType
+      }).then(res => {
+        if (res.code === 200) {
+          this.srcVersionList = res.data
+        }
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
     }
   },
   computed: {

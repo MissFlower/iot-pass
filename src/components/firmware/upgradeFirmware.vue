@@ -9,9 +9,9 @@
       title="批量升级"
       :visible.sync="upgradeFmVisible"
       :before-close="closeDialog"
-      width="25%"
+      width="35%"
     >
-      <el-form :model="form" ref="ruleFormUpgrade" :rules="rules">
+      <el-form :model="form" ref="ruleFormUpgrade" :rules="rules" label-width="150px">
         <el-form-item
           label="升级前版本号"
           label-width="150px"
@@ -22,15 +22,13 @@
         </el-form-item>
         <el-form-item
           label="升级后版本号"
-          label-width="150px"
           prop="destVersion"
           required
         >
-          <el-input v-model="form.destVersion" auto-complete="off" :disabled="checkDestVersion != ''"></el-input>
+          <el-input v-model="form.destVersion" auto-complete="off" :disabled="checkInfo.destVersion != ''"></el-input>
         </el-form-item>
         <el-form-item
           label="升级策略"
-          label-width="150px"
           prop="ugStrategy"
           required
         >
@@ -41,20 +39,22 @@
         </el-form-item>
         <el-form-item
           label="升级范围"
-          label-width="150px"
           prop="scopeType"
           required
         >
           <el-select v-model="form.scopeType" placeholder="请选择升级范围">
-            <el-option label="全部" value="0"></el-option>
-            <!-- <el-option label="定向" value="1"></el-option> -->
-            <!-- <el-option label="区域" value="2"></el-option> -->
-            <!-- <el-option label="灰度" value="3"></el-option> -->
+            <el-option label="全部设备" value="0"></el-option>
+            <el-option label="定向升级" value="1"></el-option>
+            <!-- <el-option label="区域升级" value="2"></el-option> -->
+            <!-- <el-option label="灰度升级" value="3"></el-option> -->
           </el-select>
+        </el-form-item>
+        <el-form-item label="设备范围" v-if="form.scopeType == 1" prop="selectDevicenames">
+          <el-select v-model="selectDevicenames" multiple placeholder="请选择" @focus="handleFocus"></el-select>
+
         </el-form-item>
         <el-form-item
           label="升级时间"
-          label-width="150px"
           prop="ugTimeType"
           required
         >
@@ -109,23 +109,31 @@
         >
       </div>
     </el-dialog>
+    <select-device v-if="selectDeviceFlag" :productId="checkInfo.productId" :moduleType="checkInfo.moduleType" :fmId="checkInfo.id" @success="successDeviceDrawer" @close="closeDeviceDrawer"></select-device>
   </div>
 </template>
 <script>
 import { saveUpgrade } from "@/api/fireware";
+import selectDevice from "./selectDevice"
+
 export default {
+  components: { selectDevice },
   props: {
     upgradeFmVisible: {
       type: Boolean
     },
-    checkFmId: {
-      type: String
-    },
-    checkDestVersion: {
-      type: String
+    checkInfo: {
+      type: Object
     }
   },
   data() {
+    const validateSelectNames = (rules, value, callback) => {
+      if (this.selectDeviceIds.length === 0) {
+        callback(new Error('请选择设备范围'))
+      } else {
+        callback()
+      }
+    }
     return {
       form: {
         fmId: "",
@@ -137,7 +145,8 @@ export default {
         ugTimeType: "0",
         timeOut: "",
         retryInterval: "0",
-        rate: ""
+        rate: "",
+        deviceIds: ''
       },
       rules: {
         rate: [
@@ -154,22 +163,26 @@ export default {
             { required: true, message: '请输入设备升级超时时间', trigger: 'blur' },
             { type: 'number', message: '设备升级超时时间必须为数字值' }
           ],
-      }
+          selectDevicenames: [
+            { required: true, validator: validateSelectNames, trigger: 'blur' }
+          ]
+      },
+      selectDevicenames: [],
+      selectDeviceIds: [],
+      selectDeviceFlag: false
     };
   },
   mounted () {
-    this.form.destVersion = this.checkDestVersion
+    this.form.destVersion = this.checkInfo.destVersion
   },
   methods: {
     // 固件批量升级
     upgradeSubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.form.fmId = this.checkFmId;
-          // let formData = new FormData()
-          //   for (let item in this.form) {
-          //       formData.append(item, this.form[item])
-          //   }
+          this.form.fmId = this.checkInfo.id;
+          this.form.deviceIds = this.selectDeviceIds
+          console.log(this.form)
           saveUpgrade(this.form).then(res => {
             if (res.code === 200) {
               this.$emit("upgradeVisible", this.upgradeFmVisible);
@@ -186,6 +199,22 @@ export default {
     closeDialog() {
       this.$refs.ruleFormUpgrade.resetFields();
       this.$emit("upgradeVisible", this.upgradeFmVisible);
+    },
+    handleFocus () {
+      this.selectDeviceFlag = true
+    },
+    closeDeviceDrawer () {
+      this.selectDeviceFlag = false
+    },
+    successDeviceDrawer (list) {
+      this.selectDevicenames = []
+      this.selectDeviceIds = []
+      if (list && list.length > 0) {
+        list.forEach(item => {
+          this.selectDevicenames.push(item.deviceName)
+          this.selectDeviceIds.push(item.deviceId * 1)
+        })
+      }
     }
   }
 };

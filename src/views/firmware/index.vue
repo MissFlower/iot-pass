@@ -111,48 +111,9 @@
         >
         </el-pagination>
       </el-tab-pane>
-      <!-- <el-tab-pane label="版本分布" name="second" :disabled="tabDisabled">
-        <div>
-          <el-form
-            :label-position="labelPosition"
-            ref="versionControl"
-            :model="versionControl"
-            :inline="true"
-          >
-            <el-form-item label="产品">
-              <el-select v-model="versionControl.proName">
-                <el-option label="测试" value="1"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-form>
-          <el-row :gutter="10">
-            <el-col :span="12">
-              <div class="grid-content bg-purple">
-                <h4 class="version_tit">固件版本分布</h4>
-              </div>
-            </el-col>
-            <el-col :span="12">
-              <div class="grid-content bg-purple">
-                <h4 class="version_tit">固件版本占比</h4>
-              </div>
-            </el-col>
-          </el-row>
-        </div>
-        <div>
-          <h4>设备列表</h4>
-          <el-form label-width="80px" :inline="true">
-            <el-form-item>
-              <el-select v-model="versionControl.devName">
-                <el-option label="全部版本" value="1"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-form>
-          <el-table :data="deviceList" border stripe>
-            <el-table-column label="设备名称" prop="name"></el-table-column>
-            <el-table-column label="固件版本" prop="version"></el-table-column>
-          </el-table>
-        </div>
-      </el-tab-pane> -->
+      <el-tab-pane label="版本分布" name="second">
+        <version-list v-if="activeTag == 'second'"></version-list>
+      </el-tab-pane>
     </el-tabs>
     <AddFirmware
       v-if="dialogFormVisible"
@@ -171,8 +132,7 @@
     <UpgradeFirmware
       v-if="upgradeFmVisible"
       :upgradeFmVisible="upgradeFmVisible"
-      :checkFmId="checkFmId"
-      :checkDestVersion="checkDestVersion"
+      :checkInfo="checkInfo"
       @upgradeVisible="upgradeVisible"
     ></UpgradeFirmware>
   </div>
@@ -182,6 +142,8 @@
 import AddFirmware from "@/components/firmware/addFirmware";
 import CheckFirmware from "@/components/firmware/checkFirmware";
 import UpgradeFirmware from "@/components/firmware/upgradeFirmware";
+
+import versionList from './version'
 
 import dataObj from '@/data/data'
 import {
@@ -202,10 +164,6 @@ export default {
         pageSize: 20,
         pageNum: 1
       },
-      versionControl: {
-        proName: "1",
-        devName: "1"
-      },
       productForm: {
         pageNum: 1,
         pageSize: 50,
@@ -222,14 +180,15 @@ export default {
       dialogFormVisible: false,
       checkFmVisible: false,
       upgradeFmVisible: false,
-      tabDisabled: true,
-      fmStatusObj: dataObj.fmStatusObj
+      fmStatusObj: dataObj.fmStatusObj,
+      checkInfo: null
     };
   },
   components: {
     AddFirmware,
     CheckFirmware,
-    UpgradeFirmware
+    UpgradeFirmware,
+    versionList
   },
   mounted() {
     this.fetchFmList();
@@ -299,7 +258,7 @@ export default {
      */
     checkFm(row) {
       // 未验证的固件进行验证，验证中或已验证的固件弹窗提示
-      if (row.fmStatus === 0) {
+      if (row.fmStatus === 0 || row.fmStatus === 3) {
         this.checkFmId = String(row.id);
         this.srcVersion = row.srcVersion;
         this.getVerifyFirmInfo(this.checkFmId, this.srcVersion);
@@ -347,9 +306,6 @@ export default {
         case 2:
           title = '固件验证成功'
           break
-        case 3:
-          title = '固件验证失败'
-          break
       }
       this.$alert(`${title}`, "验证固件", {
         confirmButtonText: "关闭"
@@ -361,8 +317,9 @@ export default {
     // 升级固件组件
     upgradeList(row) {
       if (row.fmStatus === 2) {
-        this.checkFmId = String(row.id);
-        this.checkDestVersion = row.destVersion
+        // this.checkFmId = String(row.id);
+        // this.checkDestVersion = row.destVersion
+        this.checkInfo = row
         this.upgradeFmVisible = true;
       }
     },

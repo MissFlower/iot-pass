@@ -9,7 +9,7 @@
       title="批量升级"
       :visible.sync="upgradeFmVisible"
       :before-close="closeDialog"
-      width="25%"
+      width="35%"
     >
       <el-form :model="form" ref="ruleFormUpgrade" :rules="rules" label-width="150px">
         <el-form-item
@@ -25,7 +25,7 @@
           prop="destVersion"
           required
         >
-          <el-input v-model="form.destVersion" auto-complete="off" :disabled="checkDestVersion != ''"></el-input>
+          <el-input v-model="form.destVersion" auto-complete="off" :disabled="checkInfo.destVersion != ''"></el-input>
         </el-form-item>
         <el-form-item
           label="升级策略"
@@ -49,8 +49,9 @@
             <!-- <el-option label="灰度升级" value="3"></el-option> -->
           </el-select>
         </el-form-item>
-        <el-form-item label="设备范围" v-if="form.scopeType == 1" prop="value1">
-          <el-select v-model="value1" multiple placeholder="请选择" @focus="handleFocus"></el-select>
+        <el-form-item label="设备范围" v-if="form.scopeType == 1" prop="selectDevicenames">
+          <el-select v-model="selectDevicenames" multiple placeholder="请选择" @focus="handleFocus"></el-select>
+
         </el-form-item>
         <el-form-item
           label="升级时间"
@@ -108,7 +109,7 @@
         >
       </div>
     </el-dialog>
-    <select-device v-if="selectDeviceFlag" @close="closeDeviceDrawer"></select-device>
+    <select-device v-if="selectDeviceFlag" :productId="checkInfo.productId" :moduleType="checkInfo.moduleType" :fmId="checkInfo.id" @success="successDeviceDrawer" @close="closeDeviceDrawer"></select-device>
   </div>
 </template>
 <script>
@@ -121,14 +122,18 @@ export default {
     upgradeFmVisible: {
       type: Boolean
     },
-    checkFmId: {
-      type: String
-    },
-    checkDestVersion: {
-      type: String
+    checkInfo: {
+      type: Object
     }
   },
   data() {
+    const validateSelectNames = (rules, value, callback) => {
+      if (this.selectDeviceIds.length === 0) {
+        callback(new Error('请选择设备范围'))
+      } else {
+        callback()
+      }
+    }
     return {
       form: {
         fmId: "",
@@ -140,7 +145,8 @@ export default {
         ugTimeType: "0",
         timeOut: "",
         retryInterval: "0",
-        rate: ""
+        rate: "",
+        deviceIds: ''
       },
       rules: {
         rate: [
@@ -157,27 +163,26 @@ export default {
             { required: true, message: '请输入设备升级超时时间', trigger: 'blur' },
             { type: 'number', message: '设备升级超时时间必须为数字值' }
           ],
-          value1: [
-            { required: true, message: '请选择设备范围', trigger: 'blur' }
+          selectDevicenames: [
+            { required: true, validator: validateSelectNames, trigger: 'blur' }
           ]
       },
-      value1: '',
+      selectDevicenames: [],
+      selectDeviceIds: [],
       selectDeviceFlag: false
     };
   },
   mounted () {
-    this.form.destVersion = this.checkDestVersion
+    this.form.destVersion = this.checkInfo.destVersion
   },
   methods: {
     // 固件批量升级
     upgradeSubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.form.fmId = this.checkFmId;
-          // let formData = new FormData()
-          //   for (let item in this.form) {
-          //       formData.append(item, this.form[item])
-          //   }
+          this.form.fmId = this.checkInfo.id;
+          this.form.deviceIds = this.selectDeviceIds
+          console.log(this.form)
           saveUpgrade(this.form).then(res => {
             if (res.code === 200) {
               this.$emit("upgradeVisible", this.upgradeFmVisible);
@@ -200,6 +205,16 @@ export default {
     },
     closeDeviceDrawer () {
       this.selectDeviceFlag = false
+    },
+    successDeviceDrawer (list) {
+      this.selectDevicenames = []
+      this.selectDeviceIds = []
+      if (list && list.length > 0) {
+        list.forEach(item => {
+          this.selectDevicenames.push(item.deviceName)
+          this.selectDeviceIds.push(item.deviceId * 1)
+        })
+      }
     }
   }
 };

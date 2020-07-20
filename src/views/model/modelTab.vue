@@ -50,9 +50,6 @@
       </el-table-column>
       <el-table-column label="数据定义" width="200">
         <template slot-scope="scope">
-          <!-- <div class="w180">
-            <div class="ellipsis">{{scope.row.dataType ? scope.row.dataType.specs : ''}}</div>
-          </div> -->
           <div style="white-space: pre;">{{scope.row.showText}}</div>
         </template>
       </el-table-column>

@@ -251,3 +251,79 @@ export function statistics(data) {
        data
      })
    }
+/**
+ * 版本分布根据产品查询版本接口
+ * 
+ * productId	Long	是	产品id
+ * /fm/getFirmWareVersionDistribution
+ */
+
+ export function getFmVers (data) {
+  return request({
+    url: '/fm/getFirmWareVersionDistribution',
+    method: 'post',
+    data
+  })
+ }
+
+ /**
+  * 根据版本查询设备版本列表接口
+  * 
+  * version	String	是	版本
+  */
+
+  export function getDeviceByVersiob (data) {
+    return request({
+      url: '/fm/getDeviceVersion',
+      method: 'post',
+      data
+    })
+  }
+
+  /**
+  * 根据产品ID查询设备版本列表接口
+  * 
+  * version	String	是	版本
+  */
+
+ export function getVersionByProductId (data) {
+  return request({
+    url: '/fm/getproductDeviceVersion',
+    method: 'post',
+    headers: headerFrom,
+    data: Qs.stringify(data)
+  })
+}
+
+/**
+ * 设备列表针对设备取消升级接口
+ * 
+ * batchNo	Long	是	批次id
+  deviceId	Long	是	设备id
+  check   0：没选 ，1选
+ */
+
+ export function cancelDeviceUpgrade (data) {
+  return request({
+    url: '/upgrade/cancelDeviceUpgrade',
+    method: 'post',
+    data: Qs.stringify(data)
+  })
+ }
+
+ /**
+ * 批次取消升级接口
+ * 
+ * batchNo	Long	是	批次id
+  check   0：没选 ，1选
+ */
+
+export function cancelBatchUpgrade (data) {
+  return request({
+    url: '/upgrade/cancelBatchUpgrade',
+    method: 'post',
+    data: Qs.stringify(data)
+  })
+ }
+
+ 

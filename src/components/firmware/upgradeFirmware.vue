@@ -90,7 +90,7 @@
             <el-option label="24小时后重试" value="1440"></el-option>
           </el-select>
         </el-form-item> -->
-        <!-- <el-form-item
+        <el-form-item
           label="设备升级超时时间（分钟）"
           label-width="150px"
           prop="timeOut"
@@ -100,7 +100,7 @@
             auto-complete="off"
             placeholder="请输入升级超时时间（分钟）"
           ></el-input>
-        </el-form-item> -->
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="closeDialog">取 消</el-button>
@@ -109,7 +109,7 @@
         >
       </div>
     </el-dialog>
-    <select-device v-if="selectDeviceFlag" :productId="checkInfo.productId" :moduleType="checkInfo.moduleType" :fmId="checkInfo.id" @success="successDeviceDrawer" @close="closeDeviceDrawer"></select-device>
+    <select-device v-if="selectDeviceFlag" :productId="checkInfo.productId" :moduleType="checkInfo.moduleType" :fmId="checkInfo.id" :destVersion="checkInfo.destVersion" @success="successDeviceDrawer" @close="closeDeviceDrawer"></select-device>
   </div>
 </template>
 <script>

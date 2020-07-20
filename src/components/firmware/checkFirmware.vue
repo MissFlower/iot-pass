@@ -14,16 +14,17 @@
       <el-form
         :model="form"
         ref="ruleForm"
-        label-width="120px"
+        label-width="150px"
         class="demo-ruleForm"
+        :rules="rules"
       >
-        <el-form-item label="待升级版本号">
-          <el-input type="text" v-model="srcVersion"></el-input>
+        <el-form-item label="待升级版本号" prop="srcVersions">
+          <el-input type="text" v-model="form.srcVersions"></el-input>
         </el-form-item>
         <!--<el-form-item label="待验证设备">-->
         <!--<el-input type="text" v-model="form.deviceNames"></el-input>-->
         <!--</el-form-item>-->
-        <el-form-item label="待验证设备">
+        <el-form-item label="待验证设备" prop="showDeviceNames">
           <el-select
             v-model="form.showDeviceNames"
             multiple
@@ -32,6 +33,17 @@
           >
               <option value=""></option>
           </el-select>
+        </el-form-item>
+        <el-form-item
+          label="固件验证超时时间（分钟）"
+          label-width="150px"
+          prop="timeOut"
+        >
+          <el-input
+            v-model.number="form.timeOut"
+            auto-complete="off"
+            placeholder="请输入验证超时时间（分钟）"
+          ></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -84,19 +96,39 @@ export default {
     }
   },
   data() {
+    const validateSelectDevice = (rule, value, callback) => {
+      if (!this.form.deviceIds || this.form.deviceIds.length === 0) {
+        callback(new Error('请选择待验证设备'))
+      } else {
+        callback()
+      }
+    }
     return {
       form: {
         fmId: "",
         srcVersions: "",
         deviceIds: [],
-        showDeviceNames: []
+        showDeviceNames: [],
+        timeOut: ''
       },
       chooseDeviceVisible: false,
       progressVisible: false,
       showClose: false,
       checkPer: 0,
       checkStatus: "1",
-      checkMessage: ""
+      checkMessage: "",
+      rules: {
+        srcVersions: [
+          {required: true, message: '请输入待升级版本号', trigger: 'change'}
+        ],
+        showDeviceNames: [
+          {required: true, validator: validateSelectDevice, trigger: 'blur'}
+        ],
+        timeOut: [
+          { required: true, message: '请输入设备升级超时时间', trigger: 'blur' },
+          { type: 'number', message: '设备升级超时时间必须为数字值' }
+        ]
+      }
     };
   },
   components: {
@@ -104,22 +136,27 @@ export default {
   },
   mounted () {
     this.form.showDeviceNames = []
+    this.form.srcVersions = this.srcVersion;
   },
   methods: {
       // 提交验证固件
     verifySubmit() {
-      this.form.fmId = this.checkFmId;
-      this.form.srcVersions = this.srcVersion;
-      let data = {
-        "fmId": this.form.fmId,
-        "srcVersions": this.form.srcVersions,
-        "deviceIds": this.form.deviceIds
-      };
-      addVerify(data).then(res => {
-        this.progressVisible = true;
-        this.$emit("checkVisible", this.checkFmVisible);
-        this.checkProgress(res);
-      });
+      this.$refs.ruleForm.validate(valid => {
+        if (valid) {
+          this.form.fmId = this.checkFmId;
+          // this.form.srcVersions = this.srcVersion;
+          let data = {
+            "fmId": this.form.fmId,
+            "srcVersions": this.form.srcVersions,
+            "deviceIds": this.form.deviceIds
+          };
+          addVerify(data).then(res => {
+            this.progressVisible = true;
+            this.$emit("checkVisible", this.checkFmVisible);
+            this.checkProgress(res);
+          });
+        }
+      })
     },
       // 进度条
     checkProgress(res) {

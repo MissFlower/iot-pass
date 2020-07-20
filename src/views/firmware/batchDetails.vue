@@ -38,7 +38,27 @@
                         </el-table-column>
                         <el-table-column label="操作">
                             <template slot-scope="scope">
-                                <a class="oprate_btn" v-if="scope.row.upgradeStatus == 4" @click="upgrade(scope.row.upgradeId)">重升级</a>
+                                <a class="oprate_btn" @click="upgrade(scope.row.upgradeId)">重升级</a>
+                                <span v-if="scope.row.status < 3"> | </span>
+                                <el-popover
+                                    placement="top"
+                                    width="200"
+                                    trigger="manual"
+                                    v-model="scope.row.visible">
+                                    <div>
+                                        <i class="el-icon-warning" style="color: #f90"></i>
+                                        确定要取消批量升级吗？
+                                    </div>
+                                    <div class="df f12 mt5">
+                                        <el-checkbox v-model="popoverItem.check" true-label="1" false-label="0"></el-checkbox>
+                                        <span class="ml10">取消批次下所有正在进行中的升级任务（如不勾选，默认只会取消定时任务）</span>
+                                    </div>
+                                    <div class="tr mt10">
+                                        <el-button size="mini" type="primary" @click="confirmPopover">确认</el-button>
+                                        <el-button size="mini" @click="scope.row.visible = false">取消</el-button>
+                                    </div>
+                                    <a class="oprate_btn" slot="reference" v-if="scope.row.status < 3" @click="ShowPopover(scope.row)">取消</a> 
+                                </el-popover>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -152,7 +172,7 @@
     </div>
 </template>
 <script>
-    import { upgradeList, upgradeDeviceList, retryPublishUpdateMsg } from '@/api/fireware'
+    import { upgradeList, upgradeDeviceList, retryPublishUpdateMsg, cancelDeviceUpgrade } from '@/api/fireware'
     import dataObj from '@/data/data'
     export default {
         data (){
@@ -183,7 +203,11 @@
                 upgradeStatusObj: dataObj.upgradeStatusObj,
                 taskStatusObj: dataObj.taskStatusObj,
                 scopeTypeObj: dataObj.scopeTypeObj,
-                productName: ''
+                productName: '',
+                popoverItem: {
+                    check: '0',
+                    row: null
+                }
             }
         },
         mounted () {
@@ -260,6 +284,33 @@
             // 返回上一级菜单
             goBack () {
                 this.$router.go(-1)
+            },
+            // 控制popover显示
+            ShowPopover (row) {
+                this.popoverItem.check = '0'
+                this.popoverItem.row = row
+                row.visible = true
+            },
+            // popover提交
+            confirmPopover () {
+                this.popoverItem.row.visible = false
+                this.loading = true
+                cancelDeviceUpgrade({
+                   check: this.popoverItem.check,
+                   batchNo: this.popoverItem.row.batchNo,
+                   deviceId: this.popoverItem.row.deviceId
+                }).then(res => {
+                   if (res.code === 200) {
+                       this.getDeviceList()
+                       this.$message.success('取消成功')
+                   } else {
+                       this.$message.error(res.message)
+                   }
+                   this.loading = false
+                }).catch(() => {
+                    this.$message.error('取消失败')
+                    this.loading = false
+                })
             }
         }
     }

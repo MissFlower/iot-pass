@@ -57,7 +57,7 @@
 <script>
 import { getDirectedUpgradeList, getSrcVersionList } from '@/api/fireware'
 export default {
-  props: ['productId', 'moduleType', 'fmId'],
+  props: ['productId', 'moduleType', 'fmId', 'destVersion'],
   data () {
     return { 
       loading: false,
@@ -121,7 +121,9 @@ export default {
       this.list = []
       getDirectedUpgradeList(this.formData).then(res => {
         if (res.code == 200) {
-          this.list = res.data.data
+          this.list = res.data.data.filter(item => {
+            return item.version !== this.destVersion
+          })
           this.tableList = this.list
         }
         this.loading = false

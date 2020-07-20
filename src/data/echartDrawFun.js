@@ -78,5 +78,70 @@ export default {
     ]
 };
     chartBar.setOption(option, true)
+  },
+  barChart2: (id, obj) => {
+    const pros = obj.reObj
+    let chartBar = echarts.init(document.getElementById(id))
+    let color = ['#3398DB', '#33981B', '#FFA02D', '"#163EC0","#2058BF", "#2374CF", "#2272AF", "#318DC1", "#38A1CD", "#38BEDA", "#CBA531", "#CB8326", "#CA5F25"']
+    const series_ = []
+    for (let key in obj.reObj) {
+      const row = {
+        name: key,
+        type: 'bar',
+        label: {
+          show: true,
+          position: 'right',
+          fontSize: 12,
+          formatter: function (params) {
+            const row = pros[params.seriesName].proportions
+            return (row[params.dataIndex] * 100).toFixed(2) + '%'
+          }
+        },
+        data: obj.reObj[key].counts
+      }
+      series_.push(row)
+    }
+    const option = {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+          type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+        }
+      },
+      color: color,
+      legend: {
+        show: false
+      },
+      grid: {
+        left: '3%',
+        right: '8%',
+        bottom: '3%',
+        containLabel: true
+      },
+      xAxis: {
+        type: 'value',
+        axisTick: {
+          show: false
+        },
+        axisLine: {
+          show: false
+        },
+        splitLine: {
+          show: false
+        },
+        axisLabel: {
+          show: false
+        }
+      },
+      yAxis: {
+        type: 'category',
+        data: obj.versionArr,
+        axisTick: {
+          show: false
+        }
+      },
+      series: series_
+    }
+    chartBar.setOption(option, true)
   }
 }

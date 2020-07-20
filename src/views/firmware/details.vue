@@ -75,7 +75,7 @@
             </el-row>
         </div>
        <div>
-           <el-tabs v-model="detailsTab" type="card" @tab-click="handleClick">
+           <el-tabs v-model="detailsTab" type="card" @tab-click="handleClick" v-loading="loading">
                <el-tab-pane label="批次管理" name="first">
                    <el-form ref="form" :model="batchManage" label-width="80px" :inline="true">
                        <el-form-item>
@@ -122,7 +122,27 @@
                        ></el-table-column>
                        <el-table-column label="操作">
                            <template slot-scope="scope">
-                               <a class="oprate_btn" @click="toBatchDetails(scope.row)">查看</a>
+                               <a class="oprate_btn" @click="toBatchDetails(scope.row)">查看</a> 
+                               <span v-if="scope.row.taskStatus == 1"> | </span>
+                               <el-popover
+                                    placement="top"
+                                    width="200"
+                                    trigger="manual"
+                                    v-model="scope.row.visible">
+                                    <div>
+                                        <i class="el-icon-warning" style="color: #f90"></i>
+                                        确定要取消批量升级吗？
+                                    </div>
+                                    <div class="df f12 mt5">
+                                        <el-checkbox v-model="popoverItem.check" true-label="1" false-label="0"></el-checkbox>
+                                        <span class="ml10">取消批次下所有正在进行中的升级任务（如不勾选，默认只会取消定时任务）</span>
+                                    </div>
+                                    <div class="tr mt10">
+                                        <el-button size="mini" type="primary" @click="confirmPopover">确认</el-button>
+                                        <el-button size="mini" @click="scope.row.visible = false">取消</el-button>
+                                    </div>
+                                    <a class="oprate_btn" slot="reference" v-if="scope.row.taskStatus == 1" @click="ShowPopover(scope.row)">取消</a> 
+                                </el-popover>
                            </template>
                        </el-table-column>
                    </el-table>
@@ -340,10 +360,11 @@
             :checkDestVersion="checkDestVersion"
             @upgradeVisible="upgradeVisible"
         ></UpgradeFirmware>
+        
     </div>
 </template>
 <script>
-    import { getFmDetails, upgradeList, upgradeDeviceList, statistics, getUploadFilePath } from '@/api/fireware'
+    import { getFmDetails, upgradeList, upgradeDeviceList, statistics, getUploadFilePath, cancelBatchUpgrade } from '@/api/fireware'
     import EditFirmware from '@/components/firmware/editFirmware'
     import CheckFirmware from "@/components/firmware/checkFirmware";
     import UpgradeFirmware from "@/components/firmware/upgradeFirmware";
@@ -352,6 +373,7 @@
     export default {
         data () {
             return {
+                loading: false,
                 productName: "",
                 details: {
                     deviceType: 'info',
@@ -392,7 +414,11 @@
                 checkDestVersion: '',
                 taskStatusObj: dataObj.taskStatusObj,
                 upgradeStatusObj: dataObj.upgradeStatusObj,
-                fmStatusObj: dataObj.fmStatusObj
+                fmStatusObj: dataObj.fmStatusObj,
+                popoverItem: {
+                    check: '0',
+                    row: null
+                }
             }
         },
         components: {
@@ -421,6 +447,7 @@
             getDetails () {
                 let formData = new FormData ()
                 formData.append('id', this.fmId)
+                this.loading = true
                 getFmDetails (formData).then( res => {
                     if (res.code === 200) {
                         this.details.detailList = res.data
@@ -429,6 +456,7 @@
                     } else {
                         this.$message.error(res.message);
                     }
+                    this.loading = false
                 })
             },
             // 固件信息
@@ -452,13 +480,20 @@
                   'batchNo': this.batchManage.id
                 };
                 this.batchManage.batchList = []
+                this.loading = true
                 upgradeList (data).then ( res => {
                     if (res.code === 200) {
+                        if (res.data.data && res.data.data.length > 0) {
+                            res.data.data.forEach(item => {
+                                item.visible = false
+                            })
+                        }
                         this.batchManage.batchList = res.data.data;
                         this.batchManage.total = res.data.total;
                     } else {
                         this.$message.error(res.message);
                     }
+                    this.loading = false
                 })
             },
             // 获取 标签页 上方数据
@@ -520,6 +555,7 @@
                   'pageNum': this.devManage.pageNum,
                   'pageSize': this.devManage.pageSize,
                 };
+                this.loading = true
                 upgradeDeviceList (data).then( res => {
                     if (res.code === 200) {
                         this.devManage.devList = res.data.data;
@@ -527,6 +563,7 @@
                     } else {
                         this.$message.error(res.message);
                     }
+                    this.loading = false
                 })
             },
             // 设备列表分页
@@ -567,6 +604,32 @@
                         productName: this.productName,
                         batchNo: row.batchNo
                     }
+                })
+            },
+            // 控制popover显示
+            ShowPopover (row) {
+                this.popoverItem.check = '0'
+                this.popoverItem.row = row
+                row.visible = true
+            },
+            // popover提交
+            confirmPopover () {
+                this.popoverItem.row.visible = false
+                this.loading = true
+                cancelBatchUpgrade({
+                   check: this.popoverItem.check,
+                   batchNo: this.popoverItem.row.batchNo
+                }).then(res => {
+                   if (res.code === 200) {
+                       this.getDeviceList()
+                       this.$message.success('取消成功')
+                   } else {
+                       this.$message.error(res.message)
+                   }
+                   this.loading = false
+                }).catch(() => {
+                    this.$message.error('取消失败')
+                    this.loading = false
                 })
             },
             // 返回上一级菜单

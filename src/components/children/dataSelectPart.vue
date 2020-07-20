@@ -603,6 +603,7 @@ export default {
                   specs: this.structsForArrar
                 }
               }
+              break
           }
           if (submitFlag) {
             this.$emit('success', this.formData)

@@ -122,9 +122,11 @@
       @changeList="changeList"
     />
     <CheckFirmware
+      v-if="checkFmVisible"
       :checkFmVisible="checkFmVisible"
       :checkFmId="checkFmId"
       :srcVersion="srcVersion"
+      :checkInfo="checkInfo"
       :fmDeviceList="fmDeviceList"
       @checkVisible="checkVisible"
       @refreshList="refreshList"
@@ -262,6 +264,7 @@ export default {
         this.checkFmId = String(row.id);
         this.srcVersion = row.srcVersion;
         this.getVerifyFirmInfo(this.checkFmId, this.srcVersion);
+        this.checkInfo = row
       } else {
         this.openCheckFm(row.fmStatus);
       }

@@ -8,7 +8,7 @@
     <el-dialog
       title="添加固件"
       :visible.sync="dialogFormVisible"
-      width="40%"
+      width="400px"
       :before-close="closeDialog"
     >
       <el-form
@@ -66,9 +66,8 @@
         <!--</el-select>-->
         <!--</el-form-item>-->
         <el-form-item label="待升级版本号" prop="srcVersion">
-          <!-- <el-input type="text" v-model="ruleForm.srcVersion"></el-input> -->
-          <el-select v-model="ruleForm.srcVersion" @focus="srcVersionFocus">
-            <el-option v-for="srcVersion in srcVersionList" :key="srcVersion" :label="srcVersion" :value="srcVersion"></el-option>
+          <el-select v-model="srcVersion" multiple @focus="srcVersionFocus">
+            <el-option v-for="version in srcVersionList" :key="version" :label="version" :value="version"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="升级后版本号" prop="destVersion">
@@ -119,7 +118,9 @@ export default {
   },
   data() {
     const validSrcVersion = (rule, value, callback) => {
-      if (value !== '') {
+      if (this.srcVersion.length === 0) {
+        callback(new Error('请选择待升级版本'))
+      } else {
         if (this.ruleForm.destVersion !== '') {
           this.$refs.ruleForm.validateField('destVersion');
           callback()
@@ -129,7 +130,7 @@ export default {
       }
     }
     const validDrcVersion = (rule, value, callback) => {
-      if (this.ruleForm.srcVersion !== '' && value !== '' && this.ruleForm.srcVersion === value) {
+      if (value !== '' && this.srcVersion.indexOf(value) > -1) {
           callback(new Error('升级前后版本号不能相同'))
         } else {
           callback()
@@ -168,6 +169,7 @@ export default {
       },
       productsValue: "",
       srcVersionList: [], // 待升级版本列表
+      srcVersion: [],
       rules: {
           fmName: [
               { required: true, message: '请输入固件名称', trigger: 'blur' }
@@ -202,10 +204,11 @@ export default {
     addFmSubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-            let formData = {};
-            for (let item in this.ruleForm) {
-                formData[item] = this.ruleForm[item];
-            }
+          let formData = {};
+          for (let item in this.ruleForm) {
+            formData[item] = this.ruleForm[item];
+          }
+          formData.srcVersion = this.srcVersion.join(',')
           saveFm(formData)
             .then(res => {
               if (res.code === 200) {

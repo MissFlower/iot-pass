@@ -17,9 +17,13 @@
         label-width="150px"
         class="demo-ruleForm"
         :rules="rules"
+        v-loading='loading'
       >
         <el-form-item label="待升级版本号" prop="srcVersions">
-          <el-input type="text" v-model="form.srcVersions"></el-input>
+          <!-- <el-input type="text" v-model="form.srcVersions"></el-input> -->
+          <el-select v-model="version" multiple>
+            <el-option v-for="ver in srcVersionList" :key="ver" :label="ver" :value="ver"></el-option>
+          </el-select>
         </el-form-item>
         <!--<el-form-item label="待验证设备">-->
         <!--<el-input type="text" v-model="form.deviceNames"></el-input>-->
@@ -79,7 +83,7 @@
 </template>
 <script>
 import ChooseDevice from "@/components/firmware/chooseDevice";
-import { addVerify } from "@/api/fireware";
+import { addVerify, getSrcVersionList } from "@/api/fireware";
 export default {
   props: {
     checkFmVisible: {
@@ -93,6 +97,9 @@ export default {
     },
     fmDeviceList: {
         type: Array
+    },
+    checkInfo: {
+      type: Object
     }
   },
   data() {
@@ -103,7 +110,15 @@ export default {
         callback()
       }
     }
+    const validSrcVersion = (rule, value, callback) => {
+      if (this.version.length === 0) {
+        callback(new Error('请选择待升级版本'))
+      } else {
+        callback()
+      }
+    }
     return {
+      loading: false,
       form: {
         fmId: "",
         srcVersions: "",
@@ -119,7 +134,8 @@ export default {
       checkMessage: "",
       rules: {
         srcVersions: [
-          {required: true, message: '请输入待升级版本号', trigger: 'change'}
+          {required: true, message: '请输入待升级版本号', trigger: 'change'},
+          { validator: validSrcVersion, trigger: 'change'}
         ],
         showDeviceNames: [
           {required: true, validator: validateSelectDevice, trigger: 'blur'}
@@ -128,29 +144,40 @@ export default {
           { required: true, message: '请输入设备升级超时时间', trigger: 'blur' },
           { type: 'number', message: '设备升级超时时间必须为数字值' }
         ]
-      }
+      },
+      version: [],
+      srcVersionList: []
     };
   },
   components: {
     ChooseDevice
   },
   mounted () {
+    this.getVersionList()
     this.form.showDeviceNames = []
-    this.form.srcVersions = this.srcVersion;
+    this.form.srcVersions = this.checkInfo.srcVersion;
+    this.form.fmId = this.checkInfo.id + '';
+    if (this.checkInfo.srcVersion) {
+      this.version = this.checkInfo.srcVersion.split(',')
+    }
   },
   methods: {
       // 提交验证固件
     verifySubmit() {
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
-          this.form.fmId = this.checkFmId;
-          // this.form.srcVersions = this.srcVersion;
+          this.form.srcVersions = this.version.join(',')
           let data = {
             "fmId": this.form.fmId,
             "srcVersions": this.form.srcVersions,
             "deviceIds": this.form.deviceIds
           };
           addVerify(data).then(res => {
+            if (res.code === 200) {
+              this.$message.success('提交成功')
+            } else {
+              this.$message.error(res.message)
+            }
             this.progressVisible = true;
             this.$emit("checkVisible", this.checkFmVisible);
             this.checkProgress(res);
@@ -204,6 +231,21 @@ export default {
     },
     deviceVisible() {
       this.chooseDeviceVisible = false;
+    },
+    // 获取版本信息
+    getVersionList () {
+      this.loading = true
+      getSrcVersionList({
+        productId: this.checkInfo.productId,
+        moduleType: this.checkInfo.moduleType
+      }).then(res => {
+        if (res.code === 200) {
+          this.srcVersionList = res.data
+        }
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
     }
   }
 };

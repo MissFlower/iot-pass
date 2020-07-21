@@ -56,14 +56,15 @@
       <el-table-column label="标识符" prop="identifier"></el-table-column>
       <el-table-column label="数据类型">
         <template slot-scope="scope">
-          {{scope.row.dataType ? dataTypeTextObj[scope.row.dataType.type] : ''}}
+          {{scope.row.dataType ? dataTypeTextObj[scope.row.dataType.type] : '-'}}
         </template>
       </el-table-column>
       <el-table-column label="数据定义" width="200">
         <template slot-scope="scope">
-          <div class="w180">
+          <!-- <div class="w180">
             <div class="ellipsis">{{scope.row.dataType ? scope.row.dataType.specs : ''}}</div>
-          </div>
+          </div> -->
+          <div style="white-space: pre;">{{scope.row.showText}}</div>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="90" align="center">
@@ -103,6 +104,8 @@ export default {
       abilityTypeObj: dataObj.abilityTypeObj,
       typeObj: dataObj.typeObj,
       dataTypeTextObj: dataObj.dataTypeTextObj,
+      dataTypeObj: dataObj.dataTypeObj,
+      eventType: dataObj.eventType,
       type: '', // 用于列表功能类型筛选
       selectType: {
         type: ''
@@ -155,12 +158,19 @@ export default {
               }
               if (key.indexOf('Pro') > -1) {
                 item.abilityType = '1' // 1 属性
+                item.showText = this.dealDataDefinition(item.dataType)
               }
               if (key.indexOf('Ser') > -1) {
                 item.abilityType = '2' // 2 服务
+                if (item.callType === 'async') {
+                  item.showText = '调用方式： 异步调用'
+                } else {
+                  item.showText = '调用方式： 同步调用'
+                }
               }
               if (key.indexOf('Eve') > -1) {
                 item.abilityType = '3' // 3 事件
+                item.showText = `事件类型：${this.eventType[item.type]}`
               }
               item.accessMode_ = item.accessMode
               if (item.accessMode === 'rw') {
@@ -180,6 +190,44 @@ export default {
           }
         }
       }
+    },
+    // 属性的数据范围的处理
+    dealDataDefinition (dataType) {
+      if (!dataType) {
+        return
+      }
+      const type = this.dataTypeObj[dataType.type]
+      const specs = dataType.specs
+      let str = ''
+      switch (type) {
+        case '0':
+        case '1':
+        case '2':
+          str = `取值范围：${specs.min} ~ ${specs.max}`
+          break
+        case '3':
+          str = `枚举值：`
+          if (specs) {
+            for (let key in specs) {
+              str = `${str}\n\t${key} - ${specs[key]}`
+            }
+          }
+          break
+        case '4':
+          str = `布尔值：`
+          if (specs) {
+            for (let key in specs) {
+              str = `${str}\n\t${key} - ${specs[key]}`
+            }
+          }
+          break
+        case '5':
+          str = `数据长度：${specs.length}`
+          break
+        default:
+          str = '-'
+      }
+      return str
     },
     // 添加自定义功能、编辑功能
     handleShowAdd (row) {

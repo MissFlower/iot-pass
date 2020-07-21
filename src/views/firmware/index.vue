@@ -124,8 +124,6 @@
     <CheckFirmware
       v-if="checkFmVisible"
       :checkFmVisible="checkFmVisible"
-      :checkFmId="checkFmId"
-      :srcVersion="srcVersion"
       :checkInfo="checkInfo"
       :fmDeviceList="fmDeviceList"
       @checkVisible="checkVisible"

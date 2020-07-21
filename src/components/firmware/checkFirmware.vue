@@ -20,14 +20,10 @@
         v-loading='loading'
       >
         <el-form-item label="待升级版本号" prop="srcVersions">
-          <!-- <el-input type="text" v-model="form.srcVersions"></el-input> -->
           <el-select v-model="version" multiple>
             <el-option v-for="ver in srcVersionList" :key="ver" :label="ver" :value="ver"></el-option>
           </el-select>
         </el-form-item>
-        <!--<el-form-item label="待验证设备">-->
-        <!--<el-input type="text" v-model="form.deviceNames"></el-input>-->
-        <!--</el-form-item>-->
         <el-form-item label="待验证设备" prop="showDeviceNames">
           <el-select
             v-model="form.showDeviceNames"
@@ -153,12 +149,14 @@ export default {
     ChooseDevice
   },
   mounted () {
-    this.getVersionList()
-    this.form.showDeviceNames = []
-    this.form.srcVersions = this.checkInfo.srcVersion;
-    this.form.fmId = this.checkInfo.id + '';
-    if (this.checkInfo.srcVersion) {
-      this.version = this.checkInfo.srcVersion.split(',')
+    if (this.checkInfo) {
+      this.getVersionList()
+      this.form.showDeviceNames = []
+      this.form.srcVersions = this.checkInfo.srcVersion;
+      this.form.fmId = this.checkInfo.id + '';
+      if (this.checkInfo.srcVersion) {
+        this.version = this.checkInfo.srcVersion.split(',')
+      }
     }
   },
   methods: {

@@ -1,44 +1,57 @@
 <template>
   <div id="version" v-loading="loading">
-    <div class="topCon">
-      <span>产品：</span>
-      <el-select v-model="productId">
-        <el-option v-for="item in productList" :key="item.id" :value="item.id" :label="item.productName"></el-option>
-      </el-select>
-      <div class="df mt10">
-        <div class="item">
-          <div class="titlt">固件版本分布</div>
-          <div class="con">
-            <div id="chart" class="chart" v-if="rightTableList.length > 0"></div>
-            <empty-con v-else></empty-con>
+    <div v-if="productId">
+      <div class="topCon">
+        <span>产品：</span>
+        <el-select v-model="productId">
+          <el-option v-for="item in productList" :key="item.id" :value="item.id" :label="item.productName"></el-option>
+        </el-select>
+        <div class="df mt10">
+          <div class="item">
+            <div class="titlt">固件版本分布</div>
+            <div class="con">
+              <div id="chart" class="chart" v-if="rightTableList.length > 0"></div>
+              <empty-con v-else></empty-con>
+            </div>
           </div>
-        </div>
-        <div class="item">
-          <div class="titlt">固件版本占比</div>
-          <div class="con">
-            <el-table :data="rightTableList">
-              <empty-con slot="empty" class="mb20"></empty-con>
-              <el-table-column label="版本号" prop="version"></el-table-column>
-              <el-table-column label="固件类型" prop="moduleType"></el-table-column>
-              <el-table-column label="设备数" prop="deviceCount"></el-table-column>
-              <el-table-column label="占比数" prop="proportion"></el-table-column>
-            </el-table>
+          <div class="item">
+            <div class="titlt">固件版本占比</div>
+            <div class="con">
+              <el-table :data="rightTableList">
+                <empty-con slot="empty" class="mb20"></empty-con>
+                <el-table-column label="版本号" prop="version"></el-table-column>
+                <el-table-column label="固件类型" prop="moduleType"></el-table-column>
+                <el-table-column label="设备数" prop="deviceCount"></el-table-column>
+                <el-table-column label="占比数" prop="proportion"></el-table-column>
+              </el-table>
+            </div>
           </div>
         </div>
       </div>
+      <div class="main mt20">
+        <div class="f16 b mb20">设备列表</div>
+        <el-select v-model="version" @change="getDevice">
+          <el-option value="" label="全部版本"></el-option>
+          <el-option v-for="(ver, index) in versionList" :key="index" :label="ver" :value="ver"></el-option>
+        </el-select>
+        <el-table :data="list">
+          <empty-con slot="empty" class="mb20"></empty-con>
+          <el-table-column label="设备名称" prop="deviceName"></el-table-column>
+          <el-table-column label="固件版本" prop="version"></el-table-column>
+        </el-table>
+      </div>
     </div>
-    <div class="main mt20">
-      <div class="f16 b mb20">设备列表</div>
-      <el-select v-model="version" @change="getDevice">
-        <el-option value="" label="全部版本"></el-option>
-        <el-option v-for="(ver, index) in versionList" :key="index" :label="ver" :value="ver"></el-option>
-      </el-select>
-      <el-table :data="list">
-        <empty-con slot="empty" class="mb20"></empty-con>
-        <el-table-column label="设备名称" prop="deviceName"></el-table-column>
-        <el-table-column label="固件版本" prop="version"></el-table-column>
-      </el-table>
+    <div v-else class="noCon df jc_c">
+      <svg-icon icon-class="noVersion"></svg-icon>
+      <div class="ml20 f12">
+        <div class="b">请选择固件所属产品</div>
+        <div class="c9 mt5">选择后，您可随时从页面左上方选项进行切换</div>
+        <el-select v-model="productId" size="mini" class="mt10" placeholder="请选择所属产品" filterable>
+          <el-option v-for="item in productList" :key="item.id" :value="item.id" :label="item.productName"></el-option>
+        </el-select>
+      </div>
     </div>
+    
   </div>
 </template>
 
@@ -120,7 +133,6 @@ export default {
           }
         })
       })
-      // console.log(reObj)
       this.$nextTick(() => {
         drawEcharts.barChart2('chart', {reObj, versionArr})
       })
@@ -135,9 +147,9 @@ export default {
       }).then(res => {
         if (res.code === 200) {
           this.productList = res.data.data
-          if (res.data.data && res.data.data.length > 0) {
-            this.productId = res.data.data[0].id
-          }
+          // if (res.data.data && res.data.data.length > 0) {
+          //   this.productId = res.data.data[0].id
+          // }
         }
         this.loading = false
       })
@@ -201,6 +213,13 @@ export default {
     }
     .item + .item {
       margin-left: 16px;
+    }
+  }
+  .noCon {
+    padding: 60px 0;
+    .svg-icon{
+      width: 60px;
+      height: 60px;
     }
   }
 }

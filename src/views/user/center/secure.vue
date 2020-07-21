@@ -52,7 +52,7 @@
         <div class="set-con-item df ai_c">
           <div class="name b">备用邮箱</div>
           <div class="flex1">
-            <div v-if="userInfo.email">您已绑定了邮箱 <span class="success">{{ userInfo.email }}</span> [阿里云发送的各类系统、营销、服务通知将发送到您的备用邮箱。]</div>
+            <div v-if="userInfo.email">您已绑定了邮箱 <span class="success">{{ userInfo.email }}</span> [速绿发送的各类系统、营销、服务通知将发送到您的备用邮箱。]</div>
             <div v-else>未设置</div>
           </div>
           <div class="op">

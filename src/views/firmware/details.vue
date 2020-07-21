@@ -346,9 +346,9 @@
         <EditFirmware :EditDialogVisible="fmInfo.EditDialogVisible" :detailInfo="fmInfo.fmInfoList" @changeVisible="changeVisible" @changeDetail="changeDetail"/>
         <!--验证固件-->
         <CheckFirmware
+            v-if="checkFmVisible"
             :checkFmVisible="checkFmVisible"
-            :checkFmId="fmId"
-            :srcVersion="srcVersion"
+            :checkInfo="checkInfo"
             @checkVisible="checkVisible"
             @refreshList="refreshList"
         ></CheckFirmware>
@@ -356,8 +356,7 @@
         <UpgradeFirmware
             v-if="upgradeFmVisible"
             :upgradeFmVisible="upgradeFmVisible"
-            :checkFmId="checkFmId"
-            :checkDestVersion="checkDestVersion"
+            :checkInfo="checkInfo"
             @upgradeVisible="upgradeVisible"
         ></UpgradeFirmware>
         
@@ -418,7 +417,8 @@
                 popoverItem: {
                     check: '0',
                     row: null
-                }
+                },
+                checkInfo: null
             }
         },
         components: {
@@ -451,6 +451,7 @@
                 getFmDetails (formData).then( res => {
                     if (res.code === 200) {
                         this.details.detailList = res.data
+                        this.checkInfo = res.data
                         res.data.createTime_ = res.data.createTime ? new Date(res.data.createTime.replace(/-/g, "/")).toLocaleString() : ''
                         this.fmInfo.fmInfoList = res.data
                     } else {

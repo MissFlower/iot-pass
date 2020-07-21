@@ -194,8 +194,9 @@ export default {
         obj.name = this.formData.modelData.name
         obj.identifier = this.formData.modelData.identifier
         obj.method = `thing.service.${obj.identifier}`
-        this.formData.modelData = obj
-        this.submitFun(this.formData)
+        const submitObj = JSON.parse(JSON.stringify(this.formData))
+        submitObj.modelData = obj
+        this.submitFun(submitObj)
       } else {
         this.loading = false
       }
@@ -206,8 +207,9 @@ export default {
         obj.name = this.formData.modelData.name
         obj.identifier = this.formData.modelData.identifier
         obj.method = `thing.event.${obj.identifier}.post`
-        this.formData.modelData = obj
-        this.submitFun(this.formData)
+        const submitObj = JSON.parse(JSON.stringify(this.formData))
+        submitObj.modelData = obj
+        this.submitFun(submitObj)
       } else {
         this.loading = false
       }

@@ -58,13 +58,13 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <!--<el-form-item label="固件模块" required>-->
-        <!--<el-radio v-model="ruleForm.typel" label="1">选择模块</el-radio>-->
-        <!--<el-radio v-model="ruleForm.typel" label="2">新增模块</el-radio>-->
-        <!--<el-select v-model="typelTag">-->
-        <!--<el-option label="default" value="1"></el-option>-->
-        <!--</el-select>-->
-        <!--</el-form-item>-->
+        <!-- <el-form-item label="固件模块" required>
+          <el-radio v-model="ruleForm.typel" label="1">选择模块</el-radio>
+          <el-radio v-model="ruleForm.typel" label="2">新增模块</el-radio>
+          <el-select v-model="typelTag">
+            <el-option label="default" value="1"></el-option>
+          </el-select>
+        </el-form-item> -->
         <el-form-item label="待升级版本号" prop="srcVersion">
           <el-select v-model="srcVersion" multiple @focus="srcVersionFocus">
             <el-option v-for="version in srcVersionList" :key="version" :label="version" :value="version"></el-option>

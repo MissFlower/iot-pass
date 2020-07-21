@@ -16,9 +16,10 @@
           label="升级前版本号"
           label-width="150px"
           prop="srcVersion"
-          required
         >
-          <el-input v-model="form.srcVersion" auto-complete="off"></el-input>
+          <el-select v-model="srcVersion" multiple>
+            <el-option v-for="version in srcVersionList" :key="version" :label="version" :value="version"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item
           label="升级后版本号"
@@ -34,7 +35,7 @@
         >
           <el-select v-model="form.ugStrategy" placeholder="请选择升级策略">
             <el-option label="静态升级" value="0"></el-option>
-            <!-- <el-option label="动态升级" value="1"></el-option> -->
+            <el-option label="动态升级" value="1"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item
@@ -60,7 +61,7 @@
         >
           <el-select v-model="form.ugTimeType" placeholder="请选择升级时间类型">
             <el-option label="立即升级" value="0"></el-option>
-            <!-- <el-option label="定时" value="1"></el-option> -->
+            <el-option label="定时" value="1"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item
@@ -113,7 +114,7 @@
   </div>
 </template>
 <script>
-import { saveUpgrade } from "@/api/fireware";
+import { saveUpgrade, getSrcVersionList } from "@/api/fireware";
 import selectDevice from "./selectDevice"
 
 export default {
@@ -133,6 +134,25 @@ export default {
       } else {
         callback()
       }
+    }
+    const validSrcVersion = (rule, value, callback) => {
+      if (this.srcVersion.length === 0) {
+        callback(new Error('请选择待升级版本'))
+      } else {
+        if (this.form.destVersion !== '') {
+          this.$refs.ruleFormUpgrade.validateField('destVersion');
+          callback()
+        }  else {
+          callback()
+        }
+      }
+    }
+    const validDrcVersion = (rule, value, callback) => {
+      if (value !== '' && this.srcVersion.indexOf(value) > -1) {
+          callback(new Error('升级前后版本号不能相同'))
+        } else {
+          callback()
+        }
     }
     return {
       form: {
@@ -154,10 +174,12 @@ export default {
             { type: 'number', min: 1, message: '推送速率必须为大于0的数字值' }
           ],
           srcVersion: [
-              { required: true, message: '请输入待升级版本号', trigger: 'blur' }
+              { required: true, message: '请输入待升级版本号', trigger: 'blur' },
+              { validator: validSrcVersion, trigger: 'change'}
           ],
           destVersion: [
-              { required: true, message: '请输入升级后版本号', trigger: 'blur' }
+              { required: true, message: '请输入升级后版本号', trigger: 'blur' },
+              {validator: validDrcVersion, trigger: 'change'}
           ],
           timeOut: [
             { required: true, message: '请输入设备升级超时时间', trigger: 'blur' },
@@ -169,20 +191,25 @@ export default {
       },
       selectDevicenames: [],
       selectDeviceIds: [],
-      selectDeviceFlag: false
+      selectDeviceFlag: false,
+      srcVersionList: [], // 待升级版本列表
+      srcVersion: []
     };
   },
   mounted () {
-    this.form.destVersion = this.checkInfo.destVersion
+    if (this.checkInfo) {
+      this.getVersionList()
+      this.form.destVersion = this.checkInfo.destVersion
+    }
   },
   methods: {
     // 固件批量升级
     upgradeSubmit(formName) {
+      this.form.srcVersion = this.srcVersion.join(',')
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.form.fmId = this.checkInfo.id;
           this.form.deviceIds = this.selectDeviceIds
-          console.log(this.form)
           saveUpgrade(this.form).then(res => {
             if (res.code === 200) {
               this.$emit("upgradeVisible", this.upgradeFmVisible);
@@ -215,6 +242,20 @@ export default {
           this.selectDeviceIds.push(item.deviceId * 1)
         })
       }
+    },
+    getVersionList () {
+      this.loading = true
+      getSrcVersionList({
+        productId: this.checkInfo.productId,
+        moduleType: this.checkInfo.moduleType
+      }).then(res => {
+        if (res.code === 200) {
+          this.srcVersionList = res.data
+        }
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
     }
   }
 };

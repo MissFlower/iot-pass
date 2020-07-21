@@ -300,7 +300,6 @@ export default {
   watch: {
     info() {
       this.dealDataByInfo()
-      console.log(this.info)
     }
   },
   mounted () {
@@ -648,7 +647,6 @@ export default {
         return item.identifier !== row.identifier
       })
       this.structSpecs = specs
-      console.log(this.structSpecs)
       this.flag = 1
     },
     deleteStruct (index) {

@@ -39,7 +39,7 @@
                         <el-table-column label="操作">
                             <template slot-scope="scope">
                                 <a class="oprate_btn" @click="upgrade(scope.row.upgradeId)">重升级</a>
-                                <span v-if="scope.row.status < 3"> | </span>
+                                <span v-if="scope.row.status < 2"> | </span>
                                 <el-popover
                                     placement="top"
                                     width="200"
@@ -57,7 +57,7 @@
                                         <el-button size="mini" type="primary" @click="confirmPopover">确认</el-button>
                                         <el-button size="mini" @click="scope.row.visible = false">取消</el-button>
                                     </div>
-                                    <a class="oprate_btn" slot="reference" v-if="scope.row.status < 3" @click="ShowPopover(scope.row)">取消</a> 
+                                    <a class="oprate_btn" slot="reference" v-if="scope.row.status < 2" @click="ShowPopover(scope.row)">取消</a> 
                                 </el-popover>
                             </template>
                         </el-table-column>

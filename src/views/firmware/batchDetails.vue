@@ -4,7 +4,7 @@
 文件说明：批次详情
  -->
 <template>
-    <div class="details" v-loading="loading">
+    <div class="details">
         <div class="details-tit clearfix" v-if="JSON.stringify(batchDetailList) != '{}'">
             <h2>
                 <span class="go_back" @click="goBack"><i class="el-icon-back"></i></span>{{batchDetailList.batchNo}}
@@ -12,7 +12,7 @@
             <el-tag :type="deviceType" class="el_tag">{{taskStatusObj[batchDetailList.taskStatus]}}</el-tag>
         </div>
         <div>
-            <el-tabs v-model="tab" type="card">
+            <el-tabs v-model="tab" type="card"  v-loading="loading">
                 <el-tab-pane label="设备列表" name="first">
                     <div class="selectCon df f12">
                         <div v-for="(item, index) in countArr" :key="index" class="selectItem" :class="selectCountItemStatus == item.status ? 'active' : 'hand'" @click.stop="handleSelectCountItem(item)">
@@ -238,27 +238,27 @@
                     }, {
                         title: '待推送',
                         count: 0,
-                        status: '1',
+                        status: 1,
                         color: '#ccc'
                     }, {
                         title: '已推送',
                         count: 0,
-                        status: '2',
+                        status: 2,
                         color: '#2192D9'
                     }, {
                         title: '升级中',
                         count: 0,
-                        status: '3',
+                        status: 3,
                         color: '#ff8a00'
                     }, {
                         title: '升级成功',
                         count: 0,
-                        status: '4',
+                        status: 4,
                         color: '#0fa18a'
                     }, {
                         title: '升级失败',
                         count: 0,
-                        status: '5',
+                        status: 5,
                         color: '#f00'
                     }
                 ],
@@ -309,6 +309,7 @@
                     data.deviceName = this.devManage.deviceName;
                 }
                 this.devManage.devList = []
+                this.loading = true
                 upgradeDeviceList (data).then( res => {
                     if (res.code === 200) {
                         if (res.data.data && res.data.data.length > 0) {
@@ -323,6 +324,7 @@
                     } else {
                         this.$message.error(res.message);
                     }
+                    this.loading = false
                 })
             },
             // 重新升级
@@ -388,7 +390,6 @@
                 getSttatusCount({
                     batchNo: this.batchManage.batchNo
                 }).then(res => {
-                    console.log(res)
                     if (res.code === 200) {
                         const obj = {}
                         if (res.data && res.data.length > 0) {
@@ -404,13 +405,16 @@
                                 }
                             })
                         }
+                        let all = 0
                         this.countArr.forEach(item => {
                             if (obj[item.status]) {
                                 item.count = obj[item.status]
+                                all += obj[item.status]
                             } else {
                                 item.count = 0
                             }
                         })
+                        this.countArr[0].count = all
                     }
                     this.loading = false
                 })

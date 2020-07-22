@@ -343,7 +343,7 @@
     </div>
 </template>
 <script>
-    import { getFmDetails, upgradeList, upgradeDeviceList, statistics, getUploadFilePath } from '@/api/fireware'
+    import { getFmDetails, upgradeList, upgradeDeviceList, statistics, getUploadFilePath, getVerifyFirmInfo } from '@/api/fireware'
     import EditFirmware from '@/components/firmware/editFirmware'
     import CheckFirmware from "@/components/firmware/checkFirmware";
     import UpgradeFirmware from "@/components/firmware/upgradeFirmware";
@@ -542,16 +542,58 @@
             checkFm () {
                 let fmStatus = this.details.detailList.fmStatus
                 if (fmStatus === 0) {
-                    this.checkFmVisible = true;
+                    // console.log(this.details.detailList)
+                    // this.checkFmVisible = true;
+                    this.checkFmId = String(this.details.detailList.id);
+                    this.srcVersion = this.details.detailList.srcVersion;
+                    this.getVerifyFirmInfo(this.checkFmId, this.srcVersion);
                 } else {
                     this.openCheckFm(fmStatus);
                 }
             },
             openCheckFm(status) {
-                let title = status === 1 ? "固件验证中" : "固件验证成功";
+                let title = ''
+                switch (status) {
+                    case 1:
+                    title = '固件验证中'
+                    break
+                    case 2:
+                    title = '固件验证成功'
+                    break
+                    case 3:
+                    title = '固件验证失败'
+                    break
+                }
                 this.$alert(`${title}`, "验证固件", {
                     confirmButtonText: "关闭"
+                }).then(() => {});
+            },
+            // 验证固件前校验是否存在设备
+            getVerifyFirmInfo(fmId, versions) {
+            let data = {
+                "pageNum": 1,
+                "pageSize": 10,
+                "fmId": fmId,
+                "srcVersions": versions
+            };
+            getVerifyFirmInfo(data).then(res => {
+                if (res.code === 200) {
+                    this.fmDeviceList = res.data.data;
+                    this.checkFmVisible = true;
+                } else if (res.code === 9003) {
+                this.$alert(res.message, "提示", {
+                    confirmButtonText: "确定",
+                    type: "warning",
+                    callback: action => {
+                    }
                 });
+                } else {
+                    this.$message({
+                        type: "warning",
+                        message: res.message
+                    });
+                }
+            });
             },
             checkVisible() {
                 this.checkFmVisible = false;

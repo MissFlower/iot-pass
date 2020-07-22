@@ -14,6 +14,15 @@
         <div>
             <el-tabs v-model="tab" type="card">
                 <el-tab-pane label="设备列表" name="first">
+                    <div class="selectCon df f12">
+                        <div v-for="(item, index) in countArr" :key="index" class="selectItem">
+                            <div>{{item.count}}</div>
+                            <div>
+                                <div v-if="item.color" class="point"></div>
+                                <div>{{item.title}}</div>
+                            </div>
+                        </div>
+                    </div>
                     <el-table :data="devManage.devList" border stripe>
                         <el-table-column label="DeviceName" prop="deviceName"></el-table-column>
                         <el-table-column label="产品" prop="productName">
@@ -207,7 +216,40 @@
                 popoverItem: {
                     check: '0',
                     row: null
-                }
+                },
+                // 状态统计
+                countArr: [
+                    {
+                        title: '所有状态',
+                        count: 0,
+                        status: ''
+                    }, {
+                        title: '待推送',
+                        count: 0,
+                        status: '1',
+                        color: '#ccc'
+                    }, {
+                        title: '已推送',
+                        count: 0,
+                        status: '2',
+                        color: '#2192D9'
+                    }, {
+                        title: '升级中',
+                        count: 0,
+                        status: '3',
+                        color: '#ff8a00'
+                    }, {
+                        title: '升级成功',
+                        count: 0,
+                        status: '4',
+                        color: '#0fa18a'
+                    }, {
+                        title: '升级失败',
+                        count: 0,
+                        status: '5',
+                        color: '#f00'
+                    }
+                ]
             }
         },
         mounted () {

@@ -15,8 +15,8 @@
         <div v-for="(item, index) in formData.inputData" :key="index" class="df ai_c json_item">
           <div class="flex1">参数名称： {{item.name}}</div>
           <div>
-            <el-link type="primary" :underline="false" class="f12 mr10" @click.stop="editSturct(item)">编辑</el-link>
-            <el-link type="primary" :underline="false" class="f12" @click.stop="deleteStruct(index)">删除</el-link>
+            <el-link type="primary" :underline="false" class="f12 mr10" @click.stop="editSturct('input', item, index)">编辑</el-link>
+            <el-link type="primary" :underline="false" class="f12" @click.stop="deleteStruct('input', index)">删除</el-link>
           </div>
         </div>
         <el-button type="text" icon="el-icon-plus" @click="addStruct('input')">新增参数</el-button>
@@ -25,8 +25,8 @@
         <div v-for="(item, index) in formData.outputData" :key="index" class="df ai_c json_item">
           <div class="flex1">参数名称： {{item.name}}</div>
           <div>
-            <el-link type="primary" :underline="false" class="f12 mr10" @click.stop="editSturct(item)">编辑</el-link>
-            <el-link type="primary" :underline="false" class="f12" @click.stop="deleteStruct(index)">删除</el-link>
+            <el-link type="primary" :underline="false" class="f12 mr10" @click.stop="editSturct('output', item, index)">编辑</el-link>
+            <el-link type="primary" :underline="false" class="f12" @click.stop="deleteStruct('output', index)">删除</el-link>
           </div>
         </div>
         <el-button type="text" icon="el-icon-plus" @click="addStruct('output')">新增参数</el-button>
@@ -56,6 +56,7 @@ export default {
       },
       type: '',
       structInfo: null,
+      structIndex: -1,
       specs: []
     }
   },
@@ -71,6 +72,25 @@ export default {
       this.type = str
       this.specs = JSON.parse(JSON.stringify(this.formData[`${str}Data`]))
       this.flag = 1
+      this.structInfo = null
+    },
+    editSturct (type, row, index) {
+      this.type = type
+      this.structInfo = JSON.parse(JSON.stringify(row))
+      this.structIndex = index
+      let specs = this.formData.inputData
+      if (this.type === 'output') {
+        specs = this.formData.outputData
+      }
+      specs = specs.filter(item => {
+        return item.identifier !== row.identifier
+      })
+      this.specs = specs
+      this.flag = 1
+    },
+    deleteStruct (type, index) {
+      const row = this.formData[`${type}Data`]
+      row.splice(index, 1)
     },
     closeAddParam () {
       this.flag = 0
@@ -81,7 +101,13 @@ export default {
         row = this.formData.outputData
       }
       if (data) {
-        row.push(data)
+        if (this.structInfo) {
+          row.splice(this.structIndex, 1, data)
+          this.structIndex = -1
+          this.structInfo = null
+        } else {
+          row.push(data)
+        }
       }
     },
     getDataForParent () {

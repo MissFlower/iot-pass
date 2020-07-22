@@ -23,7 +23,7 @@
         <el-button type="text" icon="el-icon-plus" @click="addStruct">新增参数</el-button>
       </el-form-item>
     </el-form>
-    <add-param v-if="flag == 1" :specs="formData.outputData" :info="structInfo" @close="closeAddParam" @success="successAddParams" :allFlag="0"></add-param>
+    <add-param v-if="flag == 1" :specs="specs" :info="structInfo" @close="closeAddParam" @success="successAddParams" :allFlag="0"></add-param>
   </div>
 </template>
 
@@ -44,7 +44,9 @@ export default {
           {required: true, message: "请选择事件类型", trigger: 'change' }
         ]
       },
-      structInfo: null
+      structInfo: null,
+      structIndex: -1,
+      specs: []
     }
   },
   mounted () {
@@ -56,14 +58,37 @@ export default {
   },
   methods: {
     addStruct () {
+      this.specs = JSON.parse(JSON.stringify(this.formData.outputData))
       this.flag = 1
+      this.structInfo = null
+    },
+    editSturct (row, index) {
+      this.structInfo = JSON.parse(JSON.stringify(row))
+      this.structIndex = index
+      let specs = this.formData.outputData
+      specs = specs.filter(item => {
+        return item.identifier !== row.identifier
+      })
+      this.specs = specs
+      this.flag = 1
+    },
+    deleteStruct (index) {
+      const row = this.formData.outputData
+      row.splice(index, 1)
     },
     closeAddParam () {
       this.flag = 0
     },
     successAddParams (data) {
       if (data) {
-        this.formData.outputData.push(data)
+        const row = this.formData.outputData
+        if (this.structInfo) {
+          row.splice(this.structIndex, 1, data)
+          this.structIndex = -1
+          this.structInfo = null
+        } else {
+          row.push(data)
+        }
       }
     },
     getDataForParent () {

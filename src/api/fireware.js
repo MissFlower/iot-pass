@@ -325,5 +325,17 @@ export function cancelBatchUpgrade (data) {
     data: Qs.stringify(data)
   })
  }
+/**
+ * 各个状态下的设备数量接口
+ * batchNo	Long	是	批次id
+ * 
+ */
+ export function getSttatusCount (data) {
+   return request({
+     url: 'upgrade/getUpgradeDeviceStatusCount',
+     method: 'post',
+     data: Qs.stringify(data)
+   })
+ }
 
  

@@ -15,10 +15,13 @@
             <el-tabs v-model="tab" type="card">
                 <el-tab-pane label="设备列表" name="first">
                     <div class="selectCon df f12">
-                        <div v-for="(item, index) in countArr" :key="index" class="selectItem">
-                            <div>{{item.count}}</div>
-                            <div>
-                                <div v-if="item.color" class="point"></div>
+                        <div v-for="(item, index) in countArr" :key="index" class="selectItem" :class="selectCountItemStatus == item.status ? 'active' : 'hand'" @click.stop="handleSelectCountItem(item)">
+                            <div v-if="selectCountItemStatus == item.status" class="select">
+                                <i class="el-icon-check icon"></i>
+                            </div>
+                            <div class="f16">{{item.count}}</div>
+                            <div class="c9 mt10 df ai_c">
+                                <div v-if="item.color" :style="{'background-color': item.color}" class="point"></div>
                                 <div>{{item.title}}</div>
                             </div>
                         </div>
@@ -71,6 +74,15 @@
                             </template>
                         </el-table-column>
                     </el-table>
+                    <el-pagination
+                       @current-change="handleBatchChange"
+                       :current-page.sync="batchManage.pageNum"
+                       :page-size="batchManage.pageSize"
+                       layout="total, prev, pager, next"
+                       class="tr mt20"
+                       :total="batchManage.total"
+                   >
+                   </el-pagination>
                 </el-tab-pane>
                 <el-tab-pane label="批次信息" name="second">
                     <el-row v-if="JSON.stringify(batchDetailList) != '{}'">
@@ -181,7 +193,7 @@
     </div>
 </template>
 <script>
-    import { upgradeList, upgradeDeviceList, retryPublishUpdateMsg, cancelDeviceUpgrade } from '@/api/fireware'
+    import { upgradeList, upgradeDeviceList, retryPublishUpdateMsg, cancelDeviceUpgrade, getSttatusCount } from '@/api/fireware'
     import dataObj from '@/data/data'
     export default {
         data (){
@@ -249,7 +261,8 @@
                         status: '5',
                         color: '#f00'
                     }
-                ]
+                ],
+                selectCountItemStatus: ''
             }
         },
         mounted () {
@@ -259,6 +272,7 @@
             this.productName = this.$route.query.productName
             this.getDetails()
             this.getDeviceList()
+            this.getCount()
         },
         methods: {
             // 获取详情
@@ -288,7 +302,8 @@
                   fmId: this.batchManage.fmId,
                   batchNo: this.batchManage.batchNo,
                   pageNum: this.devManage.pageNum,
-                  pageSize: this.devManage.pageSize
+                  pageSize: this.devManage.pageSize,
+                  status: this.selectCountItemStatus
                 };
                 if (this.devManage.deviceName) {
                     data.deviceName = this.devManage.deviceName;
@@ -296,7 +311,15 @@
                 this.devManage.devList = []
                 upgradeDeviceList (data).then( res => {
                     if (res.code === 200) {
+                        if (res.data.data && res.data.data.length > 0) {
+                            res.data.data.forEach(item => {
+                                if (item.status === 0) {
+                                    item.status = 1
+                                }
+                            })
+                        }
                         this.devManage.devList = res.data.data
+                        this.batchManage.total = res.data.total
                     } else {
                         this.$message.error(res.message);
                     }
@@ -353,6 +376,48 @@
                     this.$message.error('取消失败')
                     this.loading = false
                 })
+            },
+            // 选择状态
+            handleSelectCountItem (item) {
+                this.selectCountItemStatus = item.status
+                this.handleBatchChange(1)
+            },
+            // 获取转台统计
+            getCount () {
+                this.loading = true
+                getSttatusCount({
+                    batchNo: this.batchManage.batchNo
+                }).then(res => {
+                    console.log(res)
+                    if (res.code === 200) {
+                        const obj = {}
+                        if (res.data && res.data.length > 0) {
+                            res.data.forEach(item => {
+                                if (status === 0 || status === 1) {
+                                    if (obj[1]) {
+                                        obj[1] = obj[1] + item.deviceCount
+                                    } else {
+                                        obj[1] = item.deviceCount
+                                    }
+                                } else {
+                                    obj[item.status] = item.deviceCount
+                                }
+                            })
+                        }
+                        this.countArr.forEach(item => {
+                            if (obj[item.status]) {
+                                item.count = obj[item.status]
+                            } else {
+                                item.count = 0
+                            }
+                        })
+                    }
+                    this.loading = false
+                })
+            },
+            handleBatchChange (page) {
+                this.batchManage.pageNum = page
+                this.getDeviceList()
             }
         }
     }
@@ -384,6 +449,45 @@
         width: 100%;
         height: 100%;
         padding: 20px;
+        .selectCon {
+            margin-bottom: 20px;
+            .selectItem {
+                width: 120px;
+                height: 64px;
+                padding: 6px 0 0 12px;
+                border: 1px solid #c6cbd1;
+                border-radius: 3px;
+                margin-right: 9px;
+                position: relative;
+                .point {
+                    width: 8px;
+                    height: 8px;
+                    display: inline-block;
+                    border-radius: 50%;
+                    margin-right: 6px;
+                }
+                .select {
+                    width: 0;
+                    height: 0;
+                    border-color: transparent #0070cc #0070cc transparent;
+                    border-style: solid;
+                    border-width: 8px;
+                    position: absolute;
+                    right: 0;
+                    bottom: 0;
+                    color: #fff;
+                    .icon {
+                        position: absolute;
+                        top: -3px;
+                        right: -9px;
+                        transform: scale(0.8);
+                    }
+                }
+            }
+            .selectItem.active {
+                border: 1px solid #0070CC;
+            }
+        }
     }
     .details-tit{
         margin-bottom: 20px;

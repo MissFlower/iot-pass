@@ -8,30 +8,36 @@
   <div class="eventCon">
     <el-form ref="form" :model="formData" :rules="rules">
       <el-form-item label="事件类型" prop="type">
-        <el-radio v-model="formData.type" label="alter">信息</el-radio>
-        <el-radio v-model="formData.type" label="warn">告警</el-radio>
-        <el-radio v-model="formData.type" label="error">故障</el-radio>
+        <div v-if="modelType" class="disabledDiv">
+          {{eventType[formData.type]}}
+        </div>
+        <div v-else>
+          <el-radio v-model="formData.type" label="alert">信息</el-radio>
+          <el-radio v-model="formData.type" label="warn">告警</el-radio>
+          <el-radio v-model="formData.type" label="error">故障</el-radio>
+        </div>
       </el-form-item>
       <el-form-item label="输出参数">
         <div v-for="(item, index) in formData.outputData" :key="index" class="df ai_c json_item">
           <div class="flex1">参数名称： {{item.name}}</div>
           <div>
             <el-link type="primary" :underline="false" class="f12 mr10" @click.stop="editSturct(item)">编辑</el-link>
-            <el-link type="primary" :underline="false" class="f12" @click.stop="deleteStruct(index)">删除</el-link>
+            <el-link type="primary" :underline="false" class="f12" @click.stop="deleteStruct(index)" :disabled="modelType">删除</el-link>
           </div>
         </div>
         <el-button type="text" icon="el-icon-plus" @click="addStruct">新增参数</el-button>
       </el-form-item>
     </el-form>
-    <add-param v-if="flag == 1" :specs="specs" :info="structInfo" @close="closeAddParam" @success="successAddParams" :allFlag="0"></add-param>
+    <add-param v-if="flag == 1" :specs="specs" :info="structInfo" :modelType="modelType" @close="closeAddParam" @success="successAddParams" :allFlag="0"></add-param>
   </div>
 </template>
 
 <script>
 import addParam from "./addParam"
+import dataObj from '@/data/data'
 export default {
   components: {addParam},
-  props: ['info'],
+  props: ['info', 'modelType'],
   data () {
     return {
       flag: 0,
@@ -46,7 +52,8 @@ export default {
       },
       structInfo: null,
       structIndex: -1,
-      specs: []
+      specs: [],
+      eventType: dataObj.eventType
     }
   },
   mounted () {

@@ -8,7 +8,7 @@
   <div id="dataSelectPart">
     <el-form ref="dataSelectPartForm" :model="formData" :rules="rules">
       <el-form-item label="数据类型" prop="type">
-        <el-select v-model="formData.type" @change="handleChange" :disabled="showFlag">
+        <el-select v-model="formData.type" @change="handleChange" :disabled="showFlag || modelType">
           <el-option v-for="(item, index) in dataTypeArr" :key="index" :value="item.value" :label="item.label"></el-option>
         </el-select>
       </el-form-item>
@@ -102,9 +102,10 @@
       </div>
       <div v-if="formData.type == '8'">
         <el-form-item label="元素类型">
-          <el-radio-group v-model="arrObj.type" :disabled="showFlag" @change="arrayTypeChange">
+          <el-radio-group v-if="!modelType" v-model="arrObj.type" :disabled="showFlag" @change="arrayTypeChange">
             <el-radio v-for="(item, index) in arrTypes" :key="index" :label="item.value">{{item.text}}</el-radio>
           </el-radio-group>
+          <div v-else class="disabledDiv">{{dataTypeNumObj[arrObj.type]}}</div>
         </el-form-item>
         <el-form-item label="元素个数">
           <el-input v-model="arrObj.num" placeholder="请输入元素个数" :disabled="showFlag"></el-input>
@@ -138,7 +139,7 @@ import dataObj from '@/data/data'
 export default {
   name: 'DatatypeSelectpart',
   components: {addParam},
-  props: ['info', 'specs', 'showFlag', 'allFlag'],
+  props: ['info', 'specs', 'showFlag', 'allFlag', 'modelType'],
   data () {
     const validateValueRangeMin = (rule, value, callback) => {
       let str = this.numMinMaxDealFun(this.formData.specs.min)

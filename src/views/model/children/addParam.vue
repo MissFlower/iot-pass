@@ -25,9 +25,9 @@
             <div slot="content" class="f12 c9 w200">必填，支持大小写字母、数字和下划线、不超过50个字符。</div>
           </el-tooltip>
         </span>
-        <el-input v-model="formData.identifier" placeholder="请输入您的标识符" :disabled="(info ? true : false || showFlag)"></el-input>
+        <el-input v-model="formData.identifier" placeholder="请输入您的标识符" :disabled="(showFlag || modelType)"></el-input>
       </el-form-item>
-      <datatype-selectpart ref="dataSelect" :info="formData.dataType" :showFlag="showFlag" :allFlag="allFlag" @success="handleSuccess"></datatype-selectpart>
+      <datatype-selectpart ref="dataSelect" :info="formData.dataType" :showFlag="showFlag" :modelType="modelType" :allFlag="allFlag" @success="handleSuccess"></datatype-selectpart>
     </el-form>
     <div slot="footer">
       <el-button type="primary" @click="handleSave">确认</el-button>
@@ -38,7 +38,7 @@
 <script>
 import dataObj from '@/data/data'
 export default {
-  props: ['specs', 'info', 'allFlag', 'showFlag'],
+  props: ['specs', 'info', 'allFlag', 'showFlag', 'modelType'],
   data () {
     const validateName = (rule, value, callback) => {
       if (value === '') {

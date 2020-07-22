@@ -26,13 +26,13 @@
           <div class="flex1">参数名称： {{item.name}}</div>
           <div>
             <el-link type="primary" :underline="false" class="f12 mr10" @click.stop="editSturct('output', item, index)">编辑</el-link>
-            <el-link type="primary" :underline="false" class="f12" @click.stop="deleteStruct('output', index)">删除</el-link>
+            <el-link type="primary" :underline="false" class="f12" @click.stop="deleteStruct('output', index)" :disabled="modelType">删除</el-link>
           </div>
         </div>
         <el-button type="text" icon="el-icon-plus" @click="addStruct('output')">新增参数</el-button>
       </el-form-item>
     </el-form>
-    <add-param v-if="flag == 1" :specs="specs" :info="structInfo" :allFlag="0" @close="closeAddParam" @success="successAddParams"></add-param>
+    <add-param v-if="flag == 1" :specs="specs" :info="structInfo" :modelType="modelType" :allFlag="0" @close="closeAddParam" @success="successAddParams"></add-param>
   </div>
 </template>
 
@@ -40,7 +40,7 @@
 import addParam from "./addParam"
 export default {
   components: {addParam},
-  props: ['info'],
+  props: ['info', 'modelType'],
   data () {
     return {
       flag: 0,

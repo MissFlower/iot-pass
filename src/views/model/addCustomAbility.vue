@@ -20,7 +20,7 @@
           <el-radio-button label="2">服务</el-radio-button>
           <el-radio-button label="3">事件</el-radio-button>
         </el-radio-group>
-        <div v-else><el-tag type="primary">{{abilityTypeObj[formData.abilityType]}}</el-tag></div>
+        <div v-else class="disabledDiv">{{abilityTypeObj[formData.abilityType]}}</div>
       </el-form-item>
       <el-form-item prop="name">
         <span slot="label">
@@ -40,14 +40,14 @@
             <div slot="content" class="f12 c9 w200">必填，支持大小写字母、数字和下划线、不超过50个字符。</div>
           </el-tooltip>
         </span>
-        <el-input v-model="formData.modelData.identifier" placeholder="请输入您的标识符" :disabled="showFlag ? true : false"></el-input>
+        <el-input v-model="formData.modelData.identifier" placeholder="请输入您的标识符" :disabled="showFlag  || (editAbility && editAbility.modelType == '1')"></el-input>
       </el-form-item>
       <!--不同类型对应不同模块-->
-      <attribute-con ref="attDataSelectPart"  v-if="formData.abilityType == 1" :dataType="formData.modelData.dataType" :showFlag="showFlag" :accessMode="formData.modelData.accessMode" @callBack="callBackForAttribute"></attribute-con>
+      <attribute-con ref="attDataSelectPart"  v-if="formData.abilityType == 1" :dataType="formData.modelData.dataType" :showFlag="showFlag" :modelType="editAbility && editAbility.modelType == '1'" :accessMode="formData.modelData.accessMode" @callBack="callBackForAttribute"></attribute-con>
 
-      <service-con ref="servivePart" v-if="formData.abilityType == 2" :info="editAbility" @success="servivePartSuccess"></service-con>
+      <service-con ref="servivePart" v-if="formData.abilityType == 2" :info="editAbility" :modelType="editAbility && editAbility.modelType == '1'" @success="servivePartSuccess"></service-con>
 
-      <event-con ref="eventPart" v-if="formData.abilityType == 3" :info="editAbility" @success="eventPartSuccess"></event-con>
+      <event-con ref="eventPart" v-if="formData.abilityType == 3" :info="editAbility" :modelType="editAbility && editAbility.modelType == '1'" @success="eventPartSuccess"></event-con>
       <el-form-item label="描述">
         <el-input v-model="formData.modelData.desc" type="textarea" placeholder="请输入描述" :rows="4" maxlength="100" show-word-limit :disabled="showFlag"></el-input>
       </el-form-item>

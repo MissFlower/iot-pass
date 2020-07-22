@@ -76,7 +76,7 @@
     3: '验证失败' 
   },
   eventType: {
-    'alter': '信息',
+    'alert': '信息',
     'warn': '告警',
     'error': '故障'
   }

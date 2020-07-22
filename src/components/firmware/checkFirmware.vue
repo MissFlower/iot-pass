@@ -28,7 +28,7 @@
             v-model="form.showDeviceNames"
             multiple
             placeholder="请选择设备"
-            @focus="selectDevice"
+            @focus.stop="selectDevice"
           >
               <option value=""></option>
           </el-select>
@@ -58,7 +58,7 @@
       </div>
     </el-dialog>
     <ChooseDevice
-      :chooseDeviceVisible="chooseDeviceVisible"
+      v-if="chooseDeviceVisible"
       :fmDeviceList="fmDeviceList"
       @deviceVisible="deviceVisible"
       @multipleDevice="multipleDevice"

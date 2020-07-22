@@ -4,7 +4,7 @@
 文件说明：选择设备
  -->
 <template>
-    <el-dialog title="请选择设备" :visible.sync="chooseDeviceVisible" width="30%" :before-close='closeDialog' :close-on-click-modal="closeModal">
+    <el-dialog title="请选择设备" :visible.sync="visible" width="30%" @close="close" :close-on-click-modal="false">
         <el-form :model="form" ref="ruleForm" label-width="120px" class="demo-ruleForm" :inline="true">
             <el-form-item>
                 <el-input type="text" v-model="deviceForm.deviceName" placeholder="请输入设备名称"></el-input>
@@ -40,9 +40,6 @@
     // import { upgradeDeviceList } from '@/api/fireware'
     export default {
         props: {
-            chooseDeviceVisible: {
-                type: Boolean
-            },
             fmDeviceList: {
                 type: Array
             }
@@ -63,8 +60,8 @@
                     fmVersion: ''
                 },
                 deviceTotal: '',
-                closeModal: false,
-                list: []
+                list: [],
+                visible: true
             }
         },
         watch: {
@@ -96,24 +93,17 @@
                   checkedDeviceList.push(item)
                 })
                 this.$emit('multipleDevice', checkedDeviceList)
-                this.$emit('deviceVisible', this.chooseDeviceVisible)
-            },
-            // 取消选中
-            toggleSelection(rows) {
-                if (rows) {
-                    rows.forEach(row => {
-                        this.$refs.multipleTable.toggleRowSelection(row);
-                    });
-                } else {
-                    this.$refs.multipleTable.clearSelection();
-                }
+                this.$emit('deviceVisible')
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;
             },
-            
+            // 取消选中
             closeDialog () {
-                this.toggleSelection()
+                this.$refs.multipleTable.clearSelection();
+            },
+            close () {
+               this.$emit('deviceVisible') 
             }
         }
     }

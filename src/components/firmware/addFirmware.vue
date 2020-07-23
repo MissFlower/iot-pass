@@ -175,8 +175,7 @@ export default {
               { required: true, message: '请输入固件名称', trigger: 'blur' }
           ],
           srcVersion: [
-              { required: true , message: '请输入待升级版本号', trigger: 'blur' },
-              { validator: validSrcVersion, trigger: 'change'}
+              { required: true , validator: validSrcVersion, trigger: 'change'}
           ],
           destVersion: [
               { required: true, message: '请输入升级后版本号', trigger: 'blur' },

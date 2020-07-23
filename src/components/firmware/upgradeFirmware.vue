@@ -11,7 +11,7 @@
       :before-close="closeDialog"
       width="35%"
     >
-      <el-form :model="form" ref="ruleFormUpgrade" :rules="rules" label-width="150px">
+      <el-form :model="form" ref="ruleFormUpgrade" :rules="rules" label-width="150px" v-loading="loading">
         <el-form-item
           label="升级前版本号"
           label-width="150px"
@@ -61,9 +61,31 @@
         >
           <el-select v-model="form.ugTimeType" placeholder="请选择升级时间类型">
             <el-option label="立即升级" value="0"></el-option>
-            <el-option label="定时" value="1"></el-option>
+            <el-option label="定时升级" value="1"></el-option>
           </el-select>
         </el-form-item>
+        <div v-if="form.ugTimeType ==1">
+          <el-form-item prop="ugStartTime">
+            <span slot="label">
+              升级开始时间
+              <el-tooltip effect="light">
+                <i class="el-icon-question c9"></i>
+                <div slot="content" class="f12 c6 w200">选择的开始时间距当前时间最少 10 分钟，最多 7 天</div>
+              </el-tooltip>
+            </span>
+            <el-date-picker v-model="form.ugStartTime" type="datetime" :picker-options="pickerOptions" placeholder="选择日期时间"></el-date-picker>
+          </el-form-item>
+          <el-form-item prop="ugEndTime">
+            <span slot="label">
+              升级结束时间
+              <el-tooltip effect="light">
+                <i class="el-icon-question c9"></i>
+                <div slot="content" class="f12 c6 w200">不填写默认不会强制结束，选择的结束时间距开始时间最少 1 小时，最多为 30 天</div>
+              </el-tooltip>
+            </span>
+            <el-date-picker v-model="form.ugEndTime" type="datetime" :picker-options="pickerOptions1" placeholder="选择日期时间"></el-date-picker>
+          </el-form-item>
+        </div>
         <el-form-item
           label="固件推送速率"
           label-width="150px"
@@ -149,12 +171,43 @@ export default {
     }
     const validDrcVersion = (rule, value, callback) => {
       if (value !== '' && this.srcVersion.indexOf(value) > -1) {
-          callback(new Error('升级前后版本号不能相同'))
+        callback(new Error('升级前后版本号不能相同'))
+      } else {
+        callback()
+      }
+    }
+    const validateUgStartTime = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请选择升级开始时间'))
+      } else {
+        const time = value - new Date()
+        if (time < 1000 * 60 * 10 || time > 1000 * 60 * 60 * 24 * 7) {
+          callback(new Error('选择的开始时间距当前时间最少 10 分钟，最多 7 天'))
+        } else {
+          this.$refs.ruleFormUpgrade.validateField('validateUgEndTime')
+          callback()
+        }
+      }
+    }
+    const validateUgEndTime = (rule, value, callback) => {
+      if (!value) {
+        // 不填写默认不会强制结束，选择的结束时间距开始时间最少 1 小时，最多为 30 天
+        callback()
+      } else {
+        if (this.form.ugStartTime) {
+          const time = value - this.form.ugStartTime
+          if (time < 1000 * 60 * 60 || time > 1000 * 60 * 60 * 24 * 30) {
+            callback(new Error('选择的结束时间距开始时间最少 1 小时，最多为 30 天'))
+          } else {
+            callback()
+          }
         } else {
           callback()
         }
+      }
     }
     return {
+      loading: false,
       form: {
         fmId: "",
         serialVersionUID: 1,
@@ -166,7 +219,9 @@ export default {
         timeOut: "",
         retryInterval: "0",
         rate: "",
-        deviceIds: ''
+        deviceIds: '',
+        ugStartTime: '',
+        ugEndTime: ''
       },
       rules: {
         rate: [
@@ -187,13 +242,29 @@ export default {
           ],
           selectDevicenames: [
             { required: true, validator: validateSelectNames, trigger: 'blur' }
+          ],
+          ugStartTime: [
+            {required: true, validator: validateUgStartTime, trigger: 'change' }
+          ],
+          ugEndTime: [
+            {required: true, validator: validateUgEndTime, trigger: 'change' }
           ]
       },
       selectDevicenames: [],
       selectDeviceIds: [],
       selectDeviceFlag: false,
       srcVersionList: [], // 待升级版本列表
-      srcVersion: []
+      srcVersion: [],
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() < Date.now() - 1000 * 60 * 60 * 24 || time.getTime() > Date.now() + 1000 * 60 * 60 * 24 * 7;
+        }
+      },
+      pickerOptions1: {
+        disabledDate(time) {
+          return time.getTime() < Date.now() - 1000 * 60 * 60 * 24 || time.getTime() > Date.now() + 1000 * 60 * 60 * 24 * 90;
+        }
+      },
     };
   },
   mounted () {
@@ -205,18 +276,28 @@ export default {
   methods: {
     // 固件批量升级
     upgradeSubmit(formName) {
+      if (this.loading) {
+        return
+      }
       this.form.srcVersion = this.srcVersion.join(',')
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.form.fmId = this.checkInfo.id;
           this.form.deviceIds = this.selectDeviceIds
-          saveUpgrade(this.form).then(res => {
+          const obj = JSON.parse(JSON.stringify(this.form))
+          obj.ugStartTime = this.$fun.dateFormat(this.form.ugStartTime, 'yyyy-MM-dd hh:mm:ss')
+          obj.ugEndTime = this.$fun.dateFormat(this.form.ugEndTime, 'yyyy-MM-dd hh:mm:ss')
+          this.loading = true
+          saveUpgrade(obj).then(res => {
             if (res.code === 200) {
               this.$emit("upgradeVisible", this.upgradeFmVisible);
             } else {
               this.$message.warning(res.message);
             }
-          });
+            this.loading = false
+          }).catch(() => {
+            this.loading = false
+          })
         } else {
           console.log("error submit!!");
           return false;

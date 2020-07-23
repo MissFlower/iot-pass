@@ -600,23 +600,6 @@
             this.closeCheckProcess()
             this.upgradeFmVisible = true;
             },
-            openCheckFm(status) {
-                let title = ''
-                switch (status) {
-                    case 1:
-                    title = '固件验证中'
-                    break
-                    case 2:
-                    title = '固件验证成功'
-                    break
-                    case 3:
-                    title = '固件验证失败'
-                    break
-                }
-                this.$alert(`${title}`, "验证固件", {
-                    confirmButtonText: "关闭"
-                }).then(() => {});
-            },
             // 验证固件前校验是否存在设备
             getVerifyFirmInfo(fmId, versions) {
             let data = {

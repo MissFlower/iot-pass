@@ -41,4 +41,27 @@ html, body, #app {
     line-height: 30px;
     padding: 0 16px;
   }
+  .login-con {
+    max-width: 1200px;
+    justify-content: space-around;
+    margin: 100px auto;
+    .showImg {
+      width: 40%;
+      height: 380px;
+      background-image: url("../../assets/imgs/timg.jpeg");
+      background-position: center;
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+    }
+    .form-con {
+      width: 40%;
+      margin-left: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-around;
+      box-shadow: 0 2px 15px rgba(0,0,0,.15);
+      padding: 20px;
+    }
+  }
 }

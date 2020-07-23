@@ -5,7 +5,7 @@
  -->
 <template>
   <div id="register" v-loading="loading">
-    <div class="register-con df">
+    <div class="login-con df">
       <div class="showImg"></div>
       <div class="form-con">
         <div class="f24 b">注册</div>
@@ -232,26 +232,5 @@ export default {
   width: 100%;
   height: 100%;
   overflow: auto;
-  // margin: 100px auto;
-  .register-con {
-    width: 800px;
-    margin: 100px auto;
-    .showImg {
-      width: 380px;
-      height: 380px;
-      background-image: url("../../assets/imgs/timg.jpeg");
-      background-position: center;
-      background-size: 100% 100%;
-      background-repeat: no-repeat;
-    }
-    .form-con {
-      width: 400px;
-      margin-left: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-around;
-    }
-  }
 }
 </style>

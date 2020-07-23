@@ -359,7 +359,7 @@
             :checkInfo="checkInfo"
             @upgradeVisible="upgradeVisible"
         ></UpgradeFirmware>
-        
+        <check-process v-if="checkProcessFlag" :status="checkStatus" @upgrade="upgradeProcess" @close="closeCheckProcess"></check-process>
     </div>
 </template>
 <script>
@@ -367,9 +367,12 @@
     import EditFirmware from '@/components/firmware/editFirmware'
     import CheckFirmware from "@/components/firmware/checkFirmware";
     import UpgradeFirmware from "@/components/firmware/upgradeFirmware";
+    import checkProcess from './children/checkProcess'
+    
 
     import dataObj from '@/data/data'
     export default {
+        components: {EditFirmware, CheckFirmware, UpgradeFirmware, checkProcess},
         data () {
             return {
                 loading: false,
@@ -418,14 +421,12 @@
                     check: '0',
                     row: null
                 },
-                checkInfo: null
+                checkInfo: null,
+                checkStatus: 0,
+                checkProcessFlag: false
             }
         },
-        components: {
-            EditFirmware,
-            CheckFirmware,
-            UpgradeFirmware
-        },
+        
         mounted () {
             this.fmId = String(this.$route.query.id)
             this.productName = this.$route.query.productName
@@ -537,8 +538,7 @@
             },
             upgradeSubmit () {
                 if (this.details.detailList.fmStatus === 2) {
-                    this.checkFmId = String(this.fmId);
-                    this.checkDestVersion = this.details.detailList.destVersion
+                    this.checkInfo = this.details.detailList
                     this.upgradeFmVisible = true;
                 }
             },
@@ -585,8 +585,20 @@
                     this.srcVersion = this.details.detailList.srcVersion;
                     this.getVerifyFirmInfo(this.checkFmId, this.srcVersion);
                 } else {
-                    this.openCheckFm(fmStatus);
+                    // this.openCheckFm(fmStatus);
+                    this.checkStatus = fmStatus
+                    this.checkInfo = this.details.detailList
+                    this.checkProcessFlag = true
                 }
+            },
+            // 验证进程 关闭回调
+            closeCheckProcess () {
+            this.checkProcessFlag = false
+            },
+            // 验证进程 批量升级回调
+            upgradeProcess () {
+            this.closeCheckProcess()
+            this.upgradeFmVisible = true;
             },
             openCheckFm(status) {
                 let title = ''

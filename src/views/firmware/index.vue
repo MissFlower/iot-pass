@@ -135,6 +135,7 @@
       :checkInfo="checkInfo"
       @upgradeVisible="upgradeVisible"
     ></UpgradeFirmware>
+    <check-process v-if="checkProcessFlag" :status="checkStatus" @upgrade="upgradeProcess" @close="closeCheckProcess"></check-process>
   </div>
 </template>
 
@@ -142,17 +143,14 @@
 import AddFirmware from "@/components/firmware/addFirmware";
 import CheckFirmware from "@/components/firmware/checkFirmware";
 import UpgradeFirmware from "@/components/firmware/upgradeFirmware";
+import checkProcess from './children/checkProcess'
 
 import versionList from './version'
 
 import dataObj from '@/data/data'
-import {
-  getFmList,
-  deleteFm,
-  getProducts,
-  getVerifyFirmInfo
-} from "@/api/fireware";
+import {getFmList, deleteFm, getProducts, getVerifyFirmInfo} from "@/api/fireware";
 export default {
+  components: {AddFirmware, CheckFirmware, UpgradeFirmware, versionList, checkProcess},
   data() {
     return {
       loading: true,
@@ -181,15 +179,12 @@ export default {
       checkFmVisible: false,
       upgradeFmVisible: false,
       fmStatusObj: dataObj.fmStatusObj,
-      checkInfo: null
+      checkInfo: null,
+      checkStatus: 0,
+      checkProcessFlag: false
     };
   },
-  components: {
-    AddFirmware,
-    CheckFirmware,
-    UpgradeFirmware,
-    versionList
-  },
+  
   mounted() {
     this.fetchFmList();
     this.getProductList();
@@ -264,8 +259,20 @@ export default {
         this.getVerifyFirmInfo(this.checkFmId, this.srcVersion);
         this.checkInfo = row
       } else {
-        this.openCheckFm(row.fmStatus);
+        // this.openCheckFm(row.fmStatus);
+        this.checkStatus = row.fmStatus
+        this.checkInfo = row
+        this.checkProcessFlag = true
       }
+    },
+    // 验证进程 关闭回调
+    closeCheckProcess () {
+      this.checkProcessFlag = false
+    },
+    // 验证进程 批量升级回调
+    upgradeProcess () {
+      this.closeCheckProcess()
+      this.upgradeFmVisible = true;
     },
     // 验证固件前校验是否存在设备
     getVerifyFirmInfo(fmId, versions) {
@@ -287,30 +294,13 @@ export default {
             }
           });
         } else {
-            this.$message({
-                type: "warning",
-                message: res.message
-            });
+            this.$message.warning(res.message)
         }
       });
     },
     // 验证固件组件
     checkVisible() {
       this.checkFmVisible = false;
-    },
-    openCheckFm(status) {
-      let title = ''
-      switch (status) {
-        case 1:
-          title = '固件验证中'
-          break
-        case 2:
-          title = '固件验证成功'
-          break
-      }
-      this.$alert(`${title}`, "验证固件", {
-        confirmButtonText: "关闭"
-      }).then(() => {});
     },
     refreshList() {
       this.fetchFmList();

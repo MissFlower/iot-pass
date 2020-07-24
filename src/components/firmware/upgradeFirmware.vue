@@ -320,7 +320,7 @@ export default {
       if (list && list.length > 0) {
         list.forEach(item => {
           this.selectDevicenames.push(item.deviceName)
-          this.selectDeviceIds.push(item.deviceId * 1)
+          this.selectDeviceIds.push(item.deviceId)
         })
       }
     },

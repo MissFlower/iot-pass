@@ -50,7 +50,7 @@
                         </el-table-column>
                         <el-table-column label="操作">
                             <template slot-scope="scope">
-                                <a class="oprate_btn" @click="upgrade(scope.row.upgradeId)">重升级</a>
+                                <a v-if="scope.row.status == 5" class="oprate_btn" @click="upgrade(scope.row.upgradeId)">重升级</a>
                                 <span v-if="scope.row.status < 2"> | </span>
                                 <el-popover
                                     placement="top"
@@ -59,11 +59,7 @@
                                     v-model="scope.row.visible">
                                     <div>
                                         <i class="el-icon-warning" style="color: #f90"></i>
-                                        确定要取消批量升级吗？
-                                    </div>
-                                    <div class="df f12 mt5">
-                                        <el-checkbox v-model="popoverItem.check" true-label="1" false-label="0"></el-checkbox>
-                                        <span class="ml10">取消批次下所有正在进行中的升级任务（如不勾选，默认只会取消定时任务）</span>
+                                        是否确认取消升级吗？
                                     </div>
                                     <div class="tr mt10">
                                         <el-button size="mini" type="primary" @click="confirmPopover">确认</el-button>
@@ -237,7 +233,6 @@
                 scopeTypeObj: dataObj.scopeTypeObj,
                 productName: '',
                 popoverItem: {
-                    check: '0',
                     row: null
                 },
                 // 状态统计
@@ -374,7 +369,6 @@
                 this.popoverItem.row.visible = false
                 this.loading = true
                 cancelDeviceUpgrade({
-                   check: this.popoverItem.check,
                    batchNo: this.popoverItem.row.batchNo,
                    deviceId: this.popoverItem.row.deviceId
                 }).then(res => {

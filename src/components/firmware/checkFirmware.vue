@@ -137,7 +137,7 @@ export default {
           {required: true, validator: validateSelectDevice, trigger: 'blur'}
         ],
         timeOut: [
-          { required: true, message: '请输入设备升级超时时间', trigger: 'blur' },
+          // { required: true, message: '请输入设备升级超时时间', trigger: 'blur' },
           { type: 'number', message: '设备升级超时时间必须为数字值' }
         ]
       },
@@ -168,7 +168,8 @@ export default {
           let data = {
             "fmId": this.form.fmId,
             "srcVersions": this.form.srcVersions,
-            "deviceIds": this.form.deviceIds
+            "deviceIds": this.form.deviceIds,
+            timeOut: this.form.timeOut
           };
           addVerify(data).then(res => {
             if (res.code === 200) {

@@ -38,6 +38,7 @@
           <empty-con slot="empty" class="mb20"></empty-con>
           <el-table-column label="设备名称" prop="deviceName"></el-table-column>
           <el-table-column label="固件版本" prop="version"></el-table-column>
+          <el-table-column label="固件类型" prop="moduleType"></el-table-column>
         </el-table>
       </div>
     </div>

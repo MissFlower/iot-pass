@@ -123,7 +123,7 @@
                        <el-table-column label="操作">
                            <template slot-scope="scope">
                                <a class="oprate_btn" @click="toBatchDetails(scope.row)">查看</a> 
-                               <span v-if="scope.row.taskStatus == 1"> | </span>
+                               <span v-if="scope.row.taskStatus < 2"> | </span>
                                <el-popover
                                     placement="top"
                                     width="200"
@@ -141,7 +141,7 @@
                                         <el-button size="mini" type="primary" @click="confirmPopover">确认</el-button>
                                         <el-button size="mini" @click="scope.row.visible = false">取消</el-button>
                                     </div>
-                                    <a class="oprate_btn" slot="reference" v-if="scope.row.taskStatus == 1" @click="ShowPopover(scope.row)">取消</a> 
+                                    <a class="oprate_btn" slot="reference" v-if="scope.row.taskStatus < 2" @click="ShowPopover(scope.row)">取消</a> 
                                 </el-popover>
                            </template>
                        </el-table-column>

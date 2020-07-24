@@ -23,10 +23,10 @@ export default {
         }
     },
     grid: {
-        left: '3%',
-        right: '4%',
-        bottom: '3%',
-        containLabel: true
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
     },
     yAxis: [
       {

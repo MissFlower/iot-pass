@@ -106,7 +106,8 @@ export default {
       this.loading = true
       getSrcVersionList({
         productId: this.productId + '',
-        moduleType: this.moduleType
+        moduleType: this.moduleType,
+        destVersion: this.destVersion
       }).then(res => {
         if (res.code === 200) {
           this.srcVersionList = res.data

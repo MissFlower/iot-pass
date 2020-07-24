@@ -31,32 +31,23 @@
                         <el-table-column label="产品" prop="productName">
                             <template>{{productName}}</template>
                         </el-table-column>
-                        <el-table-column
-                            label="当前版本号"
-                        >
+                        <el-table-column label="当前版本号">
                             <template slot-scope="scope">
                                 {{scope.row.status == 4 ? scope.row.destVersion : scope.row.srcVersion}}
                             </template>
                         </el-table-column>
-                        <el-table-column
-                            label="状态更新时间"
-                            prop="updateTime"
-                        ></el-table-column>
-                        <el-table-column
-                            label="状态"
-                            prop="status"
-                        >
-                            <template slot-scope="scope">{{upgradeStatusObj[scope.row.status] ? upgradeStatusObj[scope.row.status] : scope.row.status}}</template>
+                        <el-table-column label="状态更新时间" prop="updateTime"></el-table-column>
+                        <el-table-column label="状态" prop="status">
+                            <template slot-scope="scope">
+                                <span v-if="selectCountItemStatus != 3">{{upgradeStatusObj[scope.row.status] ? upgradeStatusObj[scope.row.status] : scope.row.status}}</span>
+                                <el-progress v-else :stroke-width="5" :percentage="scope.row.progress" :show-text="false" :color="color"></el-progress>
+                            </template>
                         </el-table-column>
-                        <el-table-column label="操作">
+                        <el-table-column label="操作" v-if="selectCountItemStatus == ''">
                             <template slot-scope="scope">
                                 <a v-if="scope.row.status == 5" class="oprate_btn" @click="upgrade(scope.row.upgradeId)">重升级</a>
                                 <span v-if="scope.row.status < 2"> | </span>
-                                <el-popover
-                                    placement="top"
-                                    width="200"
-                                    trigger="manual"
-                                    v-model="scope.row.visible">
+                                <el-popover placement="top" width="200" trigger="manual" v-model="scope.row.visible">
                                     <div>
                                         <i class="el-icon-warning" style="color: #f90"></i>
                                         是否确认取消升级吗？
@@ -70,63 +61,37 @@
                             </template>
                         </el-table-column>
                     </el-table>
-                    <el-pagination
-                       @current-change="handleBatchChange"
-                       :current-page.sync="batchManage.pageNum"
-                       :page-size="batchManage.pageSize"
-                       layout="total, prev, pager, next"
-                       class="tr mt20"
-                       :total="batchManage.total"
-                   >
-                   </el-pagination>
+                    <el-pagination @current-change="handleBatchChange" :current-page.sync="batchManage.pageNum" :page-size="batchManage.pageSize" layout="total, prev, pager, next" class="tr mt20" :total="batchManage.total"></el-pagination>
                 </el-tab-pane>
                 <el-tab-pane label="批次信息" name="second">
                     <el-row v-if="JSON.stringify(batchDetailList) != '{}'">
                         <el-col :span="8">
                             <div class="edit_info">
-                                <div class="edit_info-lf">
-                                    批次ID
-                                </div>
-                                <div class="edit_info-rf">
-                                    {{batchDetailList.batchNo}}
-                                </div>
+                                <div class="edit_info-lf">批次ID</div>
+                                <div class="edit_info-rf">{{batchDetailList.batchNo}}</div>
                             </div>
                         </el-col>
                         <el-col :span="8">
                             <div class="edit_info">
-                                <div class="edit_info-lf">
-                                    所属产品
-                                </div>
-                                <div class="edit_info-rf">
-                                    {{productName}}
-                                </div>
+                                <div class="edit_info-lf">所属产品</div>
+                                <div class="edit_info-rf">{{productName}}</div>
                             </div>
                         </el-col>
                         <el-col :span="8">
                             <div class="edit_info">
-                                <div class="edit_info-lf">
-                                    升级前固件版本号
-                                </div>
-                                <div class="edit_info-rf">
-                                    {{batchDetailList.srcVersion}}
-                                </div>
+                                <div class="edit_info-lf">升级前固件版本号</div>
+                                <div class="edit_info-rf">{{batchDetailList.srcVersion}}</div>
                             </div>
                         </el-col>
                         <el-col :span="8">
                             <div class="edit_info">
-                                <div class="edit_info-lf">
-                                    升级后固件版本号
-                                </div>
-                                <div class="edit_info-rf">
-                                    {{batchDetailList.destVersion}}
-                                </div>
+                                <div class="edit_info-lf">升级后固件版本号</div>
+                                <div class="edit_info-rf">{{batchDetailList.destVersion}}</div>
                             </div>
                         </el-col>
                         <el-col :span="8">
                             <div class="edit_info">
-                                <div class="edit_info-lf">
-                                    升级策略
-                                </div>
+                                <div class="edit_info-lf">升级策略</div>
                                 <div class="edit_info-rf">
                                     {{batchDetailList.ugStrategy == 0 ? '静态升级' : (batchDetailList.ugStrategy == 1 ? '动态升级' : batchDetailList.ugStrategy)}}
                                 </div>
@@ -134,9 +99,7 @@
                         </el-col>
                         <el-col :span="8">
                             <div class="edit_info">
-                                <div class="edit_info-lf">
-                                    升级范围
-                                </div>
+                                <div class="edit_info-lf">升级范围</div>
                                 <div class="edit_info-rf">
                                     {{scopeTypeObj[batchDetailList.scopeType] ? scopeTypeObj[batchDetailList.scopeType] : batchDetailList.scopeType}}
                                 </div>
@@ -144,9 +107,7 @@
                         </el-col>
                         <el-col :span="8" v-if="batchDetailList.ugStartTime">
                             <div class="edit_info">
-                                <div class="edit_info-lf">
-                                    升级时间/结束时间
-                                </div>
+                                <div class="edit_info-lf">升级时间/结束时间</div>
                                 <div class="edit_info-rf">
                                     {{batchDetailList.ugStartTime}}
                                     <span v-if="batchDetailList.ugEndTime"> - {{batchDetailList.ugEndTime}}</span>
@@ -155,9 +116,7 @@
                         </el-col>
                         <el-col :span="8">
                             <div class="edit_info">
-                                <div class="edit_info-lf">
-                                    升级时间
-                                </div>
+                                <div class="edit_info-lf">升级时间</div>
                                 <div class="edit_info-rf">
                                     {{batchDetailList.ugTimeType == 0 ? '立即升级' : (batchDetailList.ugTimeType == 1 ? '定时升级' : batchDetailList.ugTimeType)}}
                                 </div>
@@ -165,32 +124,20 @@
                         </el-col>
                         <el-col :span="8">
                             <div class="edit_info">
-                                <div class="edit_info-lf">
-                                    固件推送速率
-                                </div>
-                                <div class="edit_info-rf">
-                                    {{batchDetailList.rate}}
-                                </div>
+                                <div class="edit_info-lf">固件推送速率</div>
+                                <div class="edit_info-rf">{{batchDetailList.rate}}</div>
                             </div>
                         </el-col>
                         <el-col :span="8">
                             <div class="edit_info">
-                                <div class="edit_info-lf">
-                                    升级失败重试时间间隔
-                                </div>
-                                <div class="edit_info-rf">
-                                    {{batchDetailList.retryInterval}}
-                                </div>
+                                <div class="edit_info-lf">升级失败重试时间间隔</div>
+                                <div class="edit_info-rf">{{batchDetailList.retryInterval}}</div>
                             </div>
                         </el-col>
                         <el-col :span="16">
                             <div class="edit_info">
-                                <div class="edit_info-lf">
-                                    设备升级超时时间
-                                </div>
-                                <div class="edit_info-rf">
-                                    {{batchDetailList.timeOut}}
-                                </div>
+                                <div class="edit_info-lf">设备升级超时时间</div>
+                                <div class="edit_info-rf">{{batchDetailList.timeOut}}</div>
                             </div>
                         </el-col>
                     </el-row>
@@ -268,7 +215,8 @@
                         color: '#f00'
                     }
                 ],
-                selectCountItemStatus: ''
+                selectCountItemStatus: '',
+                color: '#0070cc'
             }
         },
         mounted () {

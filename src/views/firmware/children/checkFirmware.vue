@@ -78,7 +78,7 @@
   </div>
 </template>
 <script>
-import ChooseDevice from "@/components/firmware/chooseDevice";
+import ChooseDevice from "./chooseDevice";
 import { addVerify, getSrcVersionList } from "@/api/fireware";
 export default {
   props: {

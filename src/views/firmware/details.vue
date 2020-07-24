@@ -364,9 +364,9 @@
 </template>
 <script>
     import { getFmDetails, upgradeList, upgradeDeviceList, statistics, getUploadFilePath, getVerifyFirmInfo, cancelBatchUpgrade } from '@/api/fireware'
-    import EditFirmware from '@/components/firmware/editFirmware'
-    import CheckFirmware from "@/components/firmware/checkFirmware";
-    import UpgradeFirmware from "@/components/firmware/upgradeFirmware";
+    import EditFirmware from './children/editFirmware'
+    import CheckFirmware from './children/checkFirmware';
+    import UpgradeFirmware from './children/upgradeFirmware';
     import checkProcess from './children/checkProcess'
     
 

@@ -15,7 +15,6 @@
         :model="ruleForm"
         ref="ruleForm"
         label-width="120px"
-        class="demo-ruleForm"
       >
         <el-form-item label="固件名称" required>
           <el-input type="text" v-model="ruleForm.fmName"></el-input>

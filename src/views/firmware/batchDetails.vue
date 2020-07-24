@@ -47,17 +47,7 @@
                             <template slot-scope="scope">
                                 <a v-if="scope.row.status == 5" class="oprate_btn" @click="upgrade(scope.row.upgradeId)">重升级</a>
                                 <span v-if="scope.row.status < 2"> | </span>
-                                <el-popover placement="top" width="200" trigger="manual" v-model="scope.row.visible">
-                                    <div>
-                                        <i class="el-icon-warning" style="color: #f90"></i>
-                                        是否确认取消升级吗？
-                                    </div>
-                                    <div class="tr mt10">
-                                        <el-button size="mini" type="primary" @click="confirmPopover">确认</el-button>
-                                        <el-button size="mini" @click="scope.row.visible = false">取消</el-button>
-                                    </div>
-                                    <a class="oprate_btn" slot="reference" v-if="scope.row.status < 2" @click="ShowPopover(scope.row)">取消</a> 
-                                </el-popover>
+                                <a class="oprate_btn" v-if="scope.row.status < 2" @click="ShowPopover($event, scope.row)">取消</a> 
                             </template>
                         </el-table-column>
                     </el-table>
@@ -144,6 +134,17 @@
                 </el-tab-pane>
             </el-tabs>
         </div>
+        <el-popover ref='popover' placement="top" width="200" trigger="manual" v-model="visible">
+            <div>
+                <i class="el-icon-warning" style="color: #f90"></i>
+                是否确认取消升级吗？
+            </div>
+            <div class="tr mt10">
+                <el-button size="mini" type="primary" @click="confirmPopover">确认</el-button>
+                <el-button size="mini" @click="visible = false">取消</el-button>
+            </div>
+            <el-button v-show="false" slot="reference">手动激活</el-button>
+        </el-popover>
     </div>
 </template>
 <script>
@@ -216,7 +217,8 @@
                     }
                 ],
                 selectCountItemStatus: '',
-                color: '#0070cc'
+                color: '#0070cc',
+                visible: false
             }
         },
         mounted () {
@@ -307,14 +309,21 @@
                 this.$router.go(-1)
             },
             // 控制popover显示
-            ShowPopover (row) {
+            ShowPopover (e, row) {
                 this.popoverItem.check = '0'
                 this.popoverItem.row = row
-                row.visible = true
+                let el = e.target
+                this.visible = true
+                this.$nextTick(() => {
+                    let pop = this.$refs.popover
+                    pop.popperJS._reference = el
+                    pop.popperJS.state.position = pop.popperJS._getPosition(pop.popperJS._popper, pop.popperJS._reference)
+                    pop.popperJS.update()
+                })
             },
             // popover提交
             confirmPopover () {
-                this.popoverItem.row.visible = false
+                this.visible = false
                 this.loading = true
                 cancelDeviceUpgrade({
                    batchNo: this.popoverItem.row.batchNo,

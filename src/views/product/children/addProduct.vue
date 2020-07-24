@@ -4,7 +4,7 @@
       <i class="el-icon-back" @click="goBack"></i>
       创建产品
     </div>
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
       <el-form-item label="产品名称" prop="productName">
         <el-input v-model="ruleForm.productName"></el-input>
       </el-form-item>

@@ -11,7 +11,7 @@
     @close="handleClose"
     v-loading="loading"
   >
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px">
       <el-form-item label="产品：" prop="productSelIndex">
         <el-select class="wp100" v-model="ruleForm.productSelIndex" placeholder="请选择产品" :disabled="selectDisabled">
           <el-option

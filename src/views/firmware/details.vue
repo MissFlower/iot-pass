@@ -124,25 +124,7 @@
                            <template slot-scope="scope">
                                <a class="oprate_btn" @click="toBatchDetails(scope.row)">查看</a> 
                                <span v-if="scope.row.taskStatus < 2"> | </span>
-                               <el-popover
-                                    placement="top"
-                                    width="200"
-                                    trigger="manual"
-                                    v-model="scope.row.visible">
-                                    <div>
-                                        <i class="el-icon-warning" style="color: #f90"></i>
-                                        确定要取消批量升级吗？
-                                    </div>
-                                    <div class="df f12 mt5">
-                                        <el-checkbox v-model="popoverItem.check" true-label="1" false-label="0"></el-checkbox>
-                                        <span class="ml10">取消批次下所有正在进行中的升级任务（如不勾选，默认只会取消定时任务）</span>
-                                    </div>
-                                    <div class="tr mt10">
-                                        <el-button size="mini" type="primary" @click="confirmPopover">确认</el-button>
-                                        <el-button size="mini" @click="scope.row.visible = false">取消</el-button>
-                                    </div>
-                                    <a class="oprate_btn" slot="reference" v-if="scope.row.taskStatus < 2" @click="ShowPopover(scope.row)">取消</a> 
-                                </el-popover>
+                               <a class="oprate_btn" v-if="scope.row.taskStatus < 2" @click="ShowPopover($event, scope.row)">取消</a> 
                            </template>
                        </el-table-column>
                    </el-table>
@@ -360,15 +342,30 @@
             @upgradeVisible="upgradeVisible"
         ></UpgradeFirmware>
         <check-process v-if="checkProcessFlag" :status="checkStatus" @upgrade="upgradeProcess" @close="closeCheckProcess"></check-process>
+        <el-popover ref='popover' placement="top" width="200" trigger="manual" v-model="visible">
+            <div>
+                <i class="el-icon-warning" style="color: #f90"></i>
+                确定要取消批量升级吗？
+            </div>
+            <div class="df f12 mt5">
+                <el-checkbox v-model="popoverItem.check" true-label="1" false-label="0"></el-checkbox>
+                <span class="ml10">取消批次下所有正在进行中的升级任务（如不勾选，默认只会取消定时任务）</span>
+            </div>
+            <div class="tr mt10">
+                <el-button size="mini" type="primary" @click="confirmPopover">确认</el-button>
+                <el-button size="mini" @click="visible = false">取消</el-button>
+            </div>
+            <el-button v-show="false" slot="reference">手动激活</el-button>
+        </el-popover>
     </div>
 </template>
 <script>
     import { getFmDetails, upgradeList, upgradeDeviceList, statistics, getUploadFilePath, getVerifyFirmInfo, cancelBatchUpgrade } from '@/api/fireware'
+
     import EditFirmware from './children/editFirmware'
     import CheckFirmware from './children/checkFirmware';
     import UpgradeFirmware from './children/upgradeFirmware';
     import checkProcess from './children/checkProcess'
-    
 
     import dataObj from '@/data/data'
     export default {
@@ -423,7 +420,8 @@
                 },
                 checkInfo: null,
                 checkStatus: 0,
-                checkProcessFlag: false
+                checkProcessFlag: false,
+                visible: false
             }
         },
         
@@ -485,11 +483,6 @@
                 this.loading = true
                 upgradeList (data).then ( res => {
                     if (res.code === 200) {
-                        if (res.data.data && res.data.data.length > 0) {
-                            res.data.data.forEach(item => {
-                                item.visible = false
-                            })
-                        }
                         this.batchManage.batchList = res.data.data;
                         this.batchManage.total = res.data.total;
                     } else {
@@ -645,14 +638,21 @@
                 })
             },
             // 控制popover显示
-            ShowPopover (row) {
+            ShowPopover (e, row) {
                 this.popoverItem.check = '0'
                 this.popoverItem.row = row
-                row.visible = true
+                let el = e.target
+                this.visible = true
+                this.$nextTick(() => {
+                    let pop = this.$refs.popover
+                    pop.popperJS._reference = el
+                    pop.popperJS.state.position = pop.popperJS._getPosition(pop.popperJS._popper, pop.popperJS._reference)
+                    pop.popperJS.update()
+                })
             },
             // popover提交
             confirmPopover () {
-                this.popoverItem.row.visible = false
+                this.visible = false
                 this.loading = true
                 cancelBatchUpgrade({
                    check: this.popoverItem.check,

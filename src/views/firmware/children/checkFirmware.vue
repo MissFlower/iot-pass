@@ -15,7 +15,6 @@
         :model="form"
         ref="ruleForm"
         label-width="150px"
-        class="demo-ruleForm"
         :rules="rules"
         v-loading='loading'
       >

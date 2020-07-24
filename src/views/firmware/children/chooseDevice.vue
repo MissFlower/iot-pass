@@ -5,7 +5,7 @@
  -->
 <template>
     <el-dialog title="请选择设备" :visible.sync="visible" width="30%" @close="close" :close-on-click-modal="false">
-        <el-form :model="form" ref="ruleForm" label-width="120px" class="demo-ruleForm" :inline="true">
+        <el-form :model="form" ref="ruleForm" label-width="120px" :inline="true">
             <el-form-item>
                 <el-input type="text" v-model="deviceForm.deviceName" placeholder="请输入设备名称"></el-input>
             </el-form-item>

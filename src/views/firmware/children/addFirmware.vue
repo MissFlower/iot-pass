@@ -16,7 +16,6 @@
         ref="ruleForm"
         :rules="rules"
         label-width="120px"
-        class="demo-ruleForm"
         v-loading="loading"
       >
         <el-form-item label="固件类型" required>

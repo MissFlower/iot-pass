@@ -59,7 +59,7 @@
     },
     2: {
       label: '已推送',
-      color: '#0070cc'
+      color: '#ffc440'
     },
     3: {
       label: '升级中',

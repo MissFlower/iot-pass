@@ -338,4 +338,19 @@ export function cancelBatchUpgrade (data) {
    })
  }
 
+ /**
+ * 批量升级  统计设备数量
+ * productId:  产品ID
+    srcVersions: 待升级版本 支持多选 如"116,115",
+    moduleType:  固件类型
+ * 
+ */
+export function getDeviceCount (data) {
+  return request({
+    url: 'upgrade/getUpgradeDeviceBySrcVersion',
+    method: 'post',
+    data
+  })
+}
+
  

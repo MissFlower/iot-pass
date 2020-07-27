@@ -103,14 +103,6 @@ export default {
     }
     const option = {
       tooltip: {
-        // triggerOn: 'click',
-        // backgroundColor: '#fff',
-        // borderWidth: 1,
-        // borderColor: '#ccc',
-        // padding: 10,
-        // textStyle: {
-        //   color: '#000'
-        // },
         formatter: function (params) {
           let str = `<div class="f12">固件类型：${params.seriesName}</div>`
           return str

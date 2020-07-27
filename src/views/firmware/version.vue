@@ -114,6 +114,8 @@ export default {
           }
         }
         this.loading = false
+      }).catch(() => {
+        this.loading = false
       })
     },
     drawFun (obj, setVersion, setModuleType) {

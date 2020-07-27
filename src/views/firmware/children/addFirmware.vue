@@ -25,7 +25,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="固件名称" prop="fmName">
-          <el-input type="text" v-model="ruleForm.fmName" placeholder="请输入固件名称"></el-input>
+          <el-input type="text" class="w200" v-model="ruleForm.fmName" placeholder="请输入固件名称"></el-input>
         </el-form-item>
         <el-form-item label="所属产品" prop="productId">
           <el-select
@@ -34,6 +34,7 @@
             :filter-method="userFilter"
             @change="changeSelect"
             clearable
+            class="w200"
           >
             <el-option
               v-for="item in products"
@@ -47,7 +48,7 @@
           <el-select
             v-model="ruleForm.moduleType"
             placeholder="固件产品类型"
-            :disabled="typeDisabled"
+            :disabled="typeDisabled" class="w200"
           >
             <el-option
               v-for="(key, value) in moduleTypeMap"
@@ -65,22 +66,21 @@
           </el-select>
         </el-form-item> -->
         <el-form-item label="待升级版本号" prop="srcVersion">
-          <el-select v-model="srcVersion" multiple @focus="srcVersionFocus">
+          <el-select v-model="srcVersion" multiple @focus="srcVersionFocus" class="w200">
             <el-option v-for="version in srcVersionList" :key="version" :label="version" :value="version"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="升级后版本号" prop="destVersion">
-          <el-input type="text" v-model="ruleForm.destVersion"></el-input>
+          <el-input type="text" v-model="ruleForm.destVersion" class="w200"></el-input>
         </el-form-item>
         <el-form-item label="签名算法" required>
-          <el-select v-model="ruleForm.signMethod" placeholder="请选择签名算法">
+          <el-select v-model="ruleForm.signMethod" placeholder="请选择签名算法" class="w200">
             <el-option label="Md5" value="1"></el-option>
             <el-option label="SHA256" value="2"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="选择固件" required>
           <el-upload
-            class="upload-demo"
             action=""
             :http-request="uploadFile"
             accept=".zip,.tar,.gz,.tar.gz,.gzip,.bin,.hex"
@@ -95,7 +95,7 @@
           <el-progress v-if="uploadProgressShow" :percentage="100" :status="uploadStatus ? 'success':'exception'"></el-progress>
         </el-form-item>
         <el-form-item label="固件描述" prop="fmDesc">
-          <el-input type="textarea" v-model="ruleForm.fmDesc"></el-input>
+          <el-input type="textarea" v-model="ruleForm.fmDesc" placeholder="请简要描述应用的功能" :rows="4" class="w200"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">

@@ -31,17 +31,7 @@
       </div>
     </div>
     <el-table :data="list" border v-if="!loading" class="mb20">
-      <div slot="empty" class="mt30 mb20 df jc_c">
-        <svg-icon icon-class="empty" class="empty"></svg-icon>
-        <div class="lh16 w300 tl ml20">
-          <div class="b">尚未添加任何功能</div>
-          <div class="c9 f12 mt10">您可以通过添加属性、事件、服务三类功能完成产品物模型的定义，产品下的设备都会继承该模型。</div>
-          <div class="mt20">
-            <el-button type="primary" size="mini">编辑草稿</el-button>
-            <el-button size="mini">了解更多</el-button>
-          </div>
-        </div>
-      </div>
+      <empty-con slot="empty" class="mb20"></empty-con>
       <el-table-column label="功能类型">
         <template slot-scope="scope">
           {{abilityTypeObj[scope.row.abilityType]}}
@@ -87,11 +77,12 @@ import addCustomAbility from './addCustomAbility'
 import addStdAbility from './addStdAbility'
 import importAbility from './importAbility'
 import checkModel from './checkModel'
+import emptyCon from '@/components/empty'
 
 import dataObj from '@/data/data'
 import { test} from '@/api'
 export default {
-  components: {addCustomAbility, addStdAbility, importAbility, checkModel},
+  components: {addCustomAbility, addStdAbility, importAbility, checkModel, emptyCon},
   data () {
     return {
       loading: false,
@@ -407,11 +398,8 @@ export default {
 
 <style lang="scss" scoped>
 #model {
+  width: 100%;
   padding: 0 10px;
-  .empty {
-    width: 60px;
-    height: 60px;
-  }
   .info {
     font-size: 12px;
     background-color: #e5f3ff;

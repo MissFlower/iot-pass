@@ -8,7 +8,7 @@
     <el-dialog
       title="验证固件"
       :visible.sync="checkFmVisible"
-      width="25%"
+      width="420px"
       :before-close="closeDialog"
     >
       <el-form
@@ -19,12 +19,12 @@
         v-loading='loading'
       >
         <el-form-item label="待升级版本号" prop="srcVersions">
-          <el-select v-model="version" multiple>
+          <el-select v-model="version" multiple class="w200">
             <el-option v-for="ver in srcVersionList" :key="ver" :label="ver" :value="ver"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="待验证设备" prop="showDeviceNames">
-          <el-select
+          <el-select class="w200"
             v-model="form.showDeviceNames"
             multiple
             placeholder="请选择设备"
@@ -40,7 +40,7 @@
         >
           <el-input
             v-model.number="form.timeOut"
-            auto-complete="off"
+            auto-complete="off" class="w200"
             placeholder="请输入验证超时时间（分钟）"
           ></el-input>
         </el-form-item>

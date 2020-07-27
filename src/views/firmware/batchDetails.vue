@@ -359,7 +359,7 @@
             const obj = {}
             if (res.data && res.data.length > 0) {
               res.data.forEach(item => {
-                if (status === 0 || status === 1) {
+                if (item.status === 0 || item.status === 1) {
                   if (obj[1]) {
                     obj[1] = obj[1] + item.deviceCount
                   } else {

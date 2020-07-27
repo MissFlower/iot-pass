@@ -9,7 +9,7 @@
       title="批量升级"
       :visible.sync="upgradeFmVisible"
       :before-close="closeDialog"
-      width="35%"
+      width="420px"
     >
       <el-form :model="form" ref="ruleFormUpgrade" :rules="rules" label-width="150px" v-loading="loading">
         <el-form-item
@@ -17,7 +17,7 @@
           label-width="150px"
           prop="srcVersion"
         >
-          <el-select v-model="srcVersion" multiple>
+          <el-select v-model="srcVersion" multiple class="w200" @change="scopeTypeChange">
             <el-option v-for="version in srcVersionList" :key="version" :label="version" :value="version"></el-option>
           </el-select>
         </el-form-item>
@@ -26,24 +26,24 @@
           prop="destVersion"
           required
         >
-          <el-input v-model="form.destVersion" auto-complete="off" :disabled="checkInfo.destVersion != ''"></el-input>
+          <el-input v-model="form.destVersion" auto-complete="off" :disabled="checkInfo.destVersion != ''" class="w200"></el-input>
         </el-form-item>
         <el-form-item
           label="升级策略"
           prop="ugStrategy"
           required
         >
-          <el-select v-model="form.ugStrategy" placeholder="请选择升级策略">
+          <el-select v-model="form.ugStrategy" placeholder="请选择升级策略" class="w200">
             <el-option label="静态升级" value="0"></el-option>
             <el-option label="动态升级" value="1"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item
           label="升级范围"
-          prop="scopeType"
+          prop="scopeType" 
           required
         >
-          <el-select v-model="form.scopeType" placeholder="请选择升级范围">
+          <el-select v-model="form.scopeType" placeholder="请选择升级范围" class="w200" @change="scopeTypeChange">
             <el-option label="全部设备" value="0"></el-option>
             <el-option label="定向升级" value="1"></el-option>
             <!-- <el-option label="区域升级" value="2"></el-option> -->
@@ -51,7 +51,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="设备范围" v-if="form.scopeType == 1" prop="selectDevicenames">
-          <el-select v-model="selectDevicenames" multiple placeholder="请选择" @focus="handleFocus"></el-select>
+          <el-select v-model="selectDevicenames" multiple placeholder="请选择" @focus="handleFocus" class="w200"></el-select>
 
         </el-form-item>
         <el-form-item
@@ -59,7 +59,7 @@
           prop="ugTimeType"
           required
         >
-          <el-select v-model="form.ugTimeType" placeholder="请选择升级时间类型">
+          <el-select v-model="form.ugTimeType" placeholder="请选择升级时间类型" class="w200">
             <el-option label="立即升级" value="0"></el-option>
             <el-option label="定时升级" value="1"></el-option>
           </el-select>
@@ -73,7 +73,7 @@
                 <div slot="content" class="f12 c6 w200">选择的开始时间距当前时间最少 10 分钟，最多 7 天</div>
               </el-tooltip>
             </span>
-            <el-date-picker v-model="form.ugStartTime" type="datetime" :picker-options="pickerOptions" placeholder="选择日期时间"></el-date-picker>
+            <el-date-picker v-model="form.ugStartTime" type="datetime" :picker-options="pickerOptions" placeholder="选择日期时间" class="w200"></el-date-picker>
           </el-form-item>
           <el-form-item prop="ugEndTime">
             <span slot="label">
@@ -92,7 +92,7 @@
           prop="rate"
           required
         >
-          <el-input
+          <el-input class="w200"
             v-model.number="form.rate"
             auto-complete="off"
             placeholder="请输入每分钟推送的设备数"
@@ -118,25 +118,24 @@
           label-width="150px"
           prop="timeOut"
         >
-          <el-input
+          <el-input class="w200"
             v-model.number="form.timeOut"
             auto-complete="off"
             placeholder="请输入升级超时时间（分钟）"
           ></el-input>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="closeDialog">取 消</el-button>
-        <el-button type="primary" @click="upgradeSubmit('ruleFormUpgrade')"
-          >确 定</el-button
-        >
+      <div slot="footer" class="df ai_c">
+        <div class="flex1 tl f12">本次批量升级共 <span class="blue">{{deviceCount}}</span> 个设备</div>
+        <el-button size="mini" @click="closeDialog">取 消</el-button>
+        <el-button type="primary" size="mini" @click="upgradeSubmit('ruleFormUpgrade')">确 定</el-button>
       </div>
     </el-dialog>
     <select-device v-if="selectDeviceFlag" :productId="checkInfo.productId" :moduleType="checkInfo.moduleType" :fmId="checkInfo.id" :destVersion="checkInfo.destVersion" @success="successDeviceDrawer" @close="closeDeviceDrawer"></select-device>
   </div>
 </template>
 <script>
-import { saveUpgrade, getSrcVersionList } from "@/api/fireware";
+import { saveUpgrade, getSrcVersionList, getDeviceCount } from "@/api/fireware";
 import selectDevice from "./selectDevice"
 
 export default {
@@ -214,7 +213,7 @@ export default {
         srcVersion: "",
         destVersion: "",
         ugStrategy: "0",
-        scopeType: "0",
+        scopeType: "",
         ugTimeType: "0",
         timeOut: "",
         retryInterval: "0",
@@ -265,10 +264,12 @@ export default {
           return time.getTime() < Date.now() - 1000 * 60 * 60 * 24 || time.getTime() > Date.now() + 1000 * 60 * 60 * 24 * 90;
         }
       },
+      deviceCount: 0
     };
   },
   mounted () {
     if (this.checkInfo) {
+      console.log(this.checkInfo)
       this.getVersionList()
       this.form.destVersion = this.checkInfo.destVersion
     }
@@ -323,6 +324,7 @@ export default {
           this.selectDeviceIds.push(item.deviceId)
         })
       }
+      this.deviceCount = list.length
     },
     getVersionList () {
       this.loading = true
@@ -338,6 +340,22 @@ export default {
       }).catch(() => {
         this.loading = false
       })
+    },
+    // 选择的设备数量统计
+    scopeTypeChange () {
+      if (this.form.scopeType !== '' && this.form.scopeType * 1 === 0 && this.srcVersion.length > 0) {
+        getDeviceCount({
+          productId: this.checkInfo.productId,
+          srcVersions: this.srcVersion.join(','),
+          moduleType: this.checkInfo.moduleType
+        }).then(res => {
+          if (res.code === 200) {
+            this.deviceCount = res.data
+          }
+        })
+      } else {
+        this.deviceCount = 0
+      }
     }
   }
 };

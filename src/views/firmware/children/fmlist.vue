@@ -19,11 +19,17 @@
       </el-input>
     </div>
     <el-table :data="list" border stripe v-loading="loading">
-      <el-table-column label="固件ID" prop="id"></el-table-column>
+      <!-- <el-table-column label="固件ID" prop="id"></el-table-column> -->
       <el-table-column label="固件名称" prop="fmName">
         <template slot-scope="scope">
           {{scope.row.fmName}}
-          <el-tag type="primary">{{scope.row.fmType == 1 ? '整包' : (scope.row.fmType == 2 ? '差分' : scope.row.fmType)}}</el-tag>
+          <el-tooltip>
+            <el-tag type="primary">{{scope.row.fmType == 1 ? '整包' : (scope.row.fmType == 2 ? '差分' : scope.row.fmType)}}</el-tag>
+            <div slot="content">
+              <div>{{scope.row.fmName}} / {{scope.row.fmType == 1 ? '整包' : (scope.row.fmType == 2 ? '差分' : scope.row.fmType)}}</div>
+              <div>固件ID：{{scope.row.id}}</div>
+            </div>
+          </el-tooltip>
         </template>
       </el-table-column>
       <el-table-column label="产品名称" prop="productName"></el-table-column>
@@ -31,7 +37,10 @@
       <el-table-column label="升级后版本" prop="destVersion"></el-table-column>
       <el-table-column label="创建时间" prop="createTime" :formatter="formatCreateTime"></el-table-column>
       <el-table-column abel="固件状态" prop="fmStatus">
-        <template slot-scope="scope">{{fmStatusObj[scope.row.fmStatus]}}</template>
+        <template slot-scope="scope">
+          <div :style="{'background-color': fmStatusObj[scope.row.fmStatus].color}" class="point"></div>
+          {{fmStatusObj[scope.row.fmStatus].label}}
+        </template>
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">

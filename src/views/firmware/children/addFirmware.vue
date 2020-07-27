@@ -24,10 +24,10 @@
             <el-radio-button label="2">差分</el-radio-button>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="固件名称" prop="fmName" required>
+        <el-form-item label="固件名称" prop="fmName">
           <el-input type="text" v-model="ruleForm.fmName" placeholder="请输入固件名称"></el-input>
         </el-form-item>
-        <el-form-item label="所属产品" prop="productId" required>
+        <el-form-item label="所属产品" prop="productId">
           <el-select
             v-model="productsValue"
             filterable

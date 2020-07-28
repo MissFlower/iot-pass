@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :visible.sync="dialogVisible" class="checkDialog" title="查看物模型" width="600px" @close="close" v-loading="loading">
+  <el-dialog :visible.sync="dialogVisible" class="checkDialog" title="查看物模型" width="600px" @close="close">
     <div class="json_item lh16">
       物模型是对设备在云端的功能描述，包括设备的属性、服务和事件。物联网平台通过定义一种物的描述语言来描述物模型，称之为 TSL（即Thing Specification Language），采用JSON格式，您可以根据TSL组装上报设备的数据。您可以导出完整物模型，用于云端应用开发；您也可以只导出精简物模型，配合设备端SDK实现设备开发。
     </div>
@@ -17,9 +17,10 @@
       lang="json"
       width="100%"
       height="320"
+      v-loading="loading"
     ></editor>
     <div slot="footer">
-      <el-button type="primary" @click="handleImport">导出物模型</el-button>
+      <el-button type="primary" @click="handleImport" :disabled="loading">导出物模型</el-button>
     </div>
   </el-dialog>
 </template>

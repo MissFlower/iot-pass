@@ -1,9 +1,9 @@
 <template>
-  <el-dialog :visible.sync="dialogVisible" class="dialogVisibleDialog" title="添加标准功能" @close="close" v-loading="loading" :close-on-press-escape="false" :close-on-click-modal="false">
-    <div class="con df ai_c">
+  <el-dialog :visible.sync="dialogVisible" class="dialogVisibleDialog" title="添加标准功能" @close="close" :close-on-press-escape="false" :close-on-click-modal="false">
+    <div class="con df ai_c" v-loading="loading">
       <div class="pr" style="width: 45%">
         <div class="f12 mb5">选择功能</div>
-        <div class="con-item" v-loading="loading">
+        <div class="con-item">
           <el-radio-group v-model="type" @change="handleChange">
             <el-radio-button label="1">自定义品类</el-radio-button>
             <el-radio-button label="2">其他类型</el-radio-button>
@@ -43,8 +43,8 @@
       </div>
     </div>
     <div class="tr">
-      <el-button type="primary" size="mini" :disabled="selelectList.length == 0" @click.stop="handleSave">确定</el-button>
-      <el-button size="mini" @click.stop="close">取消</el-button>
+      <el-button type="primary" size="mini" :disabled="selelectList.length == 0 || loading" @click.stop="handleSave">确定</el-button>
+      <el-button size="mini" @click.stop="close" :disabled="loading">取消</el-button>
     </div>
   </el-dialog>
 </template>

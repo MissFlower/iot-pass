@@ -1,27 +1,30 @@
 <template>
   <div class="modelList">
-    <div v-if="list.length > 0 && !loading" class="info df ai_c mb5 mt10 c9">
-      <i class="el-icon-warning blue mr5"></i>
-      您正在编辑的是草稿，需点击发布后，物模型才会正式生效
-    </div>
-    <el-table :data="list" border v-if="!loading" class="mb20">
-      <div slot="empty" class="mt30 mb20 df jc_c">
-        <svg-icon icon-class="empty" class="empty"></svg-icon>
+    <el-table :data="list" border v-loading="loading" class="mb20">
+      <div slot="empty" class="mt30 mb20 df jc_c" v-if="typeTab">
+        <svg-icon icon-class="empty" style="width: 50px; height: 50px"></svg-icon>
         <div class="lh16 w300 tl ml20">
           <div class="b">尚未添加任何功能</div>
           <div class="c9 f12 mt10">您可以通过添加属性、事件、服务三类功能完成产品物模型的定义，产品下的设备都会继承该模型。</div>
           <div class="mt20">
-            <el-button type="primary" size="mini">编辑草稿</el-button>
+            <el-button type="primary" size="mini" v-if="!productStatus" @click="handleEdit">编辑草稿</el-button>
             <el-button size="mini">了解更多</el-button>
           </div>
         </div>
       </div>
+      <empty-con v-else slot="empty" class="mb20"></empty-con>
       <el-table-column label="功能类型">
         <template slot-scope="scope">
           {{abilityTypeObj[scope.row.abilityType]}}
         </template>
       </el-table-column>
-      <el-table-column :render-header="renderName">
+      <el-table-column >
+        <div slot="header">
+          功能名称 ({{type ? typeObj[this.type] + '功能' : '全部'}})
+          <span @click="showPopover($event)">
+            <svg-icon icon-class="screen"></svg-icon>
+          </span>
+        </div>
         <template slot-scope="scope">
           {{scope.row.name}}
           <el-tag>{{typeObj[scope.row.modelType]}}</el-tag>
@@ -38,26 +41,42 @@
           <div style="white-space: pre;">{{scope.row.showText}}</div>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="90" align="center">
-        <template slot-scope="scope">
-          <el-link :underline="false" type="primary" class="f12" @click="handleShowAdd(scope.row)">编辑</el-link>
-          <el-link :underline="false" type="primary" class="f12" @click="showDelete(scope.row)">删除</el-link>
-        </template>
-      </el-table-column>
+      <slot name="operation"></slot>
     </el-table>
+    <!-- 头部筛选 popover -->
+    <el-popover ref='popover' placement="bottom" width="200" trigger="manual" v-model="visible">
+      <div class="conHeader">
+        <div class="hand f12 mb5" v-for="(item, index) in filters" :key="index" @click="setSelectType(item.value)">
+          <i class="mr10 blue dib w20" :class="selectType.type == item.value ? 'el-icon-check' : ''"></i>
+          <span>{{item.text}}</span>
+        </div>
+      </div>
+      <div class="tr mt10">
+          <el-button size="mini" type="primary" @click="setSelectTypeConfrim">确认</el-button>
+          <el-button size="mini" @click="visible = false">取消</el-button>
+      </div>
+      <el-button v-show="false" slot="reference">手动激活</el-button>
+    </el-popover>
   </div>
 </template>
 
 <script>
 import dataObj from '@/data/data'
+import emptyCon from '@/components/empty'
 export default {
-  // props: ['dataFun', 'productKey'],
+  components: {emptyCon},
   props: {
    "dataFun": {
      type: Function
    },
    'productKey': {
      type: String
+   },
+   'typeTab': {
+     type: String
+   },
+   'productStatus': {
+     type: Number
    }
   },
   data () {
@@ -69,10 +88,22 @@ export default {
       abilityTypeObj: dataObj.abilityTypeObj,
       typeObj: dataObj.typeObj,
       dataTypeTextObj: dataObj.dataTypeTextObj,
+      identifiers: [],
       type: '',
       selectType: {
         type: ''
-      }
+      },
+      filters: [{
+        text: '全部',
+        value: ''
+      }, {
+        text: '标准功能',
+        value: '1'
+      }, {
+        text: '自定义功能',
+        value: '2'
+      }],
+      visible: false
     }
   },
   mounted () {
@@ -143,6 +174,9 @@ export default {
               }
             })
             this.list = this.list.concat(arr)
+            if (this.typeTab) {
+              this.$emit('getList', this.list)
+            }
           }
         }
       }
@@ -185,81 +219,18 @@ export default {
       }
       return str
     },
-    popoverShow () {
+    showPopover (e) {
       this.selectType = {
         type: this.type
       }
-    },
-    // 头部渲染函数
-    renderName (h) {
-      return h('span', {}, [
-        h('span', {class: 'mr10'}, `功能名称（${this.type ? this.typeObj[this.type] : '全部'}）`),
-        h('el-popover', {
-          props: { width: '180', trigger: 'click' },
-          on: {
-            show: this.popoverShow
-          }
-        }, [
-          h('div', { attrs: {
-            class: 'conHeader'
-            }
-          }, [
-            h('div', {
-              class: 'hand',
-              on: {
-                click: () => {
-                  this.setSelectType('')
-                }
-              }
-            }, [
-              h('i', {
-                class: `${this.selectType.type == '' ? 'el-icon-check' : ''} mr10 blue dib w20`
-              }, ''),
-              h('span', {attrs: { class: 'f12'}}, '全部')
-            ]),
-            h('div', {class: 'hand', on: {
-                click: () => {
-                  this.setSelectType('1')
-                }
-              }}, [
-              h('i', {
-                class: `${this.selectType.type == '1' ? 'el-icon-check' : ''} mr10 blue dib w20`
-              }, ''),
-              h('span', {attrs: { class: 'f12'}}, '标准功能')
-            ]),
-            h('div', {class: 'hand', on: {
-                click: () => {
-                  this.setSelectType('2')
-                }
-              }}, [
-              h('i', {
-                class: `${this.selectType.type == '2' ? 'el-icon-check mr10 blue dib w20' : ''} mr10 blue dib w20`
-              }, ''),
-              h('span', {attrs: { class: 'f12'}}, '自定义功能')
-            ]),
-            h('div', {class: 'tc mt10'}, [
-              h('el-button', { attrs: {
-                type: 'primary',
-                size: 'mini'
-              }, on: {
-                click: () => {
-                  this.setSelectTypeConfrim()
-                }
-              }}, '确认'),
-              h('el-button', { attrs: {
-                size: 'mini'
-              }, on: {
-                click: () => {
-                  this.resetSelectType()
-                }
-              }}, '重置')
-            ])
-          ]),
-          h('svg-icon', { slot: 'reference', attrs: {
-            'icon-class': 'screen'
-          }}, '')
-        ])
-       ])
+      let el = e.target
+      this.visible = true
+      this.$nextTick(() => {
+          let pop = this.$refs.popover
+          pop.popperJS._reference = el
+          pop.popperJS.state.position = pop.popperJS._getPosition(pop.popperJS._popper, pop.popperJS._reference)
+          pop.popperJS.update()
+      })
     },
     setSelectType (key) {
       this.selectType = {
@@ -267,6 +238,7 @@ export default {
       }
     },
     setSelectTypeConfrim () {
+      this.visible = false
       this.type = this.selectType.type
       this.getData()
     },
@@ -274,11 +246,8 @@ export default {
       this.type = ''
       this.getData()
     },
-    handleShowAdd (row) {
-      this.$emit('showAdd', row)
-    },
-    showDelete (row) {
-      this.$emit('showDelete', row)
+    handleEdit () {
+      this.$emit('edit')
     }
   }
 }

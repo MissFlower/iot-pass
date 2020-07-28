@@ -5,8 +5,8 @@
  -->
 
 <template>
-  <el-dialog :visible.sync="dialogVisible" :title="title" width="400px" :close-on-press-escape="false" :close-on-click-modal="false" class="addCustomAbility" @close="close" v-loading="loading">
-    <el-form ref="addCustomAbilityForm" :model="formData" :rules="rules">
+  <el-dialog :visible.sync="dialogVisible" :title="title" width="400px" :close-on-press-escape="false" :close-on-click-modal="false" class="addCustomAbility" @close="close">
+    <el-form ref="addCustomAbilityForm" :model="formData" :rules="rules" v-loading="loading">
       <el-form-item prop="abilityType">
         <span slot="label">
           功能类型
@@ -53,8 +53,8 @@
       </el-form-item>
     </el-form>
     <div slot="footer">
-      <el-button type="primary" @click="handleSave" :disabled="showFlag">确认</el-button>
-      <el-button @click="close">取消</el-button>
+      <el-button type="primary" @click="handleSave" :disabled="showFlag || loading">确认</el-button>
+      <el-button @click="close" :disabled="loading">取消</el-button>
     </div>
   </el-dialog>
 </template>

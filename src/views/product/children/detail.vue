@@ -34,7 +34,7 @@
         </el-tab-pane>
 
         <el-tab-pane label="功能定义" name="second">
-          <product-ability v-if="productData.productKey && activeName == 'second'" :productKey="productData.productKey" :productStatus="productData.productStatus"></product-ability>
+          <product-ability v-if="productData.productKey && activeName == 'second'" :productData="productData"></product-ability>
         </el-tab-pane>
        
       </el-tabs>
@@ -106,14 +106,14 @@ export default {
   methods: {
     //复制文本内容
      copyContent(text){         
-         var inputElement =  document.getElementById("copy_content");         
-         inputElement.value = text;         
-         inputElement.select();          
-         document.execCommand("Copy");         
-         this.$message({
-          message: '复制成功',
-          type: 'success'
-        });       
+        var inputElement = document.getElementById("copy_content");         
+        inputElement.value = text;         
+        inputElement.select();          
+        document.execCommand("Copy");         
+        this.$message({
+        message: '复制成功',
+        type: 'success'
+      });       
      },
      //设备管理
      goEqu(){

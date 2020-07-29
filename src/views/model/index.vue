@@ -9,28 +9,42 @@
     <div class="f20 p10">
       <i class="el-icon-back hand" @click="goBack"></i><span style="margin-left:15px">编辑草稿</span>
     </div>
-    <div class="f12 c9 df mt10 mb10">
-      <!-- <div class="flex1 df ai_c">
+    <div class="f12 c9 df mt10 mb20">
+      <div class="flex1 df ai_c">
         <div class="w120">产品名称</div>
-        <div>ceshi</div>
-      </div> -->
+        <div>{{productName}}</div>
+      </div>
       <div class="flex1 df ai_c">
         <div class="w120">productKey</div>
         <div>{{productKey}}</div>
+        <el-link type="primary" :underline="false" class="f12 ml10" @click="copyFun">复制</el-link>
       </div>
     </div>
     <div class="mb10">
-      <el-button type="primary" size="mini" @click="handleShowAddStdAbility">添加标准功能</el-button>
-      <el-button size="mini" @click="handleShowAdd()">添加自定义功能</el-button>
-      <el-button size="mini" @click="showImport" disabled>快速导入</el-button>
+      <el-button v-if="!selectHistory" type="primary" size="mini" @click="handleShowAddStdAbility">添加标准功能</el-button>
+      <el-button v-if="!selectHistory" size="mini" @click="handleShowAdd()">添加自定义功能</el-button>
+      <el-button v-if="!selectHistory" size="mini" @click="showImport" disabled>快速导入</el-button>
       <el-button size="mini" @click="showCheck">物模型 TSL</el-button>
-      <el-button size="mini" disabled>历史版本</el-button>
+      <el-dropdown trigger="click">
+        <el-button size="mini" class="ml10">
+          历史版本<i class="el-icon-arrow-down el-icon--right"></i>
+        </el-button>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item v-for="(item, index) in historyList" :key="index">
+            <div @click="setSelectHistory(item.version)">
+              <i class="mr10 blue dib w20" :class="selectHistory == item.version ? 'el-icon-check' : ''"></i>
+              <span>{{item.version}}</span>
+            </div>
+          </el-dropdown-item>
+          <el-dropdown-item divided @click.native="showMoreHistory" class="tc">查看更多</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
       <div v-if="!loading" class="info df ai_c mb5 mt10 c9">
         <i class="el-icon-warning blue mr5"></i>
         您正在编辑的是草稿，需点击发布后，物模型才会正式生效
       </div>
     </div>
-    <model-list ref="modelList" v-if="productKey" :productKey="productKey" :dataFun="dataFun">
+    <model-list ref="modelList" v-if="productKey" :productKey="productKey" :tableHeight="tableHeight" :dataFun="dataFun" @getList="setList">
       <el-table-column label="操作" width="90" align="center" slot="operation">
         <template slot-scope="scope">
           <el-link :underline="false" type="primary" class="f12" @click="handleShowAdd(scope.row)">编辑</el-link>
@@ -38,10 +52,19 @@
         </template>
       </el-table-column>
     </model-list>
+    <div class="mt20" v-if="!selectHistory">
+      <el-button type="primary" size="mini" disabled>发布上线</el-button>
+      <el-button size="mini" @click="goBack">返回</el-button>
+    </div>
+    <div class="mt20" v-else>
+      <el-button type="primary" size="mini" disabled>恢复此版本</el-button>
+      <el-button size="mini" @click.stop="clearVersion">返回</el-button>
+    </div>
     <add-custom-ability v-if="addFlag" :productKey="productKey" :editAbility="editAbility" @close="closeAddCustomAbility" @success="successAddCustomAbility"></add-custom-ability>
     <add-std-ability v-if="addStdAbilityFlag" :productKey="productKey" :identifiers="identifiers" @close="closeAddStdAbility" @success="successAtdAbility"></add-std-ability>
     <import-ability v-if="importFlag" @close="closeImport"></import-ability>
     <check-model v-if="checkFlag" :productKey='productKey' @close="closeCheck"></check-model>
+    <more-list v-if="moreFlag" :list="historyList" :selectVersion="selectHistory" @selectVertion="setSelectHistory" @close="closeMoreList"></more-list>
   </div>
 </template>
 
@@ -52,28 +75,52 @@ import addStdAbility from './addStdAbility'
 import importAbility from './importAbility'
 import checkModel from './checkModel'
 import modelList from './children/list'
+import moreList from './children/historyList'
 
 export default {
-  components: {addCustomAbility, addStdAbility, importAbility, checkModel, modelList},
+  components: {addCustomAbility, addStdAbility, importAbility, checkModel, modelList, moreList},
   data () {
     return {
       loading: false,
+      list: [],
       addFlag: false,
       productKey: '',
+      productName: '',
       dataFun: getModelByproductKey,
       editAbility: null,
       addStdAbilityFlag: false,
       importFlag: false,
       checkFlag: false,
-      identifiers: []
+      identifiers: [],
+      historyList: [
+        // {
+        //   version: '111111111111111111111'
+        // },
+        // {
+        //   version: '2222222'
+        // },
+        // {
+        //   version: '3333333'
+        // }
+      ],
+      moreFlag: false,
+      selectHistory: '',
+      tableHeight: window.innerHeight - 290
     }
   },
   mounted () {
     if (this.$route.query.key) {
       this.productKey = this.$route.query.key
     }
+    if (this.$route.query.name) {
+      this.productName = this.$route.query.name
+    }
   },
   methods: {
+    // list 返回函数
+    setList (data) {
+      this.list = data
+    },
     // 添加自定义功能、编辑功能
     handleShowAdd (row) {
       if (row) {
@@ -156,6 +203,32 @@ export default {
     // 查看弹框关闭回调
     closeCheck () {
       this.checkFlag = false
+    },
+    // 复制
+    copyFun () {
+      let _input = document.createElement("input")
+      document.body.appendChild(_input)
+      _input.value = this.productKey
+      _input.select()    
+      document.execCommand("Copy")       
+      this.$message.success('复制成功')
+      document.body.removeChild(_input) // 删除临时实例
+    },
+    // 显示更多的显示函数
+    showMoreHistory () {
+      this.moreFlag = true
+    },
+    // 历史记录的更多弹框的关闭回调
+    closeMoreList () {
+      this.moreFlag = false
+    },
+    // 选择历史版本
+    setSelectHistory (version) {
+      this.selectHistory = version
+    },
+    // 退出历史版本模式
+    clearVersion () {
+      this.selectHistory = ''
     }
   }
 }
@@ -176,22 +249,8 @@ export default {
   .el-link + .el-link {
     margin-left: 10px;
   }
-  .conHeader {
-      width: 180px;
-      position: absolute;
-      border: 1px solid #efefef;
-      top: 0px;
-      z-index: 1;
-    }
-  .header-popover {
-    color: red;
-    .conHeader {
-      width: 180px;
-      position: absolute;
-      border: 1px solid #efefef;
-      top: 0px;
-      z-index: 1;
-    }
-  }
+}
+.el-dropdown-menu--small .el-dropdown-menu__item {
+  padding-left: 5px;
 }
 </style>

@@ -19,7 +19,7 @@
       <el-button size="mini" @click="showCheck">物模型 TSL</el-button>
       <el-button size="mini" disabled>生成设备端代码</el-button>
     </div>
-    <model-list ref="modelList" v-if="productKey" :typeTab="'tab'" :productKey="productKey" :dataFun="dataFun" :productStatus="productStatus" @edit="handleEdit" @getList="setList">
+    <model-list ref="modelList" v-if="productKey" :typeTab="'tab'" :productKey="productKey" :dataFun="dataFun" :productStatus="productStatus" :tableHeight="tableHeight" @edit="handleEdit" @getList="setList">
       <el-table-column label="操作" width="80" align="center" slot="operation">
         <template slot-scope="scope">
           <el-link :underline="false" type="primary" class="f12" @click="showDetail(scope.row)">查看</el-link>
@@ -40,7 +40,7 @@ import modelList from './children/list'
 
 export default {
   components: { addCustomAbility, checkModel, modelList },
-  props: ['productKey', 'productStatus'],
+  props: ['productData'],
   data () {
     return {
       loading: false,
@@ -48,10 +48,17 @@ export default {
       dataFun: getModelByproductKey,
       showFlag: false,
       editAbility: null,
-      checkFlag: false
+      checkFlag: false,
+      productKey: '',
+      productStatus: -1,
+      tableHeight: window.innerHeight - 350
     }
   },
   mounted () {
+    if (this.productData) {
+      this.productKey = this.productData.productKey
+      this.productStatus = this.productData.productStatus
+    }
   },
   methods: {
     setList (data) {
@@ -66,7 +73,7 @@ export default {
       this.showFlag = false
     },
     handleEdit () {
-      this.$router.push(`/model/index?key=${this.productKey}`)
+      this.$router.push(`/model/index?key=${this.productKey}&name=${this.productData.productName}`)
     },
     // 查看弹框展示
     showCheck () {

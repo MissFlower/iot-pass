@@ -1,6 +1,6 @@
 <template>
   <div class="modelList">
-    <el-table :data="list" border v-loading="loading" class="mb20">
+    <el-table :data="list" border v-loading="loading" class="mb20" :max-height="tableHeight">
       <div slot="empty" class="mt30 mb20 df jc_c" v-if="typeTab">
         <svg-icon icon-class="empty" style="width: 50px; height: 50px"></svg-icon>
         <div class="lh16 w300 tl ml20">
@@ -76,6 +76,9 @@ export default {
      type: String
    },
    'productStatus': {
+     type: Number
+   },
+   'tableHeight': {
      type: Number
    }
   },
@@ -174,9 +177,7 @@ export default {
               }
             })
             this.list = this.list.concat(arr)
-            if (this.typeTab) {
-              this.$emit('getList', this.list)
-            }
+            this.$emit('getList', this.list)
           }
         }
       }

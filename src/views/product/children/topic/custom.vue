@@ -32,7 +32,7 @@
         <template slot-scope="scope">
           <el-button type="text" @click="editTopic(scope.row)" class="mr20">编辑</el-button>          
           <el-popconfirm
-            title="确定要删除Topic类吗？>"
+            title="确定要删除Topic类吗？"
             @onConfirm="deleteTopic(scope.row.topicId)"
             >
             <el-button type="text" slot="reference">删除</el-button>    

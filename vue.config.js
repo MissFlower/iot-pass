@@ -1,8 +1,16 @@
+/*
+ * @Description: 
+ * @Version: 0.1.0
+ * @Autor: AiDongYang
+ * @Date: 2020-07-29 14:26:58
+ * @LastEditors: AiDongYang
+ * @LastEditTime: 2020-07-30 18:34:24
+ */ 
 module.exports = {
   publicPath: process.env.NODE_ENV === "production" ? "./" : "/",
   devServer: {
     // open: true,
-    host: "0.0.0.0",
+    // host: "0.0.0.0",
     port: 8091,
     https: false,
     hotOnly: false,

@@ -54,7 +54,7 @@ const router = {
     SET_ROUTERS: (state, routes) => {
       state.addRoutes = routes
       if (routes.length > 0) {
-        state.routes = routes.concat(constantRoutes)
+        state.routes = constantRoutes.concat(routes)
       } else {
         state.routes = constantRoutes
       }

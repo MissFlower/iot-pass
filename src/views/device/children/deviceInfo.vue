@@ -181,7 +181,7 @@ export default {
       loading: false,
       burnShow: false,
       modelType: "runState",
-      modelShow: false,
+      modelShow: true,
       deviceStatusType: {
         "0": "info", "1": "success", "2": "error"
       }

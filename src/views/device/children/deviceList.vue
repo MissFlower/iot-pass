@@ -172,47 +172,45 @@ export default {
         pageNum: this.tableData.pageNum,
         pageSize: this.tableData.pageSize,
         productId: this.productId
-      })
-        .then(res => {
-          if (res.code === 200) {
-            if (res.data) {
-              let list = res.data.data;
-              //设备状态
-              let statusDict = {'0':'未激活','1':'在线','2':'离线'};
-              //节点类型
-              let nodeTypeDict = {'1':'直连设备','2':'网关子设备','3':'网关设备'};
-              var newList = list.map(function(value) {
-                if(value.deviceStatus != null){
-                  value.deviceStatusStr = statusDict[value.deviceStatus.toString()];
-                }
-                if(value.nodeType != null){
-                  value.nodeTypeStr = nodeTypeDict[value.nodeType.toString()];
-                }
-                value.enableBool = value.enable==0?true:false;
-                value.statusColor = !value.enableBool?'#d93026':value.deviceStatus==1?'#1EA214':'#ffc440';
-                return value;
-              });
-              this.list = newList;
+      }).then(res => {
+        if (res.code === 200) {
+          if (res.data) {
+            let list = res.data.data;
+            //设备状态
+            let statusDict = {'0':'未激活','1':'在线','2':'离线'};
+            //节点类型
+            let nodeTypeDict = {'1':'直连设备','2':'网关子设备','3':'网关设备'};
+            var newList = list.map(function(value) {
+              if(value.deviceStatus != null){
+                value.deviceStatusStr = statusDict[value.deviceStatus.toString()];
+              }
+              if(value.nodeType != null){
+                value.nodeTypeStr = nodeTypeDict[value.nodeType.toString()];
+              }
+              value.enableBool = value.enable==0?true:false;
+              value.statusColor = !value.enableBool?'#d93026':value.deviceStatus==1?'#1EA214':'#ffc440';
+              return value;
+            });
+            this.list = newList;
 
-              let {data,...pagination} = res.data;
-              this.tableData = pagination;
-            }
+            let {data,...pagination} = res.data;
+            this.tableData = pagination;
           }
-          this.loading = false;
-        })
-        .catch(() => {
-          this.loading = false;
-        });
+        } else {
+          this.$message.error(res.message)
+        }
+        this.loading = false;
+      }).catch(() => {
+        this.loading = false;
+      })
     },
-
     //获取产品列表
     getProductList(){
       productList({
         pageNum: 1,
         pageSize: 100,
         productName: ''
-      })
-      .then(res => {
+      }).then(res => {
         if (res.code === 200) {
           if (res.data) {
             var list = res.data.data;
@@ -220,8 +218,7 @@ export default {
             this.productList = list;
           }
         }
-      })
-      .catch(() => {
+      }).catch(() => {
       });
     },
     // 产品选择改变调用函数，也是初始函数化调用的函数
@@ -233,11 +230,10 @@ export default {
       this.getDeviceStatistics();
     },
     //获取指定产品设备统计
-    getDeviceStatistics(){
+    getDeviceStatistics () {
       deviceStatistics({
         productId: this.productId
-      })
-      .then(res => {
+      }).then(res => {
         if (res.code === 200) {
           if (res.data) {
             //设备各种状态数量
@@ -246,20 +242,18 @@ export default {
             this.deviceCountObj[2].count = res.data.onlineCount;
           }
         }
-      })
-      .catch(() => {
-      });
+      }).catch(() => {})
       //清空设备名称、固件版本筛选条件
       this.searchInputValue = '';
       this.fmVersionValue = '';
     },
     // 清除按钮
-    clearFun(key) {
+    clearFun (key) {
       this[key] = ''
       this.getDeviceList()
     },
     //搜索按钮
-    searchBtnTouch() {
+    searchBtnTouch () {
       this.getDeviceList();
     },
 
@@ -268,34 +262,27 @@ export default {
     devices  设备对象数组
     batchEnable  批量启用、禁用
     */
-    deviceEnable(devices,batchEnable){
-      if(this.authArr.indexOf('device_enable')<0) return;
-
+    deviceEnable (devices,batchEnable) {
+      if (this.authArr.indexOf('device_enable')<0) return;
       this.loading = true;
-
-      if(!batchEnable) {
+      if (!batchEnable) {
         let value = devices[0];
         batchEnable = value.enable==0?'1':'0';
       }
-
       let ids = devices.map(function(value){
         return value.id;
       });
-
-      deviceBatchEnable({ids: ids, enable: batchEnable})
-        .then(res => {
-          this.getDeviceList();
-          this.$message({
-            type: res.code == 200?"success":'warning',
-            message: res.message
-          });
-          this.loading = false;
-        })
-        .catch(() => {
-          this.loading = false;
+      deviceBatchEnable({ids: ids, enable: batchEnable}).then(res => {
+        this.getDeviceList();
+        this.$message({
+          type: res.code == 200?"success":'warning',
+          message: res.message
         });
+        this.loading = false;
+      }).catch(() => {
+        this.loading = false;
+      })
     },
-
     /*
     删除指定设备
     deviceObj  设备对象
@@ -305,68 +292,63 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
-      })
-        .then(() => {
-          this.deleteDeviceRequest([deviceObj]);
-        })
-        .catch(() => {});
+      }).then(() => {
+        this.deleteDeviceRequest([deviceObj]);
+      }).catch(() => {});
     },
 
     /*
     设备删除请求
     devices  需要删除的设备数组
     */
-    deleteDeviceRequest(devices){
+    deleteDeviceRequest (devices) {
       this.loading = true;
-
       var ids = [];
       devices.map(function(value){
         ids.push(value.id);
       });
 
-      deleteDevice({ids: ids})
-        .then(res => {
-          if (res.code === 200) {
-            //判断是否删除最后一页全部设备
-            if(this.tableData.pageNum!=1&&this.tableData.pageNum==this.tableData.pageCount && devices.length==this.tableData.total%this.tableData.pageSize){
-              this.tableData.pageNum--;
-            }
-            //获取设备统计信息
-            this.getDeviceStatistics();
-            //获取指定产品设备列表
-            this.getDeviceList();
+      deleteDevice({ids: ids}).then(res => {
+        if (res.code === 200) {
+          //判断是否删除最后一页全部设备
+          if(this.tableData.pageNum!=1&&this.tableData.pageNum==this.tableData.pageCount && devices.length==this.tableData.total%this.tableData.pageSize){
+            this.tableData.pageNum--;
           }
-          this.$message({
-            type: res.code == 200?"success":'warning',
-            message: res.message
-          });
-          this.loading = false;
-        })
-        .catch(() => {
-          this.loading = false;
+          //获取设备统计信息
+          this.getDeviceStatistics();
+          //获取指定产品设备列表
+          this.getDeviceList();
+        }
+        this.$message({
+          type: res.code == 200?"success":'warning',
+          message: res.message
         });
+        this.loading = false;
+      }).catch(() => {
+        this.loading = false;
+      })
     },
 
     //设备选择
     handleSelectionChange(val){
       this.deviceSelection = val;
-        if(val.length){
-          this.bottomSeleDis = false;
-          this.bottomSeleChecked = true;
-        }else{
-          this.bottomSeleDis = true;
-          this.bottomSeleChecked = false;
-        }
+      if (val.length) {
+        this.bottomSeleDis = false;
+        this.bottomSeleChecked = true;
+      } else {
+        this.bottomSeleDis = true;
+        this.bottomSeleChecked = false;
+      }
     },
 
     /*
     批量操作设备
     type 1:删除  2:禁用  3:启用
     */
-    batchOperate(type){
-      if(type == 1){
+    batchOperate (type) {
+      if (type == 1) {
         this.deleteDeviceRequest(this.deviceSelection);
-      }else{
+      } else {
         let enable = type==2?'1':'0';
         this.deviceEnable(this.deviceSelection,enable);
       }
@@ -376,14 +358,14 @@ export default {
     底部选择框点击变化
     res  选择框更新后的值
     */
-    bottomSeleChange(res){
-      if(!res){
+    bottomSeleChange (res) {
+      if (!res) {
         this.$refs.multipleTable.clearSelection();
       }
     },
 
     //添加设备
-    toNewDevice(batch){
+    toNewDevice (batch) {
       for (let i = 0; i < this.productList.length; i++) {
         const item = this.productList[i]
         if (item.id === this.productId) {
@@ -393,9 +375,9 @@ export default {
       }
       // this.selProduck = this.productList[this.productSelIndex];
 
-      if(batch){//批量添加
+      if (batch) {//批量添加
         this.showBatchNewDevice = true;
-      }else{//单个添加
+      } else {//单个添加
         this.showNewDevice = true;
       }
     },
@@ -404,7 +386,7 @@ export default {
     新建设备窗口关闭
     updata  是否更新数据
     */
-    newDeviceClose(updata) {
+    newDeviceClose (updata) {
       this.showNewDevice = false;
       this.showBatchNewDevice = false;
       if (updata) {
@@ -419,12 +401,12 @@ export default {
     查看设备
     deviceObj  设备对象
     */
-    lookClick(deviceObj) {
+    lookClick (deviceObj) {
       this.$router.push(`deviceInfo?id=${deviceObj.id}`);
     },
 
     //列表翻页
-    handleCurrentChange() {
+    handleCurrentChange () {
       this.getDeviceList();
     }
 

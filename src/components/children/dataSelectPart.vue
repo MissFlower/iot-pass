@@ -135,7 +135,7 @@
 import addParam from "@/views/model/children/addParam"
 import units from "@/data/unit"
 
-import dataObj from '@/data/data'
+import {dataTypeObj, dataTypeNumObj} from '@/data/constants'
 export default {
   name: 'DatatypeSelectpart',
   components: {addParam},
@@ -292,9 +292,9 @@ export default {
         ]
       },
       unitArr: units,
-      dataTypeObj: dataObj.dataTypeObj,
+      dataTypeObj,
       structsForArrar: [],
-      dataTypeNumObj: dataObj.dataTypeNumObj,
+      dataTypeNumObj,
       allFlag_: 0
     }
   },

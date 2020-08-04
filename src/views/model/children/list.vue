@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import dataObj from '@/data/data'
+import {dataTypeObj, EVENT_TYPE, abilityTypeObj, typeObj, dataTypeTextObj} from '@/data/constants'
 import emptyCon from '@/components/empty'
 export default {
   components: {emptyCon},
@@ -86,11 +86,11 @@ export default {
     return {
       loading: false,
       list: [],
-      dataTypeObj: dataObj.dataTypeObj,
-      eventType: dataObj.eventType,
-      abilityTypeObj: dataObj.abilityTypeObj,
-      typeObj: dataObj.typeObj,
-      dataTypeTextObj: dataObj.dataTypeTextObj,
+      dataTypeObj,
+      eventType: EVENT_TYPE,
+      abilityTypeObj,
+      typeObj,
+      dataTypeTextObj,
       identifiers: [],
       type: '',
       selectType: {

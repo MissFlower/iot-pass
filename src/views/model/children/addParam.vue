@@ -36,7 +36,7 @@
   </el-dialog>
 </template>
 <script>
-import dataObj from '@/data/data'
+import {dataTypeObj} from '@/data/constants'
 export default {
   props: ['specs', 'info', 'allFlag', 'showFlag', 'modelType'],
   data () {
@@ -77,7 +77,7 @@ export default {
       },
       specsArr: [],
       nameArr: [],
-      dataTypeObj: dataObj.dataTypeObj
+      dataTypeObj
     }
   },
   mounted () {

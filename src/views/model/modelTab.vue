@@ -16,7 +16,7 @@
           <el-link :underline="false" type="primary" class="f12" @click="handleEdit">编辑草稿</el-link>
         </span>
       </div>
-      <el-button size="mini" @click="showCheck">物模型 TSL</el-button>
+      <el-button size="mini" :disabled="list.length == 0" @click="showCheck">物模型 TSL</el-button>
       <el-button size="mini" disabled>生成设备端代码</el-button>
     </div>
     <model-list ref="modelList" v-if="productKey" :typeTab="'tab'" :productKey="productKey" :dataFun="dataFun" :productStatus="productStatus" :tableHeight="tableHeight" @edit="handleEdit" @getList="setList">

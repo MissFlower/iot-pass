@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import {dataTypeObj} from '@/data/data'
+import {dataTypeObj} from '@/data/constants'
 export default {
   props: ['dataType', 'accessMode', 'showFlag', 'modelType'],
   data() {
@@ -25,7 +25,7 @@ export default {
         accessMode: '0',
         dataType: null
       },
-      dataTypeObj: dataTypeObj,
+      dataTypeObj,
       allFlag: 0
     }
   },

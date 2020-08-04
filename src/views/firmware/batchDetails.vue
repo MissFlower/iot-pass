@@ -152,7 +152,7 @@
 </template>
 <script>
   import { upgradeList, upgradeDeviceList, retryPublishUpdateMsg, cancelDeviceUpgrade, getSttatusCount } from '@/api/fireware'
-  import {upgradeStatusObj, taskStatusObj, scopeTypeObj} from '@/data/data'
+  import {upgradeStatusObj, taskStatusObj, scopeTypeObj} from '@/data/constants'
   export default {
     data (){
       return {
@@ -179,9 +179,9 @@
         },
         batchNo: '',
         // 升级状态
-        upgradeStatusObj: upgradeStatusObj,
-        taskStatusObj: taskStatusObj,
-        scopeTypeObj: scopeTypeObj,
+        upgradeStatusObj,
+        taskStatusObj,
+        scopeTypeObj,
         productName: '',
         popoverItem: {
           row: null

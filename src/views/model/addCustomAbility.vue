@@ -65,7 +65,7 @@ import serviceCon from "./children/serviceCon";
 import eventCon from "./children/eventCon";
 
 import { addCustomAbility, updateCustomAbility } from '@/api/model'
-import { abilityTypeObj } from '@/data/data'
+import { abilityTypeObj } from '@/data/constants'
 export default {
   components: {attributeCon, serviceCon, eventCon},
   props: ['productKey', 'editAbility', 'showFlag'],
@@ -118,7 +118,8 @@ export default {
           { required: true, validator: validateIdentifier, trigger: 'change' },
         ]
       },
-      title: '添加自定义功能'
+      title: '添加自定义功能',
+      abilityTypeObj
     }
   },
   mounted () {

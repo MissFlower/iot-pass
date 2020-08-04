@@ -67,7 +67,7 @@
 </template>
 
 <script>
-import {fmStatusObj} from '@/data/data' // 数据
+import {fmStatusObj} from '@/data/constants' // 数据
 
 import AddFirmware from "./addFirmware"
 import checkFirmware from "./checkFirmware"
@@ -105,7 +105,7 @@ export default {
       checkFmVisible: false, // 固件验证弹框
       fmDeviceList: [],
       upgradeFmVisible: false, // 批量升级弹框
-      fmStatusObj: fmStatusObj
+      fmStatusObj
     }
   },
   mounted () {

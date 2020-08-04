@@ -374,7 +374,7 @@
   import UpgradeFirmware from './children/upgradeFirmware';
   import checkProcess from './children/checkProcess'
 
-  import {taskStatusObj, upgradeStatusObj, fmStatusObj} from '@/data/data'
+  import {taskStatusObj, upgradeStatusObj, fmStatusObj} from '@/data/constants'
   export default {
     components: {EditFirmware, CheckFirmware, UpgradeFirmware, checkProcess},
     data () {
@@ -418,9 +418,9 @@
         checkFmId: '',
         srcVersion: '',
         checkDestVersion: '',
-        taskStatusObj: taskStatusObj,
-        upgradeStatusObj: upgradeStatusObj,
-        fmStatusObj: fmStatusObj,
+        taskStatusObj,
+        upgradeStatusObj,
+        fmStatusObj,
         popoverItem: {
           check: '0',
           row: null

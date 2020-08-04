@@ -4,18 +4,13 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 15:57:06
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-03 17:18:35
---> 
+ * @LastEditTime: 2020-08-04 14:58:56
+-->
 
 <template>
   <div style="padding-top: 10px;">
     <!-- 搜索部分 -->
-    <ElForm
-      ref="form"
-      :inline="true"
-      :model="formInline"
-      size="mini"
-    >
+    <ElForm ref="form" :inline="true" :model="formInline" size="mini">
       <ElFormItem prop="tags">
         <ElInput
           v-model="formInline.tags"
@@ -26,36 +21,20 @@
       </ElFormItem>
 
       <ElFormItem prop="eventType">
-        <ElSelect
-          v-model="formInline.eventType"
-          placeholder="请选择"
-          class="dialog-select"
-        >
-          <ElOption
-            label="全部类型"
-            value="all"
-          />
-          <ElOption
-            v-for="item in EVENT_TYPE"
-            :key="item"
-            :label="EVENT_TYPE[item]"
-            :value="item">
-          </ElOption>
+        <ElSelect v-model="formInline.eventType" placeholder="请选择" class="dialog-select">
+          <ElOption label="全部类型" value="all" />
+          <ElOption v-for="item in EVENT_TYPE" :key="item" :label="EVENT_TYPE[item]" :value="item" />
         </ElSelect>
       </ElFormItem>
 
       <ElFormItem prop="timeRange">
-        <ElSelect
-          v-model="formInline.timeRange"
-          placeholder="请选择"
-          class="dialog-select"
-        >
+        <ElSelect v-model="formInline.timeRange" placeholder="请选择" class="dialog-select">
           <ElOption
             v-for="item in TIME_TYPE"
             :key="item.value"
             :label="item.label"
-            :value="item.value">
-          </ElOption>
+            :value="item.value"
+          />
         </ElSelect>
       </ElFormItem>
 
@@ -77,72 +56,49 @@
       </ElFormItem>
     </ElForm>
     <!-- 列表 -->
-    <ElTable 
-      :data="listData"
-      border
-      v-loading="loading"
-    >
-      <ElTableColumn
-        label="时间"
-        prop="time"
-      />
-      <ElTableColumn
-        label="标识符"
-        prop="time"
-      >
-      </ElTableColumn>
-      <ElTableColumn 
-        label="事件名称"
-        prop="time"
-      >
-      </ElTableColumn>
-      <ElTableColumn 
-        label="事件类型"
-        prop="time"
-      >
-      </ElTableColumn>
-      <ElTableColumn
-        label="输出参数"
-        prop="time"
-      >
-      </ElTableColumn>
+    <ElTable v-loading="loading" :data="listData" border>
+      <ElTableColumn label="时间" prop="time" />
+
+      <ElTableColumn label="标识符" prop="time" />
+
+      <ElTableColumn label="事件名称" prop="time" />
+
+      <ElTableColumn label="事件类型" prop="time" />
+
+      <ElTableColumn label="输出参数" prop="time" />
     </ElTable>
     <!-- 分页 -->
-    <pagination 
-      :data="tableData"
-      @pagination="changePage"
-    />
+    <pagination :data="tableData" @pagination="changePage" />
   </div>
 </template>
 
-
 <script>
-import Pagination from "@/components/Pagination"
-import { eventManage } from "@/api/deviceRequest"
-import {TIME_TYPE, EVENT_TYPE} from '@/data/constants'
+import Pagination from '@/components/Pagination'
+import { eventManage } from '@/api/deviceRequest'
+import { TIME_TYPE, EVENT_TYPE } from '@/data/constants'
 export default {
-  name:'eventManage',
-  components: { 
+  name: 'EventManage',
+  components: {
     Pagination
   },
   data() {
     return {
       formInline: {
-        tags:'',      // 查询标签
+        tags: '', // 查询标签
         timeRange: 1, // 时间范围
         curtomTime: '', // 自定义时间
-        eventType: 'all', // 事件类型
+        eventType: 'all' // 事件类型
       },
-      listData:[],
+      listData: [],
       TIME_TYPE, // 时间范围类型
       EVENT_TYPE, // 事件类型
-      tableData:{
-        pageCount: 0,  // 总页数
-        total: 0,      // 总条数
-        pageSize: 10,  // 每页条数
-        pageNum: 1,    // 页码 从0开始
+      tableData: {
+        pageCount: 0, // 总页数
+        total: 0, // 总条数
+        pageSize: 10, // 每页条数
+        pageNum: 1 // 页码 从0开始
       },
-      loading:false
+      loading: false
     }
   },
   mounted() {
@@ -153,38 +109,39 @@ export default {
     this.getList()
   },
   methods: {
-    //获取事件管理列表
-    getList(){
+    // 获取事件管理列表
+    getList() {
       this.loading = true
       eventManage(Object.assign(this.tableData, this.formInline))
         .then(res => {
           this.loading = false
-          if(res.code === 200){
+          if (res.code === 200) {
             this.tableData.pageNum = res.data.pageNum
             this.tableData.total = res.data.total
-            res.data.pageSize !== 0 && (this.tableData.pageSize = res.data.pageSize)
+            res.data.pageSize !== 0 &&
+              (this.tableData.pageSize = res.data.pageSize)
             this.listData = res.data.list
-          }else{
+          } else {
             this.$message.error(res.message)
           }
         })
-        .catch(err => {
+        .catch(() => {
           this.loading = false
           this.$message.error('获取事件管理失败！')
         })
     },
-    //分页
-    changePage(){
+    // 分页
+    changePage() {
       this.getList()
     },
-    //搜索
-    search(event){
+    // 搜索
+    search(event) {
       this.tableData.pageNum = 1
       this.getList()
     },
-    //重置
-    reset(event){
-      this.$refs['form'] .resetFields()
+    // 重置
+    reset(event) {
+      this.$refs['form'].resetFields()
       this.search()
     }
   }

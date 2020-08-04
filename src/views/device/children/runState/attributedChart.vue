@@ -1,26 +1,28 @@
 <!--
- * @Description: 
+ * @Description:
  * @Version: 0.1.0
  * @Autor: AiDongYang
  * @Date: 2020-08-03 11:28:30
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-03 18:23:02
---> 
+ * @LastEditTime: 2020-08-04 14:52:16
+-->
 <template>
-  <div id="echart" class="echart-container"></div>
+  <div id="echart" class="echart-container" />
 </template>
 
 <script>
 // 引入 ECharts 主模块
-let echarts = require('echarts/lib/echarts')
+const echarts = require('echarts/lib/echarts')
 // 引入折线图组件
 require('echarts/lib/chart/line')
 // 引入提示框和title组件，图例
 require('echarts/lib/component/tooltip')
 require('echarts/lib/component/title')
 require('echarts/lib/component/legend')
+import resize from './mixins/resize'
 export default {
   name: 'AttributedChart',
+  mixins: [resize],
   props: {
     params: {
       type: Number,
@@ -76,7 +78,7 @@ export default {
         tooltip: {
           trigger: 'axis',
           // padding: 0,
-          formatter: function (params) {
+          formatter: function(params) {
             const content = `
               <div style="padding:5px 10px;">
                 <div>${params[0].name}</div>
@@ -90,36 +92,36 @@ export default {
               </div>
             `
             return content
-          },
+          }
         },
         legend: {
           data: ['邮件营销'],
-          orient:"horizontal",
-          x:'center',
-          y:'bottom',
-          textStyle:{
-            color:'#000',
-          },
+          orient: 'horizontal',
+          x: 'center',
+          y: 'bottom',
+          textStyle: {
+            color: '#000'
+          }
         },
         grid: {
-            top: '10',
-            left: '10px',
-            right: '10px',
-            bottom: '30px',
-            containLabel: true
+          top: '10',
+          left: '10px',
+          right: '10px',
+          bottom: '30px',
+          containLabel: true
         },
         xAxis: {
-            type: 'category',
-            boundaryGap: false,
-            data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+          type: 'category',
+          boundaryGap: false,
+          data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
         },
         yAxis: {
-            type: 'value',
-            splitLine: {
-              lineStyle: {
-                type:'dashed'
-              }
+          type: 'value',
+          splitLine: {
+            lineStyle: {
+              type: 'dashed'
             }
+          }
         },
         series: [
           {
@@ -139,9 +141,9 @@ export default {
     },
     rewriteLengendHandler() {
       // 重写echarts图例事件
-      this.echartInstance.on('legendselectchanged', params => {
+      this.echartInstance.on('legendselectchanged', (params) => {
         this.echartInstance.setOption({
-          legend:{selected:{[params.name]: true}}
+          legend: { selected: { [params.name]: true }}
         })
       })
     }

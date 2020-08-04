@@ -15,8 +15,8 @@
           @keyup.enter.native="searchAccountFun"
         >
           <span slot="suffix">
-            <i class="el-icon-search hand" @click="searchAccountFun"></i>
-            <i class="el-icon-close hand" v-if="formData.account != ''" @click="clearFun('account')"></i>
+            <i class="el-icon-search hand" @click="searchAccountFun" />
+            <i v-if="formData.account != ''" class="el-icon-close hand" @click="clearFun('account')" />
           </span>
         </el-input>
         <el-input
@@ -26,8 +26,8 @@
           @keyup.enter.native="searchPhoneFun"
         >
           <span slot="suffix">
-            <i class="el-icon-search hand" @click="searchPhoneFun"></i>
-            <i class="el-icon-close hand" v-if="formData.phone != ''" @click="clearFun('phone')"></i>
+            <i class="el-icon-search hand" @click="searchPhoneFun" />
+            <i v-if="formData.phone != ''" class="el-icon-close hand" @click="clearFun('phone')" />
           </span>
         </el-input>
       </div>
@@ -39,28 +39,28 @@
         新建用户
       </el-button>
     </div>
-    <el-table :data="list" border v-loading="loading">
-      <el-table-column label="ID" prop="id" align="center"></el-table-column>
+    <el-table v-loading="loading" :data="list" border>
+      <el-table-column label="ID" prop="id" align="center" />
       <el-table-column
         label="账号名"
         prop="account"
         align="center"
-      ></el-table-column>
+      />
       <el-table-column
         label="姓名"
         prop="name"
         align="center"
-      ></el-table-column>
+      />
       <el-table-column
         label="电话"
         prop="phone"
         align="center"
-      ></el-table-column>
+      />
       <el-table-column
         label="邮箱"
         prop="email"
         align="center"
-      ></el-table-column>
+      />
       <!-- <el-table-column label="状态" align="center">
         <template slot-scope="scope">
           <span :class="scope.row.status == 0 ? 'success' : 'red'">
@@ -75,40 +75,39 @@
             icon-class="accountRole"
             class="success hand f20"
             @click.stop="handleShowCon(3, scope.row)"
-          ></svg-icon>
+          />
           <svg-icon
             v-if="authArr.indexOf('mgr_updateRole') > -1"
             icon-class="roleSet"
             class="success orange f16"
             @click.stop="handleShowAddRole(scope.row)"
-          ></svg-icon>
+          />
           <i
             v-if="authArr.indexOf('mgr_edit') > -1"
             class="el-icon-edit blue hand f18"
             @click="handleShowCon(1, scope.row)"
-          ></i>
+          />
           <i
             v-if="authArr.indexOf('mgr_delete') > -1"
             class="el-icon-close red hand f20"
             @click="handleClose(scope.row)"
-          ></i>
+          />
         </template>
       </el-table-column>
     </el-table>
     <el-pagination
-      @current-change="handleCurrentChange"
       :current-page.sync="formData.pageNum"
       :page-size="10"
       layout="total, prev, pager, next"
       :total="total"
       class="tr mt20"
-    >
-    </el-pagination>
+      @current-change="handleCurrentChange"
+    />
   </div>
 </template>
 
 <script>
-import { userList, delUser } from "@/api/user";
+import { userList, delUser } from '@/api/user'
 export default {
   data() {
     return {
@@ -118,111 +117,111 @@ export default {
       formData: {
         pageNum: 1,
         pageSize: 10,
-        account: "",
-        phone: "",
-        startTime: "",
-        endTime: ""
-      }
-    };
-  },
-  watch: {
-    "formData.account": function() {
-      if (this.$fun.trim(this.formData.account === "")) {
-        this.handleCurrentChange(1);
-      }
-    },
-    "formData.phone": function() {
-      if (this.$fun.trim(this.formData.phone === "")) {
-        this.handleCurrentChange(1);
+        account: '',
+        phone: '',
+        startTime: '',
+        endTime: ''
       }
     }
   },
   computed: {
     authArr() {
-      return this.$store.state.app.functionArr;
+      return this.$store.state.app.functionArr
+    }
+  },
+  watch: {
+    'formData.account': function() {
+      if (this.$fun.trim(this.formData.account === '')) {
+        this.handleCurrentChange(1)
+      }
+    },
+    'formData.phone': function() {
+      if (this.$fun.trim(this.formData.phone === '')) {
+        this.handleCurrentChange(1)
+      }
     }
   },
   mounted() {
-    this.getData();
+    this.getData()
   },
   methods: {
     getData() { // 列表数据获取
-      this.loading = true;
-      this.list = [];
+      this.loading = true
+      this.list = []
       userList(this.formData)
         .then(res => {
           if (res.code === 200) {
             if (res.data && res.data.data) {
-              this.list = res.data.data;
+              this.list = res.data.data
             }
-            this.total = res.data.total;
+            this.total = res.data.total
           } else {
-            this.$message.error(res.message);
+            this.$message.error(res.message)
           }
-          this.loading = false;
+          this.loading = false
         })
         .catch(() => {
-          this.$message.error("用户列表获取失败");
-          this.loading = false;
-        });
+          this.$message.error('用户列表获取失败')
+          this.loading = false
+        })
     },
     clearFun(key) {
       this.formData[key] = ''
     },
     searchAccountFun() { // 账号名筛选函数
-      if (this.$fun.trim(this.formData.account === "")) {
-        return;
+      if (this.$fun.trim(this.formData.account === '')) {
+        return
       }
-      this.handleCurrentChange(1);
+      this.handleCurrentChange(1)
     },
-    searchPhoneFun() {// 手机号筛选函数
-      if (this.$fun.trim(this.formData.phone === "")) {
-        return;
+    searchPhoneFun() { // 手机号筛选函数
+      if (this.$fun.trim(this.formData.phone === '')) {
+        return
       }
-      this.handleCurrentChange(1);
+      this.handleCurrentChange(1)
     },
     handleCurrentChange(page) { // 页面切换函数
-      this.formData.pageNum = page;
-      this.getData();
+      this.formData.pageNum = page
+      this.getData()
     },
     handleShowCon(key, row) {
-      this.$parent.switchCon(key, row);
+      this.$parent.switchCon(key, row)
     },
     handleShowAddRole(row) {
-      this.$parent.showAddRole(row);
+      this.$parent.showAddRole(row)
     },
     handleClose(row) { // 用户删除
-      const str = "确认删除该用户吗？";
-      this.$confirm(str, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
+      const str = '确认删除该用户吗？'
+      this.$confirm(str, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
         .then(() => {
-          this.loading = true;
+          this.loading = true
           delUser({
             id: row.id
           })
             .then(res => {
               if (res.code === 200) {
-                this.$message.success("用户删除成功");
-                this.getData();
+                this.$message.success('用户删除成功')
+                this.getData()
               } else {
-                this.$message.error(res.message);
+                this.$message.error(res.message)
               }
-              this.loading = false;
+              this.loading = false
             })
             .catch(() => {
-              this.$message.error("用户删除失败");
-              this.loading = false;
-            });
+              this.$message.error('用户删除失败')
+              this.loading = false
+            })
         })
         .catch(() => {
-          this.$message("操作已取消");
-        });
+          this.$message('操作已取消')
+        })
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

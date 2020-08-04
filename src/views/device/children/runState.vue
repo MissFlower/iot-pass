@@ -4,8 +4,8 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 15:57:06
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-04 10:26:38
---> 
+ * @LastEditTime: 2020-08-04 16:09:09
+-->
 <template>
   <div>
     <div class="clearfix">
@@ -33,7 +33,7 @@
             popper-class="custom-runstate-popper"
             content="设备数据上报的最新属性值，点击“查看数据”可以查看指定属性的历史数据"
           >
-            <svg-icon icon-class="questionMark" slot="reference" />
+            <svg-icon slot="reference" icon-class="questionMark" />
           </ElPopover>
         </div>
       </div>
@@ -50,18 +50,24 @@
         <ElTableColumn prop="type" label="数据类型" />
 
         <ElTableColumn prop="updateTime" label="更新时间">
-          <template slot-scope="{ row }">{{ row.updateTime ? row.updateTime : '—'}}</template>
+          <template slot-scope="{ row }">{{
+            row.updateTime ? row.updateTime : "—"
+          }}</template>
         </ElTableColumn>
 
         <ElTableColumn prop="updateValue" label="更新值" />
 
         <ElTableColumn prop="expectedValue" label="期望值">
-          <template slot-scope="{ row }">{{ row.updateValue ? row.updateValue : '--'}}</template>
+          <template slot-scope="{ row }">
+            {{ row.updateValue ? row.updateValue : "--" }}
+          </template>
         </ElTableColumn>
 
         <ElTableColumn label="操作" width="120">
           <template>
-            <span class="view-data-text">查看数据</span>
+            <span class="view-data-text" @click="viewDataHandler">
+              查看数据
+            </span>
           </template>
         </ElTableColumn>
       </ElTable>
@@ -76,12 +82,11 @@
   </div>
 </template>
 
-
 <script>
-import RunStateCard from "./runState/card";
-import RunStateDialog from "./runState/runStateDialog";
+import RunStateCard from './runState/card'
+import RunStateDialog from './runState/runStateDialog'
 export default {
-  name: "runState",
+  name: 'RunState',
   components: {
     RunStateCard,
     RunStateDialog
@@ -89,46 +94,68 @@ export default {
   data() {
     return {
       realTimeRefresh: false,
-      showType: "card", // 展示方式 可选值：card、table
+      showType: 'card', // 展示方式 可选值：card、table
       showChart: false, // 是否展示dialog中chart选项 默认false
       tableData: [
         {
-          name: "自定义属性",
-          type: "int",
-          updateTime: "2020-8-3",
-          updateValue: "100",
-          expectedValue: "1000"
+          name: '自定义属性',
+          type: 'int',
+          updateTime: '2020-8-3',
+          updateValue: '100',
+          expectedValue: '1000'
         },
 
         {
-          name: "自定义属性",
-          type: "int",
-          updateTime: "",
-          updateValue: "",
-          expectedValue: ""
+          name: '自定义属性',
+          type: 'int',
+          updateTime: '',
+          updateValue: '',
+          expectedValue: ''
         }
       ],
       runStateDialogVisible: false, // 运行状态dialog状态
       timer: null // 定时器
-    };
+    }
   },
   mounted() {},
   methods: {
+    getData() {
+      // createDevice({
+      // })
+      //   .then(res => {
+      //     this.loading = false
+      //     if (res.code === 200) {
+      //       this.$parent.newDeviceClose(true)
+      //     }
+      //     this.$message({
+      //       type: res.code === 200 ? 'success' : 'warning',
+      //       message: res.message
+      //     })
+      //   })
+      //   .catch(() => {
+      //     this.loading = false
+      //   })
+    },
     realTimeHandler(flag) {
+      // 实时刷新功能
       if (!flag) {
-        clearInterval(this.timer);
-        return;
+        clearInterval(this.timer)
+        return
       }
       if (this.timer) {
-        clearInterval(this.timer);
+        clearInterval(this.timer)
       }
       this.timer = setInterval(() => {
-        console.log(1);
+        console.log(1)
         // 轮询接口
-      }, 1000);
+      }, 1000)
+    },
+    viewDataHandler() {
+      // 查看数据
+      this.runStateDialogVisible = true
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

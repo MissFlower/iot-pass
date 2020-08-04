@@ -1,3 +1,11 @@
+/*
+ * @Description:
+ * @Version: 0.1.0
+ * @Autor: AiDongYang
+ * @Date: 2020-08-04 10:32:25
+ * @LastEditors: AiDongYang
+ * @LastEditTime: 2020-08-04 16:00:02
+ */
 Math.easeInOutQuad = function(t, b, c, d) {
   t /= d / 2
   if (t < 1) {

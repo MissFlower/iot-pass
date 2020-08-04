@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-03 11:28:30
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-03 14:28:41
+ * @LastEditTime: 2020-08-03 18:23:02
 --> 
 <template>
   <div id="echart" class="echart-container"></div>
@@ -74,7 +74,23 @@ export default {
       // 图表配置
       return {
         tooltip: {
-            trigger: 'axis'
+          trigger: 'axis',
+          // padding: 0,
+          formatter: function (params) {
+            const content = `
+              <div style="padding:5px 10px;">
+                <div>${params[0].name}</div>
+                <div style="display:flex;justify-content:space-between;margin-top:5px;">
+                  <div>
+                    <span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:${params[0].color};"></span>
+                    <span>value</span>
+                  </div>
+                  <span style="display:inline-block;margin-left:20px;">${params[0].value}</span>
+                </div>
+              </div>
+            `
+            return content
+          },
         },
         legend: {
           data: ['邮件营销'],
@@ -98,7 +114,12 @@ export default {
             data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
         },
         yAxis: {
-            type: 'value'
+            type: 'value',
+            splitLine: {
+              lineStyle: {
+                type:'dashed'
+              }
+            }
         },
         series: [
           {

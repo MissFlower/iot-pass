@@ -34,7 +34,7 @@
 
 <script>
 import addParam from "./addParam"
-import dataObj from '@/data/data'
+import {eventType} from '@/data/data'
 export default {
   components: {addParam},
   props: ['info', 'modelType'],
@@ -53,7 +53,7 @@ export default {
       structInfo: null,
       structIndex: -1,
       specs: [],
-      eventType: dataObj.eventType
+      eventType: eventType
     }
   },
   mounted () {

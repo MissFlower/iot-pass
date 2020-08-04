@@ -67,7 +67,7 @@
 </template>
 
 <script>
-import dataObj from '@/data/data' // 数据
+import {fmStatusObj} from '@/data/data' // 数据
 
 import AddFirmware from "./addFirmware"
 import checkFirmware from "./checkFirmware"
@@ -81,7 +81,6 @@ export default {
   data () {
     return {
       loading: false,
-      fmStatusObj: dataObj.fmStatusObj,
       productsValue: "",
       form: {
         fmName: "",
@@ -105,7 +104,8 @@ export default {
       checkProcessFlag: false, // 固件验证进程弹框
       checkFmVisible: false, // 固件验证弹框
       fmDeviceList: [],
-      upgradeFmVisible: false // 批量升级弹框
+      upgradeFmVisible: false, // 批量升级弹框
+      fmStatusObj: fmStatusObj
     }
   },
   mounted () {

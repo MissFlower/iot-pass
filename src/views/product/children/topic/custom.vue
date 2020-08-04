@@ -36,7 +36,6 @@
             @onConfirm="deleteTopic(scope.row.topicId)"
             >
             <el-button type="text" slot="reference">删除</el-button>    
-            
           </el-popconfirm>       
         </template>
       </el-table-column>

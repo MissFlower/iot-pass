@@ -52,7 +52,7 @@
 <script>
 import { addStdAbility, baseModelList } from "@/api/model"
 
-import dataObj from "@/data/data"
+import {abilityTypeObj} from "@/data/data"
 
 export default {
   props: ['productKey', 'identifiers'],
@@ -73,7 +73,7 @@ export default {
       },
       selelectList: [],
       selelectIds: [],
-      abilityTypeObj: dataObj.abilityTypeObj
+      abilityTypeObj: abilityTypeObj
     }
   },
   watch: {

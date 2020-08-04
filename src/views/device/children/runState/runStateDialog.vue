@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-03 10:46:51
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-03 14:29:25
+ * @LastEditTime: 2020-08-03 17:29:00
 --> 
 <template>
   <ElDialog
@@ -16,7 +16,7 @@
       <div class="dialog-body-header">
         <ElSelect v-model="timeRange" placeholder="请选择" class="dialog-select">
           <ElOption
-            v-for="item in timeType"
+            v-for="item in TIME_TYPE"
             :key="item.value"
             :label="item.label"
             :value="item.value">
@@ -30,10 +30,9 @@
           start-placeholder="开始日期"
           end-placeholder="结束日期"
           class="dialog-date"
-        >
-        </ElDatePicker>
+        />
         <ElRadioGroup v-model="showType" class="dialog-menu-type">
-          <ElRadioButton label="chart">
+          <ElRadioButton label="chart" :disabled="isShowChart">
             图表
           </ElRadioButton>
           <ElRadioButton label="table">
@@ -79,34 +78,23 @@
 
 <script>
 import AttributedChart from './attributedChart'
-const timeType = [
-  {
-    label: '1小时',
-    value: 1
-  },
-  {
-    label: '24小时',
-    value: 24
-  },
-  {
-    label: '7天',
-    value: 168
-  },
-  {
-    label: '自定义',
-    value: 0
-  }
-]
+import { TIME_TYPE } from '@/data/constants'
 export default {
   name: 'RunStateDialog',
   components: {
     AttributedChart
   },
+  props: {
+    isShowChart: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
-      timeType,
+      TIME_TYPE,
       timeRange: 1,
-      showType: 'chart', // 展示类型chart、table 默认值chart图表展示
+      showType: this.isShowChart ? 'table' : 'chart', // 展示类型chart、table 默认值chart图表展示
       curtomTime: '', // 自定义时间
       tableData: [
         {

@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-31 15:42:42
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-03 10:55:45
+ * @LastEditTime: 2020-08-03 17:53:17
 --> 
 <template>
   <div class="card-container">
@@ -17,7 +17,7 @@
         <div class="f18 card-unit">
           <span class="card-unit-text">
             --uS/cm
-            <ElTooltip content="期望值--" placement="top" effect="light">
+            <ElTooltip content="期望值--" placement="top" effect="light" popper-class="custom-tooltip-style">
               <i class="el-icon-info card-icon" />
             </ElTooltip>
           </span>
@@ -88,5 +88,10 @@ export default {
 }
 /deep/ .el-card__header {
   padding: 8px 16px;
+}
+</style>
+<style>
+.custom-tooltip-style.is-light  {
+  border: 1px solid #999;
 }
 </style>

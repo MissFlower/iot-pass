@@ -2,8 +2,7 @@
  * 项目用到的常量
  * 
  */
-
- export  default {
+ export default {
   abilityTypeObj: {
     '1': '属性',
     '2': '服务',
@@ -121,5 +120,23 @@
     'alert': '信息',
     'warn': '告警',
     'error': '故障'
-  }
+  },
+  timeType: [
+    {
+      label: '1小时',
+      value: 1
+    },
+    {
+      label: '24小时',
+      value: 24
+    },
+    {
+      label: '7天',
+      value: 168
+    },
+    {
+      label: '自定义',
+      value: 0
+    }
+  ]
  }

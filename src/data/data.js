@@ -1,8 +1,8 @@
 /**
  * 项目用到的常量
- * 
+ *
  */
- export default {
+export default {
   abilityTypeObj: {
     '1': '属性',
     '2': '服务',
@@ -21,7 +21,7 @@
     'text': '5',
     'date': '6',
     'struct': '7',
-    'array': '8',
+    'array': '8'
   },
   dataTypeNumObj: {
     '0': 'int',
@@ -44,7 +44,7 @@
     'date': 'date (时间型)',
     'struct': 'struct (结构体)',
     '7': 'struct (结构体)',
-    'array': 'array (数组)',
+    'array': 'array (数组)'
   },
   // 固件的升级过程状态
   upgradeStatusObj: {
@@ -90,13 +90,13 @@
     3: {
       label: '已取消',
       color: '#888'
-    } 
+    }
   },
   scopeTypeObj: {
     0: '全部',
     1: '定向',
     2: '区域',
-    3: '灰度' 
+    3: '灰度'
   },
   fmStatusObj: {
     0: {
@@ -114,7 +114,7 @@
     3: {
       label: '验证失败',
       color: '#d93026'
-    } 
+    }
   },
   eventType: {
     'alert': '信息',
@@ -139,4 +139,4 @@
       value: 0
     }
   ]
- }
+}

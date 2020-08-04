@@ -1,16 +1,16 @@
 <!--
- * @Description: 
+ * @Description:
  * @Version: 0.1.0
  * @Autor: AiDongYang
  * @Date: 2020-07-29 15:57:06
  * @LastEditors: AiDongYang
  * @LastEditTime: 2020-07-31 18:02:55
---> 
+-->
 <template>
   <div id="noPath">
     <div class="df">
       <div>
-        <svg-icon icon-class="404"></svg-icon>
+        <svg-icon icon-class="404" />
       </div>
       <div class="lh20 ml10">
         <div class="b">您的访问出错了</div>
@@ -24,7 +24,7 @@
 <script>
 export default {
   methods: {
-    handleBack () {
+    handleBack() {
       this.$router.push('/home')
     }
   }

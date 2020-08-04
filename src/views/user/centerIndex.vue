@@ -1,4 +1,4 @@
-<!-- 
+<!--
   文件作者：mawenjuan
   创建日期：2020.6.21
   文件说明：个人中心
@@ -6,11 +6,19 @@
 
 <template>
   <div id="userCenter">
-    <paas-header></paas-header>
+    <paas-header />
     <div class="main df">
       <div class="left f12 mr20">
         <div class="title">账号管理</div>
-        <div class="item" v-for="(item, index) in menu" :key="index" :class="activeTab == item.path ? 'active' : ''" @click="handleSelectTab(item)">{{item.title}}</div>
+        <div
+          v-for="(item, index) in menu"
+          :key="index"
+          class="item"
+          :class="activeTab == item.path ? 'active' : ''"
+          @click="handleSelectTab(item)"
+        >
+          {{ item.title }}
+        </div>
       </div>
       <div class="right">
         <router-view />
@@ -20,44 +28,48 @@
 </template>
 
 <script>
-import paasHeader from "@/components/header";
+import paasHeader from '@/components/header'
 export default {
-  components: {paasHeader},
-  data () {
+  components: { paasHeader },
+  data() {
     return {
-      activeTab: "secure",
-      menu: [{
-        title: "安全设置",
-        path: "secure"
-      }, {
-        title: "基本资料",
-        path: "basicInfo"
-      }, {
-        title: "实名认证",
-        path: "authc"
-      }]
+      activeTab: 'secure',
+      menu: [
+        {
+          title: '安全设置',
+          path: 'secure'
+        },
+        {
+          title: '基本资料',
+          path: 'basicInfo'
+        },
+        {
+          title: '实名认证',
+          path: 'authc'
+        }
+      ]
     }
   },
   watch: {
-    $route: function () {
-      this.init();
+    $route: function() {
+      this.init()
     }
   },
-  mounted () {
-    this.init();
+  mounted() {
+    this.init()
   },
   methods: {
-    init () {
+    init() {
       const path = this.$route.path
-      if (path === "/center") {
+      if (path === '/center') {
         this.$router.push(`${path}/${this.menu[0].path}`)
         this.activeTab = this.menu[0].path
       } else {
-        const paths = path.split("/")
+        const paths = path.split('/')
         this.activeTab = paths[paths.length - 1]
       }
     },
-    handleSelectTab (item) {
+    handleSelectTab(item) {
       this.$router.push(item.path)
       this.activeTab = item.path
     }
@@ -104,7 +116,8 @@ export default {
         padding-left: 30px;
         cursor: pointer;
       }
-      .item:hover, .item.active {
+      .item:hover,
+      .item.active {
         background: #fff;
       }
     }
@@ -117,5 +130,3 @@ export default {
   }
 }
 </style>
-
- 

@@ -4,8 +4,8 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-31 15:42:42
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-03 17:53:17
---> 
+ * @LastEditTime: 2020-08-04 15:00:51
+-->
 <template>
   <div class="card-container">
     <ElCard class="box-card">
@@ -17,7 +17,12 @@
         <div class="f18 card-unit">
           <span class="card-unit-text">
             --uS/cm
-            <ElTooltip content="期望值--" placement="top" effect="light" popper-class="custom-tooltip-style">
+            <ElTooltip
+              content="期望值--"
+              placement="top"
+              effect="light"
+              popper-class="custom-tooltip-style"
+            >
               <i class="el-icon-info card-icon" />
             </ElTooltip>
           </span>
@@ -32,9 +37,7 @@
 export default {
   name: 'RunStateCard',
   data() {
-    return {
-
-    }
+    return {}
   },
   methods: {
     viewDataHandler() {
@@ -74,7 +77,7 @@ export default {
         right: -14px;
         top: 4px;
         cursor: pointer;
-        
+
         &:hover {
           color: #555;
         }
@@ -91,7 +94,7 @@ export default {
 }
 </style>
 <style>
-.custom-tooltip-style.is-light  {
+.custom-tooltip-style.is-light {
   border: 1px solid #999;
 }
 </style>

@@ -4,10 +4,10 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 14:26:58
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-07-30 18:34:24
- */ 
+ * @LastEditTime: 2020-08-04 14:28:18
+ */
 module.exports = {
-  publicPath: process.env.NODE_ENV === "production" ? "./" : "/",
+  publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
   devServer: {
     // open: true,
     // host: "0.0.0.0",
@@ -20,12 +20,12 @@ module.exports = {
     config
       .plugin('html')
       .tap(args => {
-        args[0].title= 'IOT管理系统'
+        args[0].title = 'IOT管理系统'
         return args
       })
     // 一个规则里的 基础Loader
     // svg是个基础loader
-    const svgRule = config.module.rule("svg");
+    const svgRule = config.module.rule('svg')
     // 清除已有的所有 loader。
     // 如果你不这样做，接下来的 loader 会附加在该规则现有的 loader 之后。
     svgRule.uses.clear();
@@ -36,6 +36,6 @@ module.exports = {
       .options({
         symbolId: "icon-[name]"
       });
-  }
-  // lintOnSave: false // 取消 eslint 验证
+  },
+  lintOnSave: process.env.NODE_ENV === 'development' // 取消 eslint 验证
 };

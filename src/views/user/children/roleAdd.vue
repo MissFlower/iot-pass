@@ -7,12 +7,12 @@
 <template>
   <el-dialog
     id="accRole"
+    v-loading="loading"
     title="用户角色配置"
     :visible.sync="dialogVisible"
-    @close="close"
-    v-loading="loading"
     :close-on-press-escape="false"
     :close-on-click-modal="false"
+    @close="close"
   >
     <div class="df">
       <div class="w200 info">
@@ -54,26 +54,33 @@
 </template>
 
 <script>
-import { userRoleList, updateRoleforUser } from "@/api/user";
+import { userRoleList, updateRoleforUser } from '@/api/user'
 export default {
-  props: ["info"],
-  inject: ["reload"],
+  props: {
+    info: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
+  },
+  inject: ['reload'],
   data() {
     return {
       loading: false,
       dialogVisible: true,
       roleList: [],
       selectIds: []
-    };
+    }
   },
   mounted() {
-    this.getData();
+    this.getData()
   },
   methods: {
     getData() { // 获取用户的角色列表
-      this.loading = true;
-      this.roleList = [];
-      this.selectIds = [];
+      this.loading = true
+      this.roleList = []
+      this.selectIds = []
       userRoleList({
         userId: this.info.id
       })
@@ -82,54 +89,54 @@ export default {
             if (res.data.roles.length > 0) {
               res.data.roles.forEach(item => {
                 if (item.checked) {
-                  this.selectIds.push(item.roleId);
+                  this.selectIds.push(item.roleId)
                 }
-              });
+              })
             }
-            this.roleList = res.data.roles;
+            this.roleList = res.data.roles
           } else {
-            this.$message.error(res.message);
+            this.$message.error(res.message)
           }
-          this.loading = false;
+          this.loading = false
         })
         .catch(() => {
-          this.$message.error("角色列表获取失败");
-          this.loading = false;
-        });
+          this.$message.error('角色列表获取失败')
+          this.loading = false
+        })
     },
     close() {
-      this.$emit("close");//  触发父级函数
+      this.$emit('close')//  触发父级函数
     },
     handleCancel() {
-      this.close();
+      this.close()
     },
     handleSave() { // 角色配置提交
       if (this.selectIds.length > 10) {
-        this.$message.warning("一个用户最多配置10个角色");
-        return;
+        this.$message.warning('一个用户最多配置10个角色')
+        return
       }
-      this.loading = true;
+      this.loading = true
       updateRoleforUser({
         userId: this.info.id,
-        roleIds: this.selectIds.join(",")
+        roleIds: this.selectIds.join(',')
       })
         .then(res => {
           if (res.code === 200) {
-            this.$message.success("用户的角色设置成功");
-            this.reload(1);
-            this.close();
+            this.$message.success('用户的角色设置成功')
+            this.reload(1)
+            this.close()
           } else {
-            this.$message.error(res.message);
+            this.$message.error(res.message)
           }
-          this.loading = false;
+          this.loading = false
         })
         .catch(() => {
-          this.$message.error("用户的角色设置失败");
-          this.loading = false;
-        });
+          this.$message.error('用户的角色设置失败')
+          this.loading = false
+        })
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

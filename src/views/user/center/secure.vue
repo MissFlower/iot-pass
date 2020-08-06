@@ -6,7 +6,7 @@
     <div class="con">
       <div class="info df">
         <div>
-          <svg-icon icon-class="photo"></svg-icon>
+          <svg-icon icon-class="photo" />
           <div class="tc blue">修改图像</div>
         </div>
         <div class="userInfo df fd_c jc_sa ml20">
@@ -30,7 +30,7 @@
             <!-- 安全性高的密码可以使帐号更安全。建议您定期更换密码，设置一个包含字母，符号或数字且长度超过8位的密码。 -->
           </div>
           <div class="op">
-            <svg-icon icon-class="success" class="success"></svg-icon>
+            <svg-icon icon-class="success" class="success" />
             <!-- <span class="ml5 mr20" :class="userInfo.email ? 'success' : 'orange'">{{userInfo.email ? '已' : '未'}}设置</span>
             <span class="blue hand" @click="goToVerify(3)">{{userInfo.email ? '修改' : '设置'}}</span> -->
             <span class="ml5 mr20 success">已设置</span>
@@ -40,13 +40,13 @@
         <div class="set-con-item df ai_c">
           <div class="name b">手机绑定</div>
           <div class="flex1">
-            <div v-if="userInfo.phone">您已绑定了手机 <span class="success">{{userInfo.phone}}</span> [您的手机为安全手机，可以找回密码，但不能用于登录]</div>
+            <div v-if="userInfo.phone">您已绑定了手机 <span class="success">{{ userInfo.phone }}</span> [您的手机为安全手机，可以找回密码，但不能用于登录]</div>
             <div v-else>未设置</div>
           </div>
           <div class="op">
-            <svg-icon :icon-class="userInfo.phone ? 'success' : 'warning'" :class="userInfo.phone ? 'success' : 'orange'"></svg-icon>
-            <span class="ml5 mr20" :class="userInfo.phone ? 'success' : 'orange'">{{userInfo.phone ? '已' : '未'}}设置</span>
-            <span class="blue hand" @click.stop="goToVerify(2)">{{userInfo.phone ? '修改' : '设置'}}</span>
+            <svg-icon :icon-class="userInfo.phone ? 'success' : 'warning'" :class="userInfo.phone ? 'success' : 'orange'" />
+            <span class="ml5 mr20" :class="userInfo.phone ? 'success' : 'orange'">{{ userInfo.phone ? '已' : '未' }}设置</span>
+            <span class="blue hand" @click.stop="goToVerify(2)">{{ userInfo.phone ? '修改' : '设置' }}</span>
           </div>
         </div>
         <div class="set-con-item df ai_c">
@@ -56,9 +56,9 @@
             <div v-else>未设置</div>
           </div>
           <div class="op">
-            <svg-icon :icon-class="userInfo.email ? 'success' : 'warning'" :class="userInfo.email ? 'success' : 'orange'"></svg-icon>
-            <span class="ml5 mr20" :class="userInfo.email ? 'success' : 'orange'">{{userInfo.email ? '已' : '未'}}设置</span>
-            <span class="blue hand" @click.stop="goToVerify(1)">{{userInfo.email ? '修改' : '设置'}}</span>
+            <svg-icon :icon-class="userInfo.email ? 'success' : 'warning'" :class="userInfo.email ? 'success' : 'orange'" />
+            <span class="ml5 mr20" :class="userInfo.email ? 'success' : 'orange'">{{ userInfo.email ? '已' : '未' }}设置</span>
+            <span class="blue hand" @click.stop="goToVerify(1)">{{ userInfo.email ? '修改' : '设置' }}</span>
           </div>
         </div>
       </div>
@@ -69,7 +69,7 @@
 <script>
 export default {
   computed: {
-    userInfo () {
+    userInfo() {
       return this.$store.state.app.userInfo
     }
   },
@@ -78,8 +78,8 @@ export default {
   },
   methods: {
     // 跳转要验证页面
-    goToVerify (value) {
-      this.$router.push(`/verify?flag=${value}`);
+    goToVerify(value) {
+      this.$router.push(`/verify?flag=${value}`)
     }
   }
 }

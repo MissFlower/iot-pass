@@ -7,25 +7,26 @@
   <div v-loading="loading">
     <h2>设备管理</h2>
     <div class="mb20 df ai_c">
-      <el-select class="w200" v-model="productId" placeholder="请选择产品" @change="changeProductFun">
+      <el-select v-model="productId" class="w200" placeholder="请选择产品" @change="changeProductFun">
         <el-option
           v-for="(item,index) in productList"
           :key="index"
           :label="item.productName"
           :value="item.id"
-        ></el-option>
+        />
       </el-select>
 
-      <div class="deviceCountView" v-for="(obj,index) in deviceCountObj" :key="index">
+      <div v-for="(obj,index) in deviceCountObj" :key="index" class="deviceCountView">
         <div class="df ai_c">
-          <span
-            v-if="index!=0"
-            class="dib mr5"
-            :style="{width:'8px', height:'8px', borderRadius:'4px', background: index==1?'#0A59C0':'#1D7F2F'}"
-          ></span>
+          <span v-if="index!=0" class="dib mr5" :style="{width:'8px', height:'8px', borderRadius:'4px', background: index==1?'#0A59C0':'#1D7F2F'}" />
           <span>{{ obj.title }}</span>
-          <el-popover placement="top-start" width="160" trigger="hover" :content="obj.alert">
-            <span class="el-icon-question ml2 img" slot="reference"></span>
+          <el-popover
+            placement="top-start"
+            width="160"
+            trigger="hover"
+            :content="obj.alert"
+          >
+            <span slot="reference" class="el-icon-question ml2 img" />
           </el-popover>
         </div>
         <div class="Count">{{ obj.count }}</div>
@@ -34,44 +35,26 @@
 
     <div class="mb20 df jc_sb">
       <div class="df">
-        <el-input
-          placeholder="请输入名称"
-          v-model="searchInputValue"
-          class="searchInput"
-          @change="searchBtnTouch"
-        >
+        <el-input v-model="searchInputValue" placeholder="请输入名称" class="searchInput" @change="searchBtnTouch">
           <el-select
-            class="w120"
-            v-model="searchTypeSelect"
             slot="prepend"
+            v-model="searchTypeSelect"
+            class="w120"
             placeholder="请选择"
             @change="searchInputValue = ''"
           >
-            <el-option label="设备名称" value="1"></el-option>
-            <el-option label="备注名称" value="2"></el-option>
+            <el-option label="设备名称" value="1" />
+            <el-option label="备注名称" value="2" />
           </el-select>
           <span slot="suffix">
-            <i class="el-icon-search hand" @click="searchBtnTouch"></i>
-            <i
-              class="el-icon-close hand"
-              v-if="searchInputValue != ''"
-              @click="clearFun('searchInputValue')"
-            ></i>
+            <i class="el-icon-search hand" @click="searchBtnTouch" />
+            <i v-if="searchInputValue != ''" class="el-icon-close hand" @click="clearFun('searchInputValue')" />
           </span>
         </el-input>
-        <el-input
-          class="ml10 mr10 w150 searchInput"
-          placeholder="固件版本"
-          v-model="fmVersionValue"
-          @change="searchBtnTouch"
-        >
+        <el-input v-model="fmVersionValue" class="ml10 mr10 w150 searchInput" placeholder="固件版本" @change="searchBtnTouch">
           <span slot="suffix">
-            <i class="el-icon-search hand" @click="searchBtnTouch"></i>
-            <i
-              class="el-icon-close hand"
-              v-if="fmVersionValue != ''"
-              @click="clearFun('fmVersionValue')"
-            ></i>
+            <i class="el-icon-search hand" @click="searchBtnTouch" />
+            <i v-if="fmVersionValue != ''" class="el-icon-close hand" @click="clearFun('fmVersionValue')" />
           </span>
         </el-input>
         <!-- <el-button icon="el-icon-search" @click="searchBtnTouch"></el-button> -->
@@ -89,71 +72,39 @@
         >批量添加</el-button>
       </div>
     </div>
-    <el-table :data="list" border @selection-change="handleSelectionChange" ref="multipleTable">
-      <el-table-column type="selection" width="40"></el-table-column>
-      <el-table-column prop="id" label="ID"></el-table-column>
-      <el-table-column prop="deviceName" label="设备名称"></el-table-column>
-      <el-table-column prop="productName" label="产品名称"></el-table-column>
-      <el-table-column prop="nodeTypeStr" label="节点类型"></el-table-column>
-      <el-table-column prop="nickName" label="备注名称"></el-table-column>
-      <el-table-column prop="lastLoginTime" label="最后登录时间"></el-table-column>
-      <el-table-column prop="lastLogoutTime" label="最后登出时间"></el-table-column>
+    <el-table ref="multipleTable" :data="list" border @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="40" />
+      <el-table-column prop="id" label="ID" />
+      <el-table-column prop="deviceName" label="设备名称" />
+      <el-table-column prop="productName" label="产品名称" />
+      <el-table-column prop="nodeTypeStr" label="节点类型" />
+      <el-table-column prop="nickName" label="备注名称" />
+      <el-table-column prop="lastLoginTime" label="最后登录时间" />
+      <el-table-column prop="lastLogoutTime" label="最后登出时间" />
       <el-table-column prop="deviceStatus" label="状态/启用状态">
         <template v-slot="device">
-          <span class="deviceStatusView">
-            <div :style="{background: device.row.statusColor}"></div>
-            {{ device.row.enableBool?device.row.deviceStatusStr:'已禁用' }}
-          </span>
-          <el-switch
-            :disabled="authArr.indexOf('device_enable')<0"
-            v-model="device.row.enableBool"
-            @change="deviceEnable([device.row])"
-          ></el-switch>
+          <span class="deviceStatusView"><div :style="{background: device.row.statusColor}" />{{ device.row.enableBool?device.row.deviceStatusStr:'已禁用' }}</span>
+          <el-switch v-model="device.row.enableBool" :disabled="authArr.indexOf('device_enable')<0" @change="deviceEnable([device.row])" />
         </template>
       </el-table-column>
       <el-table-column label="操作">
         <template v-slot="scope">
-          <el-button @click="lookClick(scope.row)" type="text" size="small">查看</el-button>
-          <el-button
-            v-if="authArr.indexOf('device_delete')>-1"
-            @click="deleteClick(scope.row)"
-            type="text"
-            size="small"
-          >删除</el-button>
+          <el-button type="text" size="small" @click="lookClick(scope.row)">查看</el-button>
+          <el-button v-if="authArr.indexOf('device_delete')>-1" type="text" size="small" @click="deleteClick(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <div class="pr">
-      <div class="bottomSeleView" v-if="list.length">
-        <el-checkbox
-          v-if="authArr.indexOf('device_delete')>-1 || authArr.indexOf('device_enable')>-1"
-          @change="bottomSeleChange"
-          v-model="bottomSeleChecked"
-          :disabled="bottomSeleDis"
-        ></el-checkbox>
-        <el-popconfirm
-          v-if="authArr.indexOf('device_delete')>-1"
-          :title="'确定要批量删除选中的'+deviceSelection.length+'个设备吗？'"
-          @onConfirm="batchOperate(1)"
-          class="ml10"
-        >
+      <div v-if="list.length" class="bottomSeleView">
+        <el-checkbox v-if="authArr.indexOf('device_delete')>-1 || authArr.indexOf('device_enable')>-1" v-model="bottomSeleChecked" :disabled="bottomSeleDis" @change="bottomSeleChange" />
+        <el-popconfirm v-if="authArr.indexOf('device_delete')>-1" :title="'确定要批量删除选中的'+deviceSelection.length+'个设备吗？'" class="ml10" @onConfirm="batchOperate(1)">
           <el-button slot="reference" type="primary" :disabled="bottomSeleDis">删除</el-button>
         </el-popconfirm>
-        <el-popconfirm
-          v-if="authArr.indexOf('device_enable')>-1"
-          :title="'确定要批量禁用选中的'+deviceSelection.length+'个设备吗？'"
-          @onConfirm="batchOperate(2)"
-          class="ml10"
-        >
+        <el-popconfirm v-if="authArr.indexOf('device_enable')>-1" :title="'确定要批量禁用选中的'+deviceSelection.length+'个设备吗？'" class="ml10" @onConfirm="batchOperate(2)">
           <el-button slot="reference" type="primary" :disabled="bottomSeleDis">禁用</el-button>
         </el-popconfirm>
-        <el-popconfirm
-          v-if="authArr.indexOf('device_enable')>-1"
-          :title="'确定要批量启用选中的'+deviceSelection.length+'个设备吗？'"
-          @onConfirm="batchOperate(3)"
-          class="ml10"
-        >
+        <el-popconfirm v-if="authArr.indexOf('device_enable')>-1" :title="'确定要批量启用选中的'+deviceSelection.length+'个设备吗？'" class="ml10" @onConfirm="batchOperate(3)">
           <el-button slot="reference" type="primary" :disabled="bottomSeleDis">启用</el-button>
         </el-popconfirm>
       </div>
@@ -161,9 +112,9 @@
       <pagination :data="tableData" @pagination="handleCurrentChange" class="tr" />
     </div>
     <!-- 添加设备 -->
-    <newDevice v-if="showNewDevice" :appointProduck="selProduck"></newDevice>
+    <newDevice v-if="showNewDevice" :appoint-produck="selProduck" />
     <!-- 批量 -->
-    <batchNewDevice v-if="showBatchNewDevice" :appointProduck="selProduck"></batchNewDevice>
+    <batchNewDevice v-if="showBatchNewDevice" :appoint-produck="selProduck" />
   </div>
 </template>
 

@@ -32,7 +32,7 @@
       </div>
     </div>
 
-    <el-tabs v-model="infoType" type="card" @tab-click="infoTypeChange">
+    <el-tabs v-model="infoType" type="card">
       <el-tab-pane label="设备信息" name="first">
         设备信息
         <div class="infoType_device">
@@ -107,7 +107,7 @@
       <el-tab-pane label="Topic列表" name="topic">
         <device-topic :device-obj="deviceObj" />
       </el-tab-pane>
-      <el-tab-pane v-if="modelShow" label="物模型数据" name="third">
+      <el-tab-pane v-if="modelShow" label="物模型数据" name="model">
         <!-- 二级标签页 -->
         <el-radio-group v-model="modelType">
           <el-radio-button label="runState">运行状态</el-radio-button>
@@ -115,9 +115,9 @@
           <el-radio-button label="serviceCall">服务调用</el-radio-button>
         </el-radio-group>
         <!-- 标签下方对应的内容 -->
-        <run-state v-if="modelType == 'runState'" />
-        <event-manage v-if="modelType == 'eventManage'" />
-        <service-Call v-if="modelType == 'serviceCall'" />
+        <run-state v-if="modelType == 'runState'" :device-info="deviceObj" />
+        <event-manage v-if="modelType == 'eventManage'" :device-info="deviceObj" />
+        <service-Call v-if="modelType == 'serviceCall'" :device-info="deviceObj" />
       </el-tab-pane>
     </el-tabs>
 
@@ -208,7 +208,7 @@ export default {
       lookDeviceSecret: false,
       loading: false,
       burnShow: false,
-      modelType: 'runState',
+      modelType: '',
       modelShow: true,
       deviceStatusType: {
         '0': 'info',
@@ -235,7 +235,7 @@ export default {
       deviceInfo({
         id: this.$route.query.id
       })
-        .then((res) => {
+        .then(res => {
           if (res.code === 200) {
             var deviceObj = res.data
             // 设备状态
@@ -269,6 +269,7 @@ export default {
             }
             this.deviceObj = deviceObj
           }
+          this.modelType = 'runState'
           this.loading = false
         })
         .catch(() => {
@@ -320,9 +321,6 @@ export default {
     showBurn() {
       this.burnShow = !this.burnShow
     },
-
-    // type切换
-    infoTypeChange() {},
 
     // 返回
     back() {

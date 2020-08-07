@@ -4,14 +4,20 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-03 16:31:10
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-03 16:59:08
+ * @LastEditTime: 2020-08-06 10:25:31
  */
 
 // 事件类型
 export const EVENT_TYPE = Object.freeze({
-  'alert': '信息',
-  'warn': '告警',
-  'error': '故障'
+  INFO: 1, // 信息
+  WARN: 2, // 告警
+  FAULT: 3 // 故障
+})
+// 事件文案
+export const EVENT_TYPE_TEXT = Object.freeze({
+  [EVENT_TYPE.INFO]: '信息',
+  [EVENT_TYPE.WARN]: '告警',
+  [EVENT_TYPE.FAULT]: '故障'
 })
 // 时间类型
 export const TIME_TYPE = Object.freeze([

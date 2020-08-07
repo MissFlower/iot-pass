@@ -1,8 +1,16 @@
+<!--
+ * @Description:
+ * @Version: 0.1.0
+ * @Autor: AiDongYang
+ * @Date: 2020-07-29 14:26:58
+ * @LastEditors: AiDongYang
+ * @LastEditTime: 2020-08-07 18:53:03
+-->
 <template>
   <div id="success">
     <div class="con df ai_c">
       <div class="f24 mr20">
-        <svg-icon icon-class="success"></svg-icon>
+        <svg-icon icon-class="success" />
       </div>
       <div>
         <div v-if="flag == 1">

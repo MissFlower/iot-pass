@@ -15,8 +15,6 @@ export default {
     className: {
       type: String,
       default: ''
-<<<<<<< Updated upstream
-=======
     },
     width: {
       type: String,
@@ -25,7 +23,6 @@ export default {
     height: {
       type: String,
       default: '1em'
->>>>>>> Stashed changes
     }
   },
   computed: {

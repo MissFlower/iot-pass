@@ -7,11 +7,28 @@
   <div id="fmList">
     <div class="df ai_c mb20">
       <el-button type="primary" @click="addItem">新增固件</el-button>
-      <el-select v-model="productsValue" class="w180 ml20" filterable :filter-method="userFilter" @change="changeSelect" clearable>
-        <el-option label="全部产品" value=""></el-option>
-        <el-option v-for="item in products" :key="item.id" :label="item.productName" :value="`${item.id}|${item.productName}`"></el-option>
+      <el-select
+        v-model="productsValue"
+        class="w180 ml20"
+        filterable
+        :filter-method="userFilter"
+        @change="changeSelect"
+        clearable
+      >
+        <el-option label="全部产品" value></el-option>
+        <el-option
+          v-for="item in products"
+          :key="item.id"
+          :label="item.productName"
+          :value="`${item.id}|${item.productName}`"
+        ></el-option>
       </el-select>
-      <el-input v-model="form.fmName" placeholder="请输入固件名称" class="searchInput w180 ml20" @keyup.enter.native="searchList">
+      <el-input
+        v-model="form.fmName"
+        placeholder="请输入固件名称"
+        class="searchInput w180 ml20"
+        @keyup.enter.native="searchList"
+      >
         <span slot="suffix">
           <i class="el-icon-search hand" @click="searchList"></i>
           <i class="el-icon-close hand" v-if="form.fmName != ''" @click="clearFun"></i>
@@ -22,12 +39,14 @@
       <!-- <el-table-column label="固件ID" prop="id"></el-table-column> -->
       <el-table-column label="固件名称" prop="fmName">
         <template slot-scope="scope">
-          {{scope.row.fmName}}
+          {{ scope.row.fmName }}
           <el-tooltip>
-            <el-tag type="primary">{{scope.row.fmType == 1 ? '整包' : (scope.row.fmType == 2 ? '差分' : scope.row.fmType)}}</el-tag>
+            <el-tag
+              type="primary"
+            >{{ scope.row.fmType == 1 ? '整包' : (scope.row.fmType == 2 ? '差分' : scope.row.fmType) }}</el-tag>
             <div slot="content">
-              <div>{{scope.row.fmName}} / {{scope.row.fmType == 1 ? '整包' : (scope.row.fmType == 2 ? '差分' : scope.row.fmType)}}</div>
-              <div>固件ID：{{scope.row.id}}</div>
+              <div>{{ scope.row.fmName }} / {{ scope.row.fmType == 1 ? '整包' : (scope.row.fmType == 2 ? '差分' : scope.row.fmType) }}</div>
+              <div>固件ID：{{ scope.row.id }}</div>
             </div>
           </el-tooltip>
         </template>
@@ -39,52 +58,90 @@
       <el-table-column abel="固件状态" prop="fmStatus">
         <template slot-scope="scope">
           <div :style="{'background-color': fmStatusObj[scope.row.fmStatus].color}" class="point"></div>
-          {{fmStatusObj[scope.row.fmStatus].label}}
+          {{ fmStatusObj[scope.row.fmStatus].label }}
         </template>
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <a class="oprate_btn"  @click="checkFm(scope.row)">验证固件</a>
+          <a class="oprate_btn" @click="checkFm(scope.row)">验证固件</a>
           |
-          <el-tooltip class="item" effect="dark" content="请先验证固件，再进行批量升级" placement="top" v-if="scope.row.fmStatus !== 2">
+          <el-tooltip
+            class="item"
+            effect="dark"
+            content="请先验证固件，再进行批量升级"
+            placement="top"
+            v-if="scope.row.fmStatus !== 2"
+          >
             <a class="oprate_btn disabled">批量升级</a>
           </el-tooltip>
           <a v-else class="oprate_btn" @click="upgradeList(scope.row)">批量升级</a>
           |
-          <a class="oprate_btn" @click="toDetails(scope.row.id, scope.row.productName, scope.row.srcVersion)">查看</a> |
+          <a
+            class="oprate_btn"
+            @click="toDetails(scope.row.id, scope.row.productName, scope.row.srcVersion)"
+          >查看</a> |
           <a class="oprate_btn" @click="delItem(scope.row.id)">删除</a>
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination @current-change="handleCurrentChange" :current-page.sync="form.pageNum" :page-size="form.pageSize" layout="total, prev, pager, next" :total="fmTotal" class="tr mt20"></el-pagination>
+    <el-pagination
+      @current-change="handleCurrentChange"
+      :current-page.sync="form.pageNum"
+      :page-size="form.pageSize"
+      layout="total, prev, pager, next"
+      :total="fmTotal"
+      class="tr mt20"
+    ></el-pagination>
     <!-- 新增固件 -->
-    <AddFirmware v-if="dialogFormVisible" :dialogFormVisible="dialogFormVisible" @changeVisible="changeVisible" @changeList="changeList" />
+    <AddFirmware
+      v-if="dialogFormVisible"
+      :dialogFormVisible="dialogFormVisible"
+      @changeVisible="changeVisible"
+      @changeList="changeList"
+    />
     <!-- 验证固件进程 -->
-    <check-process v-if="checkProcessFlag" :status="checkStatus" @upgrade="upgradeProcess" @close="closeCheckProcess"></check-process>
-    <check-firmware v-if="checkFmVisible" :checkFmVisible="checkFmVisible" :checkInfo="checkInfo" :fmDeviceList="fmDeviceList" @checkVisible="checkVisible" @refreshList="fetchFmList"></check-firmware>
-    <upgrade-firmware v-if="upgradeFmVisible" :upgradeFmVisible="upgradeFmVisible" :checkInfo="checkInfo" @upgradeVisible="upgradeVisible"></upgrade-firmware>
+    <check-process
+      v-if="checkProcessFlag"
+      :status="checkStatus"
+      @upgrade="upgradeProcess"
+      @close="closeCheckProcess"
+    ></check-process>
+    <check-firmware
+      v-if="checkFmVisible"
+      :checkFmVisible="checkFmVisible"
+      :checkInfo="checkInfo"
+      :fmDeviceList="fmDeviceList"
+      @checkVisible="checkVisible"
+      @refreshList="fetchFmList"
+    ></check-firmware>
+    <upgrade-firmware
+      v-if="upgradeFmVisible"
+      :upgradeFmVisible="upgradeFmVisible"
+      :checkInfo="checkInfo"
+      @upgradeVisible="upgradeVisible"
+    ></upgrade-firmware>
   </div>
 </template>
 
 <script>
-import {fmStatusObj} from '@/data/constants' // 数据
+import { fmStatusObj } from '@/data/constants' // 数据
 
-import AddFirmware from "./addFirmware"
-import checkFirmware from "./checkFirmware"
-import upgradeFirmware from "./upgradeFirmware"
+import AddFirmware from './addFirmware'
+import checkFirmware from './checkFirmware'
+import upgradeFirmware from './upgradeFirmware'
 import checkProcess from './checkProcess'
 
-import {getFmList, deleteFm, getProducts, getVerifyFirmInfo} from "@/api/fireware"
+import { getFmList, deleteFm, getProducts, getVerifyFirmInfo } from '@/api/fireware'
 
 export default {
-  components: {AddFirmware, checkProcess, checkFirmware, upgradeFirmware},
-  data () {
+  components: { AddFirmware, checkProcess, checkFirmware, upgradeFirmware },
+  data() {
     return {
       loading: false,
-      productsValue: "",
+      productsValue: '',
       form: {
-        fmName: "",
-        productId: "",
+        fmName: '',
+        productId: '',
         pageSize: 20,
         pageNum: 1
       },
@@ -93,7 +150,7 @@ export default {
       productForm: {
         pageNum: 1,
         pageSize: 100,
-        productName: ""
+        productName: ''
       },
       products: [],
       // 新增固件
@@ -108,7 +165,7 @@ export default {
       fmStatusObj
     }
   },
-  mounted () {
+  mounted() {
     this.fetchFmList()
     this.getProductList()
   },
@@ -118,15 +175,15 @@ export default {
       this.loading = true
       getFmList(this.form).then(res => {
         if (res.code === 200) {
-          this.list = res.data.data;
-          this.fmTotal = res.data.total;
-          this.loading = false;
+          this.list = res.data.data
+          this.fmTotal = res.data.total
+          this.loading = false
         } else {
-          this.$message.warning(res.message);
+          this.$message.warning(res.message)
         }
         this.loading = false
       }).catch(error => {
-        this.$message.error(error);
+        this.$message.error(error)
         this.loading = false
       })
     },
@@ -138,47 +195,47 @@ export default {
       })
     },
     // 筛选产品数据
-    userFilter(query = "") {
-      let arr = this.products.filter(item => {
-        return item.productName.includes(query);
-      });
+    userFilter(query = '') {
+      const arr = this.products.filter(item => {
+        return item.productName.includes(query)
+      })
       if (arr.length > 50) {
-        this.products = arr.slice(0, 50);
+        this.products = arr.slice(0, 50)
       } else {
-        this.products = arr;
+        this.products = arr
       }
     },
     changeSelect() {
-      this.form.productId = this.productsValue.split("|")[0];
-      this.searchList();
+      this.form.productId = this.productsValue.split('|')[0]
+      this.searchList()
     },
     // 筛选函数
-    searchList () {
+    searchList() {
       this.handleCurrentChange(1)
     },
     // 清空函数
-    clearFun () {
+    clearFun() {
       this.form.fmName = ''
       this.searchList()
     },
     // 分页函数
-    handleCurrentChange (page) {
+    handleCurrentChange(page) {
       this.form.pageNum = page
       this.fetchFmList()
     },
     // 创建时间转化函数
-    formatCreateTime (row) {
+    formatCreateTime(row) {
       return row.createTime ? this.$fun.dateFormat(
-          this.$fun.strFormatDate(row.createTime.replace(/-/g, "/")),
-          "yyyy-MM-dd hh:mm:ss"
-      ): ''
+        this.$fun.strFormatDate(row.createTime.replace(/-/g, '/')),
+        'yyyy-MM-dd hh:mm:ss'
+      ) : ''
     },
     // 新增固件弹框显示
     addItem() {
-      this.dialogFormVisible = true;
+      this.dialogFormVisible = true
     },
     // 新增固件弹框关闭
-    changeVisible () {
+    changeVisible() {
       this.dialogFormVisible = false
     },
     changeList() {
@@ -190,7 +247,7 @@ export default {
       if (row.fmStatus === 0 || row.fmStatus === 3) {
         // this.checkFmId = String(row.id);
         // this.srcVersion = row.srcVersion;
-        this.getVerifyFirmInfo(row.id, row.srcVersion);
+        this.getVerifyFirmInfo(row.id, row.srcVersion)
         this.checkInfo = row
       } else {
         this.checkStatus = row.fmStatus
@@ -200,25 +257,25 @@ export default {
     },
     // 验证固件前校验是否存在设备
     getVerifyFirmInfo(fmId, versions) {
-      let data = {
+      const data = {
         pageNum: 1,
         pageSize: 10,
         fmId: fmId,
         srcVersions: versions
-      };
+      }
       getVerifyFirmInfo(data).then(res => {
         if (res.code === 200) {
-            this.fmDeviceList = res.data.data;
-            this.checkFmVisible = true;
+          this.fmDeviceList = res.data.data
+          this.checkFmVisible = true
         } else if (res.code === 9003) {
-          this.$alert(res.message, "提示", {
-            confirmButtonText: "确定",
-            type: "warning",
+          this.$alert(res.message, '提示', {
+            confirmButtonText: '确定',
+            type: 'warning',
             callback: action => {
             }
-          });
+          })
         } else {
-            this.$message.warning(res.message)
+          this.$message.warning(res.message)
         }
       })
     },
@@ -227,19 +284,19 @@ export default {
       this.checkFmVisible = false
     },
     // 验证进程 关闭回调
-    closeCheckProcess () {
+    closeCheckProcess() {
       this.checkProcessFlag = false
     },
     // 验证进程 批量升级回调
-    upgradeProcess () {
+    upgradeProcess() {
       this.closeCheckProcess()
-      this.upgradeFmVisible = true;
+      this.upgradeFmVisible = true
     },
     // 批量升级 弹框显示
     upgradeList(row) {
       if (row.fmStatus === 2) {
         this.checkInfo = row
-        this.upgradeFmVisible = true;
+        this.upgradeFmVisible = true
       }
     },
     upgradeVisible() {
@@ -248,7 +305,7 @@ export default {
     // 查看详情
     toDetails(id, productName, srcVersion) {
       this.$router.push({
-        path: "details",
+        path: 'details',
         query: {
           id: id,
           productName: productName,
@@ -258,8 +315,8 @@ export default {
     },
     // 删除固件
     deleteFm(fmId) {
-      let formData = new FormData();
-      formData.append("fmId", fmId);
+      const formData = new FormData()
+      formData.append('fmId', fmId)
       deleteFm(formData).then(res => {
         if (res.code === 200) {
           this.fetchFmList()
@@ -270,14 +327,14 @@ export default {
     },
     // 删除固件
     delItem(fmId) {
-      this.$confirm("您确定要删除此固件吗?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
+      this.$confirm('您确定要删除此固件吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       }).then(() => {
-        this.deleteFm(fmId);
+        this.deleteFm(fmId)
       }).catch(error => {
-        console.log(error);
+        console.log(error)
       })
     }
   }

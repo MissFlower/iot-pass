@@ -1,13 +1,17 @@
 <template>
-  <el-dialog :visible.sync="dialogVisible" class="checkDialog" title="查看物模型" width="600px" @close="close">
-    <div class="json_item lh16">
-      物模型是对设备在云端的功能描述，包括设备的属性、服务和事件。物联网平台通过定义一种物的描述语言来描述物模型，称之为 TSL（即Thing Specification Language），采用JSON格式，您可以根据TSL组装上报设备的数据。您可以导出完整物模型，用于云端应用开发；您也可以只导出精简物模型，配合设备端SDK实现设备开发。
-    </div>
+  <el-dialog
+    :visible.sync="dialogVisible"
+    class="checkDialog"
+    title="查看物模型"
+    width="600px"
+    @close="close"
+  >
+    <div
+      class="json_item lh16"
+    >物模型是对设备在云端的功能描述，包括设备的属性、服务和事件。物联网平台通过定义一种物的描述语言来描述物模型，称之为 TSL（即Thing Specification Language），采用JSON格式，您可以根据TSL组装上报设备的数据。您可以导出完整物模型，用于云端应用开发；您也可以只导出精简物模型，配合设备端SDK实现设备开发。</div>
     <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-      <el-tab-pane label="完整物模型" name="1">
-      </el-tab-pane>
-      <el-tab-pane label="精简模型" name="2">
-      </el-tab-pane>
+      <el-tab-pane label="完整物模型" name="1"></el-tab-pane>
+      <el-tab-pane label="精简模型" name="2"></el-tab-pane>
     </el-tabs>
     <editor
       class="ace-github"
@@ -26,13 +30,18 @@
 </template>
 
 <script>
-import { getModel, getSimpleModel, downLoadModel } from '@/api/model'
+import { getModel, getSimpleModel } from '@/api/model'
 export default {
   components: {
     editor: require('vue2-ace-editor')
   },
-  props: ['productKey'],
-  data () {
+  props: {
+    productKey: {
+      type: String,
+      default: ''
+    }
+  },
+  data() {
     return {
       dialogVisible: true,
       formData: {
@@ -56,13 +65,13 @@ export default {
       url: ''
     }
   },
-  mounted () {
+  mounted() {
     this.url = process.env.VUE_APP_BASE_URL
     // this.content = JSON.stringify(this.JsonData, null, '\t')
     this.handleClick()
   },
   methods: {
-    getData () {
+    getData() {
       this.content = ''
       this.loading = true
       let promise = getModel
@@ -85,10 +94,10 @@ export default {
         this.$message.error('物模型获取失败')
       })
     },
-    close () {
+    close() {
       this.$emit('close')
     },
-    handleClick () {
+    handleClick() {
       this.content = ''
       this.loading = true
       let promise = getModel
@@ -111,10 +120,10 @@ export default {
         this.$message.error('物模型获取失败')
       })
     },
-    handleImport () {
+    handleImport() {
       window.open(`${this.url}/model/downLoadModel?productKey=${this.productKey}&type=${this.activeName}`)
     },
-    editorInit: function () {
+    editorInit: function() {
       require('brace/ext/language_tools')
       require('brace')
       require('brace/mode/json')
@@ -130,9 +139,9 @@ export default {
   .el-dialog__body {
     padding: 0 20px;
     .json_item {
-      background-color: #FBFBFC!important;
-      border: 1px solid #ECEDEE;
-      padding: 10px!important;
+      background-color: #fbfbfc !important;
+      border: 1px solid #ecedee;
+      padding: 10px !important;
     }
   }
   .el-tabs__header {

@@ -24,9 +24,7 @@
         v-if="authArr.indexOf('role_add') > -1"
         type="primary"
         @click="handleShowEdit()"
-      >
-        新建角色
-      </el-button>
+      >新建角色</el-button>
     </div>
     <el-table :data="list" border>
       <el-table-column label="ID" prop="roleId"></el-table-column>
@@ -63,13 +61,12 @@
       layout="total, prev, pager, next"
       :total="total"
       class="tr mt20"
-    >
-    </el-pagination>
+    ></el-pagination>
   </div>
 </template>
 
 <script>
-import { roleList, delRole } from "@/api/role";
+import { roleList, delRole } from '@/api/role'
 
 export default {
   data() {
@@ -80,106 +77,122 @@ export default {
       formData: {
         pageNum: 1,
         pageSize: 10,
-        name: ""
-      }
-    };
-  },
-  watch: {
-    "formData.name": function() { // 监控name字段
-      if (this.$fun.trim(this.formData.name === "")) {
-        this.handleCurrentChange(1);
+        name: ''
       }
     }
   },
   computed: {
-    authArr() {// 页面权限
-      return this.$store.state.app.functionArr;
+    authArr() {
+      // 页面权限
+      return this.$store.state.app.functionArr
+    }
+  },
+  watch: {
+    'formData.name': function() {
+      // 监控name字段
+      if (this.$fun.trim(this.formData.name === '')) {
+        this.handleCurrentChange(1)
+      }
     }
   },
   mounted() {
-    this.getData();
+    this.getData()
   },
   methods: {
     // 获取角色列表
     getData() {
-      this.loading = true;
-      this.list = [];
+      this.loading = true
+      this.list = []
       roleList(this.formData)
         .then(res => {
           if (res.code === 200) {
             if (res.data && res.data.data && res.data.data.length > 0) {
               res.data.data.forEach(item => {
-                item.createTime_ = item.createTime ? this.$fun.dateFormat(this.$fun.strFormatDate(item.createTime.replace(/-/g, "/")), "yyyy-MM-dd hh:mm:ss") : "";
-                item.updateTime_ = item.updateTime ? this.$fun.dateFormat(this.$fun.strFormatDate(item.updateTime.replace(/-/g, "/")), "yyyy-MM-dd hh:mm:ss") : "";
-              });
-              this.list = res.data.data;
+                item.createTime_ = item.createTime
+                  ? this.$fun.dateFormat(
+                      this.$fun.strFormatDate(
+                        item.createTime.replace(/-/g, '/')
+                      ),
+                      'yyyy-MM-dd hh:mm:ss'
+                    )
+                  : ''
+                item.updateTime_ = item.updateTime
+                  ? this.$fun.dateFormat(
+                      this.$fun.strFormatDate(
+                        item.updateTime.replace(/-/g, '/')
+                      ),
+                      'yyyy-MM-dd hh:mm:ss'
+                    )
+                  : ''
+              })
+              this.list = res.data.data
             }
-            this.total = res.data.total;
-            this.loading = false;
+            this.total = res.data.total
+            this.loading = false
           } else {
-            this.$message.error(res.message);
-            this.loading = false;
+            this.$message.error(res.message)
+            this.loading = false
           }
         })
         .catch(() => {
-          this.$message.error("角色列表获取失败");
-          this.loading = false;
-        });
+          this.$message.error('角色列表获取失败')
+          this.loading = false
+        })
     },
     clearFun(key) {
       this.formData[key] = ''
     },
     // 筛选函数
     searchFun() {
-      if (this.$fun.trim(this.formData.name === "")) {
-        return;
+      if (this.$fun.trim(this.formData.name === '')) {
+        return
       }
-      this.handleCurrentChange(1);
+      this.handleCurrentChange(1)
     },
     // 选择页
     handleCurrentChange(page) {
-      this.formData.pageNum = page;
-      this.getData();
+      this.formData.pageNum = page
+      this.getData()
     },
     // 主题切换
     handleShowCon(key, row) {
-      this.$parent.switchCon(key, row);
+      this.$parent.switchCon(key, row)
     },
     // 编辑函数
     handleShowEdit(row) {
-      this.$parent.showEditRole(row);
+      this.$parent.showEditRole(row)
     },
     // 删除函数，触发提示
     handleDelete(row) {
-      const str = "确认删除该角色吗？";
-      this.$confirm(str, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
+      const str = '确认删除该角色吗？'
+      this.$confirm(str, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
         .then(() => {
-          this.loading = true;
+          this.loading = true
           delRole({
             roleId: row.roleId
           })
             .then(res => {
               if (res.code === 200) {
-                this.$message.success("角色删除成功");
-                this.getData();
+                this.$message.success('角色删除成功')
+                this.getData()
               } else {
-                this.$message.error(res.message);
+                this.$message.error(res.message)
               }
-              this.loading = false;
+              this.loading = false
             })
             .catch(() => {
-              this.$message.error("角色删除失败");
-              this.loading = false;
-            });
+              this.$message.error('角色删除失败')
+              this.loading = false
+            })
         })
         .catch(() => {
-          this.$message("操作已取消");
-        });
+          this.$message('操作已取消')
+        })
     }
   }
-};
+}
 </script>

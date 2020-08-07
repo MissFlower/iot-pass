@@ -11,7 +11,7 @@ export default {
       return date
     }
     fmt = fmt || 'yyyy-MM-dd'
-    let o = {
+    const o = {
       'M+': date.getMonth() + 1,
       'd+': date.getDate(),
       'h+': date.getHours(),
@@ -57,7 +57,7 @@ export default {
   // },
   debounce: (func, wait, immediate) => {
     let timeout, args, context, timestamp, result
-    const later = function () {
+    const later = function() {
       // 据上一次触发时间间隔
       const last = +new Date() - timestamp
       // 上次被包装函数被调用时间间隔 last 小于设定时间间隔 wait
@@ -72,7 +72,7 @@ export default {
         }
       }
     }
-    return function (...args) {
+    return function(...args) {
       context = this
       timestamp = +new Date()
       const callNow = immediate && !timeout

@@ -14,46 +14,52 @@
       </div>
       <empty-con v-else slot="empty" class="mb20"></empty-con>
       <el-table-column label="功能类型">
-        <template slot-scope="scope">
-          {{abilityTypeObj[scope.row.abilityType]}}
-        </template>
+        <template slot-scope="scope">{{ abilityTypeObj[scope.row.abilityType] }}</template>
       </el-table-column>
-      <el-table-column >
+      <el-table-column>
         <div slot="header">
-          功能名称 ({{type ? typeObj[this.type] + '功能' : '全部'}})
+          功能名称 ({{ type ? typeObj[type] + '功能' : '全部' }})
           <span @click="showPopover($event)">
             <svg-icon icon-class="screen"></svg-icon>
           </span>
         </div>
         <template slot-scope="scope">
-          {{scope.row.name}}
-          <el-tag>{{typeObj[scope.row.modelType]}}</el-tag>
+          {{ scope.row.name }}
+          <el-tag>{{ typeObj[scope.row.modelType] }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="标识符" prop="identifier"></el-table-column>
       <el-table-column label="数据类型">
-        <template slot-scope="scope">
-          {{scope.row.dataType ? dataTypeTextObj[scope.row.dataType.type] : '-'}}
-        </template>
+        <template
+          slot-scope="scope"
+        >{{ scope.row.dataType ? dataTypeTextObj[scope.row.dataType.type] : '-' }}</template>
       </el-table-column>
       <el-table-column label="数据定义" width="200">
         <template slot-scope="scope">
-          <div style="white-space: pre;">{{scope.row.showText}}</div>
+          <div style="white-space: pre;">{{ scope.row.showText }}</div>
         </template>
       </el-table-column>
       <slot name="operation"></slot>
     </el-table>
     <!-- 头部筛选 popover -->
-    <el-popover ref='popover' placement="bottom" width="200" trigger="manual" v-model="visible">
+    <el-popover ref="popover" placement="bottom" width="200" trigger="manual" v-model="visible">
       <div class="conHeader">
-        <div class="hand f12 mb5" v-for="(item, index) in filters" :key="index" @click="setSelectType(item.value)">
-          <i class="mr10 blue dib w20" :class="selectType.type == item.value ? 'el-icon-check' : ''"></i>
-          <span>{{item.text}}</span>
+        <div
+          class="hand f12 mb5"
+          v-for="(item, index) in filters"
+          :key="index"
+          @click="setSelectType(item.value)"
+        >
+          <i
+            class="mr10 blue dib w20"
+            :class="selectType.type == item.value ? 'el-icon-check' : ''"
+          ></i>
+          <span>{{ item.text }}</span>
         </div>
       </div>
       <div class="tr mt10">
-          <el-button size="mini" type="primary" @click="setSelectTypeConfrim">确认</el-button>
-          <el-button size="mini" @click="visible = false">取消</el-button>
+        <el-button size="mini" type="primary" @click="setSelectTypeConfrim">确认</el-button>
+        <el-button size="mini" @click="visible = false">取消</el-button>
       </div>
       <el-button v-show="false" slot="reference">手动激活</el-button>
     </el-popover>
@@ -61,28 +67,39 @@
 </template>
 
 <script>
-import {dataTypeObj, EVENT_TYPE, abilityTypeObj, typeObj, dataTypeTextObj} from '@/data/constants'
+import {
+  dataTypeObj,
+  EVENT_TYPE,
+  abilityTypeObj,
+  typeObj,
+  dataTypeTextObj
+} from '@/data/constants'
 import emptyCon from '@/components/empty'
 export default {
-  components: {emptyCon},
+  components: { emptyCon },
   props: {
-   "dataFun": {
-     type: Function
-   },
-   'productKey': {
-     type: String
-   },
-   'typeTab': {
-     type: String
-   },
-   'productStatus': {
-     type: Number
-   },
-   'tableHeight': {
-     type: Number
-   }
+    dataFun: {
+      type: Function,
+      default: () => {}
+    },
+    productKey: {
+      type: String,
+      default: ''
+    },
+    typeTab: {
+      type: String,
+      default: ''
+    },
+    productStatus: {
+      type: Number,
+      default: 0
+    },
+    tableHeight: {
+      type: Number,
+      default: 0
+    }
   },
-  data () {
+  data() {
     return {
       loading: false,
       list: [],
@@ -96,20 +113,24 @@ export default {
       selectType: {
         type: ''
       },
-      filters: [{
-        text: '全部',
-        value: ''
-      }, {
-        text: '标准功能',
-        value: '1'
-      }, {
-        text: '自定义功能',
-        value: '2'
-      }],
+      filters: [
+        {
+          text: '全部',
+          value: ''
+        },
+        {
+          text: '标准功能',
+          value: '1'
+        },
+        {
+          text: '自定义功能',
+          value: '2'
+        }
+      ],
       visible: false
     }
   },
-  mounted () {
+  mounted() {
     this.getData()
   },
   methods: {
@@ -118,23 +139,25 @@ export default {
       this.loading = true
       this.list = []
       this.categoryIds = []
-      this.dataFun({productKey: this.productKey}).then(res => {
-        if (res.code === 200) {
-          if (res.data) {
-            this.allData = res.data
-            this.dealDataByType()
+      this.dataFun({ productKey: this.productKey })
+        .then(res => {
+          if (res.code === 200) {
+            if (res.data) {
+              this.allData = res.data
+              this.dealDataByType()
+            }
+          } else {
+            this.$message.error(res.message)
           }
-        } else {
-          this.$message.error(res.message)
-        }
-        this.loading = false
-      }).catch(() => {
-        this.$message.error('功能列表获取失败')
-        this.loading = false
-      })
+          this.loading = false
+        })
+        .catch(() => {
+          this.$message.error('功能列表获取失败')
+          this.loading = false
+        })
     },
-    dealDataByType () {
-      for (let key in this.allData) {
+    dealDataByType() {
+      for (const key in this.allData) {
         if (key.indexOf('Json') > -1 && key !== 'allJson') {
           let arr = this.allData[key]
           if (Array.isArray(arr)) {
@@ -165,7 +188,7 @@ export default {
               item.accessMode_ = item.accessMode
               if (item.accessMode === 'rw') {
                 item.accessMode = '0'
-              } else if(item.accessMode == 'r') {
+              } else if (item.accessMode === 'r') {
                 item.accessMode = '1'
               }
             })
@@ -183,7 +206,7 @@ export default {
       }
     },
     // 属性的数据范围的处理
-    dealDataDefinition (dataType) {
+    dealDataDefinition(dataType) {
       if (!dataType) {
         return
       }
@@ -199,7 +222,7 @@ export default {
         case '3':
           str = `枚举值：`
           if (specs) {
-            for (let key in specs) {
+            for (const key in specs) {
               str = `${str}\n\t${key} - ${specs[key]}`
             }
           }
@@ -207,7 +230,7 @@ export default {
         case '4':
           str = `布尔值：`
           if (specs) {
-            for (let key in specs) {
+            for (const key in specs) {
               str = `${str}\n\t${key} - ${specs[key]}`
             }
           }
@@ -220,34 +243,37 @@ export default {
       }
       return str
     },
-    showPopover (e) {
+    showPopover(e) {
       this.selectType = {
         type: this.type
       }
-      let el = e.target
+      const el = e.target
       this.visible = true
       this.$nextTick(() => {
-          let pop = this.$refs.popover
-          pop.popperJS._reference = el
-          pop.popperJS.state.position = pop.popperJS._getPosition(pop.popperJS._popper, pop.popperJS._reference)
-          pop.popperJS.update()
+        const pop = this.$refs.popover
+        pop.popperJS._reference = el
+        pop.popperJS.state.position = pop.popperJS._getPosition(
+          pop.popperJS._popper,
+          pop.popperJS._reference
+        )
+        pop.popperJS.update()
       })
     },
-    setSelectType (key) {
+    setSelectType(key) {
       this.selectType = {
         type: key
       }
     },
-    setSelectTypeConfrim () {
+    setSelectTypeConfrim() {
       this.visible = false
       this.type = this.selectType.type
       this.getData()
     },
-    resetSelectType () {
+    resetSelectType() {
       this.type = ''
       this.getData()
     },
-    handleEdit () {
+    handleEdit() {
       this.$emit('edit')
     }
   }

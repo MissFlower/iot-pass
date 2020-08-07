@@ -1,4 +1,4 @@
-<!-- 
+<!--
   文件作者：mawenjuan
   创建日期：2020.6.16
   文件说明：身份验证页面
@@ -22,11 +22,7 @@
             <div class="dib">{{ phone }}</div>
           </el-form-item>
           <el-form-item label="验证码：">
-            <el-input
-              v-model="code"
-              placeholder="请输入验证码"
-              class="w120 mr20"
-            ></el-input>
+            <el-input v-model="code" placeholder="请输入验证码" class="w120 mr20"></el-input>
             <el-button @click="getCode">{{ msg }}</el-button>
           </el-form-item>
           <div class="mt20">
@@ -47,11 +43,11 @@
 </template>
 
 <script>
-import { sendCode, verifyCode } from "@/api";
+import { sendCode, verifyCode } from '@/api'
 
-import emailBand from "./children/emailBand";
-import phoneBand from "./children/phoneBand";
-import passwordUpdate from "./children/updatePassword";
+import emailBand from './children/emailBand'
+import phoneBand from './children/phoneBand'
+import passwordUpdate from './children/updatePassword'
 import sendCodeVerify from '@/components/sendCodeVerify'
 
 export default {
@@ -60,16 +56,16 @@ export default {
     return {
       loading: false,
       active: 1,
-      code: "",
-      phone: "",
+      code: '',
+      phone: '',
       timerVal: null,
-      msg: "获取短信验证码",
+      msg: '获取短信验证码',
       seconds: 0,
       flag: null,
-      title: "",
+      title: '',
       type: 2,
       verifyFlag: false
-    };
+    }
   },
   computed: {
     userInfo() {
@@ -78,7 +74,7 @@ export default {
   },
   watch: {
     flag: function() {
-      switch(this.flag * 1) {
+      switch (this.flag * 1) {
         case 1:
           this.title = '修改安全邮箱'
           if (this.userInfo.email) {
@@ -103,14 +99,14 @@ export default {
     }
   },
   mounted() {
-    if (JSON.parse(localStorage.getItem("info")) || this.userInfo) {
-      const info = this.userInfo ? this.userInfo : JSON.parse(localStorage.getItem("info"))
-      this.phone = info.phone;
+    if (JSON.parse(localStorage.getItem('info')) || this.userInfo) {
+      const info = this.userInfo ? this.userInfo : JSON.parse(localStorage.getItem('info'))
+      this.phone = info.phone
       if (this.$route.query.flag) {
         this.flag = this.$route.query.flag
       }
     } else {
-      this.$message.warning("没有用户信息，请重新登录")
+      this.$message.warning('没有用户信息，请重新登录')
       this.$router.push('/login')
     }
   },
@@ -120,47 +116,47 @@ export default {
         this.verifyFlag = true
       }
     },
-    sendCodeFun (data) {
-      this.loading = true;
-        sendCode({
-          phone: this.phone,
-          type: this.type,
-          code: data.code,
-          uuid: data.uuid
-        }).then(res => {
-          if (res.code === 200) {
-            this.seconds = 61;
-            this.timer();
-          } else {
-            this.$message.error(res.message);
-          }
-          this.loading = false;
-        }).catch(() => {
-          this.$message.warning('验证码获取失败')
-          this.loading = false
-        })
+    sendCodeFun(data) {
+      this.loading = true
+      sendCode({
+        phone: this.phone,
+        type: this.type,
+        code: data.code,
+        uuid: data.uuid
+      }).then(res => {
+        if (res.code === 200) {
+          this.seconds = 61
+          this.timer()
+        } else {
+          this.$message.error(res.message)
+        }
+        this.loading = false
+      }).catch(() => {
+        this.$message.warning('验证码获取失败')
+        this.loading = false
+      })
     },
     timer() {
       if (this.seconds > 1) {
-        this.seconds--;
-        this.msg = this.seconds + " 秒后，可以重新获取";
-        this.timerVal = setTimeout(this.timer, 1000);
+        this.seconds--
+        this.msg = this.seconds + ' 秒后，可以重新获取'
+        this.timerVal = setTimeout(this.timer, 1000)
       } else {
-        this.msg = "重新发送";
-        this.seconds = 0;
+        this.msg = '重新发送'
+        this.seconds = 0
       }
     },
     // 取消操作
-    cancel () {
+    cancel() {
       this.$router.go(-1)
     },
     // 提交函数
     submit() {
-      if (this.code === "") {
-        this.$message.warning("请输入验证码");
-        return;
+      if (this.code === '') {
+        this.$message.warning('请输入验证码')
+        return
       }
-      this.loading = true;
+      this.loading = true
       verifyCode({
         code: this.code,
         phone: this.phone,
@@ -168,36 +164,36 @@ export default {
       })
         .then(res => {
           if (res.code === 200) {
-            this.submitFun();
+            this.submitFun()
           } else {
-            this.$message.warning(res.message);
+            this.$message.warning(res.message)
           }
-          this.loading = false;
+          this.loading = false
         })
         .catch(() => {
-          this.$message.warning("验证失败");
-          this.loading = false;
-        });
+          this.$message.warning('验证失败')
+          this.loading = false
+        })
     },
     submitFun() {
       if (this.active === 1) {
-        this.active++;
-        clearTimeout(this.timerVal);
+        this.active++
+        clearTimeout(this.timerVal)
       }
     },
     // 图片验证码关闭回调
-    closeVarifyDialog () {
+    closeVarifyDialog() {
       this.verifyFlag = false
     },
     // 图片验证码提交的回调
-    successVerifyDialog (data) {
+    successVerifyDialog(data) {
       this.closeVarifyDialog()
       if (data) {
         this.sendCodeFun(data)
       }
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 #verify {

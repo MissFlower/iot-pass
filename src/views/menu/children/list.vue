@@ -1,4 +1,4 @@
-<!-- 
+<!--
   文件作者：mawenjuan
   创建日期：2020.6.19
   文件说明：菜单管理的列表
@@ -31,26 +31,16 @@
           </span>
         </el-input>
       </div>
-      <el-button
-        v-if="authArr.indexOf('menu_add') > -1"
-        type="primary"
-        @click="handleEdit(2)"
-      >
-        新建菜单
-      </el-button>
+      <el-button v-if="authArr.indexOf('menu_add') > -1" type="primary" @click="handleEdit(2)">新建菜单</el-button>
     </div>
     <el-table :data="list" border>
       <el-table-column label="ID" prop="menuId" width="80"></el-table-column>
       <el-table-column label="菜单名称" prop="name"></el-table-column>
       <el-table-column label="菜单编号" prop="code"></el-table-column>
       <el-table-column label="上层菜单">
-        <template slot-scope="scope">
-          {{
-            menuObj[scope.row.pcode]
-              ? menuObj[scope.row.pcode]
-              : scope.row.pcode
-          }}
-        </template>
+        <template
+          slot-scope="scope"
+        >{{ menuObj[scope.row.pcode] ? menuObj[scope.row.pcode] : scope.row.pcode }}</template>
       </el-table-column>
       <el-table-column label="请求地址" prop="url"></el-table-column>
       <el-table-column label="菜单标记" width="80" align="center">
@@ -62,9 +52,9 @@
       <el-table-column label="图标" prop="icon"></el-table-column>
       <el-table-column label="状态" prop="status" width="80" align="center">
         <template slot-scope="scope">
-          <span :class="scope.row.status == 'ENABLE' ? 'success' : 'red'">
-            {{ scope.row.status == "ENABLE" ? "启用" : "禁用" }}
-          </span>
+          <span
+            :class="scope.row.status == 'ENABLE' ? 'success' : 'red'"
+          >{{ scope.row.status == "ENABLE" ? "启用" : "禁用" }}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -97,14 +87,13 @@
       layout="total, prev, pager, next"
       :total="total"
       class="tr mt20"
-    >
-    </el-pagination>
+    ></el-pagination>
   </div>
 </template>
 
 <script>
 // import { dealFun } from "@/data/fun";
-import { getMenuList, delMenu } from "@/api/menu";
+import { getMenuList, delMenu } from '@/api/menu'
 export default {
   data() {
     return {
@@ -112,111 +101,111 @@ export default {
       formData: {
         pageNum: 1,
         pageSize: 10,
-        name: "",
-        code: ""
+        name: '',
+        code: ''
       },
       list: [],
       total: 0,
       menuObj: {}
-    };
-  },
-  watch: {
-    "formData.code": function() {
-      if (this.$fun.trim(this.formData.code) === "") {
-        this.handleCurrentChange(1);
-      }
-    },
-    "formData.name": function() {
-      if (this.$fun.trim(this.formData.name) === "") {
-        this.handleCurrentChange(1);
-      }
     }
   },
   computed: {
     authArr() {
-      return this.$store.state.app.functionArr;
+      return this.$store.state.app.functionArr
+    }
+  },
+  watch: {
+    'formData.code': function() {
+      if (this.$fun.trim(this.formData.code) === '') {
+        this.handleCurrentChange(1)
+      }
+    },
+    'formData.name': function() {
+      if (this.$fun.trim(this.formData.name) === '') {
+        this.handleCurrentChange(1)
+      }
     }
   },
   mounted() {
-    this.getData();
+    this.getData()
   },
   methods: {
     getData() { // 获取菜单列表
-      this.loading = true;
-      this.list = [];
-      this.menuObj = {};
+      this.loading = true
+      this.list = []
+      this.menuObj = {}
       getMenuList(this.formData).then(res => {
         if (res.code === 200) {
           if (res.data.data) {
             if (res.data.data.length > 0) {
               res.data.data.forEach(item => {
-                this.menuObj[item.code] = item.name;
-              });
+                this.menuObj[item.code] = item.name
+              })
             }
-            this.list = res.data.data;
-            this.total = res.data.total;
+            this.list = res.data.data
+            this.total = res.data.total
           }
         } else {
-          this.$message.error(res.message);
+          this.$message.error(res.message)
         }
-        this.loading = false;
+        this.loading = false
       }).catch(() => {
         this.loading = false
         this.$message.warning('菜单列表获取失败')
       })
     },
     handleEdit(key, row) {
-      this.$parent.showCon(key, row);
+      this.$parent.showCon(key, row)
     },
     handleClose(row) { // 删除菜单
-      const str = "确认删除该菜单吗？";
-      this.$confirm(str, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
+      const str = '确认删除该菜单吗？'
+      this.$confirm(str, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
         .then(() => {
-          this.loading = true;
+          this.loading = true
           delMenu({
             id: row.menuId
           })
             .then(res => {
               if (res.code === 200) {
-                this.$message.success("菜单删除成功");
-                this.getData();
+                this.$message.success('菜单删除成功')
+                this.getData()
               } else {
-                this.$message.error(res.message);
+                this.$message.error(res.message)
               }
-              this.loading = false;
+              this.loading = false
             })
             .catch(() => {
-              this.$message.error("菜单删除失败");
-              this.loading = false;
-            });
+              this.$message.error('菜单删除失败')
+              this.loading = false
+            })
         })
         .catch(() => {
-          this.$message("操作已取消");
-        });
+          this.$message('操作已取消')
+        })
     },
     clearFun(key) {
       this.formData[key] = ''
     },
     searchNameFun() { // 筛选
-      if (this.$fun.trim(this.formData.name) !== "") {
-        this.handleCurrentChange(1);
+      if (this.$fun.trim(this.formData.name) !== '') {
+        this.handleCurrentChange(1)
       }
     },
-    searchCodeFun() {// 筛选
-      if (this.$fun.trim(this.formData.code) !== "") {
-        this.handleCurrentChange(1);
+    searchCodeFun() { // 筛选
+      if (this.$fun.trim(this.formData.code) !== '') {
+        this.handleCurrentChange(1)
       }
     },
-    handleCurrentChange(page) {// 当前页改变
-      this.formData.pageNum = page;
-      this.getData();
+    handleCurrentChange(page) { // 当前页改变
+      this.formData.pageNum = page
+      this.getData()
     }
   }
-};
+}
 </script>
 
 <style lang="scss">
@@ -226,7 +215,7 @@ export default {
   width: 100%;
   .el-input__suffix-inner {
     line-height: 32px;
-    [class^=el-icon-] + [class^=el-icon-] {
+    [class^="el-icon-"] + [class^="el-icon-"] {
       margin-left: 5px;
     }
   }

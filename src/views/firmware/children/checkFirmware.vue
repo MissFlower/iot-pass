@@ -11,36 +11,28 @@
       width="420px"
       :before-close="closeDialog"
     >
-      <el-form
-        :model="form"
-        ref="ruleForm"
-        label-width="150px"
-        :rules="rules"
-        v-loading='loading'
-      >
+      <el-form :model="form" ref="ruleForm" label-width="150px" :rules="rules" v-loading="loading">
         <el-form-item label="待升级版本号" prop="srcVersions">
           <el-select v-model="version" multiple class="w200">
             <el-option v-for="ver in srcVersionList" :key="ver" :label="ver" :value="ver"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="待验证设备" prop="showDeviceNames">
-          <el-select class="w200"
+          <el-select
+            class="w200"
             v-model="form.showDeviceNames"
             multiple
             placeholder="请选择设备"
             @focus.stop="selectDevice"
           >
-              <option value=""></option>
+            <option value></option>
           </el-select>
         </el-form-item>
-        <el-form-item
-          label="固件验证超时时间（分钟）"
-          label-width="150px"
-          prop="timeOut"
-        >
+        <el-form-item label="固件验证超时时间（分钟）" label-width="150px" prop="timeOut">
           <el-input
             v-model.number="form.timeOut"
-            auto-complete="off" class="w200"
+            auto-complete="off"
+            class="w200"
             placeholder="请输入验证超时时间（分钟）"
           ></el-input>
         </el-form-item>
@@ -50,20 +42,10 @@
         <el-button type="primary" @click="verifySubmit">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog
-      title="验证固件"
-      :visible.sync="progressVisible"
-      width="20%"
-      :show-close="showClose"
-    >
-      <p>
-        {{ checkStatus === "1" ? "固件验证中" : "固件验证失败" }}
-      </p>
+    <el-dialog title="验证固件" :visible.sync="progressVisible" width="20%" :show-close="showClose">
+      <p>{{ checkStatus === "1" ? "固件验证中" : "固件验证失败" }}</p>
       <p v-if="checkStatus === '2'">提示：{{ checkMessage }}</p>
-      <el-progress
-        :percentage="checkPer"
-        v-if="checkStatus !== '2'"
-      ></el-progress>
+      <el-progress :percentage="checkPer" v-if="checkStatus !== '2'"></el-progress>
       <div slot="footer" class="dialog-footer">
         <el-button @click="progressVisible = false">关 闭</el-button>
       </div>
@@ -77,24 +59,32 @@
   </div>
 </template>
 <script>
-import ChooseDevice from "./chooseDevice";
-import { addVerify, getSrcVersionList } from "@/api/fireware";
+import ChooseDevice from './chooseDevice'
+import { addVerify, getSrcVersionList } from '@/api/fireware'
 export default {
+  components: {
+    ChooseDevice
+  },
   props: {
     checkFmVisible: {
-      type: Boolean
+      type: Boolean,
+      default: false
     },
     checkFmId: {
-      type: String
+      type: String,
+      default: ''
     },
     srcVersion: {
-      type: String
+      type: String,
+      default: ''
     },
     fmDeviceList: {
-        type: Array
+      type: Array,
+      default: () => []
     },
     checkInfo: {
-      type: Object
+      type: Object,
+      default: () => {}
     }
   },
   data() {
@@ -115,8 +105,8 @@ export default {
     return {
       loading: false,
       form: {
-        fmId: "",
-        srcVersions: "",
+        fmId: '',
+        srcVersions: '',
         deviceIds: [],
         showDeviceNames: [],
         timeOut: ''
@@ -125,15 +115,15 @@ export default {
       progressVisible: false,
       showClose: false,
       checkPer: 0,
-      checkStatus: "1",
-      checkMessage: "",
+      checkStatus: '1',
+      checkMessage: '',
       rules: {
         srcVersions: [
-          {required: true, message: '请输入待升级版本号', trigger: 'change'},
-          { validator: validSrcVersion, trigger: 'change'}
+          { required: true, message: '请输入待升级版本号', trigger: 'change' },
+          { validator: validSrcVersion, trigger: 'change' }
         ],
         showDeviceNames: [
-          {required: true, validator: validateSelectDevice, trigger: 'blur'}
+          { required: true, validator: validateSelectDevice, trigger: 'blur' }
         ],
         timeOut: [
           // { required: true, message: '请输入设备升级超时时间', trigger: 'blur' },
@@ -142,96 +132,93 @@ export default {
       },
       version: [],
       srcVersionList: []
-    };
+    }
   },
-  components: {
-    ChooseDevice
-  },
-  mounted () {
+  mounted() {
     if (this.checkInfo) {
       this.getVersionList()
       this.form.showDeviceNames = []
-      this.form.srcVersions = this.checkInfo.srcVersion;
-      this.form.fmId = this.checkInfo.id + '';
+      this.form.srcVersions = this.checkInfo.srcVersion
+      this.form.fmId = this.checkInfo.id + ''
       if (this.checkInfo.srcVersion) {
         this.version = this.checkInfo.srcVersion.split(',')
       }
     }
   },
   methods: {
-      // 提交验证固件
+    // 提交验证固件
     verifySubmit() {
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
           this.form.srcVersions = this.version.join(',')
-          let data = {
-            "fmId": this.form.fmId,
-            "srcVersions": this.form.srcVersions,
-            "deviceIds": this.form.deviceIds,
+          const data = {
+            'fmId': this.form.fmId,
+            'srcVersions': this.form.srcVersions,
+            'deviceIds': this.form.deviceIds,
             timeOut: this.form.timeOut
-          };
+          }
           addVerify(data).then(res => {
             if (res.code === 200) {
               this.$message.success('提交成功')
             } else {
               this.$message.error(res.message)
             }
-            this.progressVisible = true;
-            this.$emit("checkVisible", this.checkFmVisible);
-            this.checkProgress(res);
-          });
+            this.progressVisible = true
+            this.$emit('checkVisible', this.checkFmVisible)
+            this.checkProgress(res)
+          })
         }
       })
     },
-      // 进度条
+    // 进度条
     checkProgress(res) {
-      let self = this;
-      let timer = setInterval(function() {
+      const self = this
+      const timer = setInterval(function() {
         if (self.checkPer === 99) {
-          clearInterval(timer);
+          clearInterval(timer)
         } else {
-          self.checkPer += 1;
+          self.checkPer += 1
         }
-      }, 100);
+      }, 100)
       if (res.code === 200) {
-        clearInterval(timer);
-        this.checkPer = 100;
-        this.checkStatus = "1";
-        this.$emit("refreshList", true);
+        clearInterval(timer)
+        this.checkPer = 100
+        this.checkStatus = '1'
+        this.$emit('refreshList', true)
       } else {
-        clearInterval(timer);
-        this.checkStatus = "2";
-        this.checkMessage = res.message;
+        clearInterval(timer)
+        this.checkStatus = '2'
+        this.checkMessage = res.message
       }
     },
-      // 关闭弹窗
+    // 关闭弹窗
     closeDialog() {
       this.form = {
-        fmId: "",
-        srcVersions: "",
+        fmId: '',
+        srcVersions: '',
         deviceIds: [],
         showDeviceNames: []
-      };
-      this.$refs["ruleForm"].resetFields(); // 清空弹出框校验
-      this.$emit("checkVisible", this.checkFmVisible);
+      }
+      this.$refs['ruleForm'].resetFields() // 清空弹出框校验
+      this.$emit('checkVisible', this.checkFmVisible)
     },
     // 获取选中的设备
     multipleDevice(checkedDeviceList) {
-      this.form.showDeviceNames = [];
-      this.form.deviceIds = [];
+      this.form.showDeviceNames = []
+      this.form.deviceIds = []
       checkedDeviceList.forEach(item => {
-        this.form.showDeviceNames.push(item.deviceName);
-        this.form.deviceIds.push(item.deviceId);
+        this.form.showDeviceNames.push(item.deviceName)
+        this.form.deviceIds.push(item.deviceId)
       })
     },
     selectDevice() {
-      this.chooseDeviceVisible = true;
+      this.chooseDeviceVisible = true
     },
     deviceVisible() {
-      this.chooseDeviceVisible = false;
+      this.chooseDeviceVisible = false
     },
     // 获取版本信息
-    getVersionList () {
+    getVersionList() {
       this.loading = true
       getSrcVersionList({
         productId: this.checkInfo.productId,
@@ -247,5 +234,5 @@ export default {
       })
     }
   }
-};
+}
 </script>

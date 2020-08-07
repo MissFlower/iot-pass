@@ -12,29 +12,34 @@
           v-for="(item,index) in productList"
           :key="index"
           :label="item.productName"
-          :value="item.id">
-        </el-option>
+          :value="item.id"
+        ></el-option>
       </el-select>
 
       <div class="deviceCountView" v-for="(obj,index) in deviceCountObj" :key="index">
         <div class="df ai_c">
-          <span v-if='index!=0' class="dib mr5" :style="{width:'8px', height:'8px', borderRadius:'4px', background: index==1?'#0A59C0':'#1D7F2F'}"></span>
-          <span>{{obj.title}}</span>
-          <el-popover
-            placement="top-start"
-            width="160"
-            trigger="hover"
-            :content="obj.alert">
+          <span
+            v-if="index!=0"
+            class="dib mr5"
+            :style="{width:'8px', height:'8px', borderRadius:'4px', background: index==1?'#0A59C0':'#1D7F2F'}"
+          ></span>
+          <span>{{ obj.title }}</span>
+          <el-popover placement="top-start" width="160" trigger="hover" :content="obj.alert">
             <span class="el-icon-question ml2 img" slot="reference"></span>
           </el-popover>
         </div>
-        <div class="Count">{{obj.count}}</div>
+        <div class="Count">{{ obj.count }}</div>
       </div>
     </div>
 
     <div class="mb20 df jc_sb">
       <div class="df">
-        <el-input placeholder="请输入名称" v-model="searchInputValue" class="searchInput" @change="searchBtnTouch">
+        <el-input
+          placeholder="请输入名称"
+          v-model="searchInputValue"
+          class="searchInput"
+          @change="searchBtnTouch"
+        >
           <el-select
             class="w120"
             v-model="searchTypeSelect"
@@ -47,20 +52,41 @@
           </el-select>
           <span slot="suffix">
             <i class="el-icon-search hand" @click="searchBtnTouch"></i>
-            <i class="el-icon-close hand" v-if="searchInputValue != ''" @click="clearFun('searchInputValue')"></i>
+            <i
+              class="el-icon-close hand"
+              v-if="searchInputValue != ''"
+              @click="clearFun('searchInputValue')"
+            ></i>
           </span>
         </el-input>
-        <el-input class="ml10 mr10 w150 searchInput" placeholder="固件版本" v-model="fmVersionValue" @change="searchBtnTouch">
+        <el-input
+          class="ml10 mr10 w150 searchInput"
+          placeholder="固件版本"
+          v-model="fmVersionValue"
+          @change="searchBtnTouch"
+        >
           <span slot="suffix">
             <i class="el-icon-search hand" @click="searchBtnTouch"></i>
-            <i class="el-icon-close hand" v-if="fmVersionValue != ''" @click="clearFun('fmVersionValue')"></i>
+            <i
+              class="el-icon-close hand"
+              v-if="fmVersionValue != ''"
+              @click="clearFun('fmVersionValue')"
+            ></i>
           </span>
         </el-input>
         <!-- <el-button icon="el-icon-search" @click="searchBtnTouch"></el-button> -->
       </div>
       <div>
-        <el-button v-if="authArr.indexOf('device_new')>-1" type="primary" @click="toNewDevice(false)">添加设备</el-button>
-        <el-button v-if="authArr.indexOf('device_batchNew')>-1" type="primary" @click="toNewDevice(true)">批量添加</el-button>
+        <el-button
+          v-if="authArr.indexOf('device_new')>-1"
+          type="primary"
+          @click="toNewDevice(false)"
+        >添加设备</el-button>
+        <el-button
+          v-if="authArr.indexOf('device_batchNew')>-1"
+          type="primary"
+          @click="toNewDevice(true)"
+        >批量添加</el-button>
       </div>
     </div>
     <el-table :data="list" border @selection-change="handleSelectionChange" ref="multipleTable">
@@ -74,33 +100,65 @@
       <el-table-column prop="lastLogoutTime" label="最后登出时间"></el-table-column>
       <el-table-column prop="deviceStatus" label="状态/启用状态">
         <template v-slot="device">
-          <span class="deviceStatusView"><div :style="{background: device.row.statusColor}"></div>{{device.row.enableBool?device.row.deviceStatusStr:'已禁用'}}</span>
-          <el-switch :disabled="authArr.indexOf('device_enable')<0" v-model="device.row.enableBool" @change="deviceEnable([device.row])"></el-switch>
+          <span class="deviceStatusView">
+            <div :style="{background: device.row.statusColor}"></div>
+            {{ device.row.enableBool?device.row.deviceStatusStr:'已禁用' }}
+          </span>
+          <el-switch
+            :disabled="authArr.indexOf('device_enable')<0"
+            v-model="device.row.enableBool"
+            @change="deviceEnable([device.row])"
+          ></el-switch>
         </template>
       </el-table-column>
       <el-table-column label="操作">
         <template v-slot="scope">
           <el-button @click="lookClick(scope.row)" type="text" size="small">查看</el-button>
-          <el-button v-if="authArr.indexOf('device_delete')>-1" @click="deleteClick(scope.row)" type="text" size="small">删除</el-button>
+          <el-button
+            v-if="authArr.indexOf('device_delete')>-1"
+            @click="deleteClick(scope.row)"
+            type="text"
+            size="small"
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <div class="pr">
       <div class="bottomSeleView" v-if="list.length">
-        <el-checkbox v-if="authArr.indexOf('device_delete')>-1 || authArr.indexOf('device_enable')>-1" @change="bottomSeleChange" v-model="bottomSeleChecked" :disabled="bottomSeleDis"></el-checkbox>
-        <el-popconfirm v-if="authArr.indexOf('device_delete')>-1" :title="'确定要批量删除选中的'+deviceSelection.length+'个设备吗？'" @onConfirm="batchOperate(1)" class="ml10">
+        <el-checkbox
+          v-if="authArr.indexOf('device_delete')>-1 || authArr.indexOf('device_enable')>-1"
+          @change="bottomSeleChange"
+          v-model="bottomSeleChecked"
+          :disabled="bottomSeleDis"
+        ></el-checkbox>
+        <el-popconfirm
+          v-if="authArr.indexOf('device_delete')>-1"
+          :title="'确定要批量删除选中的'+deviceSelection.length+'个设备吗？'"
+          @onConfirm="batchOperate(1)"
+          class="ml10"
+        >
           <el-button slot="reference" type="primary" :disabled="bottomSeleDis">删除</el-button>
         </el-popconfirm>
-        <el-popconfirm v-if="authArr.indexOf('device_enable')>-1" :title="'确定要批量禁用选中的'+deviceSelection.length+'个设备吗？'" @onConfirm="batchOperate(2)" class="ml10">
+        <el-popconfirm
+          v-if="authArr.indexOf('device_enable')>-1"
+          :title="'确定要批量禁用选中的'+deviceSelection.length+'个设备吗？'"
+          @onConfirm="batchOperate(2)"
+          class="ml10"
+        >
           <el-button slot="reference" type="primary" :disabled="bottomSeleDis">禁用</el-button>
         </el-popconfirm>
-        <el-popconfirm v-if="authArr.indexOf('device_enable')>-1" :title="'确定要批量启用选中的'+deviceSelection.length+'个设备吗？'" @onConfirm="batchOperate(3)" class="ml10">
+        <el-popconfirm
+          v-if="authArr.indexOf('device_enable')>-1"
+          :title="'确定要批量启用选中的'+deviceSelection.length+'个设备吗？'"
+          @onConfirm="batchOperate(3)"
+          class="ml10"
+        >
           <el-button slot="reference" type="primary" :disabled="bottomSeleDis">启用</el-button>
         </el-popconfirm>
       </div>
       <!-- 分页-->
-      <pagination :data="tableData" @pagination="handleCurrentChange" class="tr"/>
+      <pagination :data="tableData" @pagination="handleCurrentChange" class="tr" />
     </div>
     <!-- 添加设备 -->
     <newDevice v-if="showNewDevice" :appointProduck="selProduck"></newDevice>
@@ -110,45 +168,45 @@
 </template>
 
 <script>
-import newDevice from "./newDevice";
-import batchNewDevice from "./batchNewDevice";
-import Pagination from "@/components/Pagination"
-import { deviceList, deleteDevice, deviceBatchEnable, productList,deviceStatistics } from "@/api/deviceRequest";
+import newDevice from './newDevice'
+import batchNewDevice from './batchNewDevice'
+import Pagination from '@/components/Pagination'
+import { deviceList, deleteDevice, deviceBatchEnable, productList, deviceStatistics } from '@/api/deviceRequest'
 export default {
-  components: { newDevice,Pagination,batchNewDevice },
+  components: { newDevice, Pagination, batchNewDevice },
   data() {
     return {
       list: [],
-      deviceCountObj:[
-        {title:'设备总数',alert:'当前指定产品的设备总数',count:''},
-        {title:'激活设备',alert:'当前已激活的设备总数',count:''},
-        {title:'当前在线',alert:'当前在线的设备总数',count:''},
+      deviceCountObj: [
+        { title: '设备总数', alert: '当前指定产品的设备总数', count: '' },
+        { title: '激活设备', alert: '当前已激活的设备总数', count: '' },
+        { title: '当前在线', alert: '当前在线的设备总数', count: '' }
       ],
       tableData: {
-        pageCount: 0, //总页数
+        pageCount: 0, // 总页数
         total: 0, // 总条数
-        pageSize: 10, //一页大小
-        pageNum: 0, // 第几页 从0开始
+        pageSize: 10, // 一页大小
+        pageNum: 0 // 第几页 从0开始
       },
       // productSelIndex: 0,
       productId: '',
-      productList: [{productName:'全部产品'}],
+      productList: [{ productName: '全部产品' }],
       selProduck: '',
-      searchTypeSelect: "1",
-      searchInputValue: "",
-      fmVersionValue: "",
+      searchTypeSelect: '1',
+      searchInputValue: '',
+      fmVersionValue: '',
       showNewDevice: false,
       showBatchNewDevice: false,
       loading: false,
       deviceSelection: [],
       bottomSeleDis: true,
       bottomSeleChecked: false
-    };
+    }
   },
 
   computed: {
     authArr() {
-      return this.$store.state.app.functionArr;
+      return this.$store.state.app.functionArr
     }
   },
 
@@ -156,18 +214,18 @@ export default {
     if (this.$route.query.productId) {
       this.productId = this.$route.query.productId
     }
-    //获取产品列表
-    this.getProductList();
+    // 获取产品列表
+    this.getProductList()
     this.changeProductFun()
   },
 
   methods: {
-    //获取设备列表
+    // 获取设备列表
     getDeviceList() {
-      this.loading = true;
+      this.loading = true
       deviceList({
-        deviceName: this.searchTypeSelect == "1" ? this.searchInputValue : "",
-        nickName: this.searchTypeSelect == "2" ? this.searchInputValue : "",
+        deviceName: this.searchTypeSelect === '1' ? this.searchInputValue : '',
+        nickName: this.searchTypeSelect === '2' ? this.searchInputValue : '',
         fmVersion: this.fmVersionValue,
         pageNum: this.tableData.pageNum,
         pageSize: this.tableData.pageSize,
@@ -175,37 +233,37 @@ export default {
       }).then(res => {
         if (res.code === 200) {
           if (res.data) {
-            let list = res.data.data;
-            //设备状态
-            let statusDict = {'0':'未激活','1':'在线','2':'离线'};
-            //节点类型
-            let nodeTypeDict = {'1':'直连设备','2':'网关子设备','3':'网关设备'};
+            const list = res.data.data
+            // 设备状态
+            const statusDict = { '0': '未激活', '1': '在线', '2': '离线' }
+            // 节点类型
+            const nodeTypeDict = { '1': '直连设备', '2': '网关子设备', '3': '网关设备' }
             var newList = list.map(function(value) {
-              if(value.deviceStatus != null){
-                value.deviceStatusStr = statusDict[value.deviceStatus.toString()];
+              if (value.deviceStatus != null) {
+                value.deviceStatusStr = statusDict[value.deviceStatus.toString()]
               }
-              if(value.nodeType != null){
-                value.nodeTypeStr = nodeTypeDict[value.nodeType.toString()];
+              if (value.nodeType != null) {
+                value.nodeTypeStr = nodeTypeDict[value.nodeType.toString()]
               }
-              value.enableBool = value.enable==0?true:false;
-              value.statusColor = !value.enableBool?'#d93026':value.deviceStatus==1?'#1EA214':'#ffc440';
-              return value;
-            });
-            this.list = newList;
+              value.enableBool = value.enable === 0
+              value.statusColor = !value.enableBool ? '#d93026' : value.deviceStatus === 1 ? '#1EA214' : '#ffc440'
+              return value
+            })
+            this.list = newList
 
-            let {data,...pagination} = res.data;
-            this.tableData = pagination;
+            const { ...pagination } = res.data
+            this.tableData = pagination
           }
         } else {
           this.$message.error(res.message)
         }
-        this.loading = false;
+        this.loading = false
       }).catch(() => {
-        this.loading = false;
+        this.loading = false
       })
     },
-    //获取产品列表
-    getProductList(){
+    // 获取产品列表
+    getProductList() {
       productList({
         pageNum: 1,
         pageSize: 100,
@@ -213,48 +271,48 @@ export default {
       }).then(res => {
         if (res.code === 200) {
           if (res.data) {
-            var list = res.data.data;
-            list.unshift({productName:'全部产品', id: ''});
-            this.productList = list;
+            var list = res.data.data
+            list.unshift({ productName: '全部产品', id: '' })
+            this.productList = list
           }
         }
       }).catch(() => {
-      });
+      })
     },
     // 产品选择改变调用函数，也是初始函数化调用的函数
-    changeProductFun () {
+    changeProductFun() {
       this.tableData.pageNum = 1
-      //获取设备列表
-      this.getDeviceList();
-      //获取指定产品设备统计
-      this.getDeviceStatistics();
+      // 获取设备列表
+      this.getDeviceList()
+      // 获取指定产品设备统计
+      this.getDeviceStatistics()
     },
-    //获取指定产品设备统计
-    getDeviceStatistics () {
+    // 获取指定产品设备统计
+    getDeviceStatistics() {
       deviceStatistics({
         productId: this.productId
       }).then(res => {
         if (res.code === 200) {
           if (res.data) {
-            //设备各种状态数量
-            this.deviceCountObj[0].count = res.data.deviceCount;
-            this.deviceCountObj[1].count = res.data.activateCount;
-            this.deviceCountObj[2].count = res.data.onlineCount;
+            // 设备各种状态数量
+            this.deviceCountObj[0].count = res.data.deviceCount
+            this.deviceCountObj[1].count = res.data.activateCount
+            this.deviceCountObj[2].count = res.data.onlineCount
           }
         }
       }).catch(() => {})
-      //清空设备名称、固件版本筛选条件
-      this.searchInputValue = '';
-      this.fmVersionValue = '';
+      // 清空设备名称、固件版本筛选条件
+      this.searchInputValue = ''
+      this.fmVersionValue = ''
     },
     // 清除按钮
-    clearFun (key) {
+    clearFun(key) {
       this[key] = ''
       this.getDeviceList()
     },
-    //搜索按钮
-    searchBtnTouch () {
-      this.getDeviceList();
+    // 搜索按钮
+    searchBtnTouch() {
+      this.getDeviceList()
     },
 
     /*
@@ -262,25 +320,25 @@ export default {
     devices  设备对象数组
     batchEnable  批量启用、禁用
     */
-    deviceEnable (devices,batchEnable) {
-      if (this.authArr.indexOf('device_enable')<0) return;
-      this.loading = true;
+    deviceEnable(devices, batchEnable) {
+      if (this.authArr.indexOf('device_enable') < 0) return
+      this.loading = true
       if (!batchEnable) {
-        let value = devices[0];
-        batchEnable = value.enable==0?'1':'0';
+        const value = devices[0]
+        batchEnable = value.enable === 0 ? '1' : '0'
       }
-      let ids = devices.map(function(value){
-        return value.id;
-      });
-      deviceBatchEnable({ids: ids, enable: batchEnable}).then(res => {
-        this.getDeviceList();
+      const ids = devices.map(function(value) {
+        return value.id
+      })
+      deviceBatchEnable({ ids: ids, enable: batchEnable }).then(res => {
+        this.getDeviceList()
         this.$message({
-          type: res.code == 200?"success":'warning',
+          type: res.code === 200 ? 'success' : 'warning',
           message: res.message
-        });
-        this.loading = false;
+        })
+        this.loading = false
       }).catch(() => {
-        this.loading = false;
+        this.loading = false
       })
     },
     /*
@@ -288,56 +346,56 @@ export default {
     deviceObj  设备对象
     */
     deleteClick(deviceObj) {
-      this.$confirm("确定要删除此设备么?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
+      this.$confirm('确定要删除此设备么?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       }).then(() => {
-        this.deleteDeviceRequest([deviceObj]);
-      }).catch(() => {});
+        this.deleteDeviceRequest([deviceObj])
+      }).catch(() => {})
     },
 
     /*
     设备删除请求
     devices  需要删除的设备数组
     */
-    deleteDeviceRequest (devices) {
-      this.loading = true;
-      var ids = [];
-      devices.map(function(value){
-        ids.push(value.id);
-      });
+    deleteDeviceRequest(devices) {
+      this.loading = true
+      var ids = []
+      devices.map(function(value) {
+        ids.push(value.id)
+      })
 
-      deleteDevice({ids: ids}).then(res => {
+      deleteDevice({ ids: ids }).then(res => {
         if (res.code === 200) {
-          //判断是否删除最后一页全部设备
-          if(this.tableData.pageNum!=1&&this.tableData.pageNum==this.tableData.pageCount && devices.length==this.tableData.total%this.tableData.pageSize){
-            this.tableData.pageNum--;
+          // 判断是否删除最后一页全部设备
+          if (this.tableData.pageNum !== 1 && this.tableData.pageNum === this.tableData.pageCount && devices.length === this.tableData.total % this.tableData.pageSize) {
+            this.tableData.pageNum--
           }
-          //获取设备统计信息
-          this.getDeviceStatistics();
-          //获取指定产品设备列表
-          this.getDeviceList();
+          // 获取设备统计信息
+          this.getDeviceStatistics()
+          // 获取指定产品设备列表
+          this.getDeviceList()
         }
         this.$message({
-          type: res.code == 200?"success":'warning',
+          type: res.code === 200 ? 'success' : 'warning',
           message: res.message
-        });
-        this.loading = false;
+        })
+        this.loading = false
       }).catch(() => {
-        this.loading = false;
+        this.loading = false
       })
     },
 
-    //设备选择
-    handleSelectionChange(val){
-      this.deviceSelection = val;
+    // 设备选择
+    handleSelectionChange(val) {
+      this.deviceSelection = val
       if (val.length) {
-        this.bottomSeleDis = false;
-        this.bottomSeleChecked = true;
+        this.bottomSeleDis = false
+        this.bottomSeleChecked = true
       } else {
-        this.bottomSeleDis = true;
-        this.bottomSeleChecked = false;
+        this.bottomSeleDis = true
+        this.bottomSeleChecked = false
       }
     },
 
@@ -345,12 +403,12 @@ export default {
     批量操作设备
     type 1:删除  2:禁用  3:启用
     */
-    batchOperate (type) {
-      if (type == 1) {
-        this.deleteDeviceRequest(this.deviceSelection);
+    batchOperate(type) {
+      if (type === 1) {
+        this.deleteDeviceRequest(this.deviceSelection)
       } else {
-        let enable = type==2?'1':'0';
-        this.deviceEnable(this.deviceSelection,enable);
+        const enable = type === 2 ? '1' : '0'
+        this.deviceEnable(this.deviceSelection, enable)
       }
     },
 
@@ -358,14 +416,14 @@ export default {
     底部选择框点击变化
     res  选择框更新后的值
     */
-    bottomSeleChange (res) {
+    bottomSeleChange(res) {
       if (!res) {
-        this.$refs.multipleTable.clearSelection();
+        this.$refs.multipleTable.clearSelection()
       }
     },
 
-    //添加设备
-    toNewDevice (batch) {
+    // 添加设备
+    toNewDevice(batch) {
       for (let i = 0; i < this.productList.length; i++) {
         const item = this.productList[i]
         if (item.id === this.productId) {
@@ -375,10 +433,10 @@ export default {
       }
       // this.selProduck = this.productList[this.productSelIndex];
 
-      if (batch) {//批量添加
-        this.showBatchNewDevice = true;
-      } else {//单个添加
-        this.showNewDevice = true;
+      if (batch) { // 批量添加
+        this.showBatchNewDevice = true
+      } else { // 单个添加
+        this.showNewDevice = true
       }
     },
 
@@ -386,14 +444,14 @@ export default {
     新建设备窗口关闭
     updata  是否更新数据
     */
-    newDeviceClose (updata) {
-      this.showNewDevice = false;
-      this.showBatchNewDevice = false;
+    newDeviceClose(updata) {
+      this.showNewDevice = false
+      this.showBatchNewDevice = false
       if (updata) {
-        //获取设备统计信息
-        this.getDeviceStatistics();
-        //获取指定产品设备列表
-        this.getDeviceList();
+        // 获取设备统计信息
+        this.getDeviceStatistics()
+        // 获取指定产品设备列表
+        this.getDeviceList()
       }
     },
 
@@ -401,41 +459,41 @@ export default {
     查看设备
     deviceObj  设备对象
     */
-    lookClick (deviceObj) {
-      this.$router.push(`deviceInfo?id=${deviceObj.id}`);
+    lookClick(deviceObj) {
+      this.$router.push(`deviceInfo?id=${deviceObj.id}`)
     },
 
-    //列表翻页
-    handleCurrentChange () {
-      this.getDeviceList();
+    // 列表翻页
+    handleCurrentChange() {
+      this.getDeviceList()
     }
 
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
-.deviceCountView{
+.deviceCountView {
   height: 45px;
   margin-left: 100px;
   border-left: 1px solid #ebecec;
   padding-left: 20px;
   font-size: 13px;
   color: #888;
-  .Count{
+  .Count {
     color: #373d41;
     font-size: 24px;
     margin-top: 5px;
   }
-  .img{
+  .img {
     opacity: 0.7;
   }
 }
 
-.deviceStatusView{
+.deviceStatusView {
   display: inline-block;
   width: 60px;
-  div{
+  div {
     display: inline-block;
     width: 8px;
     height: 8px;
@@ -445,10 +503,9 @@ export default {
   }
 }
 
-.bottomSeleView{
+.bottomSeleView {
   position: absolute;
   top: 30px;
   left: 10px;
 }
-
 </style>

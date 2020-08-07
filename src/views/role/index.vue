@@ -1,32 +1,21 @@
-<!-- 
+<!--
   文件作者：mawenjuan
   创建日期：2020.6.18
   文件说明：角色管理的主体
- -->
+-->
 <template>
   <div id="role">
-    <i
-      v-if="activeIndex == 2"
-      class="el-icon-back b pre-icon"
-      @click="switchCon(0)"
-    ></i>
-    <list
-      ref="list"
-      v-if="activeIndex == 0 || activeIndex == 1 || activeIndex == 3"
-    ></list>
-    <edit-role
-      v-if="editFlag"
-      :info="selectRow"
-      @close="handleCloseEditRole"
-    ></edit-role>
+    <i v-if="activeIndex == 2" class="el-icon-back b pre-icon" @click="switchCon(0)"></i>
+    <list ref="list" v-if="activeIndex == 0 || activeIndex == 1 || activeIndex == 3"></list>
+    <edit-role v-if="editFlag" :info="selectRow" @close="handleCloseEditRole"></edit-role>
     <role-auth v-if="activeIndex == 2" :info="selectRow"></role-auth>
   </div>
 </template>
 
 <script>
-import list from "./children/list";
-import editRole from "./children/editRole";
-import roleAuth from "./children/editRoleAuth";
+import list from './children/list'
+import editRole from './children/editRole'
+import roleAuth from './children/editRoleAuth'
 export default {
   components: { list, editRole, roleAuth },
   data() {
@@ -34,30 +23,30 @@ export default {
       activeIndex: 0,
       selectRow: null,
       editFlag: false
-    };
+    }
   },
   methods: {
     // 主题显示切换函数
     switchCon(key, row) {
       if (row) {
-        this.selectRow = row;
+        this.selectRow = row
       } else {
-        this.selectRow = null;
+        this.selectRow = null
       }
-      this.activeIndex = key;
+      this.activeIndex = key
     },
     // 显示编辑、添加角色弹框
     showEditRole(row) {
-      this.selectRow = row;
-      this.editFlag = true;
+      this.selectRow = row
+      this.editFlag = true
     },
     // 关闭编辑、添加角色弹框
     handleCloseEditRole() {
-      this.editFlag = false;
-      this.$refs.list.getData();
+      this.editFlag = false
+      this.$refs.list.getData()
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

@@ -16,9 +16,7 @@
           class="item"
           :class="activeTab == item.path ? 'active' : ''"
           @click="handleSelectTab(item)"
-        >
-          {{ item.title }}
-        </div>
+        >{{ item.title }}</div>
       </div>
       <div class="right">
         <router-view />

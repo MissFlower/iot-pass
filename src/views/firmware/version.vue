@@ -4,7 +4,12 @@
       <div class="topCon">
         <span>产品：</span>
         <el-select v-model="productId">
-          <el-option v-for="item in productList" :key="item.id" :value="item.id" :label="item.productName"></el-option>
+          <el-option
+            v-for="item in productList"
+            :key="item.id"
+            :value="item.id"
+            :label="item.productName"
+          ></el-option>
         </el-select>
         <div class="df mt10">
           <div class="item">
@@ -31,7 +36,7 @@
       <div class="main mt20">
         <div class="f16 b mb20">设备列表</div>
         <el-select v-model="version" @change="getDevice">
-          <el-option value="" label="全部版本"></el-option>
+          <el-option value label="全部版本"></el-option>
           <el-option v-for="(ver, index) in versionList" :key="index" :label="ver" :value="ver"></el-option>
         </el-select>
         <el-table :data="list">
@@ -48,11 +53,15 @@
         <div class="b">请选择固件所属产品</div>
         <div class="c9 mt5">选择后，您可随时从页面左上方选项进行切换</div>
         <el-select v-model="productId" size="mini" class="mt10" placeholder="请选择所属产品" filterable>
-          <el-option v-for="item in productList" :key="item.id" :value="item.id" :label="item.productName"></el-option>
+          <el-option
+            v-for="item in productList"
+            :key="item.id"
+            :value="item.id"
+            :label="item.productName"
+          ></el-option>
         </el-select>
       </div>
     </div>
-    
   </div>
 </template>
 
@@ -61,8 +70,8 @@ import drawEcharts from '@/data/echartDrawFun.js'
 import emptyCon from '@/components/empty'
 import { getProducts, getFmVers, getDeviceByVersiob, getVersionByProductId } from '@/api/fireware'
 export default {
-  components: {emptyCon},
-  data () {
+  components: { emptyCon },
+  data() {
     return {
       loading: false,
       productId: '',
@@ -74,16 +83,16 @@ export default {
     }
   },
   watch: {
-    productId: function () {
+    productId: function() {
       this.getData()
       this.getVersion()
     }
   },
-  mounted () {
+  mounted() {
     this.getProductList()
   },
   methods: {
-    getData () {
+    getData() {
       this.loading = true
       this.rightTableList = []
       getFmVers({
@@ -94,8 +103,8 @@ export default {
         // console.log(res)
         if (res.code === 200) {
           if (res.data.data.length > 0) {
-            let obj = {}
-            let setVersion = new Set()
+            const obj = {}
+            const setVersion = new Set()
             const setModuleType = new Set()
             this.rightTableList = res.data.data
             res.data.data.forEach(item => {
@@ -118,12 +127,12 @@ export default {
         this.loading = false
       })
     },
-    drawFun (obj, setVersion, setModuleType) {
+    drawFun(obj, setVersion, setModuleType) {
       const versionArr = [...setVersion]
       const moduleTypeArr = [...setModuleType]
       const reObj = {}
       moduleTypeArr.forEach(type => {
-        reObj[type] = {counts: [], proportions: []}
+        reObj[type] = { counts: [], proportions: [] }
         const row = reObj[type]
         versionArr.forEach(ver => {
           const item = obj[ver]
@@ -137,10 +146,10 @@ export default {
         })
       })
       this.$nextTick(() => {
-        drawEcharts.barChart2('chart', {reObj, versionArr})
+        drawEcharts.barChart2('chart', { reObj, versionArr })
       })
     },
-    getProductList () {
+    getProductList() {
       this.loading = true
       this.productList = []
       getProducts({
@@ -157,7 +166,7 @@ export default {
         this.loading = false
       })
     },
-    getDevice () {
+    getDevice() {
       this.loading = true
       this.list = []
       getDeviceByVersiob({
@@ -172,7 +181,7 @@ export default {
         this.loading = false
       })
     },
-    getVersion () {
+    getVersion() {
       this.versionList = []
       this.loading = true
       getVersionByProductId({
@@ -208,6 +217,7 @@ export default {
         height: 300px;
         width: 100%;
         position: relative;
+        overflow: auto;
         .chart {
           width: 100%;
           height: 100%;
@@ -220,7 +230,7 @@ export default {
   }
   .noCon {
     padding: 60px 0;
-    .svg-icon{
+    .svg-icon {
       width: 60px;
       height: 60px;
     }

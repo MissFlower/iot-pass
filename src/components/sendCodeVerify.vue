@@ -1,5 +1,11 @@
 <template>
-  <el-dialog id="sedCodeVerify" title="发送验证" :visible.sync="dialogVisible" width="400px" @close="close">
+  <el-dialog
+    id="sedCodeVerify"
+    title="发送验证"
+    :visible.sync="dialogVisible"
+    width="400px"
+    @close="close"
+  >
     <div v-loading="loading" class="df">
       <el-input v-model="formData.code" placeholder="输入验证码" class="w200 mr20"></el-input>
       <div class="icon-con">
@@ -17,9 +23,9 @@
 </template>
 
 <script>
-import {getCodeImg} from "@/api"
+import { getCodeImg } from '@/api'
 export default {
-  data () {
+  data() {
     return {
       dialogVisible: true,
       loading: false,
@@ -31,11 +37,11 @@ export default {
       seconds: 0
     }
   },
-  mounted () {
+  mounted() {
     this.getImg()
   },
   methods: {
-    getImg () {
+    getImg() {
       if (this.seconds > 0 && this.pic) {
         this.$message.warning('15秒内禁止重复获取')
         return
@@ -52,7 +58,7 @@ export default {
         this.loading = false
       })
     },
-    timer () {
+    timer() {
       if (this.seconds > 1) {
         this.seconds--
         setTimeout(this.timer, 1000)
@@ -60,13 +66,13 @@ export default {
         this.seconds = 0
       }
     },
-    handleCancel () {
+    handleCancel() {
       this.close()
     },
-    close () {
+    close() {
       this.$emit('close')
     },
-    submit () {
+    submit() {
       if (this.$fun.trim(this.formData.code) === '') {
         this.$message.warning('请输入图片中验证码')
         return

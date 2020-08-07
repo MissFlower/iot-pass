@@ -30,6 +30,9 @@ module.exports = {
     "vue/multiline-html-element-content-newline": "off",
     "vue/name-property-casing": ["error", "PascalCase"],
     "vue/no-v-html": "off",
+    'vue/html-self-closing': 0, // 忽略html标签自闭合
+    'vue/attributes-order': 0,
+    'vue/attribute-hyphenation': 0,
     'accessor-pairs': 2,
     'arrow-spacing': [2, {
       'before': true,
@@ -58,8 +61,9 @@ module.exports = {
       'after': true
     }],
     'handle-callback-err': [2, '^(err|error)$'],
-    'indent': [2, 2, {
-      'SwitchCase': 1
+    'indent': [1, 2, {
+      'SwitchCase': 1,
+      'MemberExpression': 'off'
     }],
     'jsx-quotes': [2, 'prefer-single'],
     'key-spacing': [2, {

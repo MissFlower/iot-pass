@@ -15,12 +15,7 @@
     width="500px"
     @close="handleClose"
   >
-    <el-form
-      ref="ruleForm"
-      :model="ruleForm"
-      :rules="rules"
-      label-width="100px"
-    >
+    <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
       <el-form-item label="产品：" prop="productSelIndex">
         <el-select
           v-model="ruleForm.productSelIndex"
@@ -44,12 +39,7 @@
       </el-form-item>
       <el-form-item class="mt20 tr" style="margin-bottom:0;">
         <el-button @click="handleCancel">取 消</el-button>
-        <el-button
-          type="primary"
-          @click="submitForm('ruleForm')"
-        >
-          确 定
-        </el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
       </el-form-item>
     </el-form>
   </el-dialog>

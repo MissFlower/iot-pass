@@ -8,10 +8,10 @@
 </template>
 
 <script>
-import paasHeader from "./header";
+import paasHeader from './header'
 export default {
   components: { paasHeader }
-};
+}
 </script>
 
 <style lang="scss" scoped>

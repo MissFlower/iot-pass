@@ -14,17 +14,14 @@
     @close="handleClose"
   >
     <div class="df ai_c mb20">
-      <div class="w100 tr"><span class="red">*</span>角色名称：</div>
+      <div class="w100 tr">
+        <span class="red">*</span>角色名称：
+      </div>
       <el-input v-model="editItem.name" placeholder="请输入角色名称" />
     </div>
     <div class="df">
       <div class="w100 tr">角色描述：</div>
-      <el-input
-        v-model="editItem.description"
-        type="textarea"
-        :rows="3"
-        placeholder="请输入角色描述"
-      />
+      <el-input v-model="editItem.description" type="textarea" :rows="3" placeholder="请输入角色描述" />
     </div>
     <span slot="footer" class="dialog-footer">
       <el-button @click="dialogVisible = false">取 消</el-button>
@@ -40,7 +37,7 @@ export default {
     info: {
       type: Object,
       default: () => {
-        return {}
+        return null
       }
     }
   },

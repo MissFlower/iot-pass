@@ -17,8 +17,12 @@
     <div class="con mt20 p20">
       <div class="f14">开始接入物联网设备</div>
       <div class="m_con df">
-        <div  v-for="(item, index) in mArr" :key="index">
-          <div class="m_item" @click="goToPath(item)" v-if="(item.auth && authArr.indexOf(item.auth) > -1) || !item.auth">
+        <div v-for="(item, index) in mArr" :key="index">
+          <div
+            class="m_item"
+            @click="goToPath(item)"
+            v-if="(item.auth && authArr.indexOf(item.auth) > -1) || !item.auth"
+          >
             <div class="text">
               <span>{{ item.name }}</span>
               <svg-icon icon-class="arrow" class="blue ml5"></svg-icon>
@@ -35,72 +39,72 @@
 // @ is an alias to /src
 
 export default {
-  name: "Home",
+  name: 'Home',
   data() {
     return {
       topArr: [
         {
-          text: "当月设备消息量",
-          sub: "product按计费逻辑统计)",
+          text: '当月设备消息量',
+          sub: 'product按计费逻辑统计)',
           value: 0
         },
         {
-          text: "当月设备消息量",
-          sub: "(按计费逻辑统计)",
+          text: '当月设备消息量',
+          sub: '(按计费逻辑统计)',
           value: 0
         },
         {
-          text: "当月设备消息量",
-          sub: "(按计费逻辑统计)",
+          text: '当月设备消息量',
+          sub: '(按计费逻辑统计)',
           value: 0
         },
         {
-          text: "当月设备消息量",
+          text: '当月设备消息量',
           value: 0
         },
         {
-          text: "当月设备消息量",
+          text: '当月设备消息量',
           value: 0
         },
         {
-          text: "当月设备消息量",
+          text: '当月设备消息量',
           value: 0
         }
       ],
       mArr: [
         {
-          name: "创建产品",
-          desc: "创建并定义产品功能 （设备模型）",
-          path: "/product/add-product",
+          name: '创建产品',
+          desc: '创建并定义产品功能 （设备模型）',
+          path: '/product/add-product',
           auth: 'add_product'
         },
         {
-          name: "添加设备",
-          desc: "创建并定义产品功能 （设备模型）",
-          path: "/device/deviceManage",
+          name: '添加设备',
+          desc: '创建并定义产品功能 （设备模型）',
+          path: '/device/deviceManage',
           auth: 'device_new'
         },
         {
-          name: "设备烧录与激活",
-          desc: "下载SDK并烧入设备证书至设备",
-          path: ""
+          name: '设备烧录与激活',
+          desc: '下载SDK并烧入设备证书至设备',
+          path: ''
         }
       ]
-    };
+    }
   },
   computed: {
-    authArr () {
+    authArr() {
       return this.$store.state.app.functionArr
     }
   },
   methods: {
-    goToPath (item) {
+    goToPath(item) {
       if (item.path) {
         this.$router.push(item.path)
       }
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

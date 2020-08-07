@@ -1,4 +1,4 @@
-<!-- 
+<!--
   文件作者：mawenjuan
   创建日期：2020.6.16
   文件说明：账号密码重置
@@ -9,18 +9,9 @@
       <div class="showImg"></div>
       <div class="form-con">
         <div class="f24 b">注册</div>
-        <el-form
-          ref="form"
-          :model="formData"
-          label-width="0"
-          :rules="rules"
-          class="wp100"
-        >
+        <el-form ref="form" :model="formData" label-width="0" :rules="rules" class="wp100">
           <el-form-item prop="account">
-            <el-input
-              v-model="formData.account"
-              placeholder="请输入账号名"
-            ></el-input>
+            <el-input v-model="formData.account" placeholder="请输入账号名"></el-input>
           </el-form-item>
           <el-form-item prop="password">
             <el-input
@@ -34,21 +25,13 @@
           </el-form-item>
           <el-form-item prop="code">
             <div class="pr wp100 df ai_c">
-              <el-input
-                v-model="code"
-                placeholder="请输入验证码"
-                class="flex1"
-              />
-              <el-button class="ml10 w100" @click="handleSendCode">
-                {{ msg }}
-              </el-button>
+              <el-input v-model="code" placeholder="请输入验证码" class="flex1" />
+              <el-button class="ml10 w100" @click="handleSendCode">{{ msg }}</el-button>
             </div>
           </el-form-item>
         </el-form>
         <div class="wp100">
-          <el-button type="primary" class="wp100" @click="handleSubmit"
-            >注册
-          </el-button>
+          <el-button type="primary" class="wp100" @click="handleSubmit">注册</el-button>
           <div class="df f12 c6 jc_sb mt10">
             <!-- <div>忘记密码</div> -->
             <!-- <div class="hand" @click="handleRedister">注册</div> -->
@@ -62,75 +45,75 @@
 
 <script>
 import sendCodeVerify from '@/components/sendCodeVerify'
-import { register, sendCode, verifyCode } from "@/api";
-import { phoneValidate } from "@/data/fun";
+import { register, sendCode, verifyCode } from '@/api'
+import { phoneValidate } from '@/data/fun'
 export default {
-  components: {sendCodeVerify},
+  components: { sendCodeVerify },
   data() {
     const validatePhone = (rule, value, callback) => {
-      let str = phoneValidate(value);
+      const str = phoneValidate(value)
       if (str.length > 0) {
-        callback(new Error(str));
+        callback(new Error(str))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     const validateCode = (rule, value, callback) => {
-      if (this.$fun.trim(this.code) === "") {
-        callback(new Error("请输入验证码"));
+      if (this.$fun.trim(this.code) === '') {
+        callback(new Error('请输入验证码'))
       } else if (this.$fun.trim(this.code).length !== 6) {
-        callback(new Error("验证码格式错误"));
+        callback(new Error('验证码格式错误'))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     const validatePassword = (value, rule, callback) => {
-      if (this.formData.password === "") {
-        callback(new Error("请输入密码"));
+      if (this.formData.password === '') {
+        callback(new Error('请输入密码'))
       } else {
-        const pwdRegex = new RegExp('(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])');
+        const pwdRegex = new RegExp('(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])')
         if (!pwdRegex.test(this.formData.password)) {
-          callback(new Error("您的密码复杂度太低（密码中必须包含大小写字母、数字)！"));
+          callback(new Error('您的密码复杂度太低（密码中必须包含大小写字母、数字)！'))
         } else {
-          callback();
+          callback()
         }
       }
-    };
+    }
     return {
       loading: false,
       formData: {
-        account: "",
-        phone: "",
-        password: ""
+        account: '',
+        phone: '',
+        password: ''
       },
-      msg: "发送验证码",
-      code: "",
+      msg: '发送验证码',
+      code: '',
       seconds: 0,
       rules: {
-        account: [{ required: true, message: "请输入用户名", trigger: "blur" }],
+        account: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
         password: [
-          { required: true, validator: validatePassword, trigger: "blur" },
+          { required: true, validator: validatePassword, trigger: 'blur' },
           { min: 8, max: 14, message: '长度在 8 到 14 个字符', trigger: 'blur' }
         ],
-        phone: [{ required: true, validator: validatePhone, trigger: "blur" }],
+        phone: [{ required: true, validator: validatePhone, trigger: 'blur' }],
         code: [
-          { required: true, validator: validateCode, trigger: "blur" },
-          { type: 'number', message: '请输入正确的验证码', trigger: "blur"}
+          { required: true, validator: validateCode, trigger: 'blur' },
+          { type: 'number', message: '请输入正确的验证码', trigger: 'blur' }
         ]
       },
       verifyFlag: false
-    };
+    }
   },
   mounted() {
-    if (this.$cookie.getValue("access_token")) {
-      this.$router.push("/index");
+    if (this.$cookie.getValue('access_token')) {
+      this.$router.push('/index')
     }
   },
   methods: {
     handleSubmit() {
       this.$refs.form.validate(valid => {
         if (valid) {
-          this.loading = true;
+          this.loading = true
           verifyCode({
             code: this.code,
             phone: this.formData.phone,
@@ -138,38 +121,38 @@ export default {
           })
             .then(res => {
               if (res.code === 200) {
-                this.submitFun();
+                this.submitFun()
               } else {
-                this.$message.warning(res.message);
+                this.$message.warning(res.message)
                 this.loading = false
               }
             })
             .catch(() => {
-              this.$message.warning("注册失败");
+              this.$message.warning('注册失败')
               this.loading = false
-            });
+            })
         }
-      });
+      })
     },
     submitFun() {
-      this.loading = true;
+      this.loading = true
       register(this.formData)
         .then(res => {
           if (res.code === 200) {
-            this.$message.success("注册成功");
-            this.$router.push("/login");
+            this.$message.success('注册成功')
+            this.$router.push('/login')
           } else {
-            this.$message.warning(res.message);
+            this.$message.warning(res.message)
           }
-          this.loading = false;
+          this.loading = false
         })
         .catch(() => {
-          this.$message.warning("注册失败");
-          this.loading = false;
-        });
+          this.$message.warning('注册失败')
+          this.loading = false
+        })
     },
     handleRedister() {
-      this.$router.push("register");
+      this.$router.push('register')
     },
     handleSendCode() {
       this.$refs.form.validateField('phone', (valid) => {
@@ -180,7 +163,7 @@ export default {
         }
       })
     },
-    sendCodeFun (data) {
+    sendCodeFun(data) {
       this.loading = true
       sendCode({
         phone: this.formData.phone,
@@ -189,10 +172,10 @@ export default {
         uuid: data.uuid
       }).then(res => {
         if (res.code === 200) {
-          this.seconds = 61;
-          this.timer();
+          this.seconds = 61
+          this.timer()
         } else {
-          this.$message.error(res.message);
+          this.$message.error(res.message)
         }
         this.loading = false
       }).catch(() => {
@@ -203,27 +186,27 @@ export default {
     },
     timer() {
       if (this.seconds > 1) {
-        this.seconds--;
-        this.msg = this.seconds + " 秒";
-        setTimeout(this.timer, 1000);
+        this.seconds--
+        this.msg = this.seconds + ' 秒'
+        setTimeout(this.timer, 1000)
       } else {
-        this.msg = "重新发送";
-        this.seconds = 0;
+        this.msg = '重新发送'
+        this.seconds = 0
       }
     },
     // 图片验证码关闭回调
-    closeVarifyDialog () {
+    closeVarifyDialog() {
       this.verifyFlag = false
     },
     // 图片验证码提交的回调
-    successVerifyDialog (data) {
+    successVerifyDialog(data) {
       this.closeVarifyDialog()
       if (data) {
         this.sendCodeFun(data)
       }
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

@@ -48,14 +48,10 @@
           <el-select
             v-model="ruleForm.moduleType"
             placeholder="固件产品类型"
-            :disabled="typeDisabled" class="w200"
+            :disabled="typeDisabled"
+            class="w200"
           >
-            <el-option
-              v-for="(key, value) in moduleTypeMap"
-              :key="key"
-              :label="value"
-              :value="key"
-            ></el-option>
+            <el-option v-for="(key, value) in moduleTypeMap" :key="key" :label="value" :value="key"></el-option>
           </el-select>
         </el-form-item>
         <!-- <el-form-item label="固件模块" required>
@@ -64,10 +60,15 @@
           <el-select v-model="typelTag">
             <el-option label="default" value="1"></el-option>
           </el-select>
-        </el-form-item> -->
+        </el-form-item>-->
         <el-form-item label="待升级版本号" prop="srcVersion">
           <el-select v-model="srcVersion" multiple @focus="srcVersionFocus" class="w200">
-            <el-option v-for="version in srcVersionList" :key="version" :label="version" :value="version"></el-option>
+            <el-option
+              v-for="version in srcVersionList"
+              :key="version"
+              :label="version"
+              :value="version"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="升级后版本号" prop="destVersion">
@@ -81,34 +82,40 @@
         </el-form-item>
         <el-form-item label="选择固件" required>
           <el-upload
-            action=""
+            action
             :http-request="uploadFile"
-            accept=".zip,.tar,.gz,.tar.gz,.gzip,.bin,.hex"
+            accept=".zip, .tar, .gz, .tar.gz, .gzip, .bin, .hex"
             :show-file-list="false"
             :disabled="ruleForm.fmName == '' ? true : false"
           >
             <el-button size="small" @click="beforeSelectFile">{{ uploadText }}</el-button>
-            <div slot="tip" class="el-upload__tip">
-              仅支持bin、tar、gz、tar.gz、zip、gzip、hex类型的文件
-            </div>
+            <div slot="tip" class="el-upload__tip">仅支持bin、tar、gz、tar.gz、zip、gzip、hex类型的文件</div>
           </el-upload>
-          <el-progress v-if="uploadProgressShow" :percentage="100" :status="uploadStatus ? 'success':'exception'"></el-progress>
+          <el-progress
+            v-if="uploadProgressShow"
+            :percentage="100"
+            :status="uploadStatus ? 'success':'exception'"
+          ></el-progress>
         </el-form-item>
         <el-form-item label="固件描述" prop="fmDesc">
-          <el-input type="textarea" v-model="ruleForm.fmDesc" placeholder="请简要描述应用的功能" :rows="4" class="w200"></el-input>
+          <el-input
+            type="textarea"
+            v-model="ruleForm.fmDesc"
+            placeholder="请简要描述应用的功能"
+            :rows="4"
+            class="w200"
+          ></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="addFmSubmit('ruleForm')"
-          >确 定</el-button
-        >
+        <el-button type="primary" @click="addFmSubmit('ruleForm')">确 定</el-button>
         <el-button @click="closeDialog">取 消</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 <script>
-import { uploadFile, saveFm, getProducts, getFmType, getSrcVersionList } from "@/api/fireware";
+import { uploadFile, saveFm, getProducts, getSrcVersionList } from '@/api/fireware'
 export default {
   props: {
     dialogFormVisible: {
@@ -121,42 +128,42 @@ export default {
         callback(new Error('请选择待升级版本'))
       } else {
         if (this.ruleForm.destVersion !== '') {
-          this.$refs.ruleForm.validateField('destVersion');
+          this.$refs.ruleForm.validateField('destVersion')
           callback()
-        }  else {
+        } else {
           callback()
         }
       }
     }
     const validDrcVersion = (rule, value, callback) => {
       if (value !== '' && this.srcVersion.indexOf(value) > -1) {
-          callback(new Error('升级前后版本号不能相同'))
-        } else {
-          callback()
-        }
+        callback(new Error('升级前后版本号不能相同'))
+      } else {
+        callback()
+      }
     }
     return {
       loading: false,
-      uploadText: "点击上传",
+      uploadText: '点击上传',
       uploadProgressShow: false,
       uploadStatus: true,
       ruleForm: {
         fmType: 1, // 固件名称 1整包、2差分
-        productId: "", // 固件所属产品id
-        productName: "", // 固件所属产品名称
-        moduleType: "", // 固件产品类型
-        srcVersion: "", // 待升级版本号
-        destVersion: "", // 升级后固定版本
-        fmName: "", // 固件名称
-        fmSign: "",
-        fmSize: "",
-        fmUrl: "", // url
-        signMethod: "1", //签名算法 1md5 2SHA256
-        fmDesc: "", // 固件描述
+        productId: '', // 固件所属产品id
+        productName: '', // 固件所属产品名称
+        moduleType: '', // 固件产品类型
+        srcVersion: '', // 待升级版本号
+        destVersion: '', // 升级后固定版本
+        fmName: '', // 固件名称
+        fmSign: '',
+        fmSize: '',
+        fmUrl: '', // url
+        signMethod: '1', // 签名算法 1md5 2SHA256
+        fmDesc: '', // 固件描述
         fmStatus: 1,
         delFlag: 0
       },
-      typelTag: "1",
+      typelTag: '1',
       products: [],
       productMap: {},
       moduleTypeMap: {},
@@ -164,148 +171,153 @@ export default {
       productForm: {
         pageNum: 1,
         pageSize: 50,
-        productName: ""
+        productName: ''
       },
-      productsValue: "",
+      productsValue: '',
       srcVersionList: [], // 待升级版本列表
       srcVersion: [],
       rules: {
-          fmName: [
-              { required: true, message: '请输入固件名称', trigger: 'blur' }
-          ],
-          srcVersion: [
-              { required: true , validator: validSrcVersion, trigger: 'change'}
-          ],
-          destVersion: [
-              { required: true, message: '请输入升级后版本号', trigger: 'blur' },
-              {validator: validDrcVersion, trigger: 'change'}
-          ],
-          productId: [
-            { required: true, message: '请选择所属产品', trigger: 'blur' }
-          ]
+        fmName: [
+          { required: true, message: '请输入固件名称', trigger: 'blur' }
+        ],
+        srcVersion: [
+          { required: true, validator: validSrcVersion, trigger: 'change' }
+        ],
+        destVersion: [
+          { required: true, message: '请输入升级后版本号', trigger: 'blur' },
+          { validator: validDrcVersion, trigger: 'change' }
+        ],
+        productId: [
+          { required: true, message: '请选择所属产品', trigger: 'blur' }
+        ]
       }
-    };
+    }
+  },
+  computed: {
+    typeDisabled: function() {
+      return !this.ruleForm.productId
+    }
   },
   watch: {
-    'ruleForm.moduleType': function () {
+    'ruleForm.moduleType': function() {
       this.getVersionList()
     },
-    'ruleForm.productId': function () {
+    'ruleForm.productId': function() {
       this.getVersionList()
     }
   },
   mounted() {
-    this.getProductList();
+    this.getProductList()
   },
   methods: {
     // 提交新增固件
     addFmSubmit(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          let formData = {};
-          for (let item in this.ruleForm) {
-            formData[item] = this.ruleForm[item];
+          const formData = {}
+          for (const item in this.ruleForm) {
+            formData[item] = this.ruleForm[item]
           }
           formData.srcVersion = this.srcVersion.join(',')
           saveFm(formData)
             .then(res => {
               if (res.code === 200) {
-                this.$emit("changeVisible", this.dialogFormVisible);
-                this.$emit("changeList", true);
-                this.$refs["ruleForm"].resetFields(); // 清空弹出框校验
+                this.$emit('changeVisible', this.dialogFormVisible)
+                this.$emit('changeList', true)
+                this.$refs['ruleForm'].resetFields() // 清空弹出框校验
               } else {
-                this.$message.warning(res.message);
+                this.$message.warning(res.message)
               }
             })
             .catch(error => {
-              console.log(error);
-            });
+              console.log(error)
+            })
         } else {
-          console.log("error submit!!");
-          return false;
+          console.log('error submit!!')
+          return false
         }
-      });
+      })
     },
     // 获取固件产品类型
     getFmType(fmTypes) {
-      let moduleTypeMap = {};
-      if(fmTypes) {
-        fmTypes.split(",").forEach(item => {
-          moduleTypeMap[item] = item;
-        });
+      const moduleTypeMap = {}
+      if (fmTypes) {
+        fmTypes.split(',').forEach(item => {
+          moduleTypeMap[item] = item
+        })
       }
-      this.moduleTypeMap = moduleTypeMap;
-      this.ruleForm.moduleType = "";
+      this.moduleTypeMap = moduleTypeMap
+      this.ruleForm.moduleType = ''
     },
     closeDialog() {
-      this.$refs["ruleForm"].resetFields(); // 清空弹出框校验
+      this.$refs['ruleForm'].resetFields() // 清空弹出框校验
       this.uploadText = '上传文件'
       this.uploadProgressShow = false
-      this.$emit("changeVisible", this.dialogFormVisible);
+      this.$emit('changeVisible', this.dialogFormVisible)
     },
-    beforeSelectFile () {
+    beforeSelectFile() {
       if (this.ruleForm.fmName === '') {
         this.$refs.ruleForm.validateField('fmName')
       }
     },
     // 上传文件
     uploadFile(data) {
-      let fromData = new FormData();
-      fromData.append("file", data.file);
-      fromData.append("fmName", this.ruleForm.fmName)
-      this.uploadProgressShow = false;
+      const fromData = new FormData()
+      fromData.append('file', data.file)
+      fromData.append('fmName', this.ruleForm.fmName)
+      this.uploadProgressShow = false
       uploadFile(fromData)
         .then(res => {
-            if (res.data.fmUrl) {
-                // this.ruleForm.fmName = res.data.fmName || this.ruleForm.fmName;
-                this.ruleForm.fmUrl = res.data.fmUrl;
-                this.ruleForm.fmSign = res.data.fmSign;
-                this.ruleForm.fmSize = res.data.fmSize;
-                this.uploadText = "重新上传";
-                this.uploadStatus = true
-                this.uploadProgressShow = true
-            } else {
-                this.uploadStatus = false
-                this.uploadProgressShow = true
-            }
+          if (res.data.fmUrl) {
+            // this.ruleForm.fmName = res.data.fmName || this.ruleForm.fmName;
+            this.ruleForm.fmUrl = res.data.fmUrl
+            this.ruleForm.fmSign = res.data.fmSign
+            this.ruleForm.fmSize = res.data.fmSize
+            this.uploadText = '重新上传'
+            this.uploadStatus = true
+            this.uploadProgressShow = true
+          } else {
+            this.uploadStatus = false
+            this.uploadProgressShow = true
+          }
         })
         .catch(error => {
-          this.$message.error(error);
-        });
+          this.$message.error(error)
+        })
     },
-    userFilter(query = "") {
-      let arr = this.products.filter(item => {
-        return item.productName.includes(query);
-      });
+    userFilter(query = '') {
+      const arr = this.products.filter(item => {
+        return item.productName.includes(query)
+      })
       if (arr.length > 50) {
-        this.products = arr.slice(0, 50);
+        this.products = arr.slice(0, 50)
       } else {
-        this.products = arr;
+        this.products = arr
       }
     },
     // 获取产品列表
     getProductList() {
-      this.productForm.productName = this.productsValue.split("|")[1]
-        ? this.productsValue.split("|")[1]
-        : "";
-      let data = this.productForm;
+      this.productForm.productName = this.productsValue.split('|')[1]
+        ? this.productsValue.split('|')[1]
+        : ''
+      const data = this.productForm
       getProducts(data).then(res => {
-        this.products = res.data.data;
+        this.products = res.data.data
         this.products.forEach(item => {
-          this.productMap[item.id + ""] = item;
-        });
-        this.userFilter();
-      });
+          this.productMap[item.id + ''] = item
+        })
+        this.userFilter()
+      })
     },
     changeSelect() {
-      this.ruleForm.productId = this.productsValue.split("|")[0];
-      this.ruleForm.productName = this.productsValue.split("|")[1];
-      let curPrd = this.productMap[this.ruleForm.productId+""];
+      this.ruleForm.productId = this.productsValue.split('|')[0]
+      this.ruleForm.productName = this.productsValue.split('|')[1]
+      const curPrd = this.productMap[this.ruleForm.productId + '']
       this.srcVersionList = []
       this.ruleForm.srcVersion = ''
-      this.getFmType(curPrd.fmTypes);
+      this.getFmType(curPrd.fmTypes)
     },
-    srcVersionFocus () {
+    srcVersionFocus() {
       if (this.srcVersionList.length === 0) {
         if (!this.ruleForm.productId) {
           this.$message.warning('请选择所属产品')
@@ -314,7 +326,7 @@ export default {
         }
       }
     },
-    getVersionList () {
+    getVersionList() {
       if (!this.ruleForm.productId) {
         // this.$message.warning('请选择所属产品')
         return
@@ -335,12 +347,7 @@ export default {
         this.loading = false
       })
     }
-  },
-  computed: {
-    typeDisabled: function() {
-      return !this.ruleForm.productId;
-    }
   }
-};
+}
 </script>
 <style lang="scss" scoped></style>

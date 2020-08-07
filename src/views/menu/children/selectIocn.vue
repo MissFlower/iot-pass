@@ -1,4 +1,4 @@
-<!-- 
+<!--
   文件作者：mawenjuan
   创建日期：2020.6.17
   文件说明：菜单的选择图标的组件
@@ -25,32 +25,37 @@
 </template>
 
 <script>
-import objData from "@/data/icon";
+import objData from '@/data/icon'
 export default {
-  props: ["icon"],
+  props: {
+    icon: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
       dialogVisible: true,
       icons: objData.icons,
-      selectIcon: ""
-    };
+      selectIcon: ''
+    }
   },
   mounted() {
     if (this.icon) {
-      this.selectIcon = this.icon;
+      this.selectIcon = this.icon
     }
   },
   methods: {
     handleSelect(icon) {
-      this.selectIcon = icon;
+      this.selectIcon = icon
     },
     submit() {
-      this.$emit("select", this.selectIcon);
-      this.handleCancel();
+      this.$emit('select', this.selectIcon)
+      this.handleCancel()
     },
     handleCancel() {
-      this.$emit("close");
+      this.$emit('close')
     }
   }
-};
+}
 </script>

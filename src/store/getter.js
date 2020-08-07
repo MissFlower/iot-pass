@@ -7,6 +7,6 @@ const getter = {
   menuLists: state => state.app.menuLists,
   functionArr: state => state.app.functionArr,
   routes: state => state.router.routes,
-  addRoutes: state => state.router.addRoutes,
-};
-export default getter;
+  addRoutes: state => state.router.addRoutes
+}
+export default getter

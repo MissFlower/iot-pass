@@ -7,38 +7,22 @@
   <div>
     <el-dialog
       title="编辑固件"
-      :visible.sync="EditDialogVisible"
+      :visible.sync="editDialogVisible"
       width="25%"
       :before-close="closeDialog"
     >
-      <el-form
-        :model="ruleForm"
-        ref="ruleForm"
-        label-width="120px"
-      >
+      <el-form :model="ruleForm" ref="ruleForm" label-width="120px">
         <el-form-item label="固件名称" required>
           <el-input type="text" v-model="ruleForm.fmName"></el-input>
         </el-form-item>
         <el-form-item label="待升级版本号" required>
-          <el-input
-            type="text"
-            v-model="detailInfo.srcVersion"
-            :disabled="true"
-          ></el-input>
+          <el-input type="text" v-model="detailInfo.srcVersion" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="升级后版本号" required>
-          <el-input
-            type="text"
-            :value="detailInfo.destVersion"
-            :disabled="true"
-          ></el-input>
+          <el-input type="text" :value="detailInfo.destVersion" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="所属产品" required>
-          <el-input
-            type="text"
-            :value="detailInfo.productName"
-            :disabled="true"
-          ></el-input>
+          <el-input type="text" :value="detailInfo.productName" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="签名算法" required>
           <el-input
@@ -59,31 +43,33 @@
   </div>
 </template>
 <script>
-import { updateFm } from "@/api/fireware";
+import { updateFm } from '@/api/fireware'
 export default {
   props: {
-    EditDialogVisible: {
-      type: Boolean
+    editDialogVisible: {
+      type: Boolean,
+      default: false
     },
     detailInfo: {
-      type: Object
+      type: Object,
+      default: () => {}
     }
   },
   data() {
     return {
       ruleForm: {
-        fmName: "", // 固件名称
-        id: "",
-        fmDesc: ""
+        fmName: '', // 固件名称
+        id: '',
+        fmDesc: ''
       }
-    };
+    }
   },
   methods: {
     // 编辑固件信息
     addFmSubmit() {
-      this.ruleForm.id = this.detailInfo.id;
+      this.ruleForm.id = this.detailInfo.id
       if (!this.ruleForm.fmDesc) {
-        this.ruleForm.fmDesc = this.detailInfo.fmDesc;
+        this.ruleForm.fmDesc = this.detailInfo.fmDesc
       }
       // let formData = new FormData();
       // formData.append("fmName", this.ruleForm.fmName);
@@ -92,24 +78,24 @@ export default {
       updateFm(this.ruleForm)
         .then(res => {
           if (res.code === 200) {
-            this.$emit("changeVisible", this.EditDialogVisible);
-            this.$emit("changeDetail", true);
-            this.ruleForm.fmDesc = "";
-            this.ruleForm.fmName = "";
+            this.$emit('changeVisible', this.editDialogVisible)
+            this.$emit('changeDetail', true)
+            this.ruleForm.fmDesc = ''
+            this.ruleForm.fmName = ''
           } else {
-            this.$message.warning(res.message);
+            this.$message.warning(res.message)
           }
         })
         .catch(error => {
-          console.log(error);
-        });
+          console.log(error)
+        })
     },
     // 关闭弹窗
     closeDialog() {
-      this.ruleForm.fmDesc = "";
-      this.ruleForm.fmName = "";
-      this.$emit("changeVisible", this.EditDialogVisible);
+      this.ruleForm.fmDesc = ''
+      this.ruleForm.fmName = ''
+      this.$emit('changeVisible', this.editDialogVisible)
     }
   }
-};
+}
 </script>

@@ -22,14 +22,14 @@ import fmList from './children/fmlist'
 import versionList from './version'
 
 export default {
-  components: {fmList, versionList},
+  components: { fmList, versionList },
   data() {
     return {
       loading: true,
-      activeTag: "1"
+      activeTag: '1'
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

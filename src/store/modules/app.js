@@ -1,8 +1,8 @@
-import router from "@/router"
-import { getUserInfo } from "@/api";
-import Cookie from "@/utils/cookie.js";
+import router from '@/router'
+import { getUserInfo } from '@/api'
+import Cookie from '@/utils/cookie.js'
 import { Message } from 'element-ui'
-import { clearLoginInfo } from "@/data/fun"
+import { clearLoginInfo } from '@/data/fun'
 
 const app = {
   state: {
@@ -11,8 +11,8 @@ const app = {
     loginStatus: false,
     breadcrumdList: [
       {
-        name: "IOT平台",
-        path: "/home"
+        name: 'IOT平台',
+        path: '/home'
       }
     ],
     menuLists: [], // 用户的菜单列表
@@ -22,25 +22,25 @@ const app = {
   },
   mutations: {
     SET_USER_INFO: (state, info) => {
-      state.userInfo = info;
+      state.userInfo = info
     },
     SET_LOADING: (state, val) => {
-      state.loading = val;
+      state.loading = val
     },
     SET_LOGIN_STATUS: (state, flag) => {
-      state.loginStatus = flag;
+      state.loginStatus = flag
     },
     SET_BTEADCRUMB_LIST: (state, list) => {
-      state.breadcrumdList = list;
+      state.breadcrumdList = list
     },
     SET_MENU_LISTS: (state, list) => {
-      state.menuLists = list;
+      state.menuLists = list
     },
     SET_FUNCTION_ARR: (state, arr) => {
-      state.functionArr = arr;
+      state.functionArr = arr
     },
     SET_FUNCTION_LISTS: (state, list) => {
-      state.functionLists = list;
+      state.functionLists = list
     },
     SET_AUTHS: (state, auths) => {
       state.auths = auths
@@ -48,79 +48,79 @@ const app = {
   },
   actions: {
     setUserInfo({ commit }, info) {
-      commit("SET_USER_INFO", info);
+      commit('SET_USER_INFO', info)
     },
     getUserInfo({ commit }) {
-      commit("SET_LOADING", true)
+      commit('SET_LOADING', true)
       return new Promise((resolve, reject) => {
         getUserInfo().then(res => {
           if (res.code === 200) {
             // 邮箱的标志存放在cookie中， 0 未绑定提示， 1已绑定， 2 未绑定 不提示
-            const emailStatus = Cookie.getValue("emailStatus");
-            localStorage.setItem("info", JSON.stringify(res.data))
-            commit("SET_USER_INFO", res.data);
+            const emailStatus = Cookie.getValue('emailStatus')
+            localStorage.setItem('info', JSON.stringify(res.data))
+            commit('SET_USER_INFO', res.data)
             if (res.data.email) {
-              Cookie.setValue("emailStatus", 1);
+              Cookie.setValue('emailStatus', 1)
             } else if (!emailStatus) {
               // 登录 没有，状态为2不处理
-              Cookie.setValue("emailStatus", 0);
-              router.push("/add-email-tips");
+              Cookie.setValue('emailStatus', 0)
+              router.push('/add-email-tips')
             }
-            commit("SET_LOADING", false)
-            resolve(res.data.menus);
+            commit('SET_LOADING', false)
+            resolve(res.data.menus)
           } else {
-            commit("SET_LOADING", false)
+            commit('SET_LOADING', false)
             Message.warning(res.message)
-            localStorage.setItem("info", null)
+            localStorage.setItem('info', null)
             clearLoginInfo()
-            router.push("/login");
+            router.push('/login')
             resolve()
           }
         }).catch(error => {
-          commit("SET_LOADING", false)
+          commit('SET_LOADING', false)
           reject(error)
         })
       })
     },
     setLoading({ commit }, val) {
-      commit("SET_LOADING", val);
+      commit('SET_LOADING', val)
     },
     setLoginStatus({ commit }, flag) {
       return new Promise(resolve => {
-        commit("SET_LOGIN_STATUS", flag);
-        resolve();
-      });
+        commit('SET_LOGIN_STATUS', flag)
+        resolve()
+      })
     },
     setBreadcrumb({ commit }, list) {
       return new Promise(resolve => {
-        commit("SET_BTEADCRUMB_LIST", list);
-        resolve();
-      });
+        commit('SET_BTEADCRUMB_LIST', list)
+        resolve()
+      })
     },
     setMenuLists({ commit }, list) {
       return new Promise(resolve => {
-        commit("SET_MENU_LISTS", list);
-        resolve();
-      });
+        commit('SET_MENU_LISTS', list)
+        resolve()
+      })
     },
     setFunctionArr({ commit }, arr) {
       return new Promise(resolve => {
-        commit("SET_FUNCTION_ARR", arr);
-        resolve();
-      });
+        commit('SET_FUNCTION_ARR', arr)
+        resolve()
+      })
     },
     setFunctionLists({ commit }, list) {
       return new Promise(resolve => {
-        commit("SET_FUNCTION_LISTS", list);
-        resolve();
-      });
+        commit('SET_FUNCTION_LISTS', list)
+        resolve()
+      })
     },
     setAuths({ commit }, auths) {
       return new Promise(resolve => {
-        commit("SET_AUTHS", auths);
+        commit('SET_AUTHS', auths)
         resolve()
       })
     }
   }
-};
-export default app;
+}
+export default app

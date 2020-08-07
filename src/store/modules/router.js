@@ -1,7 +1,7 @@
 import { asyncRoutes, constantRoutes, nofund } from '@/router'
 // import routerObj from "@/router";
 import { deepClone } from '@/utils/validate'
-import { dealMenus } from "@/data/fun"
+import { dealMenus } from '@/data/fun'
 
 let functionArr = null
 
@@ -19,12 +19,12 @@ function filterFun(list) {
   return asyncList
 }
 
-function fun (routes, codeArr, list) {
+function fun(routes, codeArr, list) {
   const routerArr = []
   for (let i = 0; i < routes.length; i++) {
-    const item  = routes[i]
+    const item = routes[i]
     if (item.meta && item.meta.code && codeArr.indexOf(item.meta.code) > -1) {
-      const len = codeArr.indexOf(item.meta.code);
+      const len = codeArr.indexOf(item.meta.code)
       item.meta.icon = list[len].icon ? list[len].icon : ''
       item.meta.name = list[len].name ? list[len].name : ''
       if (list[len].path) {
@@ -61,26 +61,26 @@ const router = {
     }
   },
   actions: {
-    setRouters ({ commit }, menus) {
+    setRouters({ commit }, menus) {
       return new Promise((resolve) => {
         if (menus) {
-          const {list, funArr} = dealMenus(menus);
+          const { list, funArr } = dealMenus(menus)
           functionArr = funArr
           if (list.length > 0) {
-            const asyncList = filterFun(list);
+            const asyncList = filterFun(list)
             if (asyncList && asyncList.length > 0) {
-              commit('SET_ROUTERS', asyncList.concat(nofund));
-              resolve(asyncList.concat(nofund));
+              commit('SET_ROUTERS', asyncList.concat(nofund))
+              resolve(asyncList.concat(nofund))
             } else {
-              commit('SET_ROUTERS', []);
+              commit('SET_ROUTERS', [])
               resolve()
             }
           } else {
-            commit('SET_ROUTERS', []);
+            commit('SET_ROUTERS', [])
             resolve()
           }
         } else {
-          commit('SET_ROUTERS', []);
+          commit('SET_ROUTERS', [])
           resolve()
         }
       })

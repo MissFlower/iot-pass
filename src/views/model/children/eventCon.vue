@@ -1,4 +1,4 @@
-<!-- 
+<!--
 文件作者：mawenjuan
 创建日期：2020.6.23
 文件说明：自定义功能的事件部分
@@ -6,11 +6,9 @@
 
 <template>
   <div class="eventCon">
-    <el-form ref="form" :model="formData" :rules="rules">
+    <el-form ref="form" :model="formData" :rules="rules" :disabled="showFlag">
       <el-form-item label="事件类型" prop="type">
-        <div v-if="modelType" class="disabledDiv">
-          {{eventType[formData.type]}}
-        </div>
+        <div v-if="modelType" class="disabledDiv">{{ eventType[formData.type] }}</div>
         <div v-else>
           <el-radio v-model="formData.type" label="alert">信息</el-radio>
           <el-radio v-model="formData.type" label="warn">告警</el-radio>
@@ -19,26 +17,59 @@
       </el-form-item>
       <el-form-item label="输出参数">
         <div v-for="(item, index) in formData.outputData" :key="index" class="df ai_c json_item">
-          <div class="flex1">参数名称： {{item.name}}</div>
+          <div class="flex1">参数名称： {{ item.name }}</div>
           <div>
-            <el-link type="primary" :underline="false" class="f12 mr10" @click.stop="editSturct(item)">编辑</el-link>
-            <el-link type="primary" :underline="false" class="f12" @click.stop="deleteStruct(index)" :disabled="modelType">删除</el-link>
+            <el-link
+              type="primary"
+              :underline="false"
+              class="f12 mr10"
+              :disabled="showFlag"
+              @click.stop="editSturct(item)"
+            >编辑</el-link>
+            <el-link
+              type="primary"
+              :underline="false"
+              class="f12"
+              @click.stop="deleteStruct(index)"
+              :disabled="modelType || showFlag"
+            >删除</el-link>
           </div>
         </div>
-        <el-button type="text" icon="el-icon-plus" @click="addStruct">新增参数</el-button>
+        <el-button type="text" v-if="!showFlag" icon="el-icon-plus" @click="addStruct">新增参数</el-button>
       </el-form-item>
     </el-form>
-    <add-param v-if="flag == 1" :specs="specs" :info="structInfo" :modelType="modelType" @close="closeAddParam" @success="successAddParams" :allFlag="0"></add-param>
+    <add-param
+      v-if="flag == 1"
+      :specs="specs"
+      :info="structInfo"
+      :modelType="modelType"
+      @close="closeAddParam"
+      @success="successAddParams"
+      :allFlag="0"
+    ></add-param>
   </div>
 </template>
 
 <script>
-import addParam from "./addParam"
-import {EVENT_TYPE} from '@/data/constants'
+import addParam from './addParam'
+import { EVENT_TYPE } from '@/data/constants'
 export default {
-  components: {addParam},
-  props: ['info', 'modelType'],
-  data () {
+  components: { addParam },
+  props: {
+    info: {
+      type: Object,
+      default: () => {}
+    },
+    showFlag: {
+      type: Boolean,
+      default: false
+    },
+    modelType: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data() {
     return {
       flag: 0,
       formData: {
@@ -47,7 +78,7 @@ export default {
       },
       rules: {
         type: [
-          {required: true, message: "请选择事件类型", trigger: 'change' }
+          { required: true, message: '请选择事件类型', trigger: 'change' }
         ]
       },
       structInfo: null,
@@ -56,20 +87,20 @@ export default {
       eventType: EVENT_TYPE
     }
   },
-  mounted () {
+  mounted() {
     if (this.info) {
-      for(let key in this.formData) {
+      for (const key in this.formData) {
         this.formData[key] = this.info[key]
       }
     }
   },
   methods: {
-    addStruct () {
+    addStruct() {
       this.specs = JSON.parse(JSON.stringify(this.formData.outputData))
       this.flag = 1
       this.structInfo = null
     },
-    editSturct (row, index) {
+    editSturct(row, index) {
       this.structInfo = JSON.parse(JSON.stringify(row))
       this.structIndex = index
       let specs = this.formData.outputData
@@ -79,14 +110,14 @@ export default {
       this.specs = specs
       this.flag = 1
     },
-    deleteStruct (index) {
+    deleteStruct(index) {
       const row = this.formData.outputData
       row.splice(index, 1)
     },
-    closeAddParam () {
+    closeAddParam() {
       this.flag = 0
     },
-    successAddParams (data) {
+    successAddParams(data) {
       if (data) {
         const row = this.formData.outputData
         if (this.structInfo) {
@@ -98,7 +129,7 @@ export default {
         }
       }
     },
-    getDataForParent () {
+    getDataForParent() {
       this.$refs.form.validate(valid => {
         if (valid) {
           this.$emit('success', this.formData)

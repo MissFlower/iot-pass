@@ -8,9 +8,7 @@
     <div class="f20 b">
       <i class="el-icon-back" @click="back" />
       {{ deviceObj.deviceName }}
-      <el-tag :type="deviceStatusType[deviceObj.deviceStatus]">{{
-        deviceObj.deviceStatusStr
-      }}</el-tag>
+      <el-tag :type="deviceStatusType[deviceObj.deviceStatus]">{{ deviceObj.deviceStatusStr }}</el-tag>
     </div>
     <div class="f12 c6 mt20 mb20 df fww">
       <div class="productInfo">
@@ -30,11 +28,7 @@
       <div class="productInfo">
         <span class="dib w100 mr20 c9">ProductKey:</span>
         <span>{{ deviceObj.productKey }}</span>
-        <el-button
-          type="text"
-          class="ml10"
-          @click="copy(deviceObj.productKey)"
-        >复制</el-button>
+        <el-button type="text" class="ml10" @click="copy(deviceObj.productKey)">复制</el-button>
       </div>
     </div>
 
@@ -65,11 +59,7 @@
             <div class="device_infoItem">
               <span class="infoItemName">设备名称</span>
               <span>{{ deviceObj.deviceName }}</span>
-              <el-button
-                type="text"
-                class="ml10"
-                @click="copy(deviceObj.deviceName)"
-              >复制</el-button>
+              <el-button type="text" class="ml10" @click="copy(deviceObj.deviceName)">复制</el-button>
             </div>
             <div class="device_infoItem">
               <span class="infoItemName">备注名称</span>
@@ -133,38 +123,22 @@
 
     <el-dialog title="设备证书" :visible.sync="lookDeviceSecret" width="50%">
       <span class="b mb10">设备证书</span>
-      <el-button
-        type="text"
-        class="ml10"
-        @click="copy('一键复制')"
-      >一键复制</el-button>
+      <el-button type="text" class="ml10" @click="copy('一键复制')">一键复制</el-button>
       <div class="mb50" style="borderBottom: 1px solid #ecedee;">
         <div class="dialogSecret">
           <span class="title">ProductKey</span>
           <span class="secret">{{ deviceObj.productKey }}</span>
-          <el-button
-            type="text"
-            class="ml10"
-            @click="copy(deviceObj.productKey)"
-          >复制</el-button>
+          <el-button type="text" class="ml10" @click="copy(deviceObj.productKey)">复制</el-button>
         </div>
         <div class="dialogSecret">
           <span class="title">DeviceName</span>
           <span class="secret">{{ deviceObj.deviceName }}</span>
-          <el-button
-            type="text"
-            class="ml10"
-            @click="copy(deviceObj.deviceName)"
-          >复制</el-button>
+          <el-button type="text" class="ml10" @click="copy(deviceObj.deviceName)">复制</el-button>
         </div>
         <div class="dialogSecret">
           <span class="title">DeviceSecret</span>
           <span class="secret">{{ deviceObj.deviceSecret }}</span>
-          <el-button
-            type="text"
-            class="ml10"
-            @click="copy(deviceObj.deviceSecret)"
-          >复制</el-button>
+          <el-button type="text" class="ml10" @click="copy(deviceObj.deviceSecret)">复制</el-button>
         </div>
       </div>
       <span class="b mb10">烧录方式介绍</span>
@@ -187,7 +161,7 @@
           <div>
             每个设备烧录其唯一的设备证书（ProductKey、DeviceName 和
             DeviceSecret）。
-            <br>当设备与物联网平台建立连接时，物联网平台对其携带的设备证书信息进行认证。
+            <br />当设备与物联网平台建立连接时，物联网平台对其携带的设备证书信息进行认证。
           </div>
         </div>
         <el-button

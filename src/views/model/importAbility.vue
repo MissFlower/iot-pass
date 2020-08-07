@@ -1,5 +1,11 @@
 <template>
-  <el-dialog :visible.sync="dialogVisible" class="importDialog" title="导入物模型" width="400px" @close="close">
+  <el-dialog
+    :visible.sync="dialogVisible"
+    class="importDialog"
+    title="导入物模型"
+    width="400px"
+    @close="close"
+  >
     <div class="json_item">
       <i class="el-icon-warning blue"></i>
       注：导入的物模型会覆盖原来的功能。
@@ -9,12 +15,21 @@
         <el-form :model="formData">
           <el-form-item label="选择产品">
             <el-select v-model="formData.product" placeholder="请选择产品">
-              <el-option v-for="(item, index) in productList" :key="index" :value="item.id" :label="item.productName"></el-option>
+              <el-option
+                v-for="(item, index) in productList"
+                :key="index"
+                :value="item.id"
+                :label="item.productName"
+              ></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="选择版本">
             <el-select v-model="formData.version" placeholder="请选择产品">
-              <el-option v-for="(item, index) in versionList" :key="index" :value="item.id">{{item.name}}</el-option>
+              <el-option
+                v-for="(item, index) in versionList"
+                :key="index"
+                :value="item.id"
+              >{{ item.name }}</el-option>
             </el-select>
           </el-form-item>
         </el-form>
@@ -28,8 +43,7 @@
             <div slot="content" class="f12 c9 w200">文件大小不能超过256KB.</div>
           </el-tooltip>
         </div>
-        <el-upload
-          :action="src">
+        <el-upload :action="src">
           <el-button size="small" type="primary">点击上传</el-button>
         </el-upload>
       </el-tab-pane>
@@ -44,7 +58,7 @@
 <script>
 import { tableList } from '@/api/product'
 export default {
-  data () {
+  data() {
     return {
       dialogVisible: true,
       loading: false,
@@ -58,7 +72,7 @@ export default {
       versionList: []
     }
   },
-  mounted () {
+  mounted() {
     this.loading = true
     tableList({
       pageSize: 1000,
@@ -77,11 +91,11 @@ export default {
     })
   },
   methods: {
-    close () {
+    close() {
       this.$emit('close')
     },
-    handleClick () {},
-    handleSave () {}
+    handleClick() {},
+    handleSave() {}
   }
 }
 </script>
@@ -91,7 +105,7 @@ export default {
   .el-dialog__body {
     padding: 0 20px;
     .json_item {
-      padding: 10px!important;
+      padding: 10px !important;
     }
   }
 }

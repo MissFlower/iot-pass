@@ -50,24 +50,18 @@
         <ElTableColumn prop="type" label="数据类型" />
 
         <ElTableColumn prop="updateTime" label="更新时间">
-          <template slot-scope="{ row }">{{
-            row.updateTime ? row.updateTime : "—"
-          }}</template>
+          <template slot-scope="{ row }">{{ row.updateTime ? row.updateTime : "—" }}</template>
         </ElTableColumn>
 
         <ElTableColumn prop="updateValue" label="更新值" />
 
         <ElTableColumn prop="expectedValue" label="期望值">
-          <template slot-scope="{ row }">
-            {{ row.updateValue ? row.updateValue : "--" }}
-          </template>
+          <template slot-scope="{ row }">{{ row.updateValue ? row.updateValue : "--" }}</template>
         </ElTableColumn>
 
         <ElTableColumn label="操作" width="120">
           <template>
-            <span class="view-data-text" @click="viewDataHandler">
-              查看数据
-            </span>
+            <span class="view-data-text" @click="viewDataHandler">查看数据</span>
           </template>
         </ElTableColumn>
       </ElTable>

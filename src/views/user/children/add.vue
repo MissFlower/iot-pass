@@ -9,36 +9,16 @@
 <template>
   <div id="editAccount" v-loading="loading">
     <div class="pl20 pb20">{{ editItem.id ? "编辑" : "新建" }}用户</div>
-    <el-form
-      ref="form"
-      :model="editItem"
-      label-width="120px"
-      class="mt20"
-      :rules="rules"
-    >
+    <el-form ref="form" :model="editItem" label-width="120px" class="mt20" :rules="rules">
       <el-form-item label="账号：" prop="account">
-        <el-input
-          v-model="editItem.account"
-          placeholder="请输入用户名"
-          class="w200"
-        />
+        <el-input v-model="editItem.account" placeholder="请输入用户名" class="w200" />
       </el-form-item>
       <el-form-item v-if="info" label="密码：" prop="password">
-        <el-input
-          v-model="editItem.password"
-          placeholder="不输入保持原来的密码"
-          show-password
-          class="w200"
-        />
+        <el-input v-model="editItem.password" placeholder="不输入保持原来的密码" show-password class="w200" />
         <span class="f12 ml20 c6">密码必须由8到14个字符包括大小写字母、数字组成</span>
       </el-form-item>
       <el-form-item v-else label="密码：" prop="passwordAdd">
-        <el-input
-          v-model="editItem.password"
-          placeholder="请输入密码"
-          show-password
-          class="w200"
-        />
+        <el-input v-model="editItem.password" placeholder="请输入密码" show-password class="w200" />
         <span class="f12 ml20 c6">密码必须由8到14个字符包括大小写字母、数字组成</span>
       </el-form-item>
       <el-form-item label="姓名：">
@@ -77,7 +57,10 @@ export default {
         callback()
       } else {
         const pwdRegex = new RegExp('(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])')
-        if (!pwdRegex.test(this.editItem.password) && this.editItem.password !== '') {
+        if (
+          !pwdRegex.test(this.editItem.password) &&
+          this.editItem.password !== ''
+        ) {
           callback(new Error('您的密码复杂度太低'))
         } else {
           callback()
@@ -115,13 +98,19 @@ export default {
         password: [
           { required: false, validator: validatePassword, trigger: 'blur' },
           {
-            min: 8, max: 14, message: '长度在 8 到 14 个字符', trigger: 'blur'
+            min: 8,
+            max: 14,
+            message: '长度在 8 到 14 个字符',
+            trigger: 'blur'
           }
         ],
         passwordAdd: [
           { required: true, validator: validatePassword, trigger: 'blur' },
           {
-            min: 8, max: 14, message: '长度在 8 到 14 个字符', trigger: 'blur'
+            min: 8,
+            max: 14,
+            message: '长度在 8 到 14 个字符',
+            trigger: 'blur'
           }
         ]
       }

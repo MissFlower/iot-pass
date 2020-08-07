@@ -13,7 +13,12 @@
   >
     <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="100px">
       <el-form-item label="产品：" prop="productSelIndex">
-        <el-select v-model="ruleForm.productSelIndex" class="wp100" placeholder="请选择产品" :disabled="selectDisabled">
+        <el-select
+          v-model="ruleForm.productSelIndex"
+          class="wp100"
+          placeholder="请选择产品"
+          :disabled="selectDisabled"
+        >
           <el-option
             v-for="(item,index) in productList"
             :key="index"
@@ -23,7 +28,11 @@
         </el-select>
       </el-form-item>
       <el-form-item label="设备数量：" prop="deviceCount">
-        <el-input v-model="ruleForm.deviceCount" placeholder="请输入设备数量" oninput="value=value.replace(/[^\d]/g,'');value=parseInt(value)>1000?'1000':value;" />
+        <el-input
+          v-model="ruleForm.deviceCount"
+          placeholder="请输入设备数量"
+          oninput="value=value.replace(/[^\d]/g,'');value=parseInt(value)>1000?'1000':value;"
+        />
       </el-form-item>
       <el-form-item class="mt20 tr" style="margin-bottom:0;">
         <el-button @click="handleCancel">取 消</el-button>

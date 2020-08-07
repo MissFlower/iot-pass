@@ -16,7 +16,11 @@
         >
           <span slot="suffix">
             <i class="el-icon-search hand" @click="searchAccountFun" />
-            <i v-if="formData.account != ''" class="el-icon-close hand" @click="clearFun('account')" />
+            <i
+              v-if="formData.account != ''"
+              class="el-icon-close hand"
+              @click="clearFun('account')"
+            />
           </span>
         </el-input>
         <el-input
@@ -35,39 +39,21 @@
         v-if="authArr.indexOf('mgr_add') > -1"
         type="primary"
         @click="handleShowCon(1)"
-      >
-        新建用户
-      </el-button>
+      >新建用户</el-button>
     </div>
     <el-table v-loading="loading" :data="list" border>
       <el-table-column label="ID" prop="id" align="center" />
-      <el-table-column
-        label="账号名"
-        prop="account"
-        align="center"
-      />
-      <el-table-column
-        label="姓名"
-        prop="name"
-        align="center"
-      />
-      <el-table-column
-        label="电话"
-        prop="phone"
-        align="center"
-      />
-      <el-table-column
-        label="邮箱"
-        prop="email"
-        align="center"
-      />
+      <el-table-column label="账号名" prop="account" align="center" />
+      <el-table-column label="姓名" prop="name" align="center" />
+      <el-table-column label="电话" prop="phone" align="center" />
+      <el-table-column label="邮箱" prop="email" align="center" />
       <!-- <el-table-column label="状态" align="center">
         <template slot-scope="scope">
           <span :class="scope.row.status == 0 ? 'success' : 'red'">
             {{ scope.row.status == 0 ? "启用" : "禁用" }}
           </span>
         </template>
-      </el-table-column> -->
+      </el-table-column>-->
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
           <svg-icon
@@ -145,7 +131,8 @@ export default {
     this.getData()
   },
   methods: {
-    getData() { // 列表数据获取
+    getData() {
+      // 列表数据获取
       this.loading = true
       this.list = []
       userList(this.formData)
@@ -168,19 +155,22 @@ export default {
     clearFun(key) {
       this.formData[key] = ''
     },
-    searchAccountFun() { // 账号名筛选函数
+    searchAccountFun() {
+      // 账号名筛选函数
       if (this.$fun.trim(this.formData.account === '')) {
         return
       }
       this.handleCurrentChange(1)
     },
-    searchPhoneFun() { // 手机号筛选函数
+    searchPhoneFun() {
+      // 手机号筛选函数
       if (this.$fun.trim(this.formData.phone === '')) {
         return
       }
       this.handleCurrentChange(1)
     },
-    handleCurrentChange(page) { // 页面切换函数
+    handleCurrentChange(page) {
+      // 页面切换函数
       this.formData.pageNum = page
       this.getData()
     },
@@ -190,7 +180,8 @@ export default {
     handleShowAddRole(row) {
       this.$parent.showAddRole(row)
     },
-    handleClose(row) { // 用户删除
+    handleClose(row) {
+      // 用户删除
       const str = '确认删除该用户吗？'
       this.$confirm(str, '提示', {
         confirmButtonText: '确定',

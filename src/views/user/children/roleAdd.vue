@@ -40,9 +40,7 @@
             v-for="item in roleList"
             :key="item.roleId"
             :label="item.roleId"
-          >
-            {{ item.name ? item.name : item.account }}
-          </el-checkbox>
+          >{{ item.name ? item.name : item.account }}</el-checkbox>
         </el-checkbox-group>
       </div>
     </div>
@@ -77,7 +75,8 @@ export default {
     this.getData()
   },
   methods: {
-    getData() { // 获取用户的角色列表
+    getData() {
+      // 获取用户的角色列表
       this.loading = true
       this.roleList = []
       this.selectIds = []
@@ -105,12 +104,13 @@ export default {
         })
     },
     close() {
-      this.$emit('close')//  触发父级函数
+      this.$emit('close') //  触发父级函数
     },
     handleCancel() {
       this.close()
     },
-    handleSave() { // 角色配置提交
+    handleSave() {
+      // 角色配置提交
       if (this.selectIds.length > 10) {
         this.$message.warning('一个用户最多配置10个角色')
         return

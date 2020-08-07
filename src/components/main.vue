@@ -11,20 +11,20 @@
 </template>
 
 <script>
-import paasMenu from "./children/menu";
+import paasMenu from './children/menu'
 // import breadcrumb from "./breadcrumb";
 export default {
   components: { paasMenu },
   computed: {
     flag() {
-      if (this.$route.path === "/home") {
-        return false;
+      if (this.$route.path === '/home') {
+        return false
       } else {
-        return true;
+        return true
       }
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

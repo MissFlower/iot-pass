@@ -5,13 +5,9 @@
  * @Date: 2020-08-03 10:46:51
  * @LastEditors: AiDongYang
  * @LastEditTime: 2020-08-03 17:29:00
---> 
+-->
 <template>
-  <ElDialog
-    v-bind="$attrs"
-    width="50%"
-    :before-close="closeDialog"
-  >
+  <ElDialog v-bind="$attrs" width="50%" :before-close="closeDialog">
     <div>
       <div class="dialog-body-header">
         <ElSelect v-model="timeRange" placeholder="请选择" class="dialog-select">
@@ -19,8 +15,8 @@
             v-for="item in TIME_TYPE"
             :key="item.value"
             :label="item.label"
-            :value="item.value">
-          </ElOption>
+            :value="item.value"
+          ></ElOption>
         </ElSelect>
         <ElDatePicker
           v-if="timeRange === 0"
@@ -32,39 +28,18 @@
           class="dialog-date"
         />
         <ElRadioGroup v-model="showType" class="dialog-menu-type">
-          <ElRadioButton label="chart" :disabled="isShowChart">
-            图表
-          </ElRadioButton>
-          <ElRadioButton label="table">
-            表格
-          </ElRadioButton>
+          <ElRadioButton label="chart" :disabled="isShowChart">图表</ElRadioButton>
+          <ElRadioButton label="table">表格</ElRadioButton>
         </ElRadioGroup>
       </div>
       <div class="dialog-body-content">
         <!-- 图表 -->
-        <AttributedChart
-          v-if="showType === 'chart'"
-          :params="timeRange"
-        />
+        <AttributedChart v-if="showType === 'chart'" :params="timeRange" />
         <!-- 表格 -->
-        <div
-          v-else
-          class="runstate-table-container"
-        >
-          <ElTable
-            :data="tableData"
-            border
-            height="350"
-            style="width: 100%">
-            <ElTableColumn
-              prop="time"
-              label="时间"
-              width="200"
-            />
-            <ElTableColumn
-              prop="originalValue"
-              label="原始值"
-            />
+        <div v-else class="runstate-table-container">
+          <ElTable :data="tableData" border height="350" style="width: 100%">
+            <ElTableColumn prop="time" label="时间" width="200" />
+            <ElTableColumn prop="originalValue" label="原始值" />
           </ElTable>
         </div>
       </div>
@@ -73,7 +48,6 @@
       <ElButton @click="closeDialog">关 闭</ElButton>
     </span>
   </ElDialog>
-
 </template>
 
 <script>
@@ -99,116 +73,116 @@ export default {
       tableData: [
         {
           time: '2020-8-3',
-          originalValue: '100',
+          originalValue: '100'
         },
         {
           time: '2020-8-2',
-          originalValue: '150',
+          originalValue: '150'
         },
         {
           time: '2020-8-3',
-          originalValue: '100',
+          originalValue: '100'
         },
         {
           time: '2020-8-2',
-          originalValue: '150',
+          originalValue: '150'
         },
         {
           time: '2020-8-3',
-          originalValue: '100',
+          originalValue: '100'
         },
         {
           time: '2020-8-2',
-          originalValue: '150',
+          originalValue: '150'
         },
         {
           time: '2020-8-3',
-          originalValue: '100',
+          originalValue: '100'
         },
         {
           time: '2020-8-2',
-          originalValue: '150',
+          originalValue: '150'
         },
         {
           time: '2020-8-3',
-          originalValue: '100',
+          originalValue: '100'
         },
         {
           time: '2020-8-2',
-          originalValue: '150',
+          originalValue: '150'
         },
         {
           time: '2020-8-3',
-          originalValue: '100',
+          originalValue: '100'
         },
         {
           time: '2020-8-2',
-          originalValue: '150',
+          originalValue: '150'
         },
         {
           time: '2020-8-3',
-          originalValue: '100',
+          originalValue: '100'
         },
         {
           time: '2020-8-2',
-          originalValue: '150',
+          originalValue: '150'
         },
         {
           time: '2020-8-3',
-          originalValue: '100',
+          originalValue: '100'
         },
         {
           time: '2020-8-2',
-          originalValue: '150',
+          originalValue: '150'
         },
         {
           time: '2020-8-3',
-          originalValue: '100',
+          originalValue: '100'
         },
         {
           time: '2020-8-2',
-          originalValue: '150',
+          originalValue: '150'
         },
         {
           time: '2020-8-3',
-          originalValue: '100',
+          originalValue: '100'
         },
         {
           time: '2020-8-2',
-          originalValue: '150',
+          originalValue: '150'
         },
         {
           time: '2020-8-3',
-          originalValue: '100',
+          originalValue: '100'
         },
         {
           time: '2020-8-2',
-          originalValue: '150',
+          originalValue: '150'
         },
         {
           time: '2020-8-3',
-          originalValue: '100',
+          originalValue: '100'
         },
         {
           time: '2020-8-2',
-          originalValue: '150',
+          originalValue: '150'
         },
         {
           time: '2020-8-3',
-          originalValue: '100',
+          originalValue: '100'
         },
         {
           time: '2020-8-2',
-          originalValue: '150',
+          originalValue: '150'
         },
         {
           time: '2020-8-3',
-          originalValue: '100',
+          originalValue: '100'
         },
         {
           time: '2020-8-2',
-          originalValue: '150',
-        },
+          originalValue: '150'
+        }
       ]
     }
   },

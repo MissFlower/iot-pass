@@ -6,12 +6,8 @@
     <div class="info">请完善以下信息,方便我们更好的为您服务</div>
     <el-form :model="formData" label-width="150px" :rules="rules">
       <div class="mt20 mb10">基本信息</div>
-      <el-form-item label="会员身份：" prop="identity">
-        {{ formData.identity }}
-      </el-form-item>
-      <el-form-item label="真实姓名：" prop="name">
-        {{ formData.name }}
-      </el-form-item>
+      <el-form-item label="会员身份：" prop="identity">{{ formData.identity }}</el-form-item>
+      <el-form-item label="真实姓名：" prop="name">{{ formData.name }}</el-form-item>
       <div class="mt20 mb10">业务信息</div>
       <el-form-item label="主要行业应用：" prop="identity">
         <el-select />
@@ -44,8 +40,7 @@
       <el-form-item label="传真：">
         <el-input placeholder="例如：86057188888888" />
       </el-form-item>
-    </el-form>
-    开发中。。。。
+    </el-form>开发中。。。。
   </div>
 </template>
 
@@ -80,18 +75,18 @@ export default {
     h5 {
       display: inline-block;
       text-indent: 8px;
-      border-left: 2px solid #88B7E0;
+      border-left: 2px solid #88b7e0;
       margin-top: 0px;
       margin-top: 8px;
       margin-bottom: 8px;
-      vertical-align: top
+      vertical-align: top;
     }
   }
   .info {
     border: 1px solid transparent;
     color: #555;
-    background-color: #F9F9F9;
-    border-color: #DDD;
+    background-color: #f9f9f9;
+    border-color: #ddd;
     padding: 6px 12px;
     line-height: 18px;
     margin-bottom: 6px;

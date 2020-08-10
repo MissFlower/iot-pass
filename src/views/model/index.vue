@@ -1,4 +1,4 @@
-<!-- 
+<!--
 文件作者：mawenjuan
 创建日期：2020.6.28
 文件说明：功能定义页面
@@ -7,33 +7,43 @@
 <template>
   <div id="model" v-loading="loading">
     <div class="f20 p10">
-      <i class="el-icon-back hand" @click="goBack"></i><span style="margin-left:15px">编辑草稿</span>
+      <i class="el-icon-back hand" @click="goBack"></i>
+      <span style="margin-left:15px">编辑草稿</span>
     </div>
     <div class="f12 c9 df mt10 mb20">
       <div class="flex1 df ai_c">
         <div class="w120">产品名称</div>
-        <div>{{productName}}</div>
+        <div>{{ productName }}</div>
       </div>
       <div class="flex1 df ai_c">
         <div class="w120">productKey</div>
-        <div>{{productKey}}</div>
+        <div>{{ productKey }}</div>
         <el-link type="primary" :underline="false" class="f12 ml10" @click="copyFun">复制</el-link>
       </div>
     </div>
     <div class="mb10">
-      <el-button v-if="!selectHistory" type="primary" size="mini" @click="handleShowAddStdAbility">添加标准功能</el-button>
+      <el-button
+        v-if="!selectHistory"
+        type="primary"
+        size="mini"
+        @click="handleShowAddStdAbility"
+      >添加标准功能</el-button>
       <el-button v-if="!selectHistory" size="mini" @click="handleShowAdd()">添加自定义功能</el-button>
       <el-button v-if="!selectHistory" size="mini" @click="showImport" disabled>快速导入</el-button>
       <el-button size="mini" @click="showCheck">物模型 TSL</el-button>
       <el-dropdown trigger="click">
         <el-button size="mini" class="ml10">
-          历史版本<i class="el-icon-arrow-down el-icon--right"></i>
+          历史版本
+          <i class="el-icon-arrow-down el-icon--right"></i>
         </el-button>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item v-for="(item, index) in historyList" :key="index">
             <div @click="setSelectHistory(item.version)">
-              <i class="mr10 blue dib w20" :class="selectHistory == item.version ? 'el-icon-check' : ''"></i>
-              <span>{{item.version}}</span>
+              <i
+                class="mr10 blue dib w20"
+                :class="selectHistory == item.version ? 'el-icon-check' : ''"
+              ></i>
+              <span>{{ item.version }}</span>
             </div>
           </el-dropdown-item>
           <el-dropdown-item divided @click.native="showMoreHistory" class="tc">查看更多</el-dropdown-item>
@@ -44,10 +54,22 @@
         您正在编辑的是草稿，需点击发布后，物模型才会正式生效
       </div>
     </div>
-    <model-list ref="modelList" v-if="productKey" :productKey="productKey" :tableHeight="tableHeight" :dataFun="dataFun" @getList="setList">
+    <model-list
+      ref="modelList"
+      v-if="productKey"
+      :productKey="productKey"
+      :tableHeight="tableHeight"
+      :dataFun="dataFun"
+      @getList="setList"
+    >
       <el-table-column label="操作" width="90" align="center" slot="operation">
         <template slot-scope="scope">
-          <el-link :underline="false" type="primary" class="f12" @click="handleShowAdd(scope.row)">编辑</el-link>
+          <el-link
+            :underline="false"
+            type="primary"
+            class="f12"
+            @click="handleShowAdd(scope.row)"
+          >编辑</el-link>
           <el-link :underline="false" type="primary" class="f12" @click="showDelete(scope.row)">删除</el-link>
         </template>
       </el-table-column>
@@ -60,11 +82,29 @@
       <el-button type="primary" size="mini" disabled>恢复此版本</el-button>
       <el-button size="mini" @click.stop="clearVersion">返回</el-button>
     </div>
-    <add-custom-ability v-if="addFlag" :productKey="productKey" :editAbility="editAbility" @close="closeAddCustomAbility" @success="successAddCustomAbility"></add-custom-ability>
-    <add-std-ability v-if="addStdAbilityFlag" :productKey="productKey" :identifiers="identifiers" @close="closeAddStdAbility" @success="successAtdAbility"></add-std-ability>
+    <add-custom-ability
+      v-if="addFlag"
+      :productKey="productKey"
+      :editAbility="editAbility"
+      @close="closeAddCustomAbility"
+      @success="successAddCustomAbility"
+    ></add-custom-ability>
+    <add-std-ability
+      v-if="addStdAbilityFlag"
+      :productKey="productKey"
+      :identifiers="identifiers"
+      @close="closeAddStdAbility"
+      @success="successAtdAbility"
+    ></add-std-ability>
     <import-ability v-if="importFlag" @close="closeImport"></import-ability>
-    <check-model v-if="checkFlag" :productKey='productKey' @close="closeCheck"></check-model>
-    <more-list v-if="moreFlag" :list="historyList" :selectVersion="selectHistory" @selectVertion="setSelectHistory" @close="closeMoreList"></more-list>
+    <check-model v-if="checkFlag" :productKey="productKey" @close="closeCheck"></check-model>
+    <more-list
+      v-if="moreFlag"
+      :list="historyList"
+      :selectVersion="selectHistory"
+      @selectVertion="setSelectHistory"
+      @close="closeMoreList"
+    ></more-list>
   </div>
 </template>
 
@@ -78,8 +118,8 @@ import modelList from './children/list'
 import moreList from './children/historyList'
 
 export default {
-  components: {addCustomAbility, addStdAbility, importAbility, checkModel, modelList, moreList},
-  data () {
+  components: { addCustomAbility, addStdAbility, importAbility, checkModel, modelList, moreList },
+  data() {
     return {
       loading: false,
       list: [],
@@ -108,7 +148,7 @@ export default {
       tableHeight: window.innerHeight - 290
     }
   },
-  mounted () {
+  mounted() {
     if (this.$route.query.key) {
       this.productKey = this.$route.query.key
     }
@@ -118,11 +158,11 @@ export default {
   },
   methods: {
     // list 返回函数
-    setList (data) {
+    setList(data) {
       this.list = data
     },
     // 添加自定义功能、编辑功能
-    handleShowAdd (row) {
+    handleShowAdd(row) {
       if (row) {
         this.editAbility = JSON.parse(JSON.stringify(row))
       } else {
@@ -130,32 +170,32 @@ export default {
       }
       this.addFlag = true
     },
-    successAddCustomAbility () {
+    successAddCustomAbility() {
       this.closeAddCustomAbility()
       this.$refs.modelList.getData()
     },
-    closeAddCustomAbility () {
+    closeAddCustomAbility() {
       this.addFlag = false
       this.editAbility = null
     },
     // 添加标准功能
-    handleShowAddStdAbility () {
+    handleShowAddStdAbility() {
       this.identifiers = this.$refs.modelList.identifiers
       this.addStdAbilityFlag = true
     },
     // 返回上级
-    goBack () {
-      this.$router.push({path: `/product/detail/${this.productKey}?activetab=second`})
+    goBack() {
+      this.$router.push({ path: `/product/detail/${this.productKey}?activetab=second` })
     },
-    showDelete (row) {
-      const str = "确认删除该功能吗？";
-      this.$confirm(str, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
+    showDelete(row) {
+      const str = '确认删除该功能吗？'
+      this.$confirm(str, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
         .then(() => {
-          this.loading = true;
+          this.loading = true
           deleteAbility({
             productKey: this.productKey,
             abilityType: row.abilityType,
@@ -163,77 +203,76 @@ export default {
           })
             .then(res => {
               if (res.code === 200) {
-                this.$message.success("功能删除成功");
-                this.$refs.modelList.getData();
+                this.$message.success('功能删除成功')
+                this.$refs.modelList.getData()
               } else {
-                this.$message.error(res.message);
+                this.$message.error(res.message)
               }
-              this.loading = false;
+              this.loading = false
             })
             .catch(() => {
-              this.$message.error("功能删除失败");
-              this.loading = false;
-            });
+              this.$message.error('功能删除失败')
+              this.loading = false
+            })
         })
         .catch(() => {
-          this.$message("操作已取消");
-        });
+          this.$message('操作已取消')
+        })
     },
     // 关闭添加标准功能的回调
-    closeAddStdAbility () {
+    closeAddStdAbility() {
       this.addStdAbilityFlag = false
     },
     // 添加标准功能成功的回调
-    successAtdAbility () {
+    successAtdAbility() {
       this.closeAddStdAbility()
       this.$refs.modelList.getData()
     },
     // 导入弹框展示
-    showImport () {
+    showImport() {
       this.importFlag = true
     },
     // 导入弹框的关闭回调
-    closeImport () {
+    closeImport() {
       this.importFlag = false
     },
     // 查看弹框展示
-    showCheck () {
+    showCheck() {
       this.checkFlag = true
     },
     // 查看弹框关闭回调
-    closeCheck () {
+    closeCheck() {
       this.checkFlag = false
     },
     // 复制
-    copyFun () {
-      let _input = document.createElement("input")
+    copyFun() {
+      const _input = document.createElement('input')
       document.body.appendChild(_input)
       _input.value = this.productKey
-      _input.select()    
-      document.execCommand("Copy")       
+      _input.select()
+      document.execCommand('Copy')
       this.$message.success('复制成功')
       document.body.removeChild(_input) // 删除临时实例
     },
     // 显示更多的显示函数
-    showMoreHistory () {
+    showMoreHistory() {
       this.moreFlag = true
     },
     // 历史记录的更多弹框的关闭回调
-    closeMoreList () {
+    closeMoreList() {
       this.moreFlag = false
     },
     // 选择历史版本
-    setSelectHistory (version) {
+    setSelectHistory(version) {
       this.selectHistory = version
     },
     // 退出历史版本模式
-    clearVersion () {
+    clearVersion() {
       this.selectHistory = ''
     }
   }
 }
 </script>
-
 
 <style lang="scss" scoped>
 #model {

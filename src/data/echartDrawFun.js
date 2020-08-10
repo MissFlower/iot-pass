@@ -13,13 +13,13 @@ import echarts from 'echarts'
 // }
 export default {
   barChart: (id) => {
-    let chartBar = echarts.init(document.getElementById(id))
-    let color = ['#3398DB', '#33981B', '#FFA02D']
+    const chartBar = echarts.init(document.getElementById(id))
+    const color = ['#3398DB', '#33981B', '#FFA02D']
     const option = {
       tooltip: {
         trigger: 'axis',
-        axisPointer: {            // 坐标轴指示器，坐标轴触发有效
-            type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+        axisPointer: { // 坐标轴指示器，坐标轴触发有效
+          type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
         }
       },
       grid: {
@@ -62,7 +62,7 @@ export default {
           data: [10, 52, 200, 334, 390, 330, 220],
           itemStyle: {
             normal: {
-              color: function (params) {
+              color: (params) => {
                 return color[params.dataIndex % 3]
               }
             }
@@ -70,21 +70,21 @@ export default {
           label: {
             show: true,
             position: 'right',
-            formatter: function (params) {
+            formatter: (params) => {
               return params.value > 0 ? params.value + '%' : ''
             }
           }
         }
       ]
-    };
+    }
     chartBar.setOption(option, true)
   },
   barChart2: (id, obj) => {
     const pros = obj.reObj
-    let chartBar = echarts.init(document.getElementById(id))
-    let color = ['#3398DB', '#33981B', '#FFA02D', '"#163EC0","#2058BF", "#2374CF", "#2272AF", "#318DC1", "#38A1CD", "#38BEDA", "#CBA531", "#CB8326", "#CA5F25"']
+    const chartBar = echarts.init(document.getElementById(id))
+    const color = ['#3398DB', '#33981B', '#FFA02D', '"#163EC0","#2058BF", "#2374CF", "#2272AF", "#318DC1", "#38A1CD", "#38BEDA", "#CBA531", "#CB8326", "#CA5F25"']
     const series_ = []
-    for (let key in obj.reObj) {
+    for (const key in obj.reObj) {
       const row = {
         name: key,
         type: 'bar',
@@ -92,7 +92,7 @@ export default {
           show: true,
           position: 'right',
           fontSize: 12,
-          formatter: function (params) {
+          formatter: (params) => {
             const row = pros[params.seriesName].proportions
             return (row[params.dataIndex] * 100).toFixed(2) + '%'
           }
@@ -103,8 +103,8 @@ export default {
     }
     const option = {
       tooltip: {
-        formatter: function (params) {
-          let str = `<div class="f12">固件类型：${params.seriesName}</div>`
+        formatter: (params) => {
+          const str = `<div class="f12">固件类型：${params.seriesName}</div>`
           return str
         }
       },

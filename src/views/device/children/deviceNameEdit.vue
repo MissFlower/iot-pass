@@ -1,4 +1,4 @@
-<!-- 
+<!--
 文件作者：wengyoubin
 创建日期：2020.6.18
 文件说明：编辑备注名称
@@ -6,7 +6,7 @@
 <template>
   <el-dialog
     title="编辑备注名称"
-    :visible.sync='dialogVisible'
+    :visible.sync="dialogVisible"
     width="500px"
     @close="handleClose"
     v-loading="loading"
@@ -23,67 +23,65 @@
 </template>
 
 <script>
-import { deviceUpdate } from "@/api/deviceRequest";
+import { deviceUpdate } from '@/api/deviceRequest'
 export default {
-  props: ["deviceObj"],
+  props: {
+    deviceObj: {
+      type: Object,
+      default: () => {}
+    }
+  },
   data() {
     return {
       dialogVisible: true,
       newDeviceName: '',
       loading: false
-    };
+    }
   },
   mounted() {
-    this.newDeviceName = this.deviceObj.nickName;
+    this.newDeviceName = this.deviceObj.nickName
   },
 
   methods: {
 
-    //取消
+    // 取消
     handleCancel() {
-      this.$parent.deviceNameEditClose();
+      this.$parent.deviceNameEditClose()
     },
 
-    //保存
+    // 保存
     handleSave() {
-
-      if(this.newDeviceName.length == 0){
+      if (this.newDeviceName.length === 0) {
         this.$message({
           type: 'warning',
-          message: "请输入备注名称"
-        });
-        return;
+          message: '请输入备注名称'
+        })
+        return
       }
-
-      this.loading = true;
-
+      this.loading = true
       deviceUpdate({
         id: this.deviceObj.id,
-        nickName: this.newDeviceName,
+        nickName: this.newDeviceName
       })
         .then(res => {
-          this.loading = false;
+          this.loading = false
           if (res.code === 200) {
-            this.$parent.deviceNameEditClose(true);
+            this.$parent.deviceNameEditClose(true)
           }
           this.$message({
-            type: res.code == 200?"success":'warning',
+            type: res.code === 200 ? 'success' : 'warning',
             message: res.message
-          });
+          })
         })
         .catch(() => {
-          this.loading = false;
-        });
-        
+          this.loading = false
+        })
     },
 
-    //窗口关闭
+    // 窗口关闭
     handleClose() {
-      this.handleCancel();
+      this.handleCancel()
     }
   }
-};
+}
 </script>
-
-<style lang="scss" scoped>
-</style>

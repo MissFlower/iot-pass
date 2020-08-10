@@ -1,4 +1,4 @@
-<!-- 
+<!--
   文件作者：mawenjuan
   创建日期：2020.6.23
   文件说明：手机号绑定
@@ -34,12 +34,8 @@
         <svg-icon icon-class="success"></svg-icon>
       </div>
       <div>
-        <div class="f16 c3">
-          修改成功，{{ formData.phone }}可作为您的辅助邮箱
-        </div>
-        <div class="f12 c9">
-          该邮箱不能作为登录名使用，仅用于安全校验及必要时的紧急联系
-        </div>
+        <div class="f16 c3">修改成功，{{ formData.phone }}可作为您的辅助邮箱</div>
+        <div class="f12 c9">该邮箱不能作为登录名使用，仅用于安全校验及必要时的紧急联系</div>
         <div class="f12">
           <!-- 返回 <span class="red" @click="handleGoHome">首页</span> -->
         </div>
@@ -50,56 +46,56 @@
 </template>
 
 <script>
-import phoneAreaObj from "@/data/phone"
+import phoneAreaObj from '@/data/phone'
 import sendCodeVerify from '@/components/sendCodeVerify'
 
-import { sendCode, verifyCode } from "@/api";
-import { phoneValidate } from "@/data/fun";
-import { updateUser } from "@/api/user";
+import { sendCode, verifyCode } from '@/api'
+import { phoneValidate } from '@/data/fun'
+import { updateUser } from '@/api/user'
 export default {
-  components: {sendCodeVerify},
-  data () {
+  components: { sendCodeVerify },
+  data() {
     const validatePhone = (rule, value, callback) => {
-      let str = phoneValidate(value);
+      const str = phoneValidate(value)
       if (str.length > 0) {
-        callback(new Error(str));
+        callback(new Error(str))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     const validateCode = (rule, value, callback) => {
-      if (this.$fun.trim(this.code) === "") {
-        callback(new Error("请输入验证码"));
+      if (this.$fun.trim(this.code) === '') {
+        callback(new Error('请输入验证码'))
       } else if (this.$fun.trim(this.code).length !== 6) {
-        callback(new Error("验证码格式错误"));
+        callback(new Error('验证码格式错误'))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     return {
       flag: 1,
       loading: false,
       formData: {
-        area: "1",
-        phone: ""
+        area: '1',
+        phone: ''
       },
-      code: "",
+      code: '',
       areaObj: phoneAreaObj,
       timerVal: null,
-      msg: "点此免费获取",
+      msg: '点此免费获取',
       seconds: 0,
       rules: {
-        phone: [{ required: true, validator: validatePhone, trigger: "blur" }],
+        phone: [{ required: true, validator: validatePhone, trigger: 'blur' }],
         code: [
-          { required: true, validator: validateCode, trigger: "blur" },
-          { type: 'number', message: '请输入正确的验证码', trigger: "blur"}
+          { required: true, validator: validateCode, trigger: 'blur' },
+          { type: 'number', message: '请输入正确的验证码', trigger: 'blur' }
         ]
       },
       verifyFlag: false
     }
   },
   computed: {
-    userInfo () {
+    userInfo() {
       return this.$store.state.app.userInfo
     }
   },
@@ -107,7 +103,7 @@ export default {
   },
   methods: {
     getCode() {
-      this.$refs.form.validateField("phone", (valid) => {
+      this.$refs.form.validateField('phone', (valid) => {
         if (!valid) {
           if (this.seconds === 0) {
             this.verifyFlag = true
@@ -115,8 +111,8 @@ export default {
         }
       })
     },
-    sendCodeFun (data) {
-      this.loading = true;
+    sendCodeFun(data) {
+      this.loading = true
       sendCode({
         phone: this.formData.phone,
         type: 6,
@@ -124,12 +120,12 @@ export default {
         uuid: data.uuid
       }).then(res => {
         if (res.code === 200) {
-          this.seconds = 61;
-          this.timer();
+          this.seconds = 61
+          this.timer()
         } else {
-          this.$message.error(res.message);
+          this.$message.error(res.message)
         }
-        this.loading = false;
+        this.loading = false
       }).catch(() => {
         this.$message.warning('验证码获取失败')
         this.loading = false
@@ -137,17 +133,17 @@ export default {
     },
     timer() {
       if (this.seconds > 1) {
-        this.seconds--;
-        this.msg = `重发(${this.seconds}后)`;
-        this.timerVal = setTimeout(this.timer, 1000);
+        this.seconds--
+        this.msg = `重发(${this.seconds}后)`
+        this.timerVal = setTimeout(this.timer, 1000)
       } else {
-        this.msg = "重新获取验证码";
-        this.seconds = 0;
+        this.msg = '重新获取验证码'
+        this.seconds = 0
       }
     },
-    handleSave () {
+    handleSave() {
       this.$refs.form.validate(valid => {
-        this.loading = true;
+        this.loading = true
         verifyCode({
           code: this.code,
           phone: this.formData.phone,
@@ -155,19 +151,19 @@ export default {
         })
           .then(res => {
             if (res.code === 200) {
-              this.submitFun();
+              this.submitFun()
             } else {
-              this.$message.warning(res.message);
+              this.$message.warning(res.message)
             }
-            this.loading = false;
+            this.loading = false
           })
           .catch(() => {
-            this.$message.warning("验证失败");
-            this.loading = false;
-          });
+            this.$message.warning('验证失败')
+            this.loading = false
+          })
       })
     },
-    submitFun () {
+    submitFun() {
       const row = {
         id: this.userInfo.id,
         account: this.userInfo.account, //	账号
@@ -178,7 +174,7 @@ export default {
       this.loading = true
       updateUser(row).then(res => {
         if (res.code === 200) {
-          this.$store.dispatch("getUserInfo")
+          this.$store.dispatch('getUserInfo')
           // this.$router.push({
           //   name: "success",
           //   params: { id: 2 }
@@ -189,16 +185,16 @@ export default {
         }
         this.loading = false
       }).catch(() => {
-        this.$message.error("操作失败")
+        this.$message.error('操作失败')
         this.loading = false
       })
     },
     // 图片验证码关闭回调
-    closeVarifyDialog () {
+    closeVarifyDialog() {
       this.verifyFlag = false
     },
     // 图片验证码提交的回调
-    successVerifyDialog (data) {
+    successVerifyDialog(data) {
       this.closeVarifyDialog()
       if (data) {
         this.sendCodeFun(data)

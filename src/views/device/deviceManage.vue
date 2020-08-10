@@ -1,12 +1,12 @@
 <!--
- * @Description: 
+ * @Description:
  * @Version: 0.1.0
  * @Autor: AiDongYang
- * @Date: 2020-07-29 15:57:06
+ * @Date: 2020-08-04 10:32:25
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-07-31 17:43:31
---> 
-<!-- 
+ * @LastEditTime: 2020-08-07 18:47:15
+-->
+<!--
 文件作者：wengyoubin
 创建日期：2020.6.17
 文件说明：设备管理
@@ -14,28 +14,28 @@
 <template>
   <div id="deviceControl">
     <!-- 设备列表 -->
-    <deviceList></deviceList>
+    <deviceList />
   </div>
 </template>
 
 <script>
-import deviceList from "./children/deviceList";
+import deviceList from './children/deviceList'
 export default {
   components: { deviceList },
   data() {
     return {
-    };
+    }
   },
-/*
+  /*
 
-*/ 
+*/
   mounted() {
   },
 
   methods: {
-    
+
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

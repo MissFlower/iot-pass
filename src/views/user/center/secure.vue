@@ -22,7 +22,7 @@
         </div>
         <div>安全级别：<span class="orange">中</span></div>
         <div>继续努力</div>
-      </div> -->
+      </div>-->
       <div class="set-con">
         <div class="set-con-item df ai_c">
           <div class="name b">登录密码</div>
@@ -32,7 +32,7 @@
           <div class="op">
             <svg-icon icon-class="success" class="success" />
             <!-- <span class="ml5 mr20" :class="userInfo.email ? 'success' : 'orange'">{{userInfo.email ? '已' : '未'}}设置</span>
-            <span class="blue hand" @click="goToVerify(3)">{{userInfo.email ? '修改' : '设置'}}</span> -->
+            <span class="blue hand" @click="goToVerify(3)">{{userInfo.email ? '修改' : '设置'}}</span>-->
             <span class="ml5 mr20 success">已设置</span>
             <span class="blue hand" @click="goToVerify(3)">修改</span>
           </div>
@@ -40,24 +40,42 @@
         <div class="set-con-item df ai_c">
           <div class="name b">手机绑定</div>
           <div class="flex1">
-            <div v-if="userInfo.phone">您已绑定了手机 <span class="success">{{ userInfo.phone }}</span> [您的手机为安全手机，可以找回密码，但不能用于登录]</div>
+            <div v-if="userInfo.phone">
+              您已绑定了手机
+              <span class="success">{{ userInfo.phone }}</span> [您的手机为安全手机，可以找回密码，但不能用于登录]
+            </div>
             <div v-else>未设置</div>
           </div>
           <div class="op">
-            <svg-icon :icon-class="userInfo.phone ? 'success' : 'warning'" :class="userInfo.phone ? 'success' : 'orange'" />
-            <span class="ml5 mr20" :class="userInfo.phone ? 'success' : 'orange'">{{ userInfo.phone ? '已' : '未' }}设置</span>
+            <svg-icon
+              :icon-class="userInfo.phone ? 'success' : 'warning'"
+              :class="userInfo.phone ? 'success' : 'orange'"
+            />
+            <span
+              class="ml5 mr20"
+              :class="userInfo.phone ? 'success' : 'orange'"
+            >{{ userInfo.phone ? '已' : '未' }}设置</span>
             <span class="blue hand" @click.stop="goToVerify(2)">{{ userInfo.phone ? '修改' : '设置' }}</span>
           </div>
         </div>
         <div class="set-con-item df ai_c">
           <div class="name b">备用邮箱</div>
           <div class="flex1">
-            <div v-if="userInfo.email">您已绑定了邮箱 <span class="success">{{ userInfo.email }}</span> [速绿发送的各类系统、营销、服务通知将发送到您的备用邮箱。]</div>
+            <div v-if="userInfo.email">
+              您已绑定了邮箱
+              <span class="success">{{ userInfo.email }}</span> [速绿发送的各类系统、营销、服务通知将发送到您的备用邮箱。]
+            </div>
             <div v-else>未设置</div>
           </div>
           <div class="op">
-            <svg-icon :icon-class="userInfo.email ? 'success' : 'warning'" :class="userInfo.email ? 'success' : 'orange'" />
-            <span class="ml5 mr20" :class="userInfo.email ? 'success' : 'orange'">{{ userInfo.email ? '已' : '未' }}设置</span>
+            <svg-icon
+              :icon-class="userInfo.email ? 'success' : 'warning'"
+              :class="userInfo.email ? 'success' : 'orange'"
+            />
+            <span
+              class="ml5 mr20"
+              :class="userInfo.email ? 'success' : 'orange'"
+            >{{ userInfo.email ? '已' : '未' }}设置</span>
             <span class="blue hand" @click.stop="goToVerify(1)">{{ userInfo.email ? '修改' : '设置' }}</span>
           </div>
         </div>
@@ -94,16 +112,16 @@ export default {
   .title {
     padding: 16px 0px;
     min-height: 70px;
-    border-bottom: 1px solid #DDD;
+    border-bottom: 1px solid #ddd;
     color: #333;
     h5 {
       display: inline-block;
       text-indent: 8px;
-      border-left: 2px solid #88B7E0;
+      border-left: 2px solid #88b7e0;
       margin-top: 0px;
       margin-top: 8px;
       margin-bottom: 8px;
-      vertical-align: top
+      vertical-align: top;
     }
   }
   .con {

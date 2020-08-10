@@ -4,14 +4,20 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-03 16:31:10
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-03 16:59:08
- */ 
+ * @LastEditTime: 2020-08-06 10:25:31
+ */
 
 // 事件类型
 export const EVENT_TYPE = Object.freeze({
-  'alert': '信息',
-  'warn': '告警',
-  'error': '故障'
+  INFO: 1, // 信息
+  WARN: 2, // 告警
+  FAULT: 3 // 故障
+})
+// 事件文案
+export const EVENT_TYPE_TEXT = Object.freeze({
+  [EVENT_TYPE.INFO]: '信息',
+  [EVENT_TYPE.WARN]: '告警',
+  [EVENT_TYPE.FAULT]: '故障'
 })
 // 时间类型
 export const TIME_TYPE = Object.freeze([
@@ -51,7 +57,7 @@ export const dataTypeObj = {
   'text': '5',
   'date': '6',
   'struct': '7',
-  'array': '8',
+  'array': '8'
 }
 export const dataTypeNumObj = {
   '0': 'int',
@@ -74,7 +80,7 @@ export const dataTypeTextObj = {
   'date': 'date (时间型)',
   'struct': 'struct (结构体)',
   '7': 'struct (结构体)',
-  'array': 'array (数组)',
+  'array': 'array (数组)'
 }
 // 固件的升级过程状态
 export const upgradeStatusObj = {
@@ -120,13 +126,13 @@ export const taskStatusObj = {
   3: {
     label: '已取消',
     color: '#888'
-  } 
+  }
 }
 export const scopeTypeObj = {
   0: '全部',
   1: '定向',
   2: '区域',
-  3: '灰度' 
+  3: '灰度'
 }
 export const fmStatusObj = {
   0: {
@@ -144,5 +150,5 @@ export const fmStatusObj = {
   3: {
     label: '验证失败',
     color: '#d93026'
-  } 
+  }
 }

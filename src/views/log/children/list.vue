@@ -16,13 +16,16 @@
 
 <script>
 export default {
-  name:'logList',
+  name: 'LogList',
   props: {
-    data:[Array],
-    loading:{
-      type:[Boolean],
-      default:false
+    data: {
+      type: Array,
+      default: () => []
+    },
+    loading: {
+      type: Boolean,
+      default: false
     }
   }
-};
+}
 </script>

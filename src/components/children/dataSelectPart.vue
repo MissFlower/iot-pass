@@ -1,4 +1,4 @@
-<!-- 
+<!--
 文件作者：mawenjuan
 创建日期：2020.6.23
 文件说明：选择参数类型的组件
@@ -8,32 +8,63 @@
   <div id="dataSelectPart">
     <el-form ref="dataSelectPartForm" :model="formData" :rules="rules">
       <el-form-item label="数据类型" prop="type">
-        <el-select v-model="formData.type" @change="handleChange" :disabled="showFlag || modelType">
-          <el-option v-for="(item, index) in dataTypeArr" :key="index" :value="item.value" :label="item.label"></el-option>
+        <el-select v-model="formData.type" @change="handleChange" :disabled="showFlag || modelType == 0">
+          <el-option
+            v-for="(item, index) in dataTypeArr"
+            :key="index"
+            :value="item.value"
+            :label="item.label"
+          ></el-option>
         </el-select>
       </el-form-item>
       <div v-if="formData.type == '0' || formData.type == '1' || formData.type == '2'">
-        <div><span class="red mr5">*</span>取值范围</div>
+        <div>
+          <span class="red mr5">*</span>取值范围
+        </div>
         <div class="df ai_c mt10">
           <el-form-item prop="min">
-            <el-input v-model="formData.specs.min" placeholder="最小值" class="w150 mr10" @input="rangeValueFun" :disabled="showFlag"></el-input>
+            <el-input
+              v-model="formData.specs.min"
+              placeholder="最小值"
+              class="w150 mr10"
+              @input="rangeValueFun"
+              :disabled="showFlag"
+            ></el-input>
             <span class="mr10">~</span>
           </el-form-item>
           <el-form-item prop="max">
-            <el-input v-model="formData.specs.max" placeholder="最大值" class="w150" @input="rangeValueFun" :disabled="showFlag"></el-input>
+            <el-input
+              v-model="formData.specs.max"
+              placeholder="最大值"
+              class="w150"
+              @input="rangeValueFun"
+              :disabled="showFlag"
+            ></el-input>
           </el-form-item>
         </div>
         <el-form-item label="步长" prop="step">
-          <el-input v-model="formData.specs.step" placeholder="请输入步长" :disabled="showFlag" @input="stepChange"></el-input>
+          <el-input
+            v-model="formData.specs.step"
+            placeholder="请输入步长"
+            :disabled="showFlag"
+            @input="stepChange"
+          ></el-input>
         </el-form-item>
         <el-form-item label="单位" placeholder="请选择单位">
           <el-select v-model="formData.specs.unit" filterable :disabled="showFlag">
-            <el-option v-for="item in unitArr" :key="item.symbol" :value="item.symbol" :label="`${item.name} /${item.symbol}`"></el-option>
+            <el-option
+              v-for="item in unitArr"
+              :key="item.symbol"
+              :value="item.symbol"
+              :label="`${item.name} /${item.symbol}`"
+            ></el-option>
           </el-select>
         </el-form-item>
       </div>
       <div v-if="formData.type == '3'" class="mb10">
-        <div><span class="red mr5">*</span>枚举项</div>
+        <div>
+          <span class="red mr5">*</span>枚举项
+        </div>
         <div class="df mt10 mb10">
           <div class="flex1">
             参数值
@@ -52,28 +83,61 @@
         </div>
         <div v-for="(item, index) in enumArr" :key="index" class="df enumItem">
           <el-form-item class="flex1">
-            <el-input v-model="item.key" placeholder="编号如’0‘" class="w150 mr10" @input="enumKeyChange(index)" :disabled="showFlag"></el-input>
+            <el-input
+              v-model="item.key"
+              placeholder="编号如’0‘"
+              class="w150 mr10"
+              @input="enumKeyChange(index)"
+              :disabled="showFlag"
+            ></el-input>
             <span class="mr10">~</span>
-            <div class="red f12 lh14 pr20" v-if="item.errorKey">{{item.errorKey}}</div>
+            <div class="red f12 lh14 pr20" v-if="item.errorKey">{{ item.errorKey }}</div>
           </el-form-item>
           <el-form-item class="flex1">
-            <el-input v-model="item.desc" placeholder="对该枚举项的描述" class="w150" @input="enumDescChange(index)" :disabled="showFlag"></el-input>
-            <el-button type="text" v-if="enumArr.length > 1 && !showFlag" class="ml2 hand" @click="delectEnum(index)">删除</el-button>
-            <div class="red f12 lh14 pr20" v-if="item.errorDesc">{{item.errorDesc}}</div>
+            <el-input
+              v-model="item.desc"
+              placeholder="对该枚举项的描述"
+              class="w150"
+              @input="enumDescChange(index)"
+              :disabled="showFlag"
+            ></el-input>
+            <el-button
+              type="text"
+              v-if="enumArr.length > 1 && !showFlag"
+              class="ml2 hand"
+              @click="delectEnum(index)"
+            >删除</el-button>
+            <div class="red f12 lh14 pr20" v-if="item.errorDesc">{{ item.errorDesc }}</div>
           </el-form-item>
         </div>
-        <span @click="addEnumItem" class="blue f12" v-if="!showFlag"><i class="el-icon-plus mr10"></i>添加枚举项</span>
+        <span @click="addEnumItem" class="blue f12" v-if="!showFlag">
+          <i class="el-icon-plus mr10"></i>添加枚举项
+        </span>
       </div>
       <div v-if="formData.type == '4'">
-        <div class="mb10"><span class="red mr5">*</span>布尔值</div>
+        <div class="mb10">
+          <span class="red mr5">*</span>布尔值
+        </div>
         <el-form-item prop="bool0">
           <span class="dib w30 tc">0 -</span>
-          <el-input v-model="boolObj[0]" placeholder="如：关" class="ml20" style="width: calc(100% - 50px)" :disabled="showFlag"></el-input>
+          <el-input
+            v-model="boolObj[0]"
+            placeholder="如：关"
+            class="ml20"
+            style="width: calc(100% - 50px)"
+            :disabled="showFlag"
+          ></el-input>
         </el-form-item>
         <div>
           <el-form-item prop="bool1">
             <span class="dib w30 tc">1 -</span>
-            <el-input v-model="boolObj[1]" placeholder="如：开" class="ml20" style="width: calc(100% - 50px)" :disabled="showFlag"></el-input>
+            <el-input
+              v-model="boolObj[1]"
+              placeholder="如：开"
+              class="ml20"
+              style="width: calc(100% - 50px)"
+              :disabled="showFlag"
+            ></el-input>
           </el-form-item>
         </div>
       </div>
@@ -86,14 +150,34 @@
         <el-input disabled v-model="dataText"></el-input>
       </el-form-item>
       <div v-if="formData.type == '7'">
-        <div class="mb10"><span class="red mr5">*</span>JSON对象：</div>
+        <div class="mb10">
+          <span class="red mr5">*</span>JSON对象：
+        </div>
         <el-form-item>
           <div v-for="(item, index) in formData.specs" :key="index" class="df ai_c json_item">
-            <div class="flex1">参数名称： {{item.name}}</div>
+            <div class="flex1">参数名称： {{ item.name }}</div>
             <div>
-              <el-link type="primary" :underline="false" class="f12 mr10" @click.stop="editSturct(item, index)" v-if="showFlag">查看</el-link>
-              <el-link type="primary" :underline="false" class="f12 mr10" @click.stop="editSturct(item, index)" v-if="!showFlag">编辑</el-link>
-              <el-link type="primary" :underline="false" class="f12" @click.stop="deleteStruct(index)" v-if="!showFlag">删除</el-link>
+              <el-link
+                type="primary"
+                :underline="false"
+                class="f12 mr10"
+                @click.stop="editSturct(item, index)"
+                v-if="showFlag"
+              >查看</el-link>
+              <el-link
+                type="primary"
+                :underline="false"
+                class="f12 mr10"
+                @click.stop="editSturct(item, index)"
+                v-if="!showFlag"
+              >编辑</el-link>
+              <el-link
+                type="primary"
+                :underline="false"
+                class="f12"
+                @click.stop="deleteStruct(index)"
+                v-if="!showFlag"
+              >删除</el-link>
             </div>
           </div>
           <div v-if="structFlag" class="f12 red ml5">struct不能为空</div>
@@ -102,23 +186,52 @@
       </div>
       <div v-if="formData.type == '8'">
         <el-form-item label="元素类型">
-          <el-radio-group v-if="!modelType" v-model="arrObj.type" :disabled="showFlag" @change="arrayTypeChange">
-            <el-radio v-for="(item, index) in arrTypes" :key="index" :label="item.value">{{item.text}}</el-radio>
+          <el-radio-group
+            v-if="!modelType"
+            v-model="arrObj.type"
+            :disabled="showFlag"
+            @change="arrayTypeChange"
+          >
+            <el-radio
+              v-for="(item, index) in arrTypes"
+              :key="index"
+              :label="item.value"
+            >{{ item.text }}</el-radio>
           </el-radio-group>
-          <div v-else class="disabledDiv">{{dataTypeNumObj[arrObj.type]}}</div>
+          <div v-else class="disabledDiv">{{ dataTypeNumObj[arrObj.type] }}</div>
         </el-form-item>
         <el-form-item label="元素个数">
           <el-input v-model="arrObj.num" placeholder="请输入元素个数" :disabled="showFlag"></el-input>
         </el-form-item>
         <div v-if="arrObj.type == '7'">
-          <div class="mb10"><span class="red mr5">*</span>JSON对象：</div>
+          <div class="mb10">
+            <span class="red mr5">*</span>JSON对象：
+          </div>
           <el-form-item>
             <div v-for="(item, index) in structsForArrar" :key="index" class="df ai_c json_item">
-              <div class="flex1">参数名称： {{item.name}}</div>
+              <div class="flex1">参数名称： {{ item.name }}</div>
               <div>
-                <el-link type="primary" :underline="false" class="f12 mr10" @click.stop="editSturct(item, index)" v-if="showFlag">查看</el-link>
-                <el-link type="primary" :underline="false" class="f12 mr10" @click.stop="editSturct(item, index)" v-if="!showFlag">编辑</el-link>
-                <el-link type="primary" :underline="false" class="f12" @click.stop="deleteStruct(index)" v-if="!showFlag">删除</el-link>
+                <el-link
+                  type="primary"
+                  :underline="false"
+                  class="f12 mr10"
+                  @click.stop="editSturct(item, index)"
+                  v-if="showFlag"
+                >查看</el-link>
+                <el-link
+                  type="primary"
+                  :underline="false"
+                  class="f12 mr10"
+                  @click.stop="editSturct(item, index)"
+                  v-if="!showFlag"
+                >编辑</el-link>
+                <el-link
+                  type="primary"
+                  :underline="false"
+                  class="f12"
+                  @click.stop="deleteStruct(index)"
+                  v-if="!showFlag"
+                >删除</el-link>
               </div>
             </div>
             <div v-if="structFlag" class="f12 red ml5">struct不能为空</div>
@@ -127,22 +240,51 @@
         </div>
       </div>
     </el-form>
-    <add-param v-if="flag == 1" :specs="structSpecs" :info="structInfo" :showFlag="showFlag" :allFlag="allFlag_" @success="successAddParams" @close="clodeAddParams"></add-param>
+    <add-param
+      v-if="flag == 1"
+      :specs="structSpecs"
+      :info="structInfo"
+      :showFlag="showFlag"
+      :allFlag="allFlag_"
+      @success="successAddParams"
+      @close="clodeAddParams"
+    ></add-param>
   </div>
 </template>
 
 <script>
-import addParam from "@/views/model/children/addParam"
-import units from "@/data/unit"
+import addParam from '@/views/model/children/addParam'
+import units from '@/data/unit'
 
-import {dataTypeObj, dataTypeNumObj} from '@/data/constants'
+import { dataTypeObj, dataTypeNumObj } from '@/data/constants'
 export default {
   name: 'DatatypeSelectpart',
-  components: {addParam},
-  props: ['info', 'specs', 'showFlag', 'allFlag', 'modelType'],
-  data () {
+  components: { addParam },
+  props: {
+    info: {
+      type: Object,
+      default: () => null
+    },
+    specs: {
+      type: Object,
+      default: () => {}
+    },
+    showFlag: {
+      type: Boolean,
+      default: false
+    },
+    allFlag: {
+      type: Number,
+      default: 0
+    },
+    modelType: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data() {
     const validateValueRangeMin = (rule, value, callback) => {
-      let str = this.numMinMaxDealFun(this.formData.specs.min)
+      const str = this.numMinMaxDealFun(this.formData.specs.min)
       if (str) {
         callback(new Error(str))
       } else {
@@ -150,7 +292,7 @@ export default {
       }
     }
     const validateValueRangeMax = (rule, value, callback) => {
-      let str = this.numMinMaxDealFun(this.formData.specs.max)
+      const str = this.numMinMaxDealFun(this.formData.specs.max)
       if (str) {
         callback(new Error(str))
       } else {
@@ -168,7 +310,7 @@ export default {
       }
     }
     const validateBool0 = (rule, value, callback) => {
-      let str = this.validateBool(this.boolObj[0])
+      const str = this.validateBool(this.boolObj[0])
       if (str) {
         callback(new Error(str))
       } else {
@@ -176,7 +318,7 @@ export default {
       }
     }
     const validateBool1 = (rule, value, callback) => {
-      let str = this.validateBool(this.boolObj[1])
+      const str = this.validateBool(this.boolObj[1])
       if (str) {
         callback(new Error(str))
       } else {
@@ -270,25 +412,25 @@ export default {
       structSpecs: null,
       rules: {
         type: [
-          {required: true, message: "数据类型不能为空", trigger: 'change' }
+          { required: true, message: '数据类型不能为空', trigger: 'change' }
         ],
         min: [
-          { required: true, validator: validateValueRangeMin, trigger: 'change' },
+          { required: true, validator: validateValueRangeMin, trigger: 'change' }
         ],
         max: [
-          { required: true, validator: validateValueRangeMax, trigger: 'change' },
+          { required: true, validator: validateValueRangeMax, trigger: 'change' }
         ],
         step: [
-          {required: true, validator: validateStep, trigger: 'change' }
+          { required: true, validator: validateStep, trigger: 'change' }
         ],
         bool0: [
-          {required: true, validator: validateBool0, trigger: 'change'}
+          { required: true, validator: validateBool0, trigger: 'change' }
         ],
         bool1: [
-          {required: true, validator: validateBool1, trigger: 'change'}
+          { required: true, validator: validateBool1, trigger: 'change' }
         ],
         text: [
-          {required: true, validator: validateTextLength, trigger: 'change'}
+          { required: true, validator: validateTextLength, trigger: 'change' }
         ]
       },
       unitArr: units,
@@ -303,7 +445,7 @@ export default {
       this.dealDataByInfo()
     }
   },
-  mounted () {
+  mounted() {
     if (this.allFlag > 0) {
       this.dataTypeArr.forEach(item => {
         if (item.value === '7' || item.value === '8') {
@@ -321,8 +463,8 @@ export default {
   },
   methods: {
     // 步长输入的控制
-    stepChange () {
-      let step = this.formData.specs.step
+    stepChange() {
+      const step = this.formData.specs.step
       let arr = step.split('')
       arr = arr.filter(val => {
         return Number.isInteger(val * 1) || (val === '.' && this.formData.type * 1 > 0)
@@ -330,14 +472,14 @@ export default {
       this.formData.specs.step = arr.join('')
     },
     // bool值验证
-    validateBool (value) {
+    validateBool(value) {
       let str = ''
       if (value === '') {
         str = '布尔值不能为空'
       } else if (value.length > 10) {
         str = '布尔值最大长度不能超过10个字符'
       } else {
-        let reg = /^(?!_)[a-zA-Z0-9_\u4e00-\u9fa5]+$/
+        const reg = /^(?!_)[a-zA-Z0-9_\u4e00-\u9fa5]+$/
         if (reg.test(value[0])) {
           str = ''
         } else {
@@ -347,7 +489,7 @@ export default {
       return str
     },
     // 根据info 数据处理
-    dealDataByInfo () {
+    dealDataByInfo() {
       if (this.info && JSON.stringify(this.info) !== '{}') {
         this.formData = JSON.parse(JSON.stringify(this.info))
         // this.handleChange()
@@ -356,10 +498,10 @@ export default {
         } else {
           this.allFlag_ = this.allFlag + 1
         }
-        switch(this.formData.type) {
+        switch (this.formData.type) {
           case '3':
             this.enumArr = []
-            for (let key in this.formData.specs) {
+            for (const key in this.formData.specs) {
               this.enumArr.push({
                 key: key,
                 desc: this.formData.specs[key],
@@ -386,7 +528,7 @@ export default {
       }
     },
     // 最大、小值的验证
-    numMinMaxDealFun (value) {
+    numMinMaxDealFun(value) {
       let str = ''
       let val = null
       switch (this.formData.type + '') {
@@ -394,8 +536,8 @@ export default {
           val = 2147483648
           if (value === '') {
             str = '不能为空'
-          }else if (this.formData.specs.max && this.formData.specs.min && (this.formData.specs.min * 1 > this.formData.specs.max * 1 || this.formData.specs.min === this.formData.specs.max)) {
-            str = "最大值必须大于最小值，整数型不能有小数位，单精度有效位为7，双精度为16"
+          } else if (this.formData.specs.max && this.formData.specs.min && (this.formData.specs.min * 1 > this.formData.specs.max * 1 || this.formData.specs.min === this.formData.specs.max)) {
+            str = '最大值必须大于最小值，整数型不能有小数位，单精度有效位为7，双精度为16'
           } else if (value > -val && value < val) {
             str = ''
           } else {
@@ -405,7 +547,7 @@ export default {
         case '1':
           val = '2^128'
           if (this.formData.specs.max && this.formData.specs.min && (this.formData.specs.min * 1 > this.formData.specs.max * 1 || this.formData.specs.min === this.formData.specs.max)) {
-            str = "最大值必须大于最小值，整数型不能有小数位，单精度有效位为7，双精度为16"
+            str = '最大值必须大于最小值，整数型不能有小数位，单精度有效位为7，双精度为16'
           } else if (value > -(Math.pow(2, 128)) && value < Math.pow(2, 128)) {
             str = ''
           } else {
@@ -424,12 +566,12 @@ export default {
       return str
     },
     // 最大、小值的监控函数
-    rangeValueFun (newVal) {
+    rangeValueFun(newVal) {
       let value = newVal
       if (this.formData.type === '0') {
         value = newVal.replace(/\./g, '')
       } else {
-        value = newVal.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".")
+        value = newVal.replace('.', '$#$').replace(/\./g, '').replace('$#$', '.')
         let len = 7
         if (this.formData.type === '1') {
           len = 7
@@ -444,8 +586,8 @@ export default {
       }
       return value
     },
-    handleChange () { // 选择数据类型
-      switch(this.formData.type) {
+    handleChange() { // 选择数据类型
+      switch (this.formData.type) {
         case '0':
         case '1':
         case '2':
@@ -485,7 +627,7 @@ export default {
       }
     },
     // 数组类型选择更换的函数
-    arrayTypeChange () {
+    arrayTypeChange() {
       if (this.arrObj.type === '7') {
         this.allFlag_ = this.allFlag + 1
       } else {
@@ -503,7 +645,7 @@ export default {
       this.$forceUpdate()
     },
     // 显示新增参数的弹框
-    addStruct () {
+    addStruct() {
       let specs = this.formData.specs
       if (this.formData.type === '8') {
         specs = this.structsForArrar
@@ -512,16 +654,16 @@ export default {
       this.flag = 1
     },
     // 枚举项 key值得监控函数  验证信息的显示
-    enumKeyChange (index) {
+    enumKeyChange(index) {
       const row = this.enumArr[index]
       const enumKey = row.key
       if (enumKey === '') {
         row.errorKey = '参数值不能为空'
       } else {
         if (!Number.isInteger(enumKey * 1)) {
-          row.errorKey =  '支持整型，取值范围：-2147483648 ~ 2147483647'
+          row.errorKey = '支持整型，取值范围：-2147483648 ~ 2147483647'
         } else if (enumKey < -2147483648 || enumKey > 2147483648) {
-          row.errorKey =  '支持整型，取值范围：-2147483648 ~ 2147483647'
+          row.errorKey = '支持整型，取值范围：-2147483648 ~ 2147483647'
         } else {
           row.errorKey = ''
         }
@@ -529,13 +671,13 @@ export default {
       this.$forceUpdate()
     },
     // 枚举项 描述值得监控函数  验证信息的显示
-    enumDescChange (index) {
+    enumDescChange(index) {
       const row = this.enumArr[index]
       const enumDesc = row.desc
       if (enumDesc === '') {
         row.errorDesc = '参数描述不能为空'
       } else {
-        let reg = /^(?!_)(?!-)[a-zA-Z0-9_\u4e00-\u9fa5\\-]+$/
+        const reg = /^(?!_)(?!-)[a-zA-Z0-9_\u4e00-\u9fa5\\-]+$/
         if (!reg.test(enumDesc) || enumDesc.length > 20) {
           row.errorDesc = '支持中文、英文大小写、数字下划线和短划线，必须以中文、英文或数字开头，不超过20个字符'
         } else {
@@ -548,7 +690,7 @@ export default {
       this.enumArr.splice(index, 1)
     },
     // 返回数据到父级，为父级组件调用
-    getDataForParent () {
+    getDataForParent() {
       this.$refs.dataSelectPartForm.validate(valid => {
         if (valid) {
           let submitFlag = true
@@ -615,7 +757,7 @@ export default {
         }
       })
     },
-    successAddParams (data) { // 新增参数的成功的返回函数
+    successAddParams(data) { // 新增参数的成功的返回函数
       if (data) {
         this.structFlag = false
         // let specs = this.formData.specs
@@ -632,12 +774,12 @@ export default {
       }
     },
     // 新增参数弹框的close函数
-    clodeAddParams () {
+    clodeAddParams() {
       this.flag = 0
       this.structInfo = null
     },
     // 新增参数的编辑
-    editSturct (row, index) {
+    editSturct(row, index) {
       this.structInfo = JSON.parse(JSON.stringify(row))
       this.structIndex = index
       let specs = this.formData.specs
@@ -650,11 +792,11 @@ export default {
       this.structSpecs = specs
       this.flag = 1
     },
-    deleteStruct (index) {
+    deleteStruct(index) {
       let specs = this.formData.specs
-        if (this.formData.type === '8') {
-          specs = this.structsForArrar
-        }
+      if (this.formData.type === '8') {
+        specs = this.structsForArrar
+      }
       specs.splice(index, 1)
     }
   }
@@ -667,7 +809,8 @@ export default {
     margin-right: 10px;
   }
   .enumItem {
-    .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item {
+    .el-form-item--mini.el-form-item,
+    .el-form-item--small.el-form-item {
       margin-bottom: 10px;
     }
   }

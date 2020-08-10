@@ -1,9 +1,9 @@
 import request from '@/utils/request'
-import Qs from 'qs'
+// import Qs from 'qs'
 
-const headerFrom = {
-  'Content-Type': 'application/x-www-form-urlencoded'
-}
+// const headerFrom = {
+//   'Content-Type': 'application/x-www-form-urlencoded'
+// }
 const headerFrom_json = {
   'Content-Type': 'application/json'
 }
@@ -110,15 +110,6 @@ export function topicList(data) {
   })
 }
 
-/**
- * 设备自定义topic列表 *
-  *
-  * @param {
-    *   pageNum	Long	否	分页页数，默认：1
-    *   pageSize	Long	否	分页条数，默认：20
-    *   productKey	String	是	产品 productKey
-    * }
-    */
 export function topicCustomList(data) {
   return request({
     url: 'topic/customDeviceList',
@@ -127,38 +118,84 @@ export function topicCustomList(data) {
   })
 }
 
-export function eventManage(data) {
+/**
+ * @description: 事件管理接口
+ * @param { productKey: 产品key, deviceName: 设备名称, identifier: 物模型中的属性标识符 }
+ * @param { startTime: 开始时间, endTime: 结束时间, pageSize: 表格默认20条|图表默认100条 }
+ * @param { eventType: 事件类型, asc: 排序规则 }
+ * @return {type}
+ * @author: AiDongYang
+ */
+export function getEventForList(params) {
   // 物模型数据-事件管理
   return request({
-    baseURL: process.env.VUE_APP_API_URL,
-    url: '/tsdb/getEventForList',
+    url: '/device/getEventForList',
     method: 'post',
-    headers: headerFrom,
-    data: Qs.stringify(data)
-  })
-}
-
-export function serviceCall(data) {
-  // 物模型数据-服务调用
-  return request({
-    url: '/tsdb/getServiceForList',
-    method: 'post',
-    headers: headerFrom,
-    data: Qs.stringify(data)
+    headers: headerFrom_json,
+    data: params
   })
 }
 
 /**
- * @description: 获取物模型数据
- * @param {产品key: productKey, 设备名称: deviceName}
+ * @description: 服务调用接口
+ * @param { productKey: 产品key, deviceName: 设备名称, identifier: 物模型中的属性标识符 }
+ * @param { startTime: 开始时间, endTime: 结束时间, pageSize: 表格默认20条|图表默认100条 }
+ * @param { asc: 排序规则 }
  * @return {type}
  * @author: AiDongYang
  */
-export function modelData(params) {
+export function getServiceForList(params) {
+  // 物模型数据-服务调用
   return request({
-    url: '/device/getPropByProductId',
+    url: '/device/getServiceForList',
     method: 'post',
     headers: headerFrom_json,
-    data: Qs.stringify(params)
+    data: params
+  })
+}
+
+/**
+ * @description: 设备物模型属性列表
+ * @param {productKey: 产品key, deviceName: 设备名称}
+ * @return {type}
+ * @author: AiDongYang | WangHongWei
+ */
+export function getAllProperties(params) {
+  return request({
+    url: '/device/getAllProperties',
+    method: 'post',
+    headers: headerFrom_json,
+    data: params
+  })
+}
+
+/**
+ * @description: 获取属性最新状态
+ * @param {productKey: 产品key, deviceName: 设备名称, identifierList: 属性标识符列表}
+ * @return {type}
+ * @author: AiDongYang | WangHongWei
+ */
+export function getPropertyStatus(params) {
+  return request({
+    url: '/device/getPropertyStatus',
+    method: 'post',
+    headers: headerFrom_json,
+    data: params
+  })
+}
+
+/**
+ * @description: 查看数据 表格图表 接口
+ * @param { productKey: 产品key, deviceName: 设备名称, identifier: 物模型中的属性标识符 }
+ * @param { startTime: 开始时间, endTime: 结束时间, pageSize: 表格默认20条|图表默认100条 }
+ * @return {type}
+ * @author: AiDongYang | WangHongWei
+ */
+export function getTableData(params) {
+  return request({
+    url: '/device/getTableData',
+    method: 'post',
+    headers: headerFrom_json,
+    data: params
   })
 }

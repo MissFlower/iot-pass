@@ -32,7 +32,7 @@ export default {
     info: {
       type: Object,
       default: () => {
-        return {}
+        return null
       }
     }
   },

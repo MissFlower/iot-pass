@@ -18,12 +18,7 @@
       </app-link>
     </template>
 
-    <el-submenu
-      v-else
-      ref="subMenu"
-      :index="resolvePath(item.path)"
-      popper-append-to-body
-    >
+    <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
       <template slot="title">
         <new-item :icon="item.icon" :title="item.name" />
       </template>
@@ -40,13 +35,13 @@
 </template>
 
 <script>
-import path from "path";
-import { isExternal } from "@/utils/validate";
-import newItem from "./Item";
-import AppLink from "./Link";
+import path from 'path'
+import { isExternal } from '@/utils/validate'
+import newItem from './Item'
+import AppLink from './Link'
 
 export default {
-  name: "SidebarItem",
+  name: 'SidebarItem',
   components: { newItem, AppLink },
   props: {
     // route object
@@ -60,53 +55,53 @@ export default {
     },
     basePath: {
       type: String,
-      default: ""
+      default: ''
     }
   },
   data() {
     // To fix https://github.com/PanJiaChen/vue-admin-template/issues/237
     // TODO: refactor with render function
-    this.onlyOneChild = null;
-    return {};
+    this.onlyOneChild = null
+    return {}
   },
   methods: {
     hasOneShowingChild(children = [], parent) {
       const showingChildren = children.filter(item => {
         if (item.hidden) {
-          return false;
+          return false
         } else {
-          this.onlyOneChild = item;
-          return true;
+          this.onlyOneChild = item
+          return true
         }
-      });
+      })
 
       // if (showingChildren.length === 1) {
       //   return true;
       // }
       if (showingChildren.length === 1) {
-        return false;
+        return false
       }
 
       if (showingChildren.length === 0) {
         this.onlyOneChild = {
           ...parent,
-          path: "",
+          path: '',
           noShowingChildren: true
-        };
-        return true;
+        }
+        return true
       }
 
-      return false;
+      return false
     },
     resolvePath(routePath) {
       if (isExternal(routePath)) {
-        return routePath;
+        return routePath
       }
       if (isExternal(this.basePath)) {
-        return this.basePath;
+        return this.basePath
       }
-      return path.resolve(this.basePath, routePath);
+      return path.resolve(this.basePath, routePath)
     }
   }
-};
+}
 </script>

@@ -7,9 +7,7 @@
         :key="index"
         :to="{ path: item.path }"
         @click.native="handleClick(item, index)"
-      >
-        {{ item.name }}
-      </el-breadcrumb-item>
+      >{{ item.name }}</el-breadcrumb-item>
     </el-breadcrumb>
   </div>
 </template>
@@ -18,11 +16,11 @@
 // import { delBreadCrumbFun } from "@/data/fun";
 export default {
   data() {
-    return {};
+    return {}
   },
   computed: {
     list() {
-      return this.$store.state.app.breadcrumdList;
+      return this.$store.state.app.breadcrumdList
     }
   }
   // methods: {
@@ -32,7 +30,7 @@ export default {
   //     }
   //   }
   // }
-};
+}
 </script>
 
 <style lang="scss" scoped>

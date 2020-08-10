@@ -4,9 +4,9 @@
       <div class="desc">
         <div class="desc_con">
           <div class="desc_title">物联网平台</div>
-          <div class="info">
-            IOT物联网平台提供了一站式的设备接入、设备管理、监控运维、数据流转、数据存储等服务，数据按照实例维度隔离，可根据业务规模灵活提升规格，具备高可用性、高并发、高性价比的特性，是企业设备上云的首选。
-          </div>
+          <div
+            class="info"
+          >IOT物联网平台提供了一站式的设备接入、设备管理、监控运维、数据流转、数据存储等服务，数据按照实例维度隔离，可根据业务规模灵活提升规格，具备高可用性、高并发、高性价比的特性，是企业设备上云的首选。</div>
           <div class="btn_con">
             <span
               class="btn"
@@ -14,9 +14,7 @@
               :key="index"
               :class="row.class"
               @click.stop="handleGoPath(row.path)"
-            >
-              {{ row.text }}
-            </span>
+            >{{ row.text }}</span>
           </div>
         </div>
         <div class="desc_footer">
@@ -47,68 +45,68 @@
 </template>
 
 <script>
-import paasFooter from "@/components/footer";
+import paasFooter from '@/components/footer'
 export default {
   components: { paasFooter },
   data() {
     return {
       btnArr: [
         {
-          text: "立即购买",
-          path: "",
-          class: "primary"
+          text: '立即购买',
+          path: '',
+          class: 'primary'
         },
         {
-          text: "管理控制台",
-          path: "/home"
+          text: '管理控制台',
+          path: '/home'
         },
         {
-          text: "售前咨询",
-          path: ""
+          text: '售前咨询',
+          path: ''
         }
       ],
       productArr: [
         {
-          name: "产品介绍",
-          desc: "查看产品介绍文档",
-          path: "/introduce/internetOfThings"
+          name: '产品介绍',
+          desc: '查看产品介绍文档',
+          path: '/introduce/internetOfThings'
         },
         {
-          name: "快速入门",
-          desc: "快速学会使用产品",
-          path: "/introduce/introduction"
+          name: '快速入门',
+          desc: '快速学会使用产品',
+          path: '/introduce/introduction'
         },
         {
-          name: "设备端SDK",
-          desc: "下载设备端SDK",
-          path: "/introduce/equSdk"
+          name: '设备端SDK',
+          desc: '下载设备端SDK',
+          path: '/introduce/equSdk'
         },
         {
-          name: "云端SDK",
-          desc: "下载云端SDK",
-          path: "/introduce/cloudSDK"
+          name: '云端SDK',
+          desc: '下载云端SDK',
+          path: '/introduce/cloudSDK'
         }
       ]
-    };
+    }
   },
   computed: {
     loginStatus() {
-      return this.$store.state.app.loginStatus;
+      return this.$store.state.app.loginStatus
     }
   },
   methods: {
     handleGo(row) {
       // this.$router.push(row.path);
-      let url = "//" + location.host + "#" + row.path;
-      window.open(url);
+      const url = '//' + location.host + '#' + row.path
+      window.open(url)
     },
     handleGoPath(path) {
       if (path) {
-        this.$router.push(path);
+        this.$router.push(path)
       }
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

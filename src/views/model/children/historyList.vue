@@ -7,8 +7,19 @@
         <el-table-column label="版本描述"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-link v-if="scope.row.version == selectVersion" type="info" class="f12 c9" :underline="false">已选择</el-link>
-            <el-link v-else type="primary" :underline="false"  class="f12" @click="selectVersionFun(scope.row.version)">选择</el-link>
+            <el-link
+              v-if="scope.row.version == selectVersion"
+              type="info"
+              class="f12 c9"
+              :underline="false"
+            >已选择</el-link>
+            <el-link
+              v-else
+              type="primary"
+              :underline="false"
+              class="f12"
+              @click="selectVersionFun(scope.row.version)"
+            >选择</el-link>
           </template>
         </el-table-column>
       </el-table>
@@ -17,28 +28,36 @@
       </div>
     </div>
   </el-drawer>
-
 </template>
 
 <script>
 export default {
-  props: ['list', 'selectVersion'],
-  data () {
+  props: {
+    list: {
+      type: Array,
+      default: () => []
+    },
+    selectVersion: {
+      type: String,
+      default: ''
+    }
+  },
+  data() {
     return {
       drawer: true
     }
   },
-  mounted () {
+  mounted() {
     console.log(this.list)
   },
   methods: {
-    close () {
+    close() {
       this.$emit('close')
     },
-    selectVersionFun (version) {
+    selectVersionFun(version) {
       this.$emit('selectVertion', version)
     },
-    closeDrawer () {
+    closeDrawer() {
       this.$refs.drawer.closeDrawer()
     }
   }

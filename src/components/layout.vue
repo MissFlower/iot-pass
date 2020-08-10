@@ -6,11 +6,11 @@
 </template>
 
 <script>
-import paasHeader from "./header";
-import paasMain from "./main";
+import paasHeader from './header'
+import paasMain from './main'
 export default {
   components: { paasHeader, paasMain }
-};
+}
 </script>
 
 <style lang="scss" scoped>

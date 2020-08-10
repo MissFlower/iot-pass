@@ -6,20 +6,20 @@
 </template>
 
 <script>
-  import rowTable from './rowTable'
-  export default {
-    props: ['modelData'],
-    components: {
-      rowTable
-    },
-    data() {
-      return {
-        
-      
-      };
-    },   
-    methods: {
-      
+import rowTable from './rowTable'
+export default {
+  components: {
+    rowTable
+  },
+  props: {
+    modelData: {
+      type: Array,
+      default: () => []
     }
-  };
+  },
+  data() {
+    return {}
+  },
+  methods: {}
+}
 </script>

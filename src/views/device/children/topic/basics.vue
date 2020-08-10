@@ -6,17 +6,22 @@
 </template>
 
 <script>
-  import rowTable from './rowTable'
-  export default {
-    props: ['basicsData'],
-    components: {
-      rowTable
-    },
-    data() {
-      return {        
-        
-      };
-    }, 
-   
-  };
+import rowTable from './rowTable'
+export default {
+  components: {
+    rowTable
+  },
+  props: {
+    basicsData: {
+      type: Array,
+      default: () => []
+    }
+  },
+  data() {
+    return {
+
+    }
+  }
+
+}
 </script>

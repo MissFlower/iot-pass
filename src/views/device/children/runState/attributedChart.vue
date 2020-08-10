@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-03 11:28:30
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-04 14:52:16
+ * @LastEditTime: 2020-08-05 17:26:07
 -->
 <template>
   <div id="echart" class="echart-container" />
@@ -24,8 +24,8 @@ export default {
   name: 'AttributedChart',
   mixins: [resize],
   props: {
-    params: {
-      type: Number,
+    data: {
+      type: Object,
       required: true
     }
   },
@@ -35,18 +35,16 @@ export default {
     }
   },
   watch: {
-    params: {
+    data: {
       handler(newValue, oldValue) {
+        console.log(newValue)
         if (newValue) {
           // 调用后台接口函数
           console.log(newValue)
+          this.initChart(newValue)
         }
       }
     }
-  },
-  mounted() {
-    console.log(12)
-    this.getData()
   },
   beforeDestroy() {
     if (!this.echartInstance) {
@@ -56,23 +54,19 @@ export default {
     this.echartInstance = null
   },
   methods: {
-    getData() {
-      // 请求接口 并将获取到的数据 进行初始化图表 渲染
-      this.initChart()
-    },
-    initChart() {
+    initChart(data) {
       // 初始化echarts实例
       if (!this.echartInstance) {
         this.echartInstance = echarts.init(document.getElementById('echart'))
         this.rewriteLengendHandler()
       }
-      this.drawChart()
+      this.drawChart(data)
     },
-    drawChart() {
+    drawChart(data) {
       // 渲染图表
-      this.echartInstance.setOption(this.getOptions(), true)
+      this.echartInstance.setOption(this.getOptions(data), true)
     },
-    getOptions() {
+    getOptions({ dataList, dateList }) {
       // 图表配置
       return {
         tooltip: {
@@ -104,16 +98,16 @@ export default {
           }
         },
         grid: {
-          top: '10',
-          left: '10px',
-          right: '10px',
+          top: '10px',
+          left: '14px',
+          right: '36px',
           bottom: '30px',
           containLabel: true
         },
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+          data: dateList
         },
         yAxis: {
           type: 'value',
@@ -128,7 +122,7 @@ export default {
             name: '邮件营销',
             type: 'line',
             stack: '总量',
-            data: [120, 132, 101, 134, 90, 230, 210],
+            data: dataList,
             lineStyle: {
               color: '#409EFF'
             },

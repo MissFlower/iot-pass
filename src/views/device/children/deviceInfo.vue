@@ -8,9 +8,7 @@
     <div class="f20 b">
       <i class="el-icon-back" @click="back" />
       {{ deviceObj.deviceName }}
-      <el-tag :type="deviceStatusType[deviceObj.deviceStatus]">{{
-        deviceObj.deviceStatusStr
-      }}</el-tag>
+      <el-tag :type="deviceStatusType[deviceObj.deviceStatus]">{{ deviceObj.deviceStatusStr }}</el-tag>
     </div>
     <div class="f12 c6 mt20 mb20 df fww">
       <div class="productInfo">
@@ -30,15 +28,11 @@
       <div class="productInfo">
         <span class="dib w100 mr20 c9">ProductKey:</span>
         <span>{{ deviceObj.productKey }}</span>
-        <el-button
-          type="text"
-          class="ml10"
-          @click="copy(deviceObj.productKey)"
-        >复制</el-button>
+        <el-button type="text" class="ml10" @click="copy(deviceObj.productKey)">复制</el-button>
       </div>
     </div>
 
-    <el-tabs v-model="infoType" type="card" @tab-click="infoTypeChange">
+    <el-tabs v-model="infoType" type="card">
       <el-tab-pane label="设备信息" name="first">
         设备信息
         <div class="infoType_device">
@@ -65,11 +59,7 @@
             <div class="device_infoItem">
               <span class="infoItemName">设备名称</span>
               <span>{{ deviceObj.deviceName }}</span>
-              <el-button
-                type="text"
-                class="ml10"
-                @click="copy(deviceObj.deviceName)"
-              >复制</el-button>
+              <el-button type="text" class="ml10" @click="copy(deviceObj.deviceName)">复制</el-button>
             </div>
             <div class="device_infoItem">
               <span class="infoItemName">备注名称</span>
@@ -117,7 +107,7 @@
       <el-tab-pane label="Topic列表" name="topic">
         <device-topic :device-obj="deviceObj" />
       </el-tab-pane>
-      <el-tab-pane v-if="modelShow" label="物模型数据" name="third">
+      <el-tab-pane v-if="modelShow" label="物模型数据" name="model">
         <!-- 二级标签页 -->
         <el-radio-group v-model="modelType">
           <el-radio-button label="runState">运行状态</el-radio-button>
@@ -125,46 +115,30 @@
           <el-radio-button label="serviceCall">服务调用</el-radio-button>
         </el-radio-group>
         <!-- 标签下方对应的内容 -->
-        <run-state v-if="modelType == 'runState'" />
-        <event-manage v-if="modelType == 'eventManage'" />
-        <service-Call v-if="modelType == 'serviceCall'" />
+        <run-state v-if="modelType == 'runState'" :device-info="deviceObj" />
+        <event-manage v-if="modelType == 'eventManage'" :device-info="deviceObj" />
+        <service-Call v-if="modelType == 'serviceCall'" :device-info="deviceObj" />
       </el-tab-pane>
     </el-tabs>
 
     <el-dialog title="设备证书" :visible.sync="lookDeviceSecret" width="50%">
       <span class="b mb10">设备证书</span>
-      <el-button
-        type="text"
-        class="ml10"
-        @click="copy('一键复制')"
-      >一键复制</el-button>
+      <el-button type="text" class="ml10" @click="copy('一键复制')">一键复制</el-button>
       <div class="mb50" style="borderBottom: 1px solid #ecedee;">
         <div class="dialogSecret">
           <span class="title">ProductKey</span>
           <span class="secret">{{ deviceObj.productKey }}</span>
-          <el-button
-            type="text"
-            class="ml10"
-            @click="copy(deviceObj.productKey)"
-          >复制</el-button>
+          <el-button type="text" class="ml10" @click="copy(deviceObj.productKey)">复制</el-button>
         </div>
         <div class="dialogSecret">
           <span class="title">DeviceName</span>
           <span class="secret">{{ deviceObj.deviceName }}</span>
-          <el-button
-            type="text"
-            class="ml10"
-            @click="copy(deviceObj.deviceName)"
-          >复制</el-button>
+          <el-button type="text" class="ml10" @click="copy(deviceObj.deviceName)">复制</el-button>
         </div>
         <div class="dialogSecret">
           <span class="title">DeviceSecret</span>
           <span class="secret">{{ deviceObj.deviceSecret }}</span>
-          <el-button
-            type="text"
-            class="ml10"
-            @click="copy(deviceObj.deviceSecret)"
-          >复制</el-button>
+          <el-button type="text" class="ml10" @click="copy(deviceObj.deviceSecret)">复制</el-button>
         </div>
       </div>
       <span class="b mb10">烧录方式介绍</span>
@@ -187,7 +161,7 @@
           <div>
             每个设备烧录其唯一的设备证书（ProductKey、DeviceName 和
             DeviceSecret）。
-            <br>当设备与物联网平台建立连接时，物联网平台对其携带的设备证书信息进行认证。
+            <br />当设备与物联网平台建立连接时，物联网平台对其携带的设备证书信息进行认证。
           </div>
         </div>
         <el-button
@@ -234,7 +208,7 @@ export default {
       lookDeviceSecret: false,
       loading: false,
       burnShow: false,
-      modelType: 'runState',
+      modelType: '',
       modelShow: true,
       deviceStatusType: {
         '0': 'info',
@@ -261,7 +235,7 @@ export default {
       deviceInfo({
         id: this.$route.query.id
       })
-        .then((res) => {
+        .then(res => {
           if (res.code === 200) {
             var deviceObj = res.data
             // 设备状态
@@ -295,6 +269,7 @@ export default {
             }
             this.deviceObj = deviceObj
           }
+          this.modelType = 'runState'
           this.loading = false
         })
         .catch(() => {
@@ -346,9 +321,6 @@ export default {
     showBurn() {
       this.burnShow = !this.burnShow
     },
-
-    // type切换
-    infoTypeChange() {},
 
     // 返回
     back() {

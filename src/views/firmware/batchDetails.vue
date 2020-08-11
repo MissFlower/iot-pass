@@ -143,7 +143,9 @@
             </el-col>
             <el-col :span="8" v-if="batchDetailList.ugStartTime">
               <div class="edit_info">
-                <div class="edit_info-lf">升级时间/结束时间</div>
+                <div class="edit_info-lf">升级时间
+                  <span v-if="batchDetailList.ugEndTime">/结束时间</span>
+                </div>
                 <div class="edit_info-rf">
                   {{ batchDetailList.ugStartTime }}
                   <span

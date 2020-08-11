@@ -150,6 +150,7 @@
       :moduleType="checkInfo.moduleType"
       :fmId="checkInfo.id"
       :destVersion="checkInfo.destVersion"
+      :srcVersion="srcVersion"
       @success="successDeviceDrawer"
       @close="closeDeviceDrawer"
     ></select-device>
@@ -273,6 +274,7 @@ export default {
       },
       selectDevicenames: [],
       selectDeviceIds: [],
+      selectDeviceList: [],
       selectDeviceFlag: false,
       srcVersionList: [], // 待升级版本列表
       srcVersion: [],
@@ -291,7 +293,6 @@ export default {
   },
   mounted() {
     if (this.checkInfo) {
-      console.log(this.checkInfo)
       this.getVersionList()
       this.form.destVersion = this.checkInfo.destVersion
     }
@@ -337,9 +338,12 @@ export default {
     closeDeviceDrawer() {
       this.selectDeviceFlag = false
     },
-    successDeviceDrawer(list) {
+    successDeviceDrawer(list, version) {
+      this.srcVersion = version
+      this.scopeTypeChange()
       this.selectDevicenames = []
       this.selectDeviceIds = []
+      this.selectDeviceList = list
       if (list && list.length > 0) {
         list.forEach(item => {
           this.selectDevicenames.push(item.deviceName)
@@ -377,6 +381,7 @@ export default {
         })
       } else {
         this.deviceCount = 0
+        this.selectDevicenames = []
       }
     }
   }

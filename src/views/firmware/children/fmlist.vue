@@ -55,7 +55,7 @@
       <el-table-column label="升级前版本" prop="srcVersion"></el-table-column>
       <el-table-column label="升级后版本" prop="destVersion"></el-table-column>
       <el-table-column label="创建时间" prop="createTime" :formatter="formatCreateTime"></el-table-column>
-      <el-table-column abel="固件状态" prop="fmStatus">
+      <el-table-column label="固件状态" prop="fmStatus">
         <template slot-scope="scope">
           <div :style="{'background-color': fmStatusObj[scope.row.fmStatus].color}" class="point"></div>
           {{ fmStatusObj[scope.row.fmStatus].label }}

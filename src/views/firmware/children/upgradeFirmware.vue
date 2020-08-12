@@ -37,7 +37,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="升级策略" prop="ugStrategy" required>
-          <el-select v-model="form.ugStrategy" placeholder="请选择升级策略" class="w200">
+          <el-select v-model="form.ugStrategy" placeholder="请选择升级策略" class="w200" @change="ugStrategyChange">
             <el-option label="静态升级" value="0"></el-option>
             <el-option label="动态升级" value="1"></el-option>
           </el-select>
@@ -67,7 +67,7 @@
         <el-form-item label="升级时间" prop="ugTimeType" required>
           <el-select v-model="form.ugTimeType" placeholder="请选择升级时间类型" class="w200">
             <el-option label="立即升级" value="0"></el-option>
-            <el-option label="定时升级" value="1"></el-option>
+            <el-option label="定时升级" value="1" v-if="form.ugStrategy != 1"></el-option>
           </el-select>
         </el-form-item>
         <div v-if="form.ugTimeType ==1">
@@ -382,6 +382,17 @@ export default {
       } else {
         this.deviceCount = 0
         this.selectDevicenames = []
+      }
+    },
+    // 升级策略变化的函数
+    ugStrategyChange() {
+      if (this.form.ugStrategy * 1 === 1) {
+        if (this.form.scopeType * 1 === 1) {
+          this.form.scopeType = '0'
+        }
+        if (this.form.ugTimeType * 1 === 1) {
+          this.form.ugTimeType = '0'
+        }
       }
     }
   }

@@ -13,8 +13,8 @@
   flex-direction: column;
   align-items: center;
   .svg-icon {
-    width: 50px;
-    height: 50px;
+    width: 40px!important;
+    height: 40px!important;
   }
 }
 </style>

@@ -377,7 +377,7 @@ export default {
       this.loading = true
       cancelDeviceUpgrade({
         batchNo: this.popoverItem.row.batchNo,
-        deviceId: this.popoverItem.row.deviceId
+        deviceName: this.popoverItem.row.deviceName
       }).then(res => {
         if (res.code === 200) {
           this.getDeviceList()

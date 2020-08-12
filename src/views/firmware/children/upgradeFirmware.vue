@@ -50,7 +50,7 @@
             @change="scopeTypeChange"
           >
             <el-option label="全部设备" value="0"></el-option>
-            <el-option label="定向升级" value="1"></el-option>
+            <el-option label="定向升级" value="1" v-if="form.ugStrategy != 1"></el-option>
             <!-- <el-option label="区域升级" value="2"></el-option> -->
             <!-- <el-option label="灰度升级" value="3"></el-option> -->
           </el-select>
@@ -146,7 +146,7 @@
     </el-dialog>
     <select-device
       v-if="selectDeviceFlag"
-      :productId="checkInfo.productId"
+      :productKey="checkInfo.productKey"
       :moduleType="checkInfo.moduleType"
       :fmId="checkInfo.id"
       :destVersion="checkInfo.destVersion"
@@ -241,7 +241,7 @@ export default {
         timeOut: '',
         retryInterval: '0',
         rate: '',
-        deviceIds: '',
+        deviceNames: '',
         ugStartTime: '',
         ugEndTime: ''
       },
@@ -307,7 +307,7 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.form.fmId = this.checkInfo.id
-          this.form.deviceIds = this.selectDeviceIds
+          this.form.deviceNames = this.selectDevicenames
           const obj = JSON.parse(JSON.stringify(this.form))
           obj.ugStartTime = this.$fun.dateFormat(this.form.ugStartTime, 'yyyy-MM-dd hh:mm:ss')
           obj.ugEndTime = this.$fun.dateFormat(this.form.ugEndTime, 'yyyy-MM-dd hh:mm:ss')
@@ -355,7 +355,7 @@ export default {
     getVersionList() {
       this.loading = true
       getSrcVersionList({
-        productId: this.checkInfo.productId,
+        productKey: this.checkInfo.productKey,
         moduleType: this.checkInfo.moduleType,
         destVersion: this.checkInfo.destVersion
       }).then(res => {
@@ -371,7 +371,7 @@ export default {
     scopeTypeChange() {
       if (this.form.scopeType !== '' && this.form.scopeType * 1 === 0 && this.srcVersion.length > 0) {
         getDeviceCount({
-          productId: this.checkInfo.productId,
+          productKey: this.checkInfo.productKey,
           srcVersions: this.srcVersion.join(','),
           moduleType: this.checkInfo.moduleType
         }).then(res => {

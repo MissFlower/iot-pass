@@ -1,9 +1,9 @@
 <template>
   <div id="version" v-loading="loading">
-    <div v-if="productId">
+    <div v-if="productKey">
       <div class="topCon">
         <span>产品：</span>
-        <el-select v-model="productId">
+        <el-select v-model="productKey">
           <el-option
             v-for="item in productList"
             :key="item.id"
@@ -52,7 +52,7 @@
       <div class="ml20 f12">
         <div class="b">请选择固件所属产品</div>
         <div class="c9 mt5">选择后，您可随时从页面左上方选项进行切换</div>
-        <el-select v-model="productId" size="mini" class="mt10" placeholder="请选择所属产品" filterable>
+        <el-select v-model="productKey" size="mini" class="mt10" placeholder="请选择所属产品" filterable>
           <el-option
             v-for="item in productList"
             :key="item.id"
@@ -74,7 +74,7 @@ export default {
   data() {
     return {
       loading: false,
-      productId: '',
+      productKey: '',
       rightTableList: [],
       version: '',
       versionList: [],
@@ -83,7 +83,7 @@ export default {
     }
   },
   watch: {
-    productId: function() {
+    productKey: function() {
       this.getData()
       this.getVersion()
     }
@@ -96,7 +96,7 @@ export default {
       this.loading = true
       this.rightTableList = []
       getFmVers({
-        productId: this.productId,
+        productKey: this.productKey,
         pageNum: 1,
         pageSize: 200
       }).then(res => {
@@ -159,9 +159,6 @@ export default {
       }).then(res => {
         if (res.code === 200) {
           this.productList = res.data.data
-          // if (res.data.data && res.data.data.length > 0) {
-          //   this.productId = res.data.data[0].id
-          // }
         }
         this.loading = false
       })
@@ -173,7 +170,7 @@ export default {
         version: this.version,
         pageNum: 1,
         pageSize: 200,
-        productId: this.productId
+        productKey: this.productKey
       }).then(res => {
         if (res.code === 200) {
           this.list = res.data.data
@@ -185,7 +182,7 @@ export default {
       this.versionList = []
       this.loading = true
       getVersionByProductId({
-        productId: this.productId
+        productKey: this.productKey
       }).then(res => {
         if (res.code === 200) {
           this.versionList = res.data
@@ -231,8 +228,8 @@ export default {
   .noCon {
     padding: 60px 0;
     .svg-icon {
-      width: 60px;
-      height: 60px;
+      width: 60px!important;
+      height: 60px!important;
     }
   }
 }

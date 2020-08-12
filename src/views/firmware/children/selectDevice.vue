@@ -75,7 +75,7 @@
 import { getDirectedUpgradeList, getSrcVersionList } from '@/api/fireware'
 export default {
   props: {
-    productId: {
+    productKey: {
       type: String,
       default: ''
     },
@@ -147,7 +147,7 @@ export default {
     getVersionList() {
       this.loading = true
       getSrcVersionList({
-        productId: this.productId + '',
+        productKey: this.productKey,
         moduleType: this.moduleType,
         destVersion: this.destVersion
       }).then(res => {
@@ -175,7 +175,6 @@ export default {
       })
     },
     scopeTypeChange() {
-      console.log(this.srcVersions)
       this.formData.srcVersions = this.srcVersions.join(',')
       this.getData()
     },
@@ -192,7 +191,7 @@ export default {
       if (rows && rows.length > 0) {
         rows.forEach(row => {
           this.$refs.table.toggleRowSelection(this.tableList.find(item => {
-            return row.deviceId === item.deviceId // 注意这里寻找的字段要唯一，示例仅参考
+            return row.deviceName === item.deviceName // 注意这里寻找的字段要唯一，示例仅参考
           }), true)
         })
       }

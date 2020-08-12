@@ -240,7 +240,7 @@ export function getDirectedUpgradeList(data) {
    *
    * 待升级版本列表
    * 请求方式:post ,json格式
-      productId	  Long	  是	产品id
+      productKey  Long	  是	产品key
       moduleType	String	是	选中的固件产品类型
    */
 
@@ -254,7 +254,7 @@ export function getSrcVersionList(data) {
 /**
  * 版本分布根据产品查询版本接口
  *
- * productId	Long	是	产品id
+ * productKey	Long	是	产品key
  * /fm/getFirmWareVersionDistribution
  */
 
@@ -299,15 +299,14 @@ export function getVersionByProductId(data) {
  * 设备列表针对设备取消升级接口
  *
  * batchNo	Long	是	批次id
-  deviceId	Long	是	设备id
-  check   0：没选 ，1选
+  productKey	Long	是	产品key
  */
 
 export function cancelDeviceUpgrade(data) {
   return request({
     url: '/upgrade/cancelDeviceUpgrade',
     method: 'post',
-    data: Qs.stringify(data)
+    data
   })
 }
 
@@ -322,7 +321,7 @@ export function cancelBatchUpgrade(data) {
   return request({
     url: '/upgrade/cancelBatchUpgrade',
     method: 'post',
-    data: Qs.stringify(data)
+    data
   })
 }
 /**
@@ -340,7 +339,7 @@ export function getSttatusCount(data) {
 
 /**
  * 批量升级  统计设备数量
- * productId:  产品ID
+ * productKey:  产品Key
     srcVersions: 待升级版本 支持多选 如"116,115",
     moduleType:  固件类型
  *

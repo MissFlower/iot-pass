@@ -8,7 +8,7 @@
     <div class="df ai_c mb20">
       <el-button type="primary" @click="addItem">新增固件</el-button>
       <el-select
-        v-model="productsValue"
+        v-model="form.productKey"
         class="w180 ml20"
         filterable
         :filter-method="userFilter"
@@ -20,7 +20,7 @@
           v-for="item in products"
           :key="item.id"
           :label="item.productName"
-          :value="`${item.id}|${item.productName}`"
+          :value="item.productKey"
         ></el-option>
       </el-select>
       <el-input
@@ -141,7 +141,7 @@ export default {
       productsValue: '',
       form: {
         fmName: '',
-        productId: '',
+        productKey: '',
         pageSize: 20,
         pageNum: 1
       },
@@ -206,7 +206,6 @@ export default {
       }
     },
     changeSelect() {
-      this.form.productId = this.productsValue.split('|')[0]
       this.searchList()
     },
     // 筛选函数

@@ -6,8 +6,8 @@
         <el-select v-model="productKey">
           <el-option
             v-for="item in productList"
-            :key="item.id"
-            :value="item.id"
+            :key="item.productKey"
+            :value="item.productKey"
             :label="item.productName"
           ></el-option>
         </el-select>
@@ -55,8 +55,8 @@
         <el-select v-model="productKey" size="mini" class="mt10" placeholder="请选择所属产品" filterable>
           <el-option
             v-for="item in productList"
-            :key="item.id"
-            :value="item.id"
+            :key="item.productKey"
+            :value="item.productKey"
             :label="item.productName"
           ></el-option>
         </el-select>

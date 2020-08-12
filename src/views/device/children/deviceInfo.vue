@@ -182,6 +182,9 @@
 
     <!-- 备注名称编辑 -->
     <deviceNameEdit v-if="showDeviceNameEdit" :device-obj="deviceObj" />
+    <div id="copy_content_wrp">
+      <input type="text" id="copy_content" />
+    </div>
   </div>
 </template>
 
@@ -303,6 +306,7 @@ export default {
     copyStr  复制内容
     */
     copy(copyStr) {
+      console.log(copyStr)
       if (copyStr === '一键复制') {
         copyStr = `{\r"ProductKey":${this.deviceObj.productKey},\r"DeviceName":${this.deviceObj.deviceName},\r"DeviceSecret":${this.deviceObj.deviceSecret}\r}`
       }
@@ -331,6 +335,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+#copy_content_wrp {
+  position: relative;
+  overflow: hidden;
+  #copy_content {
+    position: absolute;
+    left: -10000px;
+    opacity: 0;
+  }
+}
 #deviceInfoView {
   position: relative;
   width: 100%;

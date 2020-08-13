@@ -1,5 +1,5 @@
 <template>
-  <div id="paas_footer">© 2009-2020 yunchongba.com 版权所有</div>
+  <div id="paas_footer">© 2009-2020 sulv.com 版权所有</div>
 </template>
 
 <style lang="scss" scoped>

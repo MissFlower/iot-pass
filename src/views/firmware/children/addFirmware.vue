@@ -27,20 +27,13 @@
         <el-form-item label="固件名称" prop="fmName">
           <el-input type="text" class="w200" v-model="ruleForm.fmName" placeholder="请输入固件名称"></el-input>
         </el-form-item>
-        <el-form-item label="所属产品" prop="productId">
-          <el-select
-            v-model="productsValue"
-            filterable
-            :filter-method="userFilter"
-            @change="changeSelect"
-            clearable
-            class="w200"
-          >
+        <el-form-item label="所属产品" prop="productKey">
+          <el-select v-model="ruleForm.productKey" filterable :filter-method="userFilter" @change="changeSelect">
             <el-option
               v-for="item in products"
-              :key="item.id"
+              :key="item.productKey"
               :label="item.productName"
-              :value="`${item.id}|${item.productName}`"
+              :value="item.productKey"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -149,8 +142,7 @@ export default {
       uploadStatus: true,
       ruleForm: {
         fmType: 1, // 固件名称 1整包、2差分
-        productId: '', // 固件所属产品id
-        productName: '', // 固件所属产品名称
+        productKey: '', // 固件所属产品名称
         moduleType: '', // 固件产品类型
         srcVersion: '', // 待升级版本号
         destVersion: '', // 升级后固定版本
@@ -187,7 +179,7 @@ export default {
           { required: true, message: '请输入升级后版本号', trigger: 'blur' },
           { validator: validDrcVersion, trigger: 'change' }
         ],
-        productId: [
+        productKey: [
           { required: true, message: '请选择所属产品', trigger: 'blur' }
         ]
       }
@@ -195,14 +187,14 @@ export default {
   },
   computed: {
     typeDisabled: function() {
-      return !this.ruleForm.productId
+      return !this.ruleForm.productKey
     }
   },
   watch: {
     'ruleForm.moduleType': function() {
       this.getVersionList()
     },
-    'ruleForm.productId': function() {
+    'ruleForm.productKey': function() {
       this.getVersionList()
     }
   },
@@ -302,24 +294,25 @@ export default {
         : ''
       const data = this.productForm
       getProducts(data).then(res => {
-        this.products = res.data.data
-        this.products.forEach(item => {
-          this.productMap[item.id + ''] = item
-        })
-        this.userFilter()
+        if (res.code === 200) {
+          this.products = res.data.data
+          this.productMap = {}
+          res.data.data.forEach(item => {
+            this.productMap[item.productKey] = item
+          })
+          this.userFilter()
+        }
       })
     },
     changeSelect() {
-      this.ruleForm.productId = this.productsValue.split('|')[0]
-      this.ruleForm.productName = this.productsValue.split('|')[1]
-      const curPrd = this.productMap[this.ruleForm.productId + '']
+      const curPrd = this.productMap[this.ruleForm.productKey]
       this.srcVersionList = []
       this.ruleForm.srcVersion = ''
       this.getFmType(curPrd.fmTypes)
     },
     srcVersionFocus() {
       if (this.srcVersionList.length === 0) {
-        if (!this.ruleForm.productId) {
+        if (!this.ruleForm.productKey) {
           this.$message.warning('请选择所属产品')
         } else if (!this.ruleForm.moduleType) {
           this.$message.warning('请选择固件产品类型')
@@ -327,7 +320,7 @@ export default {
       }
     },
     getVersionList() {
-      if (!this.ruleForm.productId) {
+      if (!this.ruleForm.productKey) {
         // this.$message.warning('请选择所属产品')
         return
       } else if (!this.ruleForm.moduleType) {
@@ -336,7 +329,7 @@ export default {
       }
       this.loading = true
       getSrcVersionList({
-        productId: this.ruleForm.productId,
+        productKey: this.ruleForm.productKey,
         moduleType: this.ruleForm.moduleType
       }).then(res => {
         if (res.code === 200) {

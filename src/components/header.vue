@@ -187,8 +187,8 @@ export default {
     color: #1890ff;
   }
   .logo {
-    width: 40px;
-    height: 40px;
+    // width: 40px;
+    height: 30px;
   }
   .avatar-container {
     // margin-right: 30px;

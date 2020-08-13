@@ -10,27 +10,27 @@
         <span class="go_back" @click="goBack">
           <i class="el-icon-back"></i>
         </span>
-        {{details.detailList.fmName}}
+        {{ details.detailList.fmName }}
       </h2>
       <el-tag
         :type="details.deviceType"
         class="el_tag"
         v-if="details.detailList.fmStatus || details.detailList.fmStatus == 0"
-      >{{fmStatusObj[details.detailList.fmStatus].label}}</el-tag>
+      >{{ fmStatusObj[details.detailList.fmStatus].label }}</el-tag>
     </div>
     <div class="detail_info">
       <el-row>
         <el-col :span="12">
           <div class="grid-content">
             <span class="info_left">固件类型</span>
-            <span>{{details.detailList.fmType === 1 ? '整包' : '差分'}}</span>
+            <span>{{ details.detailList.fmType === 1 ? '整包' : '差分' }}</span>
           </div>
         </el-col>
         <el-col :span="12">
           <div class="grid-content">
             <span class="info_left">固件签名</span>
             <span>
-              {{details.detailList.fmSign}}
+              {{ details.detailList.fmSign }}
               <el-link type="primary" :underline="false" class="f12 ml10" @click="downLoad">下载</el-link>
             </span>
           </div>
@@ -40,7 +40,7 @@
         <el-col :span="12">
           <div class="grid-content">
             <span class="info_left">签名算法</span>
-            <span>{{details.detailList.signMethod === 1 ? 'Md5' : 'SHA256'}}</span>
+            <span>{{ details.detailList.signMethod === 1 ? 'Md5' : 'SHA256' }}</span>
           </div>
         </el-col>
         <!--<el-col :span="12">-->
@@ -57,7 +57,7 @@
           <div class="grid-content">
             <dl class="details_line">
               <dt>目标设备总数</dt>
-              <dd>{{nums.targetTotal}}</dd>
+              <dd>{{ nums.targetTotal }}</dd>
             </dl>
           </div>
         </el-col>
@@ -65,7 +65,7 @@
           <div class="grid-content">
             <dl class="details_line">
               <dt>目标成功数</dt>
-              <dd>{{nums.targetSuccess}}</dd>
+              <dd>{{ nums.targetSuccess }}</dd>
             </dl>
           </div>
         </el-col>
@@ -73,7 +73,7 @@
           <div class="grid-content">
             <dl class="details_line">
               <dt>目标失败数</dt>
-              <dd>{{nums.targetFail}}</dd>
+              <dd>{{ nums.targetFail }}</dd>
             </dl>
           </div>
         </el-col>
@@ -121,7 +121,7 @@
             <el-table-column label="升级策略">
               <template
                 slot-scope="scope"
-              >{{scope.row.ugStrategy == 0 ? '静态升级' : (scope.row.ugStrategy == 1 ? '动态升级' : scope.row.ugStrategy)}}</template>
+              >{{ scope.row.ugStrategy == 0 ? '静态升级' : (scope.row.ugStrategy == 1 ? '动态升级' : scope.row.ugStrategy) }}</template>
             </el-table-column>
             <el-table-column label="状态" prop="taskStatus">
               <template slot-scope="scope">
@@ -131,7 +131,7 @@
                 ></div>
                 <span
                   v-if="scope.row.taskStatus || scope.row.taskStatus == 0"
-                >{{taskStatusObj[scope.row.taskStatus].label}}</span>
+                >{{ taskStatusObj[scope.row.taskStatus].label }}</span>
               </template>
             </el-table-column>
             <el-table-column label="添加时间" prop="=createTime" :formatter="formatCreateTime"></el-table-column>
@@ -195,12 +195,12 @@
           </el-form>
           <el-table :data="devManage.devList" border stripe>
             <el-table-column label="deviceName" prop="deviceName"></el-table-column>
-            <el-table-column label="设备所属产品">{{productName}}</el-table-column>
+            <el-table-column label="设备所属产品">{{ productName }}</el-table-column>
             <el-table-column label="升级批次ID" prop="batchNo"></el-table-column>
             <el-table-column label="当前版本号" prop="destVersion">
               <template
                 slot-scope="scope"
-              >{{scope.row.status == 4 ? scope.row.destVersion : scope.row.srcVersion}}</template>
+              >{{ scope.row.status == 4 ? scope.row.destVersion : scope.row.srcVersion }}</template>
             </el-table-column>
             <el-table-column label="升级状态" prop="status">
               <template slot-scope="scope">
@@ -208,7 +208,7 @@
                   :style="{'background-color': upgradeStatusObj[scope.row.status].color}"
                   class="point"
                 ></div>
-                {{upgradeStatusObj[scope.row.status].label}}
+                {{ upgradeStatusObj[scope.row.status].label }}
               </template>
             </el-table-column>
             <el-table-column label="操作">
@@ -237,49 +237,51 @@
             <el-col :span="8">
               <div class="edit_info">
                 <div class="edit_info-lf">固件ID</div>
-                <div class="edit_info-rf">{{fmInfo.fmInfoList.id}}</div>
+                <div class="edit_info-rf">{{ fmInfo.fmInfoList.id }}</div>
               </div>
             </el-col>
             <el-col :span="8">
               <div class="edit_info">
                 <div class="edit_info-lf">固件名称</div>
-                <div class="edit_info-rf">{{fmInfo.fmInfoList.fmName}}</div>
+                <div class="edit_info-rf">{{ fmInfo.fmInfoList.fmName }}</div>
               </div>
             </el-col>
             <el-col :span="8">
               <div class="edit_info">
                 <div class="edit_info-lf">所属产品</div>
-                <div class="edit_info-rf">{{fmInfo.fmInfoList.productName}}</div>
+                <div class="edit_info-rf">{{ fmInfo.fmInfoList.productName }}</div>
               </div>
             </el-col>
             <el-col :span="8">
               <div class="edit_info">
                 <div class="edit_info-lf">固件签名</div>
-                <div class="edit_info-rf">{{fmInfo.fmInfoList.fmSign}}</div>
+                <div class="edit_info-rf">{{ fmInfo.fmInfoList.fmSign }}</div>
               </div>
             </el-col>
             <el-col :span="8">
               <div class="edit_info">
                 <div class="edit_info-lf">待升级版本号</div>
-                <div class="edit_info-rf">{{fmInfo.fmInfoList.srcVersion}}</div>
+                <div class="edit_info-rf">{{ fmInfo.fmInfoList.srcVersion }}</div>
               </div>
             </el-col>
             <el-col :span="8">
               <div class="edit_info">
                 <div class="edit_info-lf">升级后版本号</div>
-                <div class="edit_info-rf">{{fmInfo.fmInfoList.destVersion}}</div>
+                <div class="edit_info-rf">{{ fmInfo.fmInfoList.destVersion }}</div>
               </div>
             </el-col>
             <el-col :span="8">
               <div class="edit_info">
                 <div class="edit_info-lf">添加时间</div>
-                <div class="edit_info-rf">{{fmInfo.fmInfoList.createTime_}}</div>
+                <div class="edit_info-rf">{{ fmInfo.fmInfoList.createTime_ }}</div>
               </div>
             </el-col>
             <el-col :span="8">
               <div class="edit_info">
                 <div class="edit_info-lf">签名算法</div>
-                <div class="edit_info-rf">{{fmInfo.fmInfoList.signMethod === 1 ? 'Md5' : 'SHA256'}}</div>
+                <div
+                  class="edit_info-rf"
+                >{{ fmInfo.fmInfoList.signMethod === 1 ? 'Md5' : 'SHA256' }}</div>
               </div>
             </el-col>
             <el-col :span="8">
@@ -288,7 +290,7 @@
                 <div class="edit_info-rf">
                   <span
                     v-if="fmInfo.fmInfoList.fmStatus || fmInfo.fmInfoList.fmStatus == 0"
-                  >{{fmStatusObj[fmInfo.fmInfoList.fmStatus].label}}</span>
+                  >{{ fmStatusObj[fmInfo.fmInfoList.fmStatus].label }}</span>
                 </div>
               </div>
             </el-col>
@@ -305,7 +307,7 @@
             <el-col :span="24">
               <div class="edit_info">
                 <div class="edit_info-lf">固件描述</div>
-                <div class="edit_info-rf">{{fmInfo.fmInfoList.fmDesc}}</div>
+                <div class="edit_info-rf">{{ fmInfo.fmInfoList.fmDesc }}</div>
               </div>
             </el-col>
           </el-row>
@@ -367,26 +369,26 @@ import {
   getUploadFilePath,
   getVerifyFirmInfo,
   cancelBatchUpgrade
-} from "@/api/fireware";
+} from '@/api/fireware'
 
-import EditFirmware from "./children/editFirmware";
-import CheckFirmware from "./children/checkFirmware";
-import UpgradeFirmware from "./children/upgradeFirmware";
-import checkProcess from "./children/checkProcess";
+import EditFirmware from './children/editFirmware'
+import CheckFirmware from './children/checkFirmware'
+import UpgradeFirmware from './children/upgradeFirmware'
+import checkProcess from './children/checkProcess'
 
-import { taskStatusObj, upgradeStatusObj, fmStatusObj } from "@/data/constants";
+import { taskStatusObj, upgradeStatusObj, fmStatusObj } from '@/data/constants'
 export default {
   components: { EditFirmware, CheckFirmware, UpgradeFirmware, checkProcess },
   data() {
     return {
       loading: false,
-      productName: "",
+      productName: '',
       details: {
-        deviceType: "info",
-        deviceName: "未验证",
+        deviceType: 'info',
+        deviceName: '未验证',
         detailList: {}
       },
-      detailsTab: "first",
+      detailsTab: 'first',
       nums: {
         // 标签栏上方的数量
         targetFail: 0,
@@ -399,13 +401,13 @@ export default {
         pageNum: 1,
         total: 0,
         pageSize: 10,
-        fmId: "",
-        id: ""
+        fmId: '',
+        id: ''
       },
       devManage: {
         // 设备列表参数
-        deviceName: "",
-        batchNo: "",
+        deviceName: '',
+        batchNo: '',
         devList: [],
         total: 0,
         pageNum: 1,
@@ -415,293 +417,290 @@ export default {
         fmInfoList: {},
         EditDialogVisible: false
       },
-      fmId: "",
+      fmId: '',
       checkFmVisible: false,
       upgradeFmVisible: false,
-      checkFmId: "",
-      srcVersion: "",
-      checkDestVersion: "",
+      checkFmId: '',
+      srcVersion: '',
+      checkDestVersion: '',
       taskStatusObj,
       upgradeStatusObj,
       fmStatusObj,
       popoverItem: {
-        check: "0",
+        check: '0',
         row: null
       },
       checkInfo: null,
       checkStatus: 0,
       checkProcessFlag: false,
       visible: false
-    };
+    }
   },
   mounted() {
-    this.fmId = String(this.$route.query.id);
-    this.productName = this.$route.query.productName;
-    this.srcVersion = this.$route.query.srcVersion;
-    this.getDetails();
-    this.getUpgradeList(); // 批次管理
-    this.getStatistics(); // 获取 标签页 上方数据
+    this.fmId = String(this.$route.query.id)
+    this.productName = this.$route.query.productName
+    this.srcVersion = this.$route.query.srcVersion
+    this.getDetails()
+    this.getUpgradeList() // 批次管理
+    this.getStatistics() // 获取 标签页 上方数据
   },
   methods: {
     // tab切换方法
     handleClick(value) {
-      if (value.index === "0") {
-        this.getUpgradeList();
-      } else if (value.index === "1") {
-        this.getDeviceList();
+      if (value.index === '0') {
+        this.getUpgradeList()
+      } else if (value.index === '1') {
+        this.getDeviceList()
       }
     },
     // 获取详情
     getDetails() {
-      let formData = new FormData();
-      formData.append("id", this.fmId);
-      this.loading = true;
+      const formData = new FormData()
+      formData.append('id', this.fmId)
+      this.loading = true
       getFmDetails(formData).then(res => {
         if (res.code === 200) {
-          this.details.detailList = res.data;
-          this.checkInfo = res.data;
+          this.details.detailList = res.data
+          this.checkInfo = res.data
           res.data.createTime_ = res.data.createTime
-            ? new Date(res.data.createTime.replace(/-/g, "/")).toLocaleString()
-            : "";
-          this.fmInfo.fmInfoList = res.data;
+            ? new Date(res.data.createTime.replace(/-/g, '/')).toLocaleString()
+            : ''
+          this.fmInfo.fmInfoList = res.data
         } else {
-          this.$message.error(res.message);
+          this.$message.error(res.message)
         }
-        this.loading = false;
-      });
+        this.loading = false
+      })
     },
     // 固件信息
     // 编辑
     editClick() {
-      this.fmInfo.EditDialogVisible = true;
+      this.fmInfo.EditDialogVisible = true
     },
     changeVisible() {
-      this.fmInfo.EditDialogVisible = false;
+      this.fmInfo.EditDialogVisible = false
     },
     // 编辑固件信息方法
     changeDetail() {
-      this.getDetails();
+      this.getDetails()
     },
     // 批次管理列表
     getUpgradeList() {
-      let data = {
+      const data = {
         pageNum: this.batchManage.pageNum,
         pageSize: this.batchManage.pageSize,
         fmId: this.fmId,
         batchNo: this.batchManage.id
-      };
-      this.batchManage.batchList = [];
-      this.loading = true;
+      }
+      this.batchManage.batchList = []
+      this.loading = true
       upgradeList(data).then(res => {
         if (res.code === 200) {
-          this.batchManage.batchList = res.data.data;
-          this.batchManage.total = res.data.total;
+          this.batchManage.batchList = res.data.data
+          this.batchManage.total = res.data.total
         } else {
-          this.$message.error(res.message);
+          this.$message.error(res.message)
         }
-        this.loading = false;
-      });
+        this.loading = false
+      })
     },
     // 获取 标签页 上方数据
     getStatistics() {
       statistics({ fmId: this.fmId }).then(res => {
         if (res.code === 200) {
-          this.nums.targetFail = res.data.targetFail;
-          this.nums.targetSuccess = res.data.targetSuccess;
-          this.nums.targetTotal = res.data.targetTotal;
+          this.nums.targetFail = res.data.targetFail
+          this.nums.targetSuccess = res.data.targetSuccess
+          this.nums.targetTotal = res.data.targetTotal
         } else {
-          this.$message.error(res.message);
+          this.$message.error(res.message)
         }
-      });
+      })
     },
     // 搜索批次管理
     searchBatchManage() {
-      this.batchManage.pageNum = 1;
-      this.getUpgradeList();
+      this.batchManage.pageNum = 1
+      this.getUpgradeList()
     },
     clearFun(key) {
       switch (key) {
-        case "id":
-          this.batchManage.id = "";
-          this.searchBatchManage();
-          break;
-        case "name":
-          this.devManage.deviceName = "";
-          this.searchDevManage();
-          break;
-        case "batchNo":
-          this.devManage.batchNo = "";
-          this.searchDevManage();
-          break;
+        case 'id':
+          this.batchManage.id = ''
+          this.searchBatchManage()
+          break
+        case 'name':
+          this.devManage.deviceName = ''
+          this.searchDevManage()
+          break
+        case 'batchNo':
+          this.devManage.batchNo = ''
+          this.searchDevManage()
+          break
       }
     },
     // 批次管理分页
     handleBatchChange() {
-      this.getUpgradeList();
+      this.getUpgradeList()
     },
     upgradeSubmit() {
       if (this.details.detailList.fmStatus === 2) {
-        this.checkInfo = this.details.detailList;
-        this.upgradeFmVisible = true;
+        this.checkInfo = this.details.detailList
+        this.upgradeFmVisible = true
       }
     },
     // 批量升级
     upgradeVisible() {
-      this.upgradeFmVisible = false;
-      this.searchBatchManage();
+      this.upgradeFmVisible = false
+      this.searchBatchManage()
     },
     // 获取设备列表
     getDeviceList() {
-      let data = {
+      const data = {
         fmId: this.fmId,
         batchNo: this.devManage.batchNo,
         deviceName: this.devManage.deviceName,
         pageNum: this.devManage.pageNum,
         pageSize: this.devManage.pageSize
-      };
-      this.loading = true;
+      }
+      this.loading = true
       upgradeDeviceList(data).then(res => {
         if (res.code === 200) {
-          this.devManage.devList = res.data.data;
-          this.devManage.total = res.data.total;
+          this.devManage.devList = res.data.data
+          this.devManage.total = res.data.total
         } else {
-          this.$message.error(res.message);
+          this.$message.error(res.message)
         }
-        this.loading = false;
-      });
+        this.loading = false
+      })
     },
     // 设备列表分页
     handleDevChange() {
-      this.getDeviceList();
+      this.getDeviceList()
     },
     // 设备列表搜索
     searchDevManage() {
-      this.getDeviceList();
+      this.getDeviceList()
     },
     // 验证固件方法
     checkFm() {
-      let fmStatus = this.details.detailList.fmStatus;
+      const fmStatus = this.details.detailList.fmStatus
       if (fmStatus === 0) {
         // console.log(this.details.detailList)
-        // this.checkFmVisible = true;
-        this.checkFmId = String(this.details.detailList.id);
-        this.srcVersion = this.details.detailList.srcVersion;
-        this.getVerifyFirmInfo(this.checkFmId, this.srcVersion);
+        // this.checkFmVisible = true
+        this.checkFmId = String(this.details.detailList.id)
+        this.srcVersion = this.details.detailList.srcVersion
+        this.getVerifyFirmInfo(this.checkFmId, this.srcVersion)
       } else {
-        // this.openCheckFm(fmStatus);
-        this.checkStatus = fmStatus;
-        this.checkInfo = this.details.detailList;
-        this.checkProcessFlag = true;
+        // this.openCheckFm(fmStatus)
+        this.checkStatus = fmStatus
+        this.checkInfo = this.details.detailList
+        this.checkProcessFlag = true
       }
     },
     // 验证进程 关闭回调
     closeCheckProcess() {
-      this.checkProcessFlag = false;
+      this.checkProcessFlag = false
     },
     // 验证进程 批量升级回调
     upgradeProcess() {
-      this.closeCheckProcess();
-      this.upgradeFmVisible = true;
+      this.closeCheckProcess()
+      this.upgradeFmVisible = true
     },
     // 验证固件前校验是否存在设备
     getVerifyFirmInfo(fmId, versions) {
-      let data = {
+      const data = {
         pageNum: 1,
         pageSize: 10,
         fmId: fmId,
         srcVersions: versions
-      };
+      }
       getVerifyFirmInfo(data).then(res => {
         if (res.code === 200) {
-          this.fmDeviceList = res.data.data;
-          this.checkFmVisible = true;
+          this.fmDeviceList = res.data.data
+          this.checkFmVisible = true
         } else if (res.code === 9003) {
-          this.$alert(res.message, "提示", {
-            confirmButtonText: "确定",
-            type: "warning",
+          this.$alert(res.message, '提示', {
+            confirmButtonText: '确定',
+            type: 'warning',
             callback: action => {}
-          });
+          })
         } else {
-          this.$message.warning(res.message);
+          this.$message.warning(res.message)
         }
-      });
+      })
     },
     checkVisible() {
-      this.checkFmVisible = false;
+      this.checkFmVisible = false
     },
     refreshList() {
-      this.fetchFmList();
+      this.fetchFmList()
     },
     // 跳转批次详情
     toBatchDetails(row) {
       this.$router.push({
-        path: "batchDetails",
+        path: 'batchDetails',
         query: {
           id: row.fmId,
           productName: this.productName,
           batchNo: row.batchNo
         }
-      });
+      })
     },
     // 控制popover显示
     ShowPopover(e, row) {
-      this.popoverItem.check = "0";
-      this.popoverItem.row = row;
-      let el = e.target;
-      this.visible = true;
+      this.popoverItem.check = '0'
+      this.popoverItem.row = row
+      const el = e.target
+      this.visible = true
       this.$nextTick(() => {
-        let pop = this.$refs.popover;
-        pop.popperJS._reference = el;
+        const pop = this.$refs.popover
+        pop.popperJS._reference = el
         pop.popperJS.state.position = pop.popperJS._getPosition(
           pop.popperJS._popper,
           pop.popperJS._reference
-        );
-        pop.popperJS.update();
-      });
+        )
+        pop.popperJS.update()
+      })
     },
     // popover提交
     confirmPopover() {
-      this.visible = false;
-      this.loading = true;
+      this.visible = false
+      this.loading = true
       cancelBatchUpgrade({
         check: this.popoverItem.check,
         batchNo: this.popoverItem.row.batchNo
       })
         .then(res => {
           if (res.code === 200) {
-            this.getDeviceList();
-            this.$message.success("取消成功");
+            this.getDeviceList()
+            this.$message.success('取消成功')
           } else {
-            this.$message.error(res.message);
+            this.$message.error(res.message)
           }
-          this.loading = false;
+          this.loading = false
         })
         .catch(() => {
-          this.$message.error("取消失败");
-          this.loading = false;
-        });
+          this.$message.error('取消失败')
+          this.loading = false
+        })
     },
     // 返回上一级菜单
     goBack() {
-      this.$router.go(-1);
+      this.$router.go(-1)
     },
     // 格式化表格内容
     formatTaskType(row) {
-      return row.taskType === 0 ? "验证固件" : "批量升级";
+      return row.taskType === 0 ? '验证固件' : '批量升级'
     },
     formatUgType(row) {
-      return row.ugType === 1 ? "静态升级" : "动态升级";
+      return row.ugType === 1 ? '静态升级' : '动态升级'
     },
     formatDestVersion(row) {
-      return row.status == 4 ? row.destVersion : row.srcVersion;
+      return row.status === 4 ? row.destVersion : row.srcVersion
     },
     formatCreateTime(row) {
       return row.createTime
-        ? this.$fun.dateFormat(
-            new Date(row.createTime.replace(/-/g, "/")),
-            "yyyy-MM-dd hh:mm:ss"
-          )
-        : "";
+        ? this.$fun.dateFormat(new Date(row.createTime.replace(/-/g, '/')), 'yyyy-MM-dd hh:mm:ss')
+        : ''
     },
     // 下载
     downLoad() {
@@ -710,17 +709,18 @@ export default {
       }).then(res => {
         if (res.code === 200) {
           if (res.data.fmUrl) {
-            window.open(res.data.fmUrl);
+            window.open(res.data.fmUrl)
           }
         } else {
-          this.$message.error;
+          this.$message.error
         }
-      });
+      })
     }
   }
-};
+}
 </script>
-<style lang="scss" scoped>
+
+<style lang='scss' scoped>
 body,
 h1,
 h2,
@@ -750,7 +750,7 @@ a {
   padding: 0;
 }
 .clearfix:after {
-  content: ".";
+  content: '.';
   display: block;
   clear: both;
   height: 0;

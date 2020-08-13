@@ -14,16 +14,17 @@
         <div class="df pb10 bb1">
           <div class="flex1">
             <el-select
-              v-model="formData.srcVersions"
-              class="w100"
+              v-model="srcVersions"
+              multiple
+              class="w200"
               placeholder="版本筛选"
-              @change="getData"
+              @change="scopeTypeChange"
             >
               <el-option
-                v-for="srcVersion in srcVersionList"
-                :key="srcVersion"
-                :label="srcVersion"
-                :value="srcVersion"
+                v-for="version in srcVersionList"
+                :key="version"
+                :label="version"
+                :value="version"
               ></el-option>
             </el-select>
             <el-input
@@ -74,7 +75,7 @@
 import { getDirectedUpgradeList, getSrcVersionList } from '@/api/fireware'
 export default {
   props: {
-    productId: {
+    productKey: {
       type: String,
       default: ''
     },
@@ -83,12 +84,16 @@ export default {
       default: ''
     },
     fmId: {
-      type: String,
-      default: ''
+      type: Number,
+      default: 0
     },
     destVersion: {
       type: String,
       default: ''
+    },
+    srcVersion: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -107,6 +112,7 @@ export default {
       list: [],
       selectList: [],
       srcVersionList: [],
+      srcVersions: [],
       tableList: [],
       allSelectFlag: false
     }
@@ -117,8 +123,11 @@ export default {
     }
   },
   mounted() {
+    if (this.srcVersion && this.srcVersion.length > 0) {
+      this.srcVersions = JSON.parse(JSON.stringify(this.srcVersion))
+    }
     this.formData.fmId = this.fmId
-    this.getData()
+    this.scopeTypeChange()
     this.getVersionList()
   },
   methods: {
@@ -138,7 +147,7 @@ export default {
     getVersionList() {
       this.loading = true
       getSrcVersionList({
-        productId: this.productId + '',
+        productKey: this.productKey,
         moduleType: this.moduleType,
         destVersion: this.destVersion
       }).then(res => {
@@ -165,6 +174,10 @@ export default {
         this.loading = false
       })
     },
+    scopeTypeChange() {
+      this.formData.srcVersions = this.srcVersions.join(',')
+      this.getData()
+    },
     handleSelect(selection, row) {
       this.selectList = selection
       if (this.allFlag * 1 === 0) {
@@ -178,7 +191,7 @@ export default {
       if (rows && rows.length > 0) {
         rows.forEach(row => {
           this.$refs.table.toggleRowSelection(this.tableList.find(item => {
-            return row.deviceId === item.deviceId // 注意这里寻找的字段要唯一，示例仅参考
+            return row.deviceName === item.deviceName // 注意这里寻找的字段要唯一，示例仅参考
           }), true)
         })
       }
@@ -186,11 +199,16 @@ export default {
     handleClose() {
       this.$emit('close')
     },
-    searchNameFun() {},
-    cancelForm() {},
+    searchNameFun() {
+      this.getData()
+    },
+    cancelForm() {
+      this.$refs.drawer.closeDrawer()
+      this.$emit('close')
+    },
     handleSubmit() {
       this.$refs.drawer.closeDrawer()
-      this.$emit('success', this.selectList)
+      this.$emit('success', this.selectList, this.srcVersions)
     }
   }
 }
@@ -225,8 +243,8 @@ export default {
     background-color: #fafafa;
   }
   .svg-icon {
-    width: 50px;
-    height: 50px;
+    width: 50px!important;
+    height: 50px!important;
   }
 }
 </style>

@@ -154,7 +154,7 @@ export default {
           const data = {
             'fmId': this.form.fmId,
             'srcVersions': this.form.srcVersions,
-            'deviceIds': this.form.deviceIds,
+            'deviceNames': this.form.showDeviceNames,
             timeOut: this.form.timeOut
           }
           addVerify(data).then(res => {
@@ -221,7 +221,7 @@ export default {
     getVersionList() {
       this.loading = true
       getSrcVersionList({
-        productId: this.checkInfo.productId,
+        productKey: this.checkInfo.productKey,
         moduleType: this.checkInfo.moduleType,
         destVersion: this.checkInfo.destVersion
       }).then(res => {

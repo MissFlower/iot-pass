@@ -50,6 +50,11 @@ export default {
       loading: false
     }
   },
+  computed: {
+    authArr() {
+      return this.$store.state.app.functionArr
+    }
+  },
   watch: {
     productName: function(newVal, oldVal) {
       if (newVal === '' && oldVal !== '') {
@@ -59,11 +64,6 @@ export default {
   },
   created() {
     this.getList()
-  },
-  computed: {
-    authArr() {
-      return this.$store.state.app.functionArr
-    }
   },
   methods: {
     clearFun() {
@@ -78,36 +78,31 @@ export default {
     // 产品列表
     getList() {
       this.loading = true
-      tableList(
-        Object.assign(this.tableData, { productName: this.productName })
-      )
-        .then(res => {
-          this.loading = false
-          if (res.code === 200) {
-            const { ...pagination } = res.data
-            this.tableData = pagination
-            if (res.data && res.data.data.length > 0) {
-              res.data.data.forEach(item => {
-                item.createTime_ = item.createTime
-                  ? this.$fun.dateFormat(
-                      this.$fun.strFormatDate(
-                        item.createTime.replace(/-/g, '/')
-                      ),
-                      'yyyy-MM-dd hh:mm:ss'
-                    )
-                  : ''
-              })
-            }
-            this.listData = res.data.data
-            this.tableData.total = res.data.total
-          } else {
-            this.$message.warning(res.message)
+      tableList({
+        pageSize: this.tableData.pageSize,
+        pageNum: this.tableData.pageNum,
+        productName: this.productName
+      }).then(res => {
+        this.loading = false
+        if (res.code === 200) {
+          const { ...pagination } = res.data
+          this.tableData = pagination
+          if (res.data && res.data.data.length > 0) {
+            res.data.data.forEach(item => {
+              item.createTime_ = item.createTime
+                ? this.$fun.dateFormat(this.$fun.strFormatDate(item.createTime.replace(/-/g, '/')), 'yyyy-MM-dd hh:mm:ss')
+                : ''
+            })
           }
-        })
-        .catch(err => {
-          this.loading = false
-          this.$message.error(err)
-        })
+          this.listData = res.data.data
+          this.tableData.total = res.data.total
+        } else {
+          this.$message.warning(res.message)
+        }
+      }).catch(err => {
+        this.loading = false
+        this.$message.error(err)
+      })
     },
     // 新建产品
     handleAdd() {

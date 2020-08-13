@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-03 11:28:30
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-05 17:26:07
+ * @LastEditTime: 2020-08-13 10:59:22
 -->
 <template>
   <div id="echart" class="echart-container" />
@@ -37,10 +37,10 @@ export default {
   watch: {
     data: {
       handler(newValue, oldValue) {
-        console.log(newValue)
+        // console.log(newValue)
         if (newValue) {
           // 调用后台接口函数
-          console.log(newValue)
+          // console.log(newValue)
           this.initChart(newValue)
         }
       }

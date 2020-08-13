@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 15:57:06
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-07 18:45:35
+ * @LastEditTime: 2020-08-13 11:00:07
 -->
 
 <template>
@@ -84,7 +84,7 @@
 
         <ElTableColumn label="输入参数" prop="inputData" />
 
-        <ElTableColumn label="输出参数" prop="outputData" />
+        <ElTableColumn label="输出参数" prop="outputData" show-overflow-tooltip />
 
         <div slot="empty" class="defalut-graph-box">
           <DeafultGraph icon-class="empty1" text="暂无数据" />
@@ -96,8 +96,9 @@
 </template>
 
 <script>
-// import { getServiceForList } from '@/api/deviceRequest'
+import { getServiceForList } from '@/api/deviceRequest'
 import { TIME_TYPE } from '@/data/constants'
+import { deepFreeze } from '@/utils'
 import DeafultGraph from '@/components/DeafultGraph'
 
 export default {
@@ -117,11 +118,11 @@ export default {
       startTime: '',
       endTime: '',
       loading: false,
-      isShowLoadMoreBtn: true // 是否展示加载数据
+      isShowLoadMoreBtn: false // 是否展示加载数据
     }
   },
   mounted() {
-    console.log(this.$attrs['device-info'])
+    // console.log(this.$attrs['device-info'])
     this.endTime = new Date().getTime()
     this.startTime = this.endTime - 60 * 60 * 1000
     this.getList()
@@ -129,7 +130,8 @@ export default {
   methods: {
     // 获取服务调用列表
     getList(isLoadMore) {
-      console.log({
+      this.loading = true
+      getServiceForList({
         productKey: this.$attrs['device-info'].productKey,
         deviceName: this.$attrs['device-info'].deviceName,
         startTime: this.startTime,
@@ -138,50 +140,29 @@ export default {
         asc: 1,
         ...this.formInline
       })
-      const res = {
-        'nextTime': '1596535676218',
-        'nextValid': true,
-        'serviceInfo': [{
-          'identifier': 'TimeReset',
-          'outputData': '{code:200,data:{},id:1058584695,message:success,version:1.0}',
-          'time': '1596535676218',
-          'inputData': '{TimeReset:hello}',
-          'name': '设备校时服务'
-        }]
-      }
-      this.isShowLoadMoreBtn = res.nextValid
-      this.endTime = res.nextTime
-      if (!isLoadMore) {
-        // 不是加载更多，将表格数据清空
-        this.listData = []
-      }
-      // this.listData.push(...res.serviceInfo)
-      // this.loading = true
-      // getServiceForList({
-      //   productKey: this.$attrs['device-info'].productKey,
-      //   deviceName: this.$attrs['device-info'].deviceName,
-      //   startTime: this.startTime,
-      //   endTime: this.endTime,
-      //   pageSize: 20,
-      //   asc: 1,
-      //   ...this.formInline
-      // })
-      //   .then(res => {
-      //     this.loading = false
-      //     if (res.code === 200) {
-      //       // 成功处理
-      //     } else {
-      //       this.$message.error(res.message)
-      //     }
-      //   })
-      //   .catch(() => {
-      //     this.loading = false
-      //     this.$message.error('获取事件管理失败！')
-      //   })
+        .then(res => {
+          this.loading = false
+          if (res.code === 200) {
+            // 成功处理
+            this.isShowLoadMoreBtn = res.nextValid
+            this.endTime = res.nextTime
+            const data = res.data.serviceInfo ? res.data.serviceInfo : []
+            if (!isLoadMore) {
+              // 不是加载更多，将表格数据清空
+              this.listData = []
+            }
+            this.listData.push(...deepFreeze(data))
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+        .catch(() => {
+          this.loading = false
+        })
     },
     chooseTime(value) {
       // 选择时间范围 转换 startTime endTime 除自定义之外
-      console.log(value)
+      // console.log(value)
       this.endTime = new Date().getTime()
       this.startTime = this.endTime - ((value || 1) * 60 * 60 * 1000)
       if (!value) {

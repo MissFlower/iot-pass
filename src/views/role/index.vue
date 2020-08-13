@@ -5,10 +5,10 @@
 -->
 <template>
   <div id="role">
-    <i v-if="activeIndex == 2" class="el-icon-back b pre-icon" @click="switchCon(0)"></i>
-    <list ref="list" v-if="activeIndex == 0 || activeIndex == 1 || activeIndex == 3"></list>
-    <edit-role v-if="editFlag" :info="selectRow" @close="handleCloseEditRole"></edit-role>
-    <role-auth v-if="activeIndex == 2" :info="selectRow"></role-auth>
+    <i v-if="activeIndex == 2" class="el-icon-back b pre-icon" @click="switchCon(0)" />
+    <list ref="list" v-if="activeIndex == 0 || activeIndex == 1 || activeIndex == 3" />
+    <edit-role v-if="editFlag" :info="selectRow" @close="handleCloseEditRole" />
+    <role-auth v-if="activeIndex == 2" :info="selectRow" />
   </div>
 </template>
 

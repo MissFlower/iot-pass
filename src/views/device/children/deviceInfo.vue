@@ -115,9 +115,12 @@
           <el-radio-button label="serviceCall">服务调用</el-radio-button>
         </el-radio-group>
         <!-- 标签下方对应的内容 -->
-        <run-state v-if="modelType == 'runState'" :device-info="deviceObj" />
-        <event-manage v-if="modelType == 'eventManage'" :device-info="deviceObj" />
-        <service-Call v-if="modelType == 'serviceCall'" :device-info="deviceObj" />
+        <KeepAlive>
+          <component :is="modelType" :device-info="deviceObj" />
+        </KeepAlive>
+        <!-- <run-state v-show="modelType == 'runState'" :device-info="deviceObj" />
+        <event-manage v-show="modelType == 'eventManage'" :device-info="deviceObj" />
+        <service-Call v-show="modelType == 'serviceCall'" :device-info="deviceObj" /> -->
       </el-tab-pane>
     </el-tabs>
 
@@ -211,13 +214,14 @@ export default {
       lookDeviceSecret: false,
       loading: false,
       burnShow: false,
-      modelType: '',
-      modelShow: true,
+      modelType: 'runState',
+      modelShow: false,
       deviceStatusType: {
         '0': 'info',
         '1': 'success',
         '2': 'error'
-      }
+      },
+      currentComponent: null
     }
   },
 
@@ -272,7 +276,8 @@ export default {
             }
             this.deviceObj = deviceObj
           }
-          this.modelType = 'runState'
+          // this.modelType = 'runState'
+          this.modelShow = true
           this.loading = false
         })
         .catch(() => {

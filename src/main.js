@@ -7,6 +7,7 @@ import '@/assets/css/base.scss'
 import '@/assets/css/index.scss'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css' // 默认主题
+import 'src/styles/index.scss'
 import '@/permission'
 import '@/common'
 import DatatypeSelectpart from '@/components/children/dataSelectPart' // 注册全局组件

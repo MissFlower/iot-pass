@@ -199,8 +199,8 @@ export default {
       border: none;
       .user-avatar {
         cursor: pointer;
-        width: 40px;
-        height: 40px;
+        width: 40px !important;
+        height: 40px !important;
       }
       // .el-icon-caret-bottom {
       //   cursor: pointer;
@@ -213,8 +213,8 @@ export default {
   width: 300px;
   .user-avatar {
     cursor: pointer;
-    width: 40px;
-    height: 40px;
+    width: 40px !important;
+    height: 40px !important;
   }
   .drop-link {
     margin-bottom: 10px;

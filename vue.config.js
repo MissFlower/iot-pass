@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 14:26:58
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-07 14:40:22
+ * @LastEditTime: 2020-08-12 10:25:23
  */
 'use strict'
 const path = require('path')
@@ -15,7 +15,7 @@ module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
   devServer: {
     // open: true,
-    // host: "0.0.0.0",
+    host: '192.168.0.64',
     port: 8091,
     https: false,
     hotOnly: false,

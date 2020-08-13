@@ -244,8 +244,6 @@ export default {
     checkFm(row) {
       // 未验证的固件进行验证，验证中或已验证的固件弹窗提示
       if (row.fmStatus === 0 || row.fmStatus === 3) {
-        // this.checkFmId = String(row.id);
-        // this.srcVersion = row.srcVersion;
         this.getVerifyFirmInfo(row.id, row.srcVersion)
         this.checkInfo = row
       } else {

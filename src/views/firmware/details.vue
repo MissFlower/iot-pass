@@ -583,12 +583,11 @@ export default {
     // 验证固件方法
     checkFm() {
       const fmStatus = this.details.detailList.fmStatus
-      if (fmStatus === 0) {
-        // console.log(this.details.detailList)
-        // this.checkFmVisible = true
+      if (fmStatus === 0 || fmStatus === 3) {
         this.checkFmId = String(this.details.detailList.id)
         this.srcVersion = this.details.detailList.srcVersion
         this.getVerifyFirmInfo(this.checkFmId, this.srcVersion)
+        this.checkInfo = this.details.detailList
       } else {
         // this.openCheckFm(fmStatus)
         this.checkStatus = fmStatus

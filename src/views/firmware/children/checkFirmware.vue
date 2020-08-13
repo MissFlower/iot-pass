@@ -13,7 +13,7 @@
     >
       <el-form :model="form" ref="ruleForm" label-width="150px" :rules="rules" v-loading="loading">
         <el-form-item label="待升级版本号" prop="srcVersions">
-          <el-select v-model="version" multiple class="w200">
+          <el-select v-model="version" multiple class="w200" @change="versionChangeFun">
             <el-option v-for="ver in srcVersionList" :key="ver" :label="ver" :value="ver"></el-option>
           </el-select>
         </el-form-item>
@@ -52,7 +52,7 @@
     </el-dialog>
     <ChooseDevice
       v-if="chooseDeviceVisible"
-      :fmDeviceList="fmDeviceList"
+      :fmDeviceList="deviceList"
       @deviceVisible="deviceVisible"
       @multipleDevice="multipleDevice"
     ></ChooseDevice>
@@ -60,7 +60,7 @@
 </template>
 <script>
 import ChooseDevice from './chooseDevice'
-import { addVerify, getSrcVersionList } from '@/api/fireware'
+import { addVerify, getSrcVersionList, getVerifyFirmInfo } from '@/api/fireware'
 export default {
   components: {
     ChooseDevice
@@ -131,7 +131,8 @@ export default {
         ]
       },
       version: [],
-      srcVersionList: []
+      srcVersionList: [],
+      deviceList: []
     }
   },
   mounted() {
@@ -140,6 +141,7 @@ export default {
       this.form.showDeviceNames = []
       this.form.srcVersions = this.checkInfo.srcVersion
       this.form.fmId = this.checkInfo.id + ''
+      this.deviceList = this.fmDeviceList
       if (this.checkInfo.srcVersion) {
         this.version = this.checkInfo.srcVersion.split(',')
       }
@@ -231,6 +233,21 @@ export default {
         this.loading = false
       }).catch(() => {
         this.loading = false
+      })
+    },
+    versionChangeFun() {
+      const data = {
+        pageNum: 1,
+        pageSize: 10,
+        fmId: this.checkInfo.id,
+        srcVersions: this.srcVersion
+      }
+      getVerifyFirmInfo(data).then(res => {
+        if (res.code === 200) {
+          this.deviceList = res.data.data
+        } else {
+          this.$message.warning(res.message)
+        }
       })
     }
   }

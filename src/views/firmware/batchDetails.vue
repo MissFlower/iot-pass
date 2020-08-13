@@ -92,11 +92,11 @@
           </el-table>
           <el-pagination
             @current-change="handleBatchChange"
-            :current-page.sync="batchManage.pageNum"
-            :page-size="batchManage.pageSize"
+            :current-page.sync="devManage.pageNum"
+            :page-size="devManage.pageSize"
             layout="total, prev, pager, next"
             class="tr mt20"
-            :total="batchManage.total"
+            :total="devManage.total"
           ></el-pagination>
         </el-tab-pane>
         <el-tab-pane label="批次信息" name="second">
@@ -326,7 +326,7 @@ export default {
             })
           }
           this.devManage.devList = res.data.data
-          this.batchManage.total = res.data.total
+          this.devManage.total = res.data.total
         } else {
           this.$message.error(res.message)
         }
@@ -377,7 +377,8 @@ export default {
       this.loading = true
       cancelDeviceUpgrade({
         batchNo: this.popoverItem.row.batchNo,
-        deviceName: this.popoverItem.row.deviceName
+        deviceName: this.popoverItem.row.deviceName,
+        productKey: this.popoverItem.row.productKey
       }).then(res => {
         if (res.code === 200) {
           this.getDeviceList()

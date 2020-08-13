@@ -9,7 +9,7 @@
       title="批量升级"
       :visible.sync="upgradeFmVisible"
       :before-close="closeDialog"
-      width="420px"
+      width="500px"
     >
       <el-form
         :model="form"
@@ -100,6 +100,7 @@
               type="datetime"
               :picker-options="pickerOptions1"
               placeholder="选择日期时间"
+              class="w200"
             ></el-date-picker>
           </el-form-item>
         </div>

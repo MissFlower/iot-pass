@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 15:57:06
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-13 11:00:07
+ * @LastEditTime: 2020-08-13 13:52:38
 -->
 
 <template>
@@ -123,8 +123,7 @@ export default {
   },
   mounted() {
     // console.log(this.$attrs['device-info'])
-    this.endTime = new Date().getTime()
-    this.startTime = this.endTime - 60 * 60 * 1000
+    this.setStartEndTime()
     this.getList()
   },
   methods: {
@@ -163,8 +162,7 @@ export default {
     chooseTime(value) {
       // 选择时间范围 转换 startTime endTime 除自定义之外
       // console.log(value)
-      this.endTime = new Date().getTime()
-      this.startTime = this.endTime - ((value || 1) * 60 * 60 * 1000)
+      this.setStartEndTime()
       if (!value) {
         this.curtomTime = [this.startTime, this.endTime]
       }
@@ -179,8 +177,20 @@ export default {
       // 加载更多
       this.getList(true)
     },
+    setStartEndTime() {
+      // 设置开始和结束时间
+      this.endTime = new Date().getTime()
+      this.startTime = this.endTime - (this.timeRange * 60 * 60 * 1000)
+    },
     refreshHandler() {
-      this.getList()
+      if (!this.timeRange) {
+        // 自定义时间的刷新
+        this.dateChange()
+      } else {
+        // 非自定义时间刷新
+        this.setStartEndTime()
+        this.getList()
+      }
     }
   }
 }

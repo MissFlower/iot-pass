@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 15:57:06
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-13 10:51:55
+ * @LastEditTime: 2020-08-13 13:17:33
 -->
 <template>
   <div v-loading="loading">
@@ -196,10 +196,10 @@ export default {
             // console.log(111, this.tableData)
             this.freezeTableData = deepFreeze(result)
           }
-          this.$message({
-            type: res.code === 200 ? 'success' : 'warning',
-            message: res.message
-          })
+          // this.$message({
+          //   type: res.code === 200 ? 'success' : 'warning',
+          //   message: res.message
+          // })
         })
     },
     filterValueChange(value) {

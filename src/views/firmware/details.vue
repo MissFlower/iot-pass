@@ -234,49 +234,49 @@
             </a>
           </div>
           <el-row>
-            <el-col :span="8">
+            <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
               <div class="edit_info">
                 <div class="edit_info-lf">固件ID</div>
                 <div class="edit_info-rf">{{ fmInfo.fmInfoList.id }}</div>
               </div>
             </el-col>
-            <el-col :span="8">
+            <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
               <div class="edit_info">
                 <div class="edit_info-lf">固件名称</div>
                 <div class="edit_info-rf">{{ fmInfo.fmInfoList.fmName }}</div>
               </div>
             </el-col>
-            <el-col :span="8">
+            <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
               <div class="edit_info">
                 <div class="edit_info-lf">所属产品</div>
                 <div class="edit_info-rf">{{ fmInfo.fmInfoList.productName }}</div>
               </div>
             </el-col>
-            <el-col :span="8">
+            <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
               <div class="edit_info">
                 <div class="edit_info-lf">固件签名</div>
                 <div class="edit_info-rf">{{ fmInfo.fmInfoList.fmSign }}</div>
               </div>
             </el-col>
-            <el-col :span="8">
+            <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
               <div class="edit_info">
                 <div class="edit_info-lf">待升级版本号</div>
                 <div class="edit_info-rf">{{ fmInfo.fmInfoList.srcVersion }}</div>
               </div>
             </el-col>
-            <el-col :span="8">
+            <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
               <div class="edit_info">
                 <div class="edit_info-lf">升级后版本号</div>
                 <div class="edit_info-rf">{{ fmInfo.fmInfoList.destVersion }}</div>
               </div>
             </el-col>
-            <el-col :span="8">
+            <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
               <div class="edit_info">
                 <div class="edit_info-lf">添加时间</div>
                 <div class="edit_info-rf">{{ fmInfo.fmInfoList.createTime_ }}</div>
               </div>
             </el-col>
-            <el-col :span="8">
+            <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
               <div class="edit_info">
                 <div class="edit_info-lf">签名算法</div>
                 <div
@@ -284,7 +284,7 @@
                 >{{ fmInfo.fmInfoList.signMethod === 1 ? 'Md5' : 'SHA256' }}</div>
               </div>
             </el-col>
-            <el-col :span="8">
+            <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
               <div class="edit_info">
                 <div class="edit_info-lf">固件状态</div>
                 <div class="edit_info-rf">
@@ -304,7 +304,7 @@
             <!--</div>-->
             <!--</div>-->
             <!--</el-col>-->
-            <el-col :span="24">
+            <el-col :xs="24" :sm="12" :md="24" :lg="24" :xl="24">
               <div class="edit_info">
                 <div class="edit_info-lf">固件描述</div>
                 <div class="edit_info-rf">{{ fmInfo.fmInfoList.fmDesc }}</div>
@@ -847,6 +847,9 @@ $default: #409eff;
   .edit_info-rf {
     box-sizing: border-box;
     padding: 10px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 }
 </style>

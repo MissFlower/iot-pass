@@ -101,31 +101,31 @@
         </el-tab-pane>
         <el-tab-pane label="批次信息" name="second">
           <el-row v-if="JSON.stringify(batchDetailList) != '{}'">
-            <el-col :span="8">
+            <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
               <div class="edit_info">
                 <div class="edit_info-lf">批次ID</div>
                 <div class="edit_info-rf">{{ batchDetailList.batchNo }}</div>
               </div>
             </el-col>
-            <el-col :span="8">
+            <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
               <div class="edit_info">
                 <div class="edit_info-lf">所属产品</div>
                 <div class="edit_info-rf">{{ productName }}</div>
               </div>
             </el-col>
-            <el-col :span="8">
+            <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
               <div class="edit_info">
                 <div class="edit_info-lf">升级前固件版本号</div>
                 <div class="edit_info-rf">{{ batchDetailList.srcVersion }}</div>
               </div>
             </el-col>
-            <el-col :span="8">
+            <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
               <div class="edit_info">
                 <div class="edit_info-lf">升级后固件版本号</div>
                 <div class="edit_info-rf">{{ batchDetailList.destVersion }}</div>
               </div>
             </el-col>
-            <el-col :span="8">
+            <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
               <div class="edit_info">
                 <div class="edit_info-lf">升级策略</div>
                 <div
@@ -133,7 +133,7 @@
                 >{{ batchDetailList.ugStrategy == 0 ? '静态升级' : (batchDetailList.ugStrategy == 1 ? '动态升级' : batchDetailList.ugStrategy) }}</div>
               </div>
             </el-col>
-            <el-col :span="8">
+            <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
               <div class="edit_info">
                 <div class="edit_info-lf">升级范围</div>
                 <div
@@ -141,7 +141,7 @@
                 >{{ scopeTypeObj[batchDetailList.scopeType] ? scopeTypeObj[batchDetailList.scopeType] : batchDetailList.scopeType }}</div>
               </div>
             </el-col>
-            <el-col :span="8" v-if="batchDetailList.ugStartTime">
+            <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8" v-if="batchDetailList.ugStartTime">
               <div class="edit_info">
                 <div class="edit_info-lf">升级时间
                   <span v-if="batchDetailList.ugEndTime">/结束时间</span>
@@ -154,7 +154,7 @@
                 </div>
               </div>
             </el-col>
-            <el-col :span="8">
+            <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
               <div class="edit_info">
                 <div class="edit_info-lf">升级时间</div>
                 <div
@@ -162,19 +162,19 @@
                 >{{ batchDetailList.ugTimeType == 0 ? '立即升级' : (batchDetailList.ugTimeType == 1 ? '定时升级' : batchDetailList.ugTimeType) }}</div>
               </div>
             </el-col>
-            <el-col :span="8">
+            <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
               <div class="edit_info">
                 <div class="edit_info-lf">固件推送速率</div>
                 <div class="edit_info-rf">{{ batchDetailList.rate }}</div>
               </div>
             </el-col>
-            <el-col :span="8">
+            <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
               <div class="edit_info">
                 <div class="edit_info-lf">升级失败重试时间间隔</div>
                 <div class="edit_info-rf">{{ batchDetailList.retryInterval }}</div>
               </div>
             </el-col>
-            <el-col :span="16">
+            <el-col :xs="24" :sm="12" :md="16" :lg="16" :xl="16">
               <div class="edit_info">
                 <div class="edit_info-lf">设备升级超时时间</div>
                 <div class="edit_info-rf">{{ batchDetailList.timeOut }}</div>
@@ -565,6 +565,9 @@ $default: #409eff;
   .edit_info-rf {
     box-sizing: border-box;
     padding: 10px;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
   }
 }
 </style>

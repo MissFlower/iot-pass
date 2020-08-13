@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-31 15:42:42
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-07 18:05:34
+ * @LastEditTime: 2020-08-13 10:58:33
 -->
 <template>
   <div class="card-container">
@@ -15,16 +15,12 @@
       </div>
       <div>
         <div class="f18 card-unit">
-          <ElTooltip
-            :content="cardValueUnit"
-            placement="top"
-            effect="light"
-            popper-class="custom-tooltip-style"
-          >
-            <span class="card-unit-text">
-              {{ cardValueUnit }}
+          <DynamicToolTip :content="cardValueUnit" effect="light">
+            <span class="card-unit-text" slot="content" :style="{'font-size': valueFontSize}">
+              {{ cardData.value ? cardData.value : '--' }}
+              <span :style="{'font-size': unitFontSize}">{{ cardData.unit }}</span>
             </span>
-          </ElTooltip>
+          </DynamicToolTip>
         </div>
         <div class="f14 card-value">{{ cardData.time || '--' | parseMillTime }}</div>
       </div>
@@ -33,8 +29,12 @@
 </template>
 
 <script>
+import DynamicToolTip from 'src/components/DynamicToolTip'
 export default {
   name: 'RunStateCard',
+  components: {
+    DynamicToolTip
+  },
   props: {
     cardData: {
       type: Object,
@@ -54,12 +54,17 @@ export default {
         result = (this.cardData.value ? this.cardData.value : '--') + ' ' + this.cardData.unit
       }
       return result
+    },
+    valueFontSize() {
+      return this.cardData.value.length > 12 ? '14px' : '28px'
+    },
+    unitFontSize() {
+      return (this.cardData.dataType === 'bool' || this.cardData.dataType === 'enum') ? '28px' : '18px'
     }
   },
   methods: {
     viewDataHandler(identifier) {
-      this.$parent.currentId = identifier
-      this.$parent.runStateDialogVisible = true
+      this.$parent.viewDataHandler(identifier)
     }
   }
 }
@@ -82,12 +87,13 @@ export default {
 
   .card-unit {
     color: #333;
-    height: 24px;
-    line-height: 24px;
+    height: 35px;
+    line-height: 35px;
     margin-bottom: 12px;
 
     .card-unit-text {
       position: relative;
+      cursor: pointer;
 
       .card-icon {
         font-size: 12px;
@@ -115,10 +121,5 @@ export default {
   .el-card__body {
     padding: 16px 20px;
   }
-}
-</style>
-<style>
-.custom-tooltip-style.is-light {
-  border: 1px solid #999;
 }
 </style>

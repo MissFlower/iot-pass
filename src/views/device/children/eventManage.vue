@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 15:57:06
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-07 15:36:53
+ * @LastEditTime: 2020-08-13 10:59:43
 -->
 
 <template>
@@ -98,7 +98,7 @@
           <template slot-scope="{ row }">{{ EVENT_TYPE_TEXT[row.eventType] }}</template>
         </ElTableColumn>
 
-        <ElTableColumn label="输出参数" prop="outputData" />
+        <ElTableColumn label="输出参数" prop="outputData" show-overflow-tooltip />
 
         <div slot="empty" class="defalut-graph-box">
           <DeafultGraph icon-class="empty1" text="暂无数据" />
@@ -110,9 +110,9 @@
 </template>
 
 <script>
-// import { getEventForList } from '@/api/deviceRequest'
+import { getEventForList } from '@/api/deviceRequest'
 import { TIME_TYPE, EVENT_TYPE_TEXT } from '@/data/constants'
-import { parseTime } from '@/utils'
+import { deepFreeze } from '@/utils'
 import DeafultGraph from '@/components/DeafultGraph'
 export default {
   name: 'EventManage',
@@ -133,11 +133,10 @@ export default {
       startTime: '',
       endTime: '',
       loading: false,
-      isShowLoadMoreBtn: true // 是否展示加载数据
+      isShowLoadMoreBtn: false // 是否展示加载数据
     }
   },
   created() {
-    console.log(this.$attrs['device-info'])
     this.endTime = new Date().getTime()
     this.startTime = this.endTime - 60 * 60 * 1000
     this.getList()
@@ -145,59 +144,40 @@ export default {
   methods: {
     // 获取事件管理列表
     getList(isLoadMore) {
-      console.log({
+      // this.loading = true
+      getEventForList({
         productKey: this.$attrs['device-info'].productKey,
         deviceName: this.$attrs['device-info'].deviceName,
-        startTime: parseTime(this.startTime),
-        endTime: parseTime(this.endTime),
+        startTime: this.startTime,
+        endTime: this.endTime,
         pageSize: 20,
         asc: 1,
         ...this.formInline
       })
-      const res = {
-        'nextTime': '1596526007139',
-        'nextValid': true,
-        'eventInfo': [{
-          'identifier': 'LowBatteyEvent',
-          'eventType': 1,
-          'outputData': "{ 'BatteryLevel': 99 }",
-          'time': '1596532624134',
-          'name': '电量低告警'
-        }]
-      }
-      this.isShowLoadMoreBtn = res.nextValid
-      this.endTime = res.nextTime
-      if (!isLoadMore) {
-        // 不是加载更多，将表格数据清空
-        this.listData = []
-      }
-      // this.listData.push(...res.eventInfo)
-      // this.loading = true
-      // getEventForList({
-      //   productKey: this.$attrs['device-info'].productKey,
-      //   deviceName: this.$attrs['device-info'].deviceName,
-      //   startTime: this.startTime,
-      //   endTime: this.endTime,
-      //   pageSize: 20,
-      //   asc: 1,
-      //   ...this.formInline
-      // })
-      //   .then(res => {
-      //     this.loading = false
-      //     if (res.code === 200) {
-      //       // 成功处理
-      //     } else {
-      //       this.$message.error(res.message)
-      //     }
-      //   })
-      //   .catch(() => {
-      //     this.loading = false
-      //     this.$message.error('获取事件管理失败！')
-      //   })
+        .then(res => {
+          this.loading = false
+          if (res.code === 200) {
+            // 成功处理
+            this.isShowLoadMoreBtn = res.nextValid
+            this.endTime = res.nextTime
+            const data = res.data.eventInfo ? res.data.eventInfo : []
+            if (!isLoadMore) {
+              // 不是加载更多，将表格数据清空
+              this.listData = []
+            }
+            this.listData.push(...deepFreeze(data))
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+          this.loading = false
+        })
     },
     chooseTime(value) {
       // 选择时间范围 转换 startTime endTime 除自定义之外
-      console.log(value)
+      // console.log(value)
       this.endTime = new Date().getTime()
       this.startTime = this.endTime - ((value || 1) * 60 * 60 * 1000)
       if (!value) {
@@ -260,6 +240,7 @@ export default {
 
   .table-list-container {
     text-align: center;
+    margin-bottom: 20px;
 
     .load-more-button {
       margin-top: 5px;

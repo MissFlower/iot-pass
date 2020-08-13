@@ -1,3 +1,11 @@
+/*
+ * @Description:
+ * @Version: 0.1.0
+ * @Autor: AiDongYang
+ * @Date: 2020-07-29 14:26:58
+ * @LastEditors: AiDongYang
+ * @LastEditTime: 2020-08-11 16:10:35
+ */
 import axios from 'axios'
 import cookie from '@/utils/cookie.js'
 // import { Message } from "element-ui";

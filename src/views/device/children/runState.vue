@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 15:57:06
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-07 18:45:00
+ * @LastEditTime: 2020-08-13 10:51:55
 -->
 <template>
   <div v-loading="loading">
@@ -56,29 +56,33 @@
     <!-- 表格结构 -->
     <div v-else class="runstate-table-container">
       <ElTable :data="tableData" border style="width: 100%">
-        <ElTableColumn prop="name" label="属性名称" />
+        <ElTableColumn prop="name" label="属性名称" min-width="200" />
 
-        <ElTableColumn prop="dataType" label="数据类型" />
+        <ElTableColumn prop="dataType" label="数据类型" min-width="120" />
 
-        <ElTableColumn prop="time" label="更新时间">
+        <ElTableColumn prop="time" label="更新时间" min-width="150">
           <template slot-scope="{ row }">
             {{ !row.time ? "—" : row.time | parseMillTime }}
           </template>
         </ElTableColumn>
 
-        <ElTableColumn prop="value" label="最新值" />
+        <ElTableColumn prop="value" label="最新值" show-overflow-tooltip />
 
-        <ElTableColumn prop="expectedValue" label="期望值">
+        <!-- <ElTableColumn prop="expectedValue" label="期望值">
           <template slot-scope="{ row }">{{ row.updateValue ? row.updateValue : "--" }}</template>
-        </ElTableColumn>
+        </ElTableColumn> -->
 
-        <ElTableColumn label="操作" width="120">
+        <ElTableColumn label="操作" width="100">
           <template slot-scope="{ row }">
             <span class="view-data-text" @click="viewDataHandler(row.identifier)">
               查看数据
             </span>
           </template>
         </ElTableColumn>
+
+        <div slot="empty" class="defalut-graph-box">
+          <DeafultGraph icon-class="empty1" text="暂无数据" />
+        </div>
       </ElTable>
     </div>
     <!-- 查看数据 -->
@@ -97,11 +101,14 @@
 import RunStateCard from './runState/card'
 import RunStateDialog from './runState/runStateDialog'
 import { getAllProperties, getPropertyStatus } from '@/api/deviceRequest'
+import { deepFreeze } from 'src/utils'
+import DeafultGraph from '@/components/DeafultGraph'
 export default {
   name: 'RunState',
   components: {
     RunStateCard,
-    RunStateDialog
+    RunStateDialog,
+    DeafultGraph
   },
   data() {
     return {
@@ -122,58 +129,13 @@ export default {
   mounted() {
     this.getAllProperties()
   },
+  beforeDestroy() {
+    // console.log('runState组件即将被销毁')
+  },
   methods: {
     getAllProperties() {
       // 获取设备物模型属性列表
       this.loading = true
-
-      const propertyInfo = [{
-        'identifier': 'OverTiltEnable',
-        'version': 0,
-        'dataType': 'double',
-        'unit': 'uS/cm',
-        'name': '倾斜告警使能'
-      }, {
-        'identifier': 'LightStatus',
-        'version': 0,
-        'dataType': 'text',
-        'unit': 'ppt',
-        'name': '工作状态'
-      }, {
-        'identifier': 'UnderVoltEnable',
-        'version': 0,
-        'dataType': 'bool',
-        'unit': 'Ture',
-        'name': '欠压告警使能'
-      }, {
-        'identifier': 'LeakageEnable',
-        'version': 0,
-        'dataType': 'init32',
-        'unit': 'V',
-        'name': '漏电告警使能'
-      }, {
-        'identifier': 'LeakageEnable1',
-        'version': 0,
-        'dataType': 'init',
-        'unit': '',
-        'name': '漏电告警使能'
-      }]
-      this.identifierList = []
-      this.propertyData = []
-      propertyInfo.map(item => {
-        this.identifierList.push(item.identifier)
-        this.propertyData.push({
-          name: item.name,
-          unit: item.unit,
-          dataType: item.dataType,
-          value: '',
-          time: '',
-          identifier: item.identifier
-        })
-      })
-      console.log(this.propertyData)
-      this.getPropertyStatus()
-
       getAllProperties({
         productKey: this.$attrs['device-info'].productKey,
         deviceName: this.$attrs['device-info'].deviceName
@@ -182,6 +144,20 @@ export default {
           this.loading = false
           if (res.code === 200) {
             // 成功处理
+            this.identifierList = []
+            this.propertyData = []
+            res.data.propertyInfo.map(item => {
+              this.identifierList.push(deepFreeze(item.identifier))
+              this.propertyData.push(deepFreeze({
+                name: item.name,
+                unit: item.unit,
+                dataType: item.dataType,
+                value: '',
+                time: '',
+                identifier: item.identifier
+              }))
+            })
+            this.getPropertyStatus()
           }
           this.$message({
             type: res.code === 200 ? 'success' : 'warning',
@@ -195,65 +171,48 @@ export default {
     },
     getPropertyStatus() {
       // 获取属性实时状态
-      const propertyStatusInfo = [{
-        'identifier': 'UnderVoltEnable',
-        'dataType': 'bool',
-        'unit': '',
-        'value': Math.floor(Math.random() * 5) + 5,
-        'time': '1596306007139',
-        'name': '欠压告警使能'
-      }, {
-        'identifier': 'LeakageEnable',
-        'dataType': 'init32',
-        'unit': '',
-        'value': Math.floor(Math.random() * 5) + 1,
-        'time': '1596526007369',
-        'name': '漏电告警使能'
-      }]
-      this.propertyData.forEach((item, index) => {
-        const existItem = propertyStatusInfo.find(i => i.identifier === item.identifier)
-        console.log(existItem)
-        if (existItem) {
-          this.propertyData[index].value = existItem.value
-          this.propertyData[index].time = existItem.time
-        }
-      })
-      this.tableData = [...this.propertyData]
-      this.freezeTableData = [...this.propertyData]
-      console.log(this.tableData)
-
-      // this.loading = true
       getPropertyStatus({
         productKey: this.$attrs['device-info'].productKey,
         deviceName: this.$attrs['device-info'].deviceName,
         identifierList: this.identifierList
       })
         .then(res => {
-          this.loading = false
           if (res.code === 200) {
             // 成功处理
+            const data = res.data.propertyStatusInfo
+            // const temp = []
+            const result = this.propertyData.map((item, index) => {
+              const temp = {
+                ...item
+              }
+              const existItem = data.find(i => i.identifier === item.identifier)
+              if (existItem) {
+                temp.value = existItem.value
+                temp.time = existItem.time
+              }
+              return temp
+            })
+            this.tableData = deepFreeze([...result])
+            // console.log(111, this.tableData)
+            this.freezeTableData = deepFreeze(result)
           }
           this.$message({
             type: res.code === 200 ? 'success' : 'warning',
             message: res.message
           })
-          this.loading = false
-        })
-        .catch(() => {
-          this.loading = false
         })
     },
     filterValueChange(value) {
       // 根据属性值过滤
       if (!value) {
         // 为空时 将冻结的请求数据重新赋给 tableData
-        this.tableData = [...this.freezeTableData]
+        this.tableData = deepFreeze([...this.freezeTableData])
       }
       // 非空时 进行过滤
-      const res = this.tableData.filter(item => {
+      const res = this.freezeTableData.filter(item => {
         return item.name.includes(value)
       })
-      this.tableData = [...res]
+      this.tableData = deepFreeze([...res])
     },
     realTimeHandler(flag) {
       // 实时刷新功能
@@ -273,6 +232,8 @@ export default {
       // 查看数据
       this.currentId = identifier
       this.runStateDialogVisible = true
+      const dataType = this.tableData.find(item => item.identifier === identifier).dataType
+      this.showChart = !(dataType === 'int' || dataType === 'double' || dataType === 'float')
     }
   }
 }
@@ -324,6 +285,9 @@ export default {
 .view-data-text {
   color: #0070cc;
   cursor: pointer;
+}
+.runstate-table-container {
+  margin-bottom: 20px;
 }
 </style>
 <style>

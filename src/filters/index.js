@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-06 14:25:46
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-06 15:38:12
+ * @LastEditTime: 2020-08-11 17:14:24
  */
 // import parseTime, formatTime 用于 filter
 export { parseTime, formatTime } from '@/utils'
@@ -19,7 +19,8 @@ export function parseMillTime(time, cFormat) {
   if (!(/^[0-9]+$/.test(time))) {
     return time
   }
-  const formatTime = time.substring(0, 10) + '000'
-  const time_str = parseTime(formatTime, cFormat) + '.' + time.slice(-3)
+  const timeStr = time.toString()
+  const formatTime = timeStr.substring(0, 10) + '000'
+  const time_str = parseTime(formatTime, cFormat) + '.' + timeStr.slice(-3)
   return time_str
 }

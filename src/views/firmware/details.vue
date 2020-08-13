@@ -573,7 +573,8 @@ export default {
       })
     },
     // 设备列表分页
-    handleDevChange() {
+    handleDevChange(page) {
+      this.devManage.pageNum = page
       this.getDeviceList()
     },
     // 设备列表搜索

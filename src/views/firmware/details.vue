@@ -149,7 +149,7 @@
           </el-table>
           <el-pagination
             @current-change="handleBatchChange"
-            :current-page.sync="batchManage.page"
+            :current-page.sync="batchManage.pageNum"
             :page-size="batchManage.pageSize"
             layout="total, prev, pager, next"
             class="tr mt20"
@@ -538,7 +538,8 @@ export default {
       }
     },
     // 批次管理分页
-    handleBatchChange() {
+    handleBatchChange(page) {
+      this.batchManage.pageNum = page
       this.getUpgradeList()
     },
     upgradeSubmit() {

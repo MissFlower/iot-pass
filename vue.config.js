@@ -15,7 +15,7 @@ module.exports = {
   publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
   devServer: {
     // open: true,
-    host: '192.168.0.64',
+    host: '0.0.0.0',
     port: 8091,
     https: false,
     hotOnly: false,

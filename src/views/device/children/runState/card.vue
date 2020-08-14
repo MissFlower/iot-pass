@@ -4,14 +4,14 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-31 15:42:42
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-13 10:58:33
+ * @LastEditTime: 2020-08-13 14:32:45
 -->
 <template>
   <div class="card-container">
     <ElCard class="box-card">
       <div slot="header" class="card-header">
         <span class="f14">{{ cardData.name }}</span>
-        <ElButton type="text" class="f12" @click="viewDataHandler(cardData.identifier)">查看数据</ElButton>
+        <ElButton type="text" class="f12" @click="viewDataHandler(cardData)">查看数据</ElButton>
       </div>
       <div>
         <div class="f18 card-unit">

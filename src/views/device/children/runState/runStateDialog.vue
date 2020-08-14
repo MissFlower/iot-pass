@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-03 10:46:51
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-11 18:36:04
+ * @LastEditTime: 2020-08-14 14:04:21
 -->
 <template>
   <ElDialog v-bind="$attrs" width="50%" :before-close="closeDialog">
@@ -39,47 +39,50 @@
           </ElRadioButton>
         </ElRadioGroup>
       </div>
-      <div v-loading="loading" class="dialog-body-content">
-        <template v-if="showHideNoData">
-          <!-- 图表 -->
-          <AttributedChart
-            v-if="showType === 'chart'"
-            :data="{dataList, dateList}"
-          />
-          <!-- 表格 -->
-          <div
-            v-else
-            class="runstate-table-container"
+      <div class="dialog-body-content">
+        <!-- 图表 -->
+        <AttributedChart
+          v-show="showType === 'chart' && showHideNoData"
+          ref="chart"
+          v-bind="$attrs"
+          :chart-data="echartData"
+          :chart-count="chartCount"
+        />
+        <!-- 表格 -->
+        <div
+          v-show="showType === 'table' && showHideNoData"
+          class="runstate-table-container"
+        >
+          <ElTable
+            :data="tableData"
+            border
+            height="330"
+            width="100%"
+            style="width: 100%"
           >
-            <ElTable
-              :data="tableData"
-              border
-              height="350"
-              width="100%"
-              style="width: 100%"
+            <ElTableColumn
+              prop="time"
+              label="时间"
+              width="200"
             >
-              <ElTableColumn
-                prop="time"
-                label="时间"
-                width="200"
-              >
-                <template slot-scope="{ row }">
-                  {{ !row.time ? "—" : row.time | parseMillTime }}
-                </template>
-              </ElTableColumn>
-              <ElTableColumn
-                prop="value"
-                label="原始值"
-              />
+              <template slot-scope="{ row }">
+                {{ !row.time ? "—" : row.time | parseMillTime }}
+              </template>
+            </ElTableColumn>
+            <ElTableColumn
+              prop="value"
+              label="原始值"
+            />
 
-            </ElTable>
-            <ElButton v-if="isShowLoadMoreBtn" class="load-more-button" @click="loadMore">加载更多</ElButton>
+          </ElTable>
+          <div class="load-more-container">
+            <ElButton v-show="isShowLoadMoreBtn" @click="loadMore">加载更多</ElButton>
           </div>
-        </template>
+        </div>
 
-        <template v-else class="defalut-graph-box">
+        <div v-show="!showHideNoData" class="defalut-graph-box">
           <DeafultGraph icon-class="empty1" text="暂无数据" />
-        </template>
+        </div>
       </div>
     </div>
     <span slot="footer">
@@ -119,12 +122,19 @@ export default {
       tableData: [],
       loading: false, // loading 状态
       isShowLoadMoreBtn: false, // loadMore按钮状态
-      dataList: [], // 图表数据list
-      dateList: [], // 图表时间list
+      echartData: {
+        dataList: [], // 图表数据list
+        dateList: [] // 图表时间list
+      },
       startTime: '', // 开始时间
-      tmpEndTime: '', // 表格每次请求后的时间
-      showHideNoData: true // 是否有数据
+      endTime: '', // 结束时间
+      // tmpEndTime: '', // 表格每次请求后的时间
+      showHideNoData: true, // 是否有数据
+      chartCount: 0 // 统计chart请求次数
     }
+  },
+  beforeDestroy() {
+    this.getTableData = null
   },
   mounted() {
     this.chooseTime(this.timeRange)
@@ -133,48 +143,61 @@ export default {
     chooseTime(value) {
       // 选择时间范围 转换 startTime endTime 除自定义之外
       this.initData()
-      const endTime = new Date().getTime()
-      this.startTime = endTime - ((value || 7 * 24) * 60 * 60 * 1000)
+      this.endTime = new Date().getTime()
+      this.startTime = this.endTime - ((value || 7 * 24) * 60 * 60 * 1000)
       if (!value) {
-        this.customTime = [this.startTime, endTime]
+        this.customTime = [this.startTime, this.endTime]
       }
-      this.getTableData({
-        startTime: this.startTime,
-        endTime
-      })
+      this.getTableData()
     },
-    getTableData({ startTime, endTime }) {
+    getTableData(isLoadMore) {
       // 获取表格图表数据
       this.loading = true
       getTableData({
         productKey: this.$attrs['device-info'].productKey,
         deviceName: this.$attrs['device-info'].deviceName,
         identifier: this.identifier,
-        startTime,
-        endTime,
+        startTime: this.startTime,
+        endTime: this.endTime,
         pageSize: this.showType === 'chart' ? 100 : 20
       })
         .then(res => {
-          this.loading = false
           if (res.code === 200) {
             // 成功处理
-            this.showHideNoData = !!res.data.propertyInfo.length
             const data = res.data.propertyInfo
+            this.showHideNoData = !!data
+            if (!this.showHideNoData) {
+              return
+            }
             if (this.showType === 'chart') {
               // 图表数据处理
+              this.chartCount += 1
+              // console.log(this.chartCount)
+              const dataList = []
+              const dateList = []
               data.forEach(item => {
-                this.dataList.push(item.value)
-                this.dateList.push(parseTime(item.time, '{m}/{d} {h}:{i}'))
+                dataList.unshift({
+                  value: item.value,
+                  timeLabel: parseTime(item.timestamp, '{y}{m}/{d} {h}:{i}:{s}')
+                })
+                dateList.unshift(parseTime(item.timestamp, '{m}/{d} {h}:{i}'))
+                // this.echartData.dataList.push(item.value)
+                // this.echartData.dateList.push(parseTime(item.timestamp, '{m}/{d} {h}:{i}'))
               })
+              this.echartData.dataList.unshift(...dataList)
+              this.echartData.dateList.unshift(...dateList)
+              // console.log('调用画图')
+              // this.$refs.chart.drawChart(this.echartData)
               if (res.data.nextValid) {
               // 再次调用
-                this.getTableData({
-                  startTime,
-                  endTime: res.data.nextTime
-                })
+                this.endTime = res.data.nextTime
+                this.getTableData()
               }
             } else {
               // table表格
+              if (!isLoadMore) {
+                this.tableData = []
+              }
               data.map(item => {
                 // console.log(item)
                 this.tableData.push(deepFreeze({
@@ -183,15 +206,12 @@ export default {
                 }))
               })
               this.isShowLoadMoreBtn = !!res.data.nextValid
-              this.tmpEndTime = res.data.nextTime
+              this.endTime = res.data.nextTime
             }
+            this.loading = false
           } else {
-            this.showHideNoData = false
+            // this.showHideNoData = false
           }
-          this.$message({
-            type: res.code === 200 ? 'success' : 'warning',
-            message: res.message
-          })
           this.loading = false
         })
         .catch(() => {
@@ -201,11 +221,12 @@ export default {
     getCustomTime() {
       // 自定义时间处理
       // console.log(this.customTime)
-      this.initData()
-      this.getTableData({
-        startTime: this.customTime[0],
-        endTime: this.customTime[1]
-      })
+      if (!this.loading) {
+        this.initData()
+        this.startTime = this.customTime[0]
+        this.endTime = this.customTime[1]
+        this.getTableData()
+      }
     },
     typeChange() {
       // 图表和表格切换事件处理 初始化值
@@ -214,18 +235,18 @@ export default {
     },
     initData() {
       // 初始化数据
-      this.dataList = []
-      this.dateList = []
       this.tableData = []
+      this.echartData = {
+        dataList: [],
+        dateList: []
+      }
       this.startTime = ''
-      this.tmpEndTime = ''
+      this.endTime = ''
+      this.chartCount = 0
     },
     loadMore() {
       // 表格加载更多
-      this.getTableData({
-        startTime: this.startTime,
-        endTime: this.tmpEndTime
-      })
+      this.getTableData(true)
     },
     closeDialog() {
       this.$emit('update:visible', false)
@@ -262,8 +283,9 @@ export default {
     text-align: center;
   }
 
-  .load-more-button {
+  .load-more-container {
     margin-top: 5px;
+    height: 32px;
   }
 }
 /deep/ .el-dialog__body {

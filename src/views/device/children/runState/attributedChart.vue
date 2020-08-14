@@ -4,10 +4,14 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-03 11:28:30
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-13 10:59:22
+ * @LastEditTime: 2020-08-14 14:15:57
 -->
 <template>
-  <div id="echart" class="echart-container" />
+  <div id="echart" v-bind="$attrs" class="echart-container" />
+  <!-- <div style="width: 100%;height:100%">
+    <ElButton @click="restore">还原</ElButton>
+  </div> -->
+
 </template>
 
 <script>
@@ -19,32 +23,50 @@ require('echarts/lib/chart/line')
 require('echarts/lib/component/tooltip')
 require('echarts/lib/component/title')
 require('echarts/lib/component/legend')
+require('echarts/lib/component/toolbox')
+require('echarts/lib/component/dataZoom')
 import resize from './mixins/resize'
 export default {
   name: 'AttributedChart',
   mixins: [resize],
   props: {
-    data: {
+    chartData: {
       type: Object,
       required: true
+    },
+    chartCount: {
+      type: Number,
+      default: 0
     }
   },
   data() {
     return {
-      echartInstance: null
+      echartInstance: null,
+      lastedEchartData: {
+        dataList: [],
+        dateList: []
+      }
     }
   },
   watch: {
-    data: {
-      handler(newValue, oldValue) {
-        // console.log(newValue)
-        if (newValue) {
-          // 调用后台接口函数
-          // console.log(newValue)
-          this.initChart(newValue)
-        }
+    chartData: {
+      handler(newValue) {
+        console.log(newValue)
+        this.drawChart(newValue)
+      },
+      deep: true
+    },
+    chartCount(newValue) {
+      if (newValue === 0) {
+        this.addAndRemoveDataZoom(false)
+      } else if (newValue === 2) {
+        this.addAndRemoveDataZoom(true)
       }
     }
+  },
+  mounted() {
+    // console.log('初始化')
+    this.initChart()
   },
   beforeDestroy() {
     if (!this.echartInstance) {
@@ -54,17 +76,25 @@ export default {
     this.echartInstance = null
   },
   methods: {
-    initChart(data) {
+    initChart() {
       // 初始化echarts实例
       if (!this.echartInstance) {
         this.echartInstance = echarts.init(document.getElementById('echart'))
+        this.echartInstance.setOption(this.getOptions({ dataList: [], dateList: [] }), true) // 默认为 false，即合并
         this.rewriteLengendHandler()
       }
-      this.drawChart(data)
     },
-    drawChart(data) {
+    drawChart({ dataList, dateList }) {
       // 渲染图表
-      this.echartInstance.setOption(this.getOptions(data), true)
+      // this.echartInstance.clear()
+      this.echartInstance.setOption({
+        xAxis: [{
+          data: dateList
+        }],
+        series: [{
+          data: dataList
+        }]
+      }, false, true)
     },
     getOptions({ dataList, dateList }) {
       // 图表配置
@@ -75,7 +105,7 @@ export default {
           formatter: function(params) {
             const content = `
               <div style="padding:5px 10px;">
-                <div>${params[0].name}</div>
+                <div>${params[0].data.timeLabel}</div>
                 <div style="display:flex;justify-content:space-between;margin-top:5px;">
                   <div>
                     <span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:${params[0].color};"></span>
@@ -89,12 +119,30 @@ export default {
           }
         },
         legend: {
-          data: ['邮件营销'],
+          data: [this.$attrs.lengend],
           orient: 'horizontal',
           x: 'center',
           y: 'bottom',
           textStyle: {
-            color: '#000'
+            color: '#000',
+            lineHeight: 18,
+            height: 18,
+            padding: [3, 0, 0, 0]
+          },
+          icon: 'circle',
+          itemWidth: 8, // icon的宽
+          itemHeight: 12 // icon的高
+        },
+        toolbox: {
+          show: true,
+          itemSize: 0,
+          showTitle: false,
+          feature: {
+            dataZoom: {
+              yAxisIndex: 'none'
+            },
+            restore: {},
+            saveAsImage: {}
           }
         },
         grid: {
@@ -111,6 +159,7 @@ export default {
         },
         yAxis: {
           type: 'value',
+          myName: 'aaa',
           splitLine: {
             lineStyle: {
               type: 'dashed'
@@ -119,10 +168,14 @@ export default {
         },
         series: [
           {
-            name: '邮件营销',
+            name: this.$attrs.lengend,
             type: 'line',
-            stack: '总量',
             data: dataList,
+            symbol: 'circle',
+            symbolSize: 8,
+            animation: true,
+            smooth: false, // 是否平滑展示
+            // sampling: 'average',
             lineStyle: {
               color: '#409EFF'
             },
@@ -139,6 +192,27 @@ export default {
         this.echartInstance.setOption({
           legend: { selected: { [params.name]: true }}
         })
+      })
+    },
+    addAndRemoveDataZoom(boolean) {
+      // 添加或删除 dataZoom
+      console.log(boolean)
+      this.echartInstance.dispatchAction({
+        type: 'takeGlobalCursor',
+        key: 'dataZoomSelect',
+        dataZoomSelectActive: boolean
+      })
+      this.echartInstance.setOption({
+        dataZoom: [{
+          type: 'inside',
+          xAxisIndex: 0,
+          zoomOnMouseWheel: boolean
+        }]
+      })
+    },
+    restore() {
+      this.echartInstance.dispatchAction({
+        type: 'restore'
       })
     }
   }

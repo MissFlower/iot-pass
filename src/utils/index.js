@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-04 13:20:48
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-12 18:50:16
+ * @LastEditTime: 2020-08-13 15:30:06
  */
 
 /**
@@ -53,7 +53,6 @@ export function parseTime(time, cFormat) {
     if (key === 'a') { return ['日', '一', '二', '三', '四', '五', '六'][value ] }
     return value.toString().padStart(2, '0')
   })
-  console.log(time_str)
   return time_str
 }
 

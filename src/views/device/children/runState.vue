@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 15:57:06
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-13 13:17:33
+ * @LastEditTime: 2020-08-13 20:39:43
 -->
 <template>
   <div v-loading="loading">
@@ -74,7 +74,7 @@
 
         <ElTableColumn label="操作" width="100">
           <template slot-scope="{ row }">
-            <span class="view-data-text" @click="viewDataHandler(row.identifier)">
+            <span class="view-data-text" @click="viewDataHandler(row)">
               查看数据
             </span>
           </template>
@@ -93,6 +93,7 @@
       :visible.sync="runStateDialogVisible"
       :is-show-chart="showChart"
       :identifier="currentId"
+      :lengend="lengend"
     />
   </div>
 </template>
@@ -123,7 +124,8 @@ export default {
       loading: false,
       identifierList: [], // 属性的id列表
       propertyData: [], // 属性列表 不包含最新值
-      currentId: '' // 当前操作的属性id
+      currentId: '', // 当前操作的属性id
+      lengend: '' //  当前操作的属性title
     }
   },
   mounted() {
@@ -159,10 +161,10 @@ export default {
             })
             this.getPropertyStatus()
           }
-          this.$message({
-            type: res.code === 200 ? 'success' : 'warning',
-            message: res.message
-          })
+          // this.$message({
+          //   type: res.code === 200 ? 'success' : 'warning',
+          //   message: res.message
+          // })
           this.loading = false
         })
         .catch(() => {
@@ -228,9 +230,11 @@ export default {
         // 轮询接口
       }, this.timeInterval)
     },
-    viewDataHandler(identifier) {
+    viewDataHandler({ identifier, name }) {
       // 查看数据
+      // console.log(identifier, name)
       this.currentId = identifier
+      this.lengend = name
       this.runStateDialogVisible = true
       const dataType = this.tableData.find(item => item.identifier === identifier).dataType
       this.showChart = !(dataType === 'int' || dataType === 'double' || dataType === 'float')

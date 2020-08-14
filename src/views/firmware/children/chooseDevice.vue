@@ -28,6 +28,7 @@
         <template slot-scope="scope">{{ scope.row.deviceName }}</template>
       </el-table-column>
       <el-table-column prop="productKey" label="productKey"></el-table-column>
+      <el-table-column prop="version" label="version"></el-table-column>
     </el-table>
     <div slot="footer" class="dialog-footer">
       <el-button @click="closeDialog">取 消</el-button>

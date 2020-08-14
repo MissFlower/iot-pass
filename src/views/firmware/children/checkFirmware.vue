@@ -240,7 +240,7 @@ export default {
         pageNum: 1,
         pageSize: 10,
         fmId: this.checkInfo.id,
-        srcVersions: this.srcVersion
+        srcVersions: this.version.join(',')
       }
       getVerifyFirmInfo(data).then(res => {
         if (res.code === 200) {

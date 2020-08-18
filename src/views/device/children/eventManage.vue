@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 15:57:06
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-18 15:33:53
+ * @LastEditTime: 2020-08-18 18:39:41
 -->
 
 <template>
@@ -18,12 +18,12 @@
             clearable
             prefix-icon="el-icon-search"
             placeholder="请输入事件标识符"
-            @change="getList()"
+            @change="change"
           />
         </ElFormItem>
 
         <ElFormItem prop="eventType">
-          <ElSelect v-model="formInline.eventType" placeholder="请选择" @change="getList()">
+          <ElSelect v-model="formInline.eventType" placeholder="请选择" @change="change">
             <ElOption label="全部类型" :value="0" />
             <ElOption
               v-for="(item, index) in EVENT_TYPE_TEXT"
@@ -56,6 +56,7 @@
             value-format="timestamp"
             popper-class="event-manage-custom-datepicker"
             :clearable="false"
+            :picker-options="pickerOptions"
             @change="dateChange"
           />
         </ElFormItem>
@@ -136,15 +137,25 @@ export default {
       isShowLoadMoreBtn: false // 是否展示加载数据
     }
   },
+  computed: {
+    pickerOptions() {
+      return {
+        disabledDate: (date) => {
+          const nowDate = new Date()
+          const day = new Date(nowDate.getFullYear(), nowDate.getMonth() + 1, 0).getDate()
+          return (date.getTime() < Date.now() - day * 24 * 60 * 60 * 1000) || (date.getTime() > Date.now())
+        }
+      }
+    }
+  },
   created() {
-    this.setStartEndTime()
-    this.getList()
+    this.change()
   },
   methods: {
     // 获取事件管理列表
     getList(isLoadMore) {
       this.loading = true
-      this.setStartEndTime()
+      console.log(this)
       getEventForList({
         productKey: this.$attrs['device-info'].productKey,
         deviceName: this.$attrs['device-info'].deviceName,
@@ -181,6 +192,7 @@ export default {
       // console.log(value)
       this.setStartEndTime()
       if (!value) {
+        this.startTime = this.endTime - (7 * 24 * 60 * 60 * 1000)
         this.curtomTime = [this.startTime, this.endTime]
       }
       this.getList()
@@ -199,6 +211,10 @@ export default {
       // 设置开始和结束时间
       this.endTime = new Date().getTime()
       this.startTime = this.endTime - (this.timeRange * 60 * 60 * 1000)
+    },
+    change() {
+      this.setStartEndTime()
+      this.getList()
     },
     refreshHandler() {
       if (!this.timeRange) {

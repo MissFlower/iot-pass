@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 15:57:06
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-13 21:19:43
+ * @LastEditTime: 2020-08-18 15:33:53
 -->
 
 <template>
@@ -12,18 +12,18 @@
     <div class="search-content">
       <!-- 搜索部分 -->
       <ElForm ref="form" :inline="true" :model="formInline" size="mini">
-        <ElFormItem prop="formInline">
+        <ElFormItem prop="identifier">
           <ElInput
-            v-model="formInline.formInline"
+            v-model="formInline.identifier"
             clearable
             prefix-icon="el-icon-search"
             placeholder="请输入事件标识符"
-            @blur="getList"
+            @change="getList()"
           />
         </ElFormItem>
 
         <ElFormItem prop="eventType">
-          <ElSelect v-model="formInline.eventType" placeholder="请选择" @change="getList">
+          <ElSelect v-model="formInline.eventType" placeholder="请选择" @change="getList()">
             <ElOption label="全部类型" :value="0" />
             <ElOption
               v-for="(item, index) in EVENT_TYPE_TEXT"
@@ -104,7 +104,7 @@
           <DeafultGraph icon-class="empty1" text="暂无数据" />
         </div>
       </ElTable>
-      <ElButton v-if="isShowLoadMoreBtn" class="load-more-button" @click="loadMore">加载更多</ElButton>
+      <ElButton v-show="isShowLoadMoreBtn" class="load-more-button" @click="loadMore">加载更多</ElButton>
     </div>
   </div>
 </template>
@@ -126,13 +126,13 @@ export default {
         eventType: 0 // 事件类型
       },
       timeRange: 1, // 时间范围
-      listData: [],
+      listData: [], // table数据
       TIME_TYPE, // 时间范围类型
       EVENT_TYPE_TEXT, // 事件类型
       curtomTime: '', // 自定义时间
-      startTime: '',
-      endTime: '',
-      loading: false,
+      startTime: '', // 开始时间
+      endTime: '', // 结束时间
+      loading: false, // loading状态
       isShowLoadMoreBtn: false // 是否展示加载数据
     }
   },
@@ -143,7 +143,8 @@ export default {
   methods: {
     // 获取事件管理列表
     getList(isLoadMore) {
-      // this.loading = true
+      this.loading = true
+      this.setStartEndTime()
       getEventForList({
         productKey: this.$attrs['device-info'].productKey,
         deviceName: this.$attrs['device-info'].deviceName,
@@ -157,14 +158,15 @@ export default {
           this.loading = false
           if (res.code === 200) {
             // 成功处理
-            this.isShowLoadMoreBtn = res.nextValid
+            this.isShowLoadMoreBtn = res.data.nextValid
             this.endTime = res.nextTime
             const data = res.data.eventInfo ? res.data.eventInfo : []
             if (!isLoadMore) {
               // 不是加载更多，将表格数据清空
-              this.listData = []
+              this.listData = [...data]
+            } else {
+              this.listData.push(...deepFreeze(data))
             }
-            this.listData.push(...deepFreeze(data))
           } else {
             this.$message.error(res.message)
           }
@@ -184,6 +186,7 @@ export default {
       this.getList()
     },
     dateChange() {
+      // 自定义时间
       this.startTime = this.curtomTime[0]
       this.endTime = this.curtomTime[1]
       this.getList()
@@ -250,7 +253,7 @@ export default {
 
   .table-list-container {
     text-align: center;
-    margin-bottom: 20px;
+    padding-bottom: 20px;
 
     .load-more-button {
       margin-top: 5px;

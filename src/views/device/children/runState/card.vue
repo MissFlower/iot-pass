@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-31 15:42:42
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-13 14:32:45
+ * @LastEditTime: 2020-08-17 14:52:35
 -->
 <template>
   <div class="card-container">
@@ -36,6 +36,11 @@ export default {
     DynamicToolTip
   },
   props: {
+    /**
+     * @description: 卡片数据 必传项
+     * @type Object
+     * @参考值 {}
+     */
     cardData: {
       type: Object,
       required: true
@@ -56,14 +61,17 @@ export default {
       return result
     },
     valueFontSize() {
+      // 值字体大小设置
       return this.cardData.value.length > 12 ? '14px' : '28px'
     },
     unitFontSize() {
+      // 单位字体大小设置
       return (this.cardData.dataType === 'bool' || this.cardData.dataType === 'enum') ? '28px' : '18px'
     }
   },
   methods: {
     viewDataHandler(identifier) {
+      // 查看数据
       this.$parent.viewDataHandler(identifier)
     }
   }

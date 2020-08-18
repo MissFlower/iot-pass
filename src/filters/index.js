@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-06 14:25:46
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-11 17:14:24
+ * @LastEditTime: 2020-08-18 10:22:41
  */
 // import parseTime, formatTime 用于 filter
 export { parseTime, formatTime } from '@/utils'
@@ -20,7 +20,7 @@ export function parseMillTime(time, cFormat) {
     return time
   }
   const timeStr = time.toString()
-  const formatTime = timeStr.substring(0, 10) + '000'
+  const formatTime = timeStr.substring(0, 10).padEnd(3, '0')
   const time_str = parseTime(formatTime, cFormat) + '.' + timeStr.slice(-3)
   return time_str
 }

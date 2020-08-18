@@ -1,10 +1,10 @@
 <!--
- * @Description:
+ * @Description: 图表展示
  * @Version: 0.1.0
  * @Autor: AiDongYang
  * @Date: 2020-08-03 11:28:30
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-14 14:15:57
+ * @LastEditTime: 2020-08-17 15:04:23
 -->
 <template>
   <div id="echart" v-bind="$attrs" class="echart-container" />
@@ -30,22 +30,28 @@ export default {
   name: 'AttributedChart',
   mixins: [resize],
   props: {
+    /**
+     * @description: 图表数据 必传项
+     * @type Object
+     * @数据结构 {dataList: [], dateList: []}
+     */
     chartData: {
       type: Object,
       required: true
     },
-    chartCount: {
-      type: Number,
-      default: 0
+    /**
+     * @description: 数据缩放 非必传项
+     * @type Boolean
+     * @参考值 true | false
+     */
+    dataZoom: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
-      echartInstance: null,
-      lastedEchartData: {
-        dataList: [],
-        dateList: []
-      }
+      echartInstance: null
     }
   },
   watch: {
@@ -56,12 +62,8 @@ export default {
       },
       deep: true
     },
-    chartCount(newValue) {
-      if (newValue === 0) {
-        this.addAndRemoveDataZoom(false)
-      } else if (newValue === 2) {
-        this.addAndRemoveDataZoom(true)
-      }
+    dataZoom(newValue) {
+      this.addAndRemoveDataZoom(newValue)
     }
   },
   mounted() {
@@ -159,25 +161,28 @@ export default {
         },
         yAxis: {
           type: 'value',
-          myName: 'aaa',
           splitLine: {
             lineStyle: {
               type: 'dashed'
             }
-          }
+          },
+          min: 15,
+          max: 30
         },
         series: [
           {
             name: this.$attrs.lengend,
             type: 'line',
             data: dataList,
+            // step: true,
             symbol: 'circle',
             symbolSize: 8,
             animation: true,
             smooth: false, // 是否平滑展示
             // sampling: 'average',
             lineStyle: {
-              color: '#409EFF'
+              color: '#409EFF',
+              width: 1
             },
             itemStyle: {
               color: '#409EFF'

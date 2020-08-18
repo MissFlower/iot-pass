@@ -102,6 +102,22 @@ export default {
         callback()
       }
     }
+    const validateTimeOut = (rule, value, callback) => {
+      if (value === '') {
+        callback()
+      } else {
+        const reg = /^\d+$/
+        if (!reg.test(value)) {
+          callback(new Error('设备升级超时时间必须为数字值'))
+        } else {
+          if (value < 0) {
+            callback(new Error('必须大于0'))
+          } else {
+            callback()
+          }
+        }
+      }
+    }
     return {
       loading: false,
       form: {
@@ -126,8 +142,7 @@ export default {
           { required: true, validator: validateSelectDevice, trigger: 'blur' }
         ],
         timeOut: [
-          // { required: true, message: '请输入设备升级超时时间', trigger: 'blur' },
-          { type: 'number', message: '设备升级超时时间必须为数字值' }
+          { validator: validateTimeOut, trigger: 'change' }
         ]
       },
       version: [],

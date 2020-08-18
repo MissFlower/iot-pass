@@ -8,7 +8,7 @@
   <div id="dataSelectPart">
     <el-form ref="dataSelectPartForm" :model="formData" :rules="rules">
       <el-form-item label="数据类型" prop="type">
-        <el-select v-model="formData.type" @change="handleChange" :disabled="showFlag || modelType == 0">
+        <el-select v-model="formData.type" @change="handleChange" :disabled="showFlag || modelType">
           <el-option
             v-for="(item, index) in dataTypeArr"
             :key="index"
@@ -17,7 +17,7 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <div v-if="formData.type == '0' || formData.type == '1' || formData.type == '2'">
+      <div v-if="formData.type == 'int' || formData.type == 'float' || formData.type == 'double'">
         <div>
           <span class="red mr5">*</span>取值范围
         </div>
@@ -61,7 +61,7 @@
           </el-select>
         </el-form-item>
       </div>
-      <div v-if="formData.type == '3'" class="mb10">
+      <div v-if="formData.type == 'enum'" class="mb10">
         <div>
           <span class="red mr5">*</span>枚举项
         </div>
@@ -114,7 +114,7 @@
           <i class="el-icon-plus mr10"></i>添加枚举项
         </span>
       </div>
-      <div v-if="formData.type == '4'">
+      <div v-if="formData.type == 'bool'">
         <div class="mb10">
           <span class="red mr5">*</span>布尔值
         </div>
@@ -141,15 +141,15 @@
           </el-form-item>
         </div>
       </div>
-      <el-form-item label="数据长度" v-if="formData.type == '5'" prop="text">
+      <el-form-item label="数据长度" v-if="formData.type == 'text'" prop="text">
         <el-input placeholder="请输入内容" v-model="text" :disabled="showFlag">
           <template slot="append">字节</template>
         </el-input>
       </el-form-item>
-      <el-form-item label="时间格式" v-if="formData.type == '6'">
+      <el-form-item label="时间格式" v-if="formData.type == 'date'">
         <el-input disabled v-model="dataText"></el-input>
       </el-form-item>
-      <div v-if="formData.type == '7'">
+      <div v-if="formData.type == 'struct'">
         <div class="mb10">
           <span class="red mr5">*</span>JSON对象：
         </div>
@@ -184,7 +184,7 @@
           <el-button v-if="!showFlag" type="text" icon="el-icon-plus" @click="addStruct">新增参数</el-button>
         </el-form-item>
       </div>
-      <div v-if="formData.type == '8'">
+      <div v-if="formData.type == 'array'">
         <el-form-item label="元素类型">
           <el-radio-group
             v-if="!modelType"
@@ -198,12 +198,12 @@
               :label="item.value"
             >{{ item.text }}</el-radio>
           </el-radio-group>
-          <div v-else class="disabledDiv">{{ dataTypeNumObj[arrObj.type] }}</div>
+          <div v-else class="disabledDiv">{{ dataTypeTextObj[arrObj.type] }}</div>
         </el-form-item>
         <el-form-item label="元素个数">
           <el-input v-model="arrObj.num" placeholder="请输入元素个数" :disabled="showFlag"></el-input>
         </el-form-item>
-        <div v-if="arrObj.type == '7'">
+        <div v-if="arrObj.type == 'struct'">
           <div class="mb10">
             <span class="red mr5">*</span>JSON对象：
           </div>
@@ -256,7 +256,7 @@
 import addParam from '@/views/model/children/addParam'
 import units from '@/data/unit'
 
-import { dataTypeObj, dataTypeNumObj } from '@/data/constants'
+import { dataTypeTextObj } from '@/data/constants'
 export default {
   name: 'DatatypeSelectpart',
   components: { addParam },
@@ -338,7 +338,7 @@ export default {
     }
     return {
       formData: {
-        type: '0',
+        type: 'int',
         specs: {
           unit: '',
           step: '',
@@ -354,54 +354,63 @@ export default {
       text: '',
       dataText: 'String类型的UTC时间戳（毫秒）',
       arrObj: {
-        type: '0',
+        type: 'int',
         num: 10
       },
       dataTypeArr: [
         {
-          value: '0',
+          value: 'int',
+          value1: '0',
           label: 'int32 (整数型)'
         }, {
-          value: '1',
+          value: 'float',
+          value1: '1',
           label: 'float (单精度浮点型)'
         }, {
-          value: '2',
+          value: 'double',
+          value1: '2',
           label: 'double (双精度浮点型)'
         }, {
-          value: '3',
+          value: 'enum',
+          value1: '3',
           label: 'enum (枚举型)'
         }, {
-          value: '4',
+          value: 'bool',
+          value1: '4',
           label: 'bool (布尔型)'
         }, {
-          value: '5',
+          value: 'text',
+          value1: '5',
           label: 'text (字符串)'
         }, {
-          value: '6',
+          value: 'date',
+          value1: '6',
           label: 'date (时间型)'
         }, {
-          value: '7',
+          value: 'struct',
+          value1: '7',
           label: 'struct (结构体)'
         }, {
-          value: '8',
+          value: 'array',
+          value1: '8',
           label: 'array (数组)'
         }
       ],
       arrTypes: [
         {
-          value: '0',
+          value: 'int',
           text: 'int32'
         }, {
-          value: '1',
+          value: 'float',
           text: 'float'
         }, {
-          value: '2',
+          value: 'double',
           text: 'double'
         }, {
-          value: '5',
+          value: 'text',
           text: 'text'
         }, {
-          value: '7',
+          value: 'struct',
           text: 'struct'
         }
       ],
@@ -434,9 +443,8 @@ export default {
         ]
       },
       unitArr: units,
-      dataTypeObj,
       structsForArrar: [],
-      dataTypeNumObj,
+      dataTypeTextObj,
       allFlag_: 0
     }
   },
@@ -448,7 +456,7 @@ export default {
   mounted() {
     if (this.allFlag > 0) {
       this.dataTypeArr.forEach(item => {
-        if (item.value === '7' || item.value === '8') {
+        if (item.value === 'struct' || item.value === 'array') {
           item.hidden = true
         }
       })
@@ -493,13 +501,13 @@ export default {
       if (this.info && JSON.stringify(this.info) !== '{}') {
         this.formData = JSON.parse(JSON.stringify(this.info))
         // this.handleChange()
-        if (this.formData.type === '8') {
+        if (this.formData.type === 'array') {
           this.allFlag_ = this.allFlag
         } else {
           this.allFlag_ = this.allFlag + 1
         }
         switch (this.formData.type) {
-          case '3':
+          case 'enum':
             this.enumArr = []
             for (const key in this.formData.specs) {
               this.enumArr.push({
@@ -510,18 +518,18 @@ export default {
               })
             }
             break
-          case '4':
+          case 'bool':
             this.boolObj = this.formData.specs
             break
-          case '5':
+          case 'text':
             this.text = this.formData.specs.length
             break
-          case '8':
+          case 'array':
             this.arrObj = {
-              type: this.dataTypeObj[this.formData.specs.item.type],
+              type: this.formData.specs.item.type,
               num: this.formData.specs.size
             }
-            this.structsForArrar = this.formData.specs.item.specs
+            this.structsForArrar = this.formData.specs.item.specs ? this.formData.specs.item.specs : []
             this.arrayTypeChange()
             break
         }
@@ -532,7 +540,7 @@ export default {
       let str = ''
       let val = null
       switch (this.formData.type + '') {
-        case '0':
+        case 'int':
           val = 2147483648
           if (value === '') {
             str = '不能为空'
@@ -544,7 +552,7 @@ export default {
             str = `取值范围：-${val} ~ ${val}`
           }
           break
-        case '1':
+        case 'float':
           val = '2^128'
           if (this.formData.specs.max && this.formData.specs.min && (this.formData.specs.min * 1 > this.formData.specs.max * 1 || this.formData.specs.min === this.formData.specs.max)) {
             str = '最大值必须大于最小值，整数型不能有小数位，单精度有效位为7，双精度为16'
@@ -554,7 +562,7 @@ export default {
             str = `取值范围：-${val} ~ ${val}`
           }
           break
-        case '2':
+        case 'double':
           val = 64
           if (value.length > val) {
             str = 'double类型支持最大位数为64'
@@ -568,12 +576,12 @@ export default {
     // 最大、小值的监控函数
     rangeValueFun(newVal) {
       let value = newVal
-      if (this.formData.type === '0') {
+      if (this.formData.type === 'int') {
         value = newVal.replace(/\./g, '')
       } else {
         value = newVal.replace('.', '$#$').replace(/\./g, '').replace('$#$', '.')
         let len = 7
-        if (this.formData.type === '1') {
+        if (this.formData.type === 'float') {
           len = 7
         } else {
           len = 16
@@ -588,9 +596,9 @@ export default {
     },
     handleChange() { // 选择数据类型
       switch (this.formData.type) {
-        case '0':
-        case '1':
-        case '2':
+        case 'int':
+        case 'float':
+        case 'double':
           this.formData.specs = {
             unit: '',
             step: '',
@@ -598,29 +606,29 @@ export default {
             min: ''
           }
           break
-        case '3':
+        case 'enum':
           this.enumArr = []
           this.formData.specs = {}
           this.addEnumItem()
           break
-        case '4':
+        case 'bool':
           this.boolObj = {
             '1': '',
             '0': ''
           }
           break
-        case '5':
+        case 'text':
           this.text = 2048
           break
-        case '7':
+        case 'struct':
           this.formData.specs = []
           this.structFlag = false
           break
-        case '8':
+        case 'array':
           this.structFlag = false
           break
       }
-      if (this.formData.type === '8') {
+      if (this.formData.type === 'array') {
         this.allFlag_ = this.allFlag
       } else {
         this.allFlag_ = this.allFlag + 1
@@ -628,7 +636,7 @@ export default {
     },
     // 数组类型选择更换的函数
     arrayTypeChange() {
-      if (this.arrObj.type === '7') {
+      if (this.arrObj.type === 'struct') {
         this.allFlag_ = this.allFlag + 1
       } else {
         this.allFlag_ = this.allFlag
@@ -647,7 +655,7 @@ export default {
     // 显示新增参数的弹框
     addStruct() {
       let specs = this.formData.specs
-      if (this.formData.type === '8') {
+      if (this.formData.type === 'array') {
         specs = this.structsForArrar
       }
       this.structSpecs = specs
@@ -695,7 +703,7 @@ export default {
         if (valid) {
           let submitFlag = true
           switch (this.formData.type) {
-            case '3':
+            case 'enum':
               for (let i = 0; i < this.enumArr.length; i++) {
                 const item = this.enumArr[i]
                 if (!item.key || !item.desc) {
@@ -706,18 +714,18 @@ export default {
                 this.formData.specs[item.key] = item.desc
               }
               break
-            case '4':
+            case 'bool':
               this.formData.specs = this.boolObj
               break
-            case '5':
+            case 'text':
               this.formData.specs = {
                 length: this.text
               }
               break
-            case '6':
+            case 'date':
               this.formData.specs = {}
               break
-            case '7':
+            case 'struct':
               // this.formData.specs = []
               if (this.formData.specs.length === 0) {
                 this.structFlag = true
@@ -727,16 +735,19 @@ export default {
                 submitFlag = true
               }
               break
-            case '8':
-              if (this.structsForArrar.length > 0) {
-                this.structsForArrar.forEach(item => {
-                  item.dataType.type = this.dataTypeNumObj[item.dataType.type]
-                })
+            case 'array':
+              if (this.arrObj.type !== 'struct') {
+                this.structsForArrar = []
                 this.structFlag = false
                 submitFlag = true
               } else {
-                this.structFlag = true
-                submitFlag = false
+                if (this.structsForArrar.length > 0) {
+                  this.structFlag = false
+                  submitFlag = true
+                } else {
+                  this.structFlag = true
+                  submitFlag = false
+                }
               }
               this.formData.specs = {
                 size: this.arrObj.num,
@@ -783,7 +794,7 @@ export default {
       this.structInfo = JSON.parse(JSON.stringify(row))
       this.structIndex = index
       let specs = this.formData.specs
-      if (this.formData.type === '8') {
+      if (this.formData.type === 'array') {
         specs = this.structsForArrar
       }
       specs = specs.filter(item => {
@@ -794,7 +805,7 @@ export default {
     },
     deleteStruct(index) {
       let specs = this.formData.specs
-      if (this.formData.type === '8') {
+      if (this.formData.type === 'array') {
         specs = this.structsForArrar
       }
       specs.splice(index, 1)

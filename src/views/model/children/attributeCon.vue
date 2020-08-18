@@ -18,14 +18,13 @@
       <span class="red mr5">*</span>读写类型
     </div>
     <el-form-item>
-      <el-radio v-model="formData.accessMode" label="0" :disabled="showFlag">读写</el-radio>
-      <el-radio v-model="formData.accessMode" label="1" :disabled="showFlag">只读</el-radio>
+      <el-radio v-model="formData.accessMode" label="rw" :disabled="showFlag">读写</el-radio>
+      <el-radio v-model="formData.accessMode" label="r" :disabled="showFlag">只读</el-radio>
     </el-form-item>
   </div>
 </template>
 
 <script>
-import { dataTypeObj } from '@/data/constants'
 export default {
   props: {
     dataType: {
@@ -48,10 +47,9 @@ export default {
   data() {
     return {
       formData: {
-        accessMode: '0',
+        accessMode: 'rw',
         dataType: null
       },
-      dataTypeObj,
       allFlag: 0
     }
   },
@@ -60,11 +58,11 @@ export default {
       this.formData.accessMode = this.accessMode
     }
     if (this.dataType) {
-      if (this.dataType.type) {
-        this.dataType.type = this.dataTypeObj[this.dataType.type]
-          ? this.dataTypeObj[this.dataType.type]
-          : this.dataType.type
-      }
+      // if (this.dataType.type) {
+      //   this.dataType.type = this.dataTypeObj[this.dataType.type]
+      //     ? this.dataTypeObj[this.dataType.type]
+      //     : this.dataType.type
+      // }
       this.formData.dataType = JSON.parse(JSON.stringify(this.dataType))
     }
   },

@@ -205,7 +205,7 @@ export default {
           this.baseModelIds.eventIds.push(item.id)
         }
       })
-      this.submitObj.baseModelIds = JSON.stringify(this.selelectIds)
+      this.submitObj.baseModelIds = this.selelectIds
       this.loading = true
       addStdAbility(this.submitObj).then(res => {
         if (res.code === 200) {

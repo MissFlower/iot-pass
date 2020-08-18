@@ -10,9 +10,9 @@
   <div id="noPath">
     <div class="df">
       <div>
-        <svg-icon icon-class="404" />
+        <svg-icon icon-class="404" width="50px" height="50px" />
       </div>
-      <div class="lh20 ml10">
+      <div class="lh20 ml20">
         <div class="b">您的访问出错了</div>
         <div class="c6">很抱歉，您访问的页面不存在，请检查您输入的地址是否正确</div>
         <el-button type="primary" class="mt20" @click="handleBack">返回首页</el-button>

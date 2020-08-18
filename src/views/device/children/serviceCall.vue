@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 15:57:06
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-18 18:19:44
+ * @LastEditTime: 2020-08-18 19:02:16
 -->
 
 <template>
@@ -18,7 +18,7 @@
             clearable
             prefix-icon="el-icon-search"
             placeholder="请输入服务标识符"
-            @change="getList()"
+            @change="change"
           />
         </ElFormItem>
 
@@ -133,16 +133,14 @@ export default {
       }
     }
   },
-  mounted() {
+  created() {
     // console.log(this.$attrs['device-info'])
-    this.setStartEndTime()
-    this.getList()
+    this.change()
   },
   methods: {
     // 获取服务调用列表
     getList(isLoadMore) {
       this.loading = true
-      this.setStartEndTime()
       getServiceForList({
         productKey: this.$attrs['device-info'].productKey,
         deviceName: this.$attrs['device-info'].deviceName,
@@ -194,6 +192,10 @@ export default {
       // 设置开始和结束时间
       this.endTime = new Date().getTime()
       this.startTime = this.endTime - (this.timeRange * 60 * 60 * 1000)
+    },
+    change() {
+      this.setStartEndTime()
+      this.getList()
     },
     refreshHandler() {
       if (!this.timeRange) {

@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 15:57:06
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-18 15:37:37
+ * @LastEditTime: 2020-08-18 16:20:07
 -->
 
 <template>
@@ -17,7 +17,7 @@
             v-model="formInline.identifier"
             clearable
             prefix-icon="el-icon-search"
-            placeholder="请输入事件标识符"
+            placeholder="请输入服务标识符"
             @change="getList()"
           />
         </ElFormItem>
@@ -55,7 +55,7 @@
             width="300"
             trigger="hover"
             popper-class="custom-runstate-popper"
-            content="设备上报的事件记录，包括信息、告警、故障 3 种类型。"
+            content="云端下发给设备的远程指令，包括属性设置（set）和服务调用的记录。"
           >
             <svg-icon slot="reference" icon-class="questionMark" />
           </ElPopover>

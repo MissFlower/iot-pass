@@ -46,8 +46,8 @@
               >标识符： {{ item.identifier }} 所属品类： {{ item.categoryName }}</div>
             </div>
           </div>
-          <div v-if="list.length == 0" class="tc f12" style="margin-top: 100px">
-            <svg-icon icon-class="empty1" class="empty"></svg-icon>
+          <div v-if="list.length == 0" class="tc f12" style="margin-top: 80px">
+            <svg-icon icon-class="empty1" class="empty mb10" width="35px" height="35px"></svg-icon>
             <div>无符合功能</div>
           </div>
         </div>

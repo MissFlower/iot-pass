@@ -4,10 +4,10 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-03 10:46:51
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-17 15:01:15
+ * @LastEditTime: 2020-08-18 18:23:50
 -->
 <template>
-  <ElDialog v-bind="$attrs" width="80%" :before-close="closeDialog">
+  <ElDialog v-bind="$attrs" width="50%" :before-close="closeDialog">
     <div>
       <div class="dialog-body-header">
         <ElSelect v-model="timeRange" placeholder="请选择" class="dialog-select" @change="chooseTime">
@@ -28,6 +28,7 @@
           value-format="timestamp"
           :clearable="false"
           class="dialog-date"
+          :picker-options="pickerOptions"
           @change="getCustomTime"
         />
         <ElRadioGroup v-model="showType" class="dialog-menu-type" @change="typeChange">
@@ -142,6 +143,17 @@ export default {
       showHideNoData: true, // 是否有数据
       chartCount: 0, // 统计chart请求次数
       dataZoom: false // 是否使用dataZoom
+    }
+  },
+  computed: {
+    pickerOptions() {
+      return {
+        disabledDate: (date) => {
+          const nowDate = new Date()
+          const day = new Date(nowDate.getFullYear(), nowDate.getMonth() + 1, 0).getDate()
+          return (date.getTime() < Date.now() - day * 24 * 60 * 60 * 1000) || (date.getTime() > Date.now())
+        }
+      }
     }
   },
   beforeDestroy() {

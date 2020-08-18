@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-03 11:28:30
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-17 15:04:23
+ * @LastEditTime: 2020-08-18 17:06:15
 -->
 <template>
   <div id="echart" v-bind="$attrs" class="echart-container" />
@@ -165,9 +165,7 @@ export default {
             lineStyle: {
               type: 'dashed'
             }
-          },
-          min: 15,
-          max: 30
+          }
         },
         series: [
           {

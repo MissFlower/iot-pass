@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 15:57:06
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-18 16:20:07
+ * @LastEditTime: 2020-08-18 18:19:44
 -->
 
 <template>
@@ -44,6 +44,7 @@
             value-format="timestamp"
             popper-class="event-manage-custom-datepicker"
             :clearable="false"
+            :picker-options="pickerOptions"
             @change="dateChange"
           />
         </ElFormItem>
@@ -82,7 +83,7 @@
 
         <ElTableColumn label="服务名称" prop="name" />
 
-        <ElTableColumn label="输入参数" prop="inputData" />
+        <ElTableColumn label="输入参数" prop="inputData" show-overflow-tooltip />
 
         <ElTableColumn label="输出参数" prop="outputData" show-overflow-tooltip />
 
@@ -119,6 +120,17 @@ export default {
       endTime: '', // 结束时间
       loading: false, // loading状态
       isShowLoadMoreBtn: false // 是否展示加载数据
+    }
+  },
+  computed: {
+    pickerOptions() {
+      return {
+        disabledDate: (date) => {
+          const nowDate = new Date()
+          const day = new Date(nowDate.getFullYear(), nowDate.getMonth() + 1, 0).getDate()
+          return (date.getTime() < Date.now() - day * 24 * 60 * 60 * 1000) || (date.getTime() > Date.now())
+        }
+      }
     }
   },
   mounted() {

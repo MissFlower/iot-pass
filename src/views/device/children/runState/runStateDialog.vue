@@ -4,10 +4,10 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-03 10:46:51
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-14 14:04:21
+ * @LastEditTime: 2020-08-17 15:01:15
 -->
 <template>
-  <ElDialog v-bind="$attrs" width="50%" :before-close="closeDialog">
+  <ElDialog v-bind="$attrs" width="80%" :before-close="closeDialog">
     <div>
       <div class="dialog-body-header">
         <ElSelect v-model="timeRange" placeholder="请选择" class="dialog-select" @change="chooseTime">
@@ -46,7 +46,7 @@
           ref="chart"
           v-bind="$attrs"
           :chart-data="echartData"
-          :chart-count="chartCount"
+          :data-zoom="dataZoom"
         />
         <!-- 表格 -->
         <div
@@ -104,10 +104,20 @@ export default {
     DeafultGraph
   },
   props: {
+    /**
+     * @description: 图表功能是否可用 非必传项
+     * @type Boolean
+     * @参考值 true | false
+     */
     isShowChart: {
       type: Boolean,
       default: false
     },
+    /**
+     * @description: 唯一标识 必传项
+     * @type String
+     * @参考值 xxxxx
+     */
     identifier: {
       type: String,
       required: true
@@ -130,7 +140,8 @@ export default {
       endTime: '', // 结束时间
       // tmpEndTime: '', // 表格每次请求后的时间
       showHideNoData: true, // 是否有数据
-      chartCount: 0 // 统计chart请求次数
+      chartCount: 0, // 统计chart请求次数
+      dataZoom: false // 是否使用dataZoom
     }
   },
   beforeDestroy() {
@@ -172,13 +183,14 @@ export default {
             if (this.showType === 'chart') {
               // 图表数据处理
               this.chartCount += 1
+              this.dataZoom = !!(this.chartCount > 2)
               // console.log(this.chartCount)
               const dataList = []
               const dateList = []
               data.forEach(item => {
                 dataList.unshift({
                   value: item.value,
-                  timeLabel: parseTime(item.timestamp, '{y}{m}/{d} {h}:{i}:{s}')
+                  timeLabel: parseTime(item.timestamp, '{y}-{m}-{d} {h}:{i}:{s}')
                 })
                 dateList.unshift(parseTime(item.timestamp, '{m}/{d} {h}:{i}'))
                 // this.echartData.dataList.push(item.value)
@@ -210,7 +222,7 @@ export default {
             }
             this.loading = false
           } else {
-            // this.showHideNoData = false
+            this.showHideNoData = false
           }
           this.loading = false
         })

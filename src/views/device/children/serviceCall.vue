@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 15:57:06
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-13 13:52:38
+ * @LastEditTime: 2020-08-18 15:37:37
 -->
 
 <template>
@@ -12,13 +12,13 @@
     <div class="search-content">
       <!-- 搜索部分 -->
       <ElForm ref="form" :inline="true" :model="formInline" size="mini">
-        <ElFormItem prop="formInline">
+        <ElFormItem prop="identifier">
           <ElInput
-            v-model="formInline.formInline"
+            v-model="formInline.identifier"
             clearable
             prefix-icon="el-icon-search"
             placeholder="请输入事件标识符"
-            @blur="getList"
+            @change="getList()"
           />
         </ElFormItem>
 
@@ -113,11 +113,11 @@ export default {
       },
       timeRange: 1, // 时间范围
       TIME_TYPE, // 时间范围类型
-      listData: [],
+      listData: [], // table数据
       curtomTime: '', // 自定义时间
-      startTime: '',
-      endTime: '',
-      loading: false,
+      startTime: '', // 开始时间
+      endTime: '', // 结束时间
+      loading: false, // loading状态
       isShowLoadMoreBtn: false // 是否展示加载数据
     }
   },
@@ -130,6 +130,7 @@ export default {
     // 获取服务调用列表
     getList(isLoadMore) {
       this.loading = true
+      this.setStartEndTime()
       getServiceForList({
         productKey: this.$attrs['device-info'].productKey,
         deviceName: this.$attrs['device-info'].deviceName,

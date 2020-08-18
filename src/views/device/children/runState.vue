@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 15:57:06
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-13 20:39:43
+ * @LastEditTime: 2020-08-17 15:07:30
 -->
 <template>
   <div v-loading="loading">
@@ -121,7 +121,7 @@ export default {
       runStateDialogVisible: false, // 运行状态dialog状态
       timer: null, // 定时器
       timeInterval: 3000, // 轮询时间间隔
-      loading: false,
+      loading: false, // loading状态
       identifierList: [], // 属性的id列表
       propertyData: [], // 属性列表 不包含最新值
       currentId: '', // 当前操作的属性id

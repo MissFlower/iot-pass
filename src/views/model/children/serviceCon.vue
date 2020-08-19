@@ -20,18 +20,26 @@
               :underline="false"
               class="f12 mr10"
               @click.stop="editSturct('input', item, index)"
-              :disabled="showFlag"
+              v-if="showFlag"
+            >查看</el-link>
+            <el-link
+              type="primary"
+              :underline="false"
+              class="f12 mr10"
+              @click.stop="editSturct('input', item, index)"
+              v-if="!showFlag"
             >编辑</el-link>
             <el-link
               type="primary"
               :underline="false"
-              :disabled="showFlag || modelType"
+              v-if="!(showFlag || modelType)"
               class="f12"
               @click.stop="deleteStruct('input', index)"
             >删除</el-link>
           </div>
         </div>
         <el-button v-if="!showFlag" type="text" icon="el-icon-plus" @click="addStruct('input')">新增参数</el-button>
+        <div class="ml20 f12" v-else-if="formData.outputData.length == 0">无输入参数</div>
       </el-form-item>
       <el-form-item label="输出参数">
         <div v-for="(item, index) in formData.outputData" :key="index" class="df ai_c json_item">
@@ -41,7 +49,14 @@
               type="primary"
               :underline="false"
               class="f12 mr10"
-              :disabled="showFlag"
+              @click.stop="editSturct('output', item, index)"
+              v-if="showFlag"
+            >查看</el-link>
+            <el-link
+              type="primary"
+              :underline="false"
+              class="f12 mr10"
+              v-if="!showFlag"
               @click.stop="editSturct('output', item, index)"
             >编辑</el-link>
             <el-link
@@ -49,17 +64,19 @@
               :underline="false"
               class="f12"
               @click.stop="deleteStruct('output', index)"
-              :disabled="showFlag || modelType"
+              v-if="!(showFlag || modelType)"
             >删除</el-link>
           </div>
         </div>
         <el-button v-if="!showFlag" type="text" icon="el-icon-plus" @click="addStruct('output')">新增参数</el-button>
+        <div class="ml20 f12" v-else-if="formData.outputData.length == 0">无输出参数</div>
       </el-form-item>
     </el-form>
     <add-param
       v-if="flag == 1"
       :specs="specs"
       :info="structInfo"
+      :showFlag="showFlag"
       :modelType="addParamFlag"
       :allFlag="1"
       @close="closeAddParam"

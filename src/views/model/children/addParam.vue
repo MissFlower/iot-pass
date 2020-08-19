@@ -51,7 +51,7 @@
       ></datatype-selectpart>
     </el-form>
     <div slot="footer">
-      <el-button type="primary" @click="handleSave">确认</el-button>
+      <el-button type="primary" :disabled="showFlag" @click="handleSave">确认</el-button>
       <el-button @click="close">取消</el-button>
     </div>
   </el-dialog>

@@ -23,7 +23,14 @@
               type="primary"
               :underline="false"
               class="f12 mr10"
-              :disabled="showFlag"
+              @click.stop="editSturct(item)"
+              v-if="showFlag"
+            >查看</el-link>
+            <el-link
+              type="primary"
+              :underline="false"
+              class="f12 mr10"
+              v-if="!showFlag"
               @click.stop="editSturct(item)"
             >编辑</el-link>
             <el-link
@@ -31,7 +38,7 @@
               :underline="false"
               class="f12"
               @click.stop="deleteStruct(index)"
-              :disabled="showFlag || modelType"
+              v-if="!(showFlag || modelType)"
             >删除</el-link>
           </div>
         </div>
@@ -42,6 +49,7 @@
       v-if="flag == 1"
       :specs="specs"
       :info="structInfo"
+      :showFlag="showFlag"
       :modelType="addParamFlag"
       @close="closeAddParam"
       @success="successAddParams"

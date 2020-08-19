@@ -25,7 +25,7 @@
             <el-link
               type="primary"
               :underline="false"
-              :disabled="showFlag"
+              :disabled="showFlag || modelType"
               class="f12"
               @click.stop="deleteStruct('input', index)"
             >删除</el-link>
@@ -49,7 +49,7 @@
               :underline="false"
               class="f12"
               @click.stop="deleteStruct('output', index)"
-              :disabled="modelType || showFlag"
+              :disabled="showFlag || modelType"
             >删除</el-link>
           </div>
         </div>
@@ -60,7 +60,7 @@
       v-if="flag == 1"
       :specs="specs"
       :info="structInfo"
-      :modelType="modelType"
+      :modelType="addParamFlag"
       :allFlag="1"
       @close="closeAddParam"
       @success="successAddParams"
@@ -102,7 +102,8 @@ export default {
       type: '',
       structInfo: null,
       structIndex: -1,
-      specs: []
+      specs: [],
+      addParamFlag: false
     }
   },
   mounted() {
@@ -118,8 +119,10 @@ export default {
       this.specs = JSON.parse(JSON.stringify(this.formData[`${str}Data`]))
       this.flag = 1
       this.structInfo = null
+      this.addParamFlag = false
     },
     editSturct(type, row, index) {
+      this.addParamFlag = this.modelType
       this.type = type
       this.structInfo = JSON.parse(JSON.stringify(row))
       this.structIndex = index

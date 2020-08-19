@@ -31,7 +31,7 @@
               :underline="false"
               class="f12"
               @click.stop="deleteStruct(index)"
-              :disabled="modelType || showFlag"
+              :disabled="showFlag || modelType"
             >删除</el-link>
           </div>
         </div>
@@ -42,7 +42,7 @@
       v-if="flag == 1"
       :specs="specs"
       :info="structInfo"
-      :modelType="modelType"
+      :modelType="addParamFlag"
       @close="closeAddParam"
       @success="successAddParams"
       :allFlag="1"
@@ -64,7 +64,7 @@ export default {
       type: Boolean,
       default: false
     },
-    modelType: {
+    modelType: { // 是否是标准功能
       type: Boolean,
       default: false
     }
@@ -84,7 +84,8 @@ export default {
       structInfo: null,
       structIndex: -1,
       specs: [],
-      eventType: EVENT_TYPE
+      eventType: EVENT_TYPE,
+      addParamFlag: false
     }
   },
   mounted() {
@@ -99,8 +100,10 @@ export default {
       this.specs = JSON.parse(JSON.stringify(this.formData.outputData))
       this.flag = 1
       this.structInfo = null
+      this.addParamFlag = false
     },
     editSturct(row, index) {
+      this.addParamFlag = this.modelType
       this.structInfo = JSON.parse(JSON.stringify(row))
       this.structIndex = index
       let specs = this.formData.outputData

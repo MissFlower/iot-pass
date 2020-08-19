@@ -546,20 +546,20 @@ export default {
             str = '不能为空'
           } else if (this.formData.specs.max && this.formData.specs.min && (this.formData.specs.min * 1 > this.formData.specs.max * 1 || this.formData.specs.min === this.formData.specs.max)) {
             str = '最大值必须大于最小值，整数型不能有小数位，单精度有效位为7，双精度为16'
-          } else if (value > -val && value < val) {
-            str = ''
-          } else {
+          } else if (value < -val || value > val) {
             str = `取值范围：-${val} ~ ${val}`
+          } else {
+            str = ''
           }
           break
         case 'float':
           val = '2^128'
           if (this.formData.specs.max && this.formData.specs.min && (this.formData.specs.min * 1 > this.formData.specs.max * 1 || this.formData.specs.min === this.formData.specs.max)) {
             str = '最大值必须大于最小值，整数型不能有小数位，单精度有效位为7，双精度为16'
-          } else if (value > -(Math.pow(2, 128)) && value < Math.pow(2, 128)) {
-            str = ''
-          } else {
+          } else if (value < -(Math.pow(2, 128)) || value > Math.pow(2, 128)) {
             str = `取值范围：-${val} ~ ${val}`
+          } else {
+            str = ''
           }
           break
         case 'double':

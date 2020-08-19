@@ -129,7 +129,7 @@ export default {
       type: Object,
       default: () => {}
     },
-    showFlag: {
+    showFlag: { // 是否为查看
       type: Boolean,
       default: false
     }

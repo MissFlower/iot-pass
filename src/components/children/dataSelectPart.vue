@@ -771,12 +771,12 @@ export default {
     successAddParams(data) { // 新增参数的成功的返回函数
       if (data) {
         this.structFlag = false
-        // let specs = this.formData.specs
-        // if (this.formData.type === '8') {
-        //   specs = this.structsForArrar
-        // }
+        let specs = this.formData.specs
+        if (this.formData.type === 'array') {
+          specs = this.structsForArrar
+        }
         if (this.structInfo) {
-          this.structSpecs.splice(this.structIndex, 1, data)
+          specs.splice(this.structIndex, 1, data)
           this.structIndex = -1
           this.structInfo = null
         } else {

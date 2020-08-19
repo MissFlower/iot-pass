@@ -190,7 +190,8 @@ export default {
     },
     // 返回上层页面
     goBack() {
-      this.$router.go(-1)
+      // this.$router.go(-1)
+      this.$router.push('/product/index')
     },
     // 切换tab
     tabChange(val) {

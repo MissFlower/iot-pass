@@ -266,6 +266,7 @@ export default {
         this.loading = false
       }
     },
+    // 事件的成功回调
     eventPartSuccess(data) {
       if (data) {
         const obj = JSON.parse(JSON.stringify(data))

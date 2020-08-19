@@ -13,11 +13,16 @@ export const EVENT_TYPE = Object.freeze({
   warn: '告警',
   fault: '故障'
 })
+export const EVENT_TYPE1 = Object.freeze({
+  INFO: 1,
+  WARN: 2,
+  FAULT: 3
+})
 // 事件文案
 export const EVENT_TYPE_TEXT = Object.freeze({
-  [EVENT_TYPE.INFO]: '信息',
-  [EVENT_TYPE.WARN]: '告警',
-  [EVENT_TYPE.FAULT]: '故障'
+  [EVENT_TYPE1.INFO]: '信息',
+  [EVENT_TYPE1.WARN]: '告警',
+  [EVENT_TYPE1.FAULT]: '故障'
 })
 // 时间类型
 export const TIME_TYPE = Object.freeze([

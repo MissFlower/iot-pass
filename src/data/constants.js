@@ -9,9 +9,9 @@
 
 // 事件类型
 export const EVENT_TYPE = Object.freeze({
-  INFO: 1, // 信息
-  WARN: 2, // 告警
-  FAULT: 3 // 故障
+  info: '信息',
+  warn: '告警',
+  fault: '故障'
 })
 // 事件文案
 export const EVENT_TYPE_TEXT = Object.freeze({

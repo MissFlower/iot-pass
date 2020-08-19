@@ -10,9 +10,9 @@
       <el-form-item label="事件类型" prop="type">
         <div v-if="modelType" class="disabledDiv">{{ eventType[formData.type] }}</div>
         <div v-else>
-          <el-radio v-model="formData.type" label="alert">信息</el-radio>
+          <el-radio v-model="formData.type" label="info">信息</el-radio>
           <el-radio v-model="formData.type" label="warn">告警</el-radio>
-          <el-radio v-model="formData.type" label="error">故障</el-radio>
+          <el-radio v-model="formData.type" label="fault">故障</el-radio>
         </div>
       </el-form-item>
       <el-form-item label="输出参数">
@@ -45,7 +45,7 @@
       :modelType="modelType"
       @close="closeAddParam"
       @success="successAddParams"
-      :allFlag="0"
+      :allFlag="1"
     ></add-param>
   </div>
 </template>

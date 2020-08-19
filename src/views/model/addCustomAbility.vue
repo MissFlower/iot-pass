@@ -289,6 +289,9 @@ export default {
         str = '编辑'
         obj.modelType = this.editAbility.modelType * 1
         obj.modelData.index = 0
+        obj.identifier = this.editAbility.identifier
+      } else {
+        obj.modelType = '2'
       }
       obj.modelData = JSON.stringify(obj.modelData)
       const submitObj = JSON.parse(JSON.stringify(obj))

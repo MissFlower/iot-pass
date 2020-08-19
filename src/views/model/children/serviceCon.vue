@@ -61,7 +61,7 @@
       :specs="specs"
       :info="structInfo"
       :modelType="modelType"
-      :allFlag="0"
+      :allFlag="1"
       @close="closeAddParam"
       @success="successAddParams"
     ></add-param>

@@ -1,3 +1,7 @@
+* {
+  padding: 0;
+  margin: 0;
+}
 body {
   .pr {
     position: relative;
@@ -576,4 +580,8 @@ body {
     border-radius: 50%;
     margin-right: 6px;
   }
+}
+
+ul, li {
+  list-style: none;
 }

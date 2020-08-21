@@ -133,6 +133,19 @@ export const asyncRoutes = [
     ]
   },
   {
+    path: '/perspective',
+    redirect: '/perspective/index',
+    component: Layout,
+    meta: { name: '透视分析', code: 'mgr' },
+    children: [
+      {
+        path: 'index',
+        component: resolve => require(['@/views/Perspectives/index'], resolve),
+        meta: { name: '透视分析', code: 'mgr' }
+      }
+    ]
+  },
+  {
     path: '/user',
     redirect: '/user/index',
     component: Layout,

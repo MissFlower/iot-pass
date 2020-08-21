@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-31 15:42:42
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-17 14:52:35
+ * @LastEditTime: 2020-08-19 10:48:54
 -->
 <template>
   <div class="card-container">
@@ -47,7 +47,8 @@ export default {
     }
   },
   data() {
-    return {}
+    return {
+    }
   },
   computed: {
     cardValueUnit() {

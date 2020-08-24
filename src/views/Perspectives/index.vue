@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 14:26:58
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-21 18:31:42
+ * @LastEditTime: 2020-08-24 19:34:45
 -->
 <template>
   <div class="perspective-container">
@@ -73,12 +73,44 @@
         <div class="operation-from fl">
           <span class="operation-text">FROM</span>
           <div class="operation-from-content">
-            <ProductAutocomplete v-model="productName" placeholder="搜索产品" @change="getProductKey" />
+            <ProductAutocomplete v-model="productName" placeholder="搜索产品" class="product-complete" @change="getProductKey" />
             <MeasureAutocomplete v-model="measureName" :product-key="productKey" placeholder="请选择" class="measure-complete" @change="getMeasure" />
           </div>
         </div>
-        <div class="operation-filter-container fl">
-          <FilterTag />
+        <div class="base-fliter-container fl">
+          <FilterTag
+            :tag-options="baseFilter.options"
+            :show="false"
+            :id="baseFilter.id"
+            @change="getCheckedTagValue"
+            @tagChange="computedFilterOptions"
+          />
+        </div>
+        <div class="other-filter-container fl">
+          <!-- <ElScrollbar ref="scroll" wrap-class="scrollbar-wrapper">
+            <div class="other-filter-box">
+              <FilterTag v-for="(item, index) in filterList" :key="item.createTime" :style="{'left': index * 216 +'px'}" :tag-options="item.options" class="filter-list" />
+              <div class="add-filter-container" :style="{'left': (filterList.length * 216) +'px'}" @click="addFilter">
+                <span>+</span>
+              </div>
+            </div>
+          </ElScrollbar> -->
+          <div ref="filterTags" class="other-filter-box">
+            <FilterTag
+              v-for="(item, index) in filterList"
+              :key="item.id"
+              :id="item.id"
+              :tag-options="item.options"
+              :style="{'left': index * 216 +'px'}"
+              class="filter-list"
+              @deleteFilter="deleteFilter"
+              @change="getCheckedTagValue"
+              @tagChange="computedFilterOptions"
+            />
+          </div>
+        </div>
+        <div ref="add" class="add-filter-container" :style="{'left': filterList.length * 216 + 616 +'px'}" @click="addFilter">
+          <i class="el-icon-plus" />
         </div>
       </div>
     </div>
@@ -219,7 +251,14 @@ export default {
       endTime: '', //  结束时间
       productName: '', // 选择的产品name
       productKey: '123', // 选择的产品key
-      measureName: '' //  度量名称
+      measureName: '', //  度量名称
+      baseFilter: {
+        id: 'base',
+        checkedTag: '',
+        options: []
+      }, // 全部的tag
+      filterList: [], // tag Filter list 下的各个不同filter (选过的不会再有)
+      checkedFilterTagValue: {} // 用来存储用户创建的不同 Filter 下 选择的 value
     }
   },
   methods: {
@@ -230,7 +269,112 @@ export default {
       // 获取prodectKey
     },
     getMeasure() {
-      // 获取度量
+      // 获取度量 请求接口 返回数据赋值给baseFilter
+      this.initFilter = [
+        {
+          label: 'list1-tag1',
+          value: 11,
+          id: 1
+        },
+        {
+          label: 'list1-tag2',
+          value: 12,
+          id: 2
+        },
+        {
+          label: 'list1-tag3',
+          value: 13,
+          id: 3
+        }
+      ]
+      this.baseFilter.options = [
+        {
+          label: 'list1-tag1',
+          value: 11,
+          id: 1
+        },
+        {
+          label: 'list1-tag2',
+          value: 12,
+          id: 2
+        },
+        {
+          label: 'list1-tag3',
+          value: 13,
+          id: 3
+        }
+      ]
+    },
+    getUsedFilterList() {
+      // 获取已经被使用的tag filter
+      const usedFilterIds = []
+      for (const key in this.checkedFilterTagValue) {
+        if (Object.prototype.hasOwnProperty.call(this.checkedFilterTagValue, key)) {
+          usedFilterIds.push(this.checkedFilterTagValue[key].tag)
+        }
+      }
+      // 获取没有被使用过的tag Filter列表
+      this.unusedFilterList = this.initFilter.filter(item => !usedFilterIds.includes(item.id))
+    },
+    addFilter() {
+      // 判断filter条件是否已经选择 给提示弹窗
+      if (!this.baseFilter.checkedTag || this.filterList.some(item => item.checkedTag === '')) {
+        this.$message({
+          type: 'warning',
+          message: '请完善Filter!'
+        })
+        return
+      }
+      // 创建tag Filter 已经被选过的tag再次创建Filter时 列表过滤
+      const id = Date.now()
+      this.getUsedFilterList()
+      this.filterList.push({
+        id,
+        checkedTag: '',
+        options: [...this.unusedFilterList]
+      })
+      // 创建tag Filter时 创建一个存储用户选中value的容器 每个Filter创建时 都独立生成唯一id 使用id作为键进行数据存储
+      this.checkedFilterTagValue[id] = {
+        tag: '', // tag 的 id
+        value: []
+      }
+      this.$nextTick(() => {
+        if (this.$refs.filterTags.offsetWidth < this.$refs.filterTags.scrollWidth) {
+          this.$refs.add.style.left = ''
+          this.$refs.add.style.right = 0
+          this.$refs.add.style.borderLeft = '1px solid #999'
+        }
+      })
+    },
+    computedFilterOptions() {
+      // 计算每个TAG FILTER下面的options
+      this.getUsedFilterList()
+      this.filterList.forEach(item => {
+        item.options = [this.initFilter.find(i => i.id === item.checkedTag), ...this.unusedFilterList]
+      })
+      this.baseFilter.options = [this.initFilter.find(item => item.id === this.baseFilter.checkedTag), ...this.unusedFilterList]
+    },
+    deleteFilter(id) {
+      // 删除filter
+      console.log(id)
+      const index = this.filterList.findIndex(item => item.id === id)
+      this.filterList.splice(index, 1)
+      // 删除filter的同时  需要将创建时给用户创建 的 存储容器 一并删除
+      delete this.checkedFilterTagValue[id]
+      // 删除filter 重新计算每个options的值
+      this.computedFilterOptions()
+    },
+    getCheckedTagValue(id, data) {
+      // 获取tag 和 value 更新 用户 存储的内容
+      // console.log(data)
+      this.checkedFilterTagValue[id] = data
+      // 设置每个Filter选中的tag  存储的是id
+      const index = this.filterList.findIndex(item => item.id === id)
+      if (~index) {
+        this.filterList[index].checkedTag = data.tag
+        return
+      }
+      this.baseFilter.checkedTag = data.tag
     }
   }
 }
@@ -286,10 +430,13 @@ export default {
     .operation-content {
       width: 100%;
       margin-top: 6px;
-      overflow-x: auto;
-      height: calc(100% - 38px);
+      height: 262px;
+      overflow: hidden;
+      border-right: 1px solid #999;
+      position: relative;
 
       .operation-from {
+        display: inline-block;
         width: 400px;
         padding: 8px;
         border: 1px solid #999;
@@ -307,14 +454,86 @@ export default {
         justify-content: space-between;
       }
 
+      .product-complete {
+        width: 186px;
+      }
+
       .measure-complete {
         margin-left: 10px;
+        width: 186px;
       }
     }
 
-    .operation-filter-container {
+    .base-fliter-container {
+      display: inline-block;
       height: 100%;
     }
+
+    .other-filter-container {
+      display: inline-block;
+      width: calc(100% - 636px);
+      height: 100%;
+    }
+
+    .other-filter-box {
+      height: 262px;
+      position: relative;
+      overflow-x: auto;
+      .filter-list {
+        width: 216px;
+        position: absolute;
+        top: 0;
+        // &:last-child {
+        //   border-right: none;
+        // }
+      }
+    }
+
+    .add-filter-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      width: 20px;
+      position: absolute;
+      top: 0;
+      float: left;
+      border: 1px solid #999;
+      border-left: none;
+      font-size: 18px;
+      cursor: pointer;
+      color: #999;
+      &:hover {
+        color: #000;
+      }
+    }
+  }
+  /deep/.el-scrollbar {
+      width: 100%;
+      overflow-y: hidden;
+    }
+
+/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+  ::-webkit-scrollbar{
+    width: 7px;
+    height: 7px;
+    background-color: #fff;
+  }
+
+  /*定义滚动条轨道 内阴影+圆角*/
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    background-color: #fff;
+  }
+
+  /*定义滑块 内阴影+圆角*/
+  ::-webkit-scrollbar-thumb{
+    border-radius: 10px;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, .1);
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .1);
+    background-color: #f1f1f1;
   }
 }
 </style>

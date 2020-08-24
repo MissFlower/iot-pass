@@ -133,7 +133,7 @@ export default {
     getData() { // 获取菜单列表
       this.loading = true
       this.list = []
-      this.menuObj = {}
+      // this.menuObj = {}
       getMenuList(this.formData).then(res => {
         if (res.code === 200) {
           if (res.data.data) {

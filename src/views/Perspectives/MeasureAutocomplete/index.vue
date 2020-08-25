@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-21 15:03:28
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-21 16:47:31
+ * @LastEditTime: 2020-08-25 18:27:35
 -->
 <template>
   <ElAutocomplete
@@ -19,11 +19,12 @@
       slot="suffix"
     />
     <template slot-scope="{ item }">
-      <div class="name">{{ item.name }}</div>
+      <div class="name">{{ item.metricShowName }}</div>
     </template>
   </ElAutocomplete>
 </template>
 <script>
+import { getMetircsByProduct } from 'src/api/perspectives'
 export default {
   name: 'ProductAutocomplete',
   props: {
@@ -36,27 +37,50 @@ export default {
     return {
       measureList: [
         {
-          name: '度量1'
+          metricRealName: '22ea8e3d96ba42e1b42ec4d05cd5e0a6_cellSignalStrength1',
+          metricShowName: '度量1'
         },
         {
-          name: '度量2'
+          metricRealName: '22ea8e3d96ba42e1b42ec4d05cd5e0a6_cellSignalStrength2',
+          metricShowName: '度量2'
         },
         {
-          name: '度量3'
+          metricRealName: '22ea8e3d96ba42e1b42ec4d05cd5e0a6_cellSignalStrength3',
+          metricShowName: '度量3'
         },
         {
-          name: '度量4'
+          metricRealName: '22ea8e3d96ba42e1b42ec4d05cd5e0a6_cellSignalStrength4',
+          metricShowName: '度量4'
         },
         {
-          name: '度量5'
+          metricRealName: '22ea8e3d96ba42e1b42ec4d05cd5e0a6_cellSignalStrength5',
+          metricShowName: '度量5'
         }
       ]
     }
   },
-  created() {
-    // 调用产品列表接口
+  watch: {
+    productKey: {
+      handler(newKey, oldKey) {
+        // 调用度量列表接口
+        if (newKey && newKey !== oldKey) {
+          // this.getMetircsList()
+        }
+      }
+    }
   },
   methods: {
+    async getMetircsList() {
+      try {
+        const { data } = await getMetircsByProduct({
+          productKey: this.productKey
+        })
+        console.log(data)
+        this.measureList = data.metrics
+      } catch (error) {
+        this.$message.error(error)
+      }
+    },
     querySearchAsync(queryString, callback) {
       // 过滤列表
       const results = queryString ? this.measureList.filter(this.createFilter(queryString)) : this.measureList
@@ -64,13 +88,13 @@ export default {
     },
     createFilter(queryString) {
       return (measure) => {
-        return (measure.name.includes(queryString))
+        return (measure.metricShowName.includes(queryString))
       }
     },
     handleSelect(data) {
       // 选择事件
-      this.$emit('input', data.name)
-      this.$emit('change', data)
+      this.$emit('input', data.metricShowName)
+      this.$emit('measureChange', data)
     }
   }
 }

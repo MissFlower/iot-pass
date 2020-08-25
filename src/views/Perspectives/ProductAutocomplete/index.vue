@@ -4,10 +4,11 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-21 15:03:28
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-21 18:36:30
+ * @LastEditTime: 2020-08-25 17:45:11
 -->
 <template>
   <ElAutocomplete
+    ref="productAutocomplete"
     v-bind="$attrs"
     :fetch-suggestions="querySearchAsync"
     popper-class="product-autocomplete"
@@ -19,11 +20,12 @@
       slot="suffix"
     />
     <template slot-scope="{ item }">
-      <div class="name">{{ item.name }}</div>
+      <div class="name">{{ item.productName }}</div>
     </template>
   </ElAutocomplete>
 </template>
 <script>
+import { tableList } from '@/api/product'
 export default {
   name: 'ProductAutocomplete',
   data() {
@@ -64,8 +66,22 @@ export default {
   },
   created() {
     // 调用产品列表接口
+    this.getProductList()
   },
   methods: {
+    async getProductList() {
+      try {
+        const { data } = await tableList({
+          pageSize: 999,
+          pageNum: 1,
+          productName: ''
+        })
+        this.productList = data.data
+        this.$refs.productAutocomplete.focus()
+      } catch (error) {
+        this.$message.error(error)
+      }
+    },
     querySearchAsync(queryString, callback) {
       // 过滤列表
       const results = queryString ? this.productList.filter(this.createFilter(queryString)) : this.productList
@@ -73,13 +89,14 @@ export default {
     },
     createFilter(queryString) {
       return (product) => {
-        return (product.name.includes(queryString))
+        return (product.productName.includes(queryString))
       }
     },
     handleSelect(data) {
       // 选择事件
-      this.$emit('input', data.name)
-      this.$emit('change', data)
+      console.log(1)
+      this.$emit('input', data.productName)
+      this.$emit('productChange', data)
     }
   }
 }

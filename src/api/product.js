@@ -1,16 +1,16 @@
-/** 
-<!-- 
+/**
+<!--
 文件作者：zhaoyifeng
 创建日期：2020.6.17
 文件说明：产品管理api
  -->
 */
-import request from "@/utils/request";
-import Qs from "qs";
+import request from '@/utils/request'
+import Qs from 'qs'
 
 const headerFrom = {
-  "Content-Type": "application/x-www-form-urlencoded"
-};
+  'Content-Type': 'application/x-www-form-urlencoded'
+}
 /**
  * 产品列表
  * @param {
@@ -19,12 +19,12 @@ const headerFrom = {
  *  productName	string	否	产品名称
  * }
  */
-export function tableList(data) {  
+export function tableList(data) {
   return request({
-    url: "product/list",
-    method: "get",
-    params: data   
-  });
+    url: 'product/list',
+    method: 'get',
+    params: data
+  })
 }
 /**
  * 新建产品
@@ -39,105 +39,101 @@ export function tableList(data) {
 *   description	string	否	描述
 * }
 */
-export function productSave(data) { 
+export function productSave(data) {
   return request({
-    url: "product/save",
-    method: "post",
+    url: 'product/save',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 /**
  * 删除产品
  * @param {
-  *   productKey	string	是	产品key 
+  *   productKey	string	是	产品key
   * }
   */
-export function delProduct(data) { 
+export function delProduct(data) {
   return request({
-    url: "product/del",
-    method: "post",
+    url: 'product/del',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
-
-
-
 
 /**
  * 获取产品密钥
  * @param {
-  *   productKey	string	是	产品key 
+  *   productKey	string	是	产品key
   * }
   */
-export function findSecret(data) { 
+export function findSecret(data) {
   return request({
-    url: "product/findSecret",
-    method: "get",
-    params: data 
-  });
+    url: 'product/findSecret',
+    method: 'get',
+    params: data
+  })
 }
 
 /**
  * 获取产品详情
  * @param {
-  *   productKey	string	是	产品key 
+  *   productKey	string	是	产品key
   * }
   */
-export function getProduct(data) { 
+export function getProduct(data) {
   return request({
-    url: "product/get",
-    method: "get",
-    params: data 
-  });
+    url: 'product/get',
+    method: 'get',
+    params: data
+  })
 }
 
 /**
  * 产品动态注册开关
  * @param {
   *   productKey	string	是	产品key
-  *   registerSwitch	int	是	开关状态 1:开,0:关 
+  *   registerSwitch	int	是	开关状态 1:开,0:关
   * }
   */
-export function dynamicRegisterSwitch(data) { 
+export function dynamicRegisterSwitch(data) {
   return request({
-    url: "product/dynamicRegisterSwitch",
-    method: "post",
+    url: 'product/dynamicRegisterSwitch',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 
 /**
  * 产品取消发布
  * @param {
-  *   productKey	string	是	产品key  *   
+  *   productKey	string	是	产品key  *
   * }
   */
-export function cancelRelease(data) { 
+export function cancelRelease(data) {
   return request({
-    url: "product/cancelRelease",
-    method: "post",
+    url: 'product/cancelRelease',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
-
 
 /**
  * 产品发布
  * @param {
-  *   productKey	string	是	产品key  *   
+  *   productKey	string	是	产品key  *
   * }
   */
-export function release(data) { 
+export function release(data) {
   return request({
-    url: "product/release",
-    method: "post",
+    url: 'product/release',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 
 /**
@@ -146,35 +142,34 @@ export function release(data) {
   *   id	string	是	产品id
   *   productName	string	是	产品名称
   *   dynRegister	int	是	动态注册开关
-  *   description	string	否	描述   
+  *   description	string	否	描述
   * }
   */
-export function productEdit(data) { 
+export function productEdit(data) {
   return request({
-    url: "product/update",
-    method: "post",
+    url: 'product/update',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
-
 
 /**
  * 品类选择--领域列表
- * 
-  *   
-  * 
+ *
+  *
+  *
   */
-export function domainList() { 
+export function domainList() {
   return request({
-    url: "domain/list",
-    method: "get"    
-  });
+    url: 'domain/list',
+    method: 'get'
+  })
 }
 
 /**
- * 品类选择--领域详情列表 * 
-  *   
+ * 品类选择--领域详情列表 *
+  *
   * @param {
   *   domainId string	是	领域id
   *  pageNum	int	是	当前页
@@ -182,82 +177,79 @@ export function domainList() {
   *  name	string	否	品类名称
   * }
   */
- export function categoryPage(data) { 
+export function categoryPage(data) {
   return request({
-    url: "category/page",
-    method: "get",
-    params: data  
-  });
+    url: 'category/page',
+    method: 'get',
+    params: data
+  })
 }
 
 /**
- * topic类列表 * 
-  *   
+ * topic类列表 *
+  *
   * @param {
-    *   id string	是	产品id  
+    *   id string	是	产品id
     * }
     */
-   export function sysTopic(data) { 
-    return request({
-      url: "product/sysTopic",
-      method: "get",
-      params: data  
-    });
-  }
-
+export function sysTopic(data) {
+  return request({
+    url: 'product/sysTopic',
+    method: 'get',
+    params: data
+  })
+}
 
 /**
  * 产品自定义topic新增、编辑
  * @param {
   *   topicName	String	是	topic名称
   *   productKey	String	是	产品 productKey
-  *   topicAccess	int	是	topic权限，1：订阅，2：发布，3：订阅+发布  
-  *    
+  *   topicAccess	int	是	topic权限，1：订阅，2：发布，3：订阅+发布
+  *
   *  --- 编辑加上topicId ---
   *   topicId	Long	是	topic Id
   * }
   */
-export function productCustomEdit(data) { 
+export function productCustomEdit(data) {
   return request({
-    url: "topic/customEdit",
-    method: "post",
+    url: 'topic/customEdit',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 
- /**
+/**
  * 产品自定义topic删除
  * @param {
   *   topicId	Long	是	topic Id
   *   productKey	String	是	产品 productKey
   * }
   */
-export function productDelete(data) { 
+export function productDelete(data) {
   return request({
-    url: "topic/customDelete",
-    method: "post",
+    url: 'topic/customDelete',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 
-
 /**
- * 产品自定义topic列表 * 
-  *   
+ * 产品自定义topic列表 *
+  *
   * @param {
     *   pageNum	Long	否	分页页数，默认：1
     *   pageSize	Long	否	分页条数，默认：20
-    *   productKey	String	是	产品 productKey      
+    *   productKey	String	是	产品 productKey
     * }
     */
-   export function customList(data) { 
-    return request({
-      url: "topic/customList",
-      method: "get",
-      params: data  
-    });
-  }
-
+export function customList(data) {
+  return request({
+    url: 'topic/customList',
+    method: 'get',
+    params: data
+  })
+}
 

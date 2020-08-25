@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 14:26:58
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-24 19:34:45
+ * @LastEditTime: 2020-08-25 18:56:02
 -->
 <template>
   <div class="perspective-container">
@@ -65,7 +65,7 @@
           </div>
         </div>
         <div class="operation-header-right">
-          <ElButton type="primary">Submit</ElButton>
+          <ElButton type="primary" @click="submit">Submit</ElButton>
           <ElButton type="primary">更新SQL</ElButton>
         </div>
       </div>
@@ -73,8 +73,8 @@
         <div class="operation-from fl">
           <span class="operation-text">FROM</span>
           <div class="operation-from-content">
-            <ProductAutocomplete v-model="productName" placeholder="搜索产品" class="product-complete" @change="getProductKey" />
-            <MeasureAutocomplete v-model="measureName" :product-key="productKey" placeholder="请选择" class="measure-complete" @change="getMeasure" />
+            <ProductAutocomplete v-model="productName" placeholder="搜索产品" class="product-complete" @productChange="getProductKey" />
+            <MeasureAutocomplete v-model="measureName" :product-key="productKey" placeholder="请选择" class="measure-complete" @measureChange="getMeasureKey" />
           </div>
         </div>
         <div class="base-fliter-container fl">
@@ -82,6 +82,7 @@
             :tag-options="baseFilter.options"
             :show="false"
             :id="baseFilter.id"
+            :measure-key="measureKey"
             @change="getCheckedTagValue"
             @tagChange="computedFilterOptions"
           />
@@ -101,7 +102,8 @@
               :key="item.id"
               :id="item.id"
               :tag-options="item.options"
-              :style="{'left': index * 216 +'px'}"
+              :measure-key="measureKey"
+              :style="{'left': filterTagLeft(index)}"
               class="filter-list"
               @deleteFilter="deleteFilter"
               @change="getCheckedTagValue"
@@ -109,7 +111,7 @@
             />
           </div>
         </div>
-        <div ref="add" class="add-filter-container" :style="{'left': filterList.length * 216 + 616 +'px'}" @click="addFilter">
+        <div v-show="isShowAddFilter" ref="add" class="add-filter-container" :style="{'left': addFilterIconLeft}" @click="addFilter">
           <i class="el-icon-plus" />
         </div>
       </div>
@@ -122,6 +124,7 @@ import ProductAutocomplete from './ProductAutocomplete'
 import MeasureAutocomplete from './MeasureAutocomplete'
 import FilterTag from './FilterTag'
 import { deepFreeze } from 'src/utils'
+// import { getTagkByMetric, getDataForChart } from 'src/api/perspectives'
 // 时间范围options
 const TIME_OPTIONS = deepFreeze([
   {
@@ -165,43 +168,43 @@ const TIME_OPTIONS = deepFreeze([
     value: 43200
   }
 ])
-// 时间间隔options
+// 采样间隔options
 const TIME_INTERVAL_OPTIONS = deepFreeze([
   {
-    label: '5s',
-    value: 5
-  },
-  {
-    label: '10s',
-    value: 10
-  },
-  {
-    label: '15s',
-    value: 15
-  },
-  {
-    label: '20s',
-    value: 20
-  },
-  {
     label: '1min',
-    value: 60
+    value: '1m'
+  },
+  {
+    label: '2min',
+    value: '2m'
   },
   {
     label: '5min',
-    value: 300
+    value: '5m'
   },
   {
     label: '15min',
-    value: 900
+    value: '15m'
+  },
+  {
+    label: '30min',
+    value: '30m'
   },
   {
     label: '1h',
-    value: 3600
+    value: '1h'
   },
   {
     label: '6h',
-    value: 21600
+    value: '6h'
+  },
+  {
+    label: '12h',
+    value: '12h'
+  },
+  {
+    label: '24h',
+    value: '24h'
   }
 ])
 // 算法options
@@ -238,75 +241,120 @@ export default {
   data() {
     return {
       chartData: { // 图表数据
-        dataList: [],
-        dateList: []
+        dataList: [20, 30, 40, 20, 15, 50, 15],
+        dateList: ['2020-1-1', '2020-1-2', '2020-1-3', '2020-1-3', '2020-1-4', '2020-1-5']
       },
-      timeRange: 5, // 选择的事件范围 unit(minute)
+      timeRange: 5, // 选择的时间范围 unit(minute)
       TIME_OPTIONS, // 可供选择的时间范围options
-      timeInterval: 5, // 选择的采样间隔 unit(second)
+      timeInterval: '1m', // 选择的采样间隔 unit(second)
       TIME_INTERVAL_OPTIONS, // 时间间隔options
       algorithm: 'none', // 选择的算法值 默认值 none
       ALFORITHM_OPTIONS, // 算法options
       startTime: '', // 开始时间
       endTime: '', //  结束时间
       productName: '', // 选择的产品name
-      productKey: '123', // 选择的产品key
+      productKey: '', // 选择的产品key
       measureName: '', //  度量名称
+      measureKey: '', // 选择的度量key
       baseFilter: {
         id: 'base',
         checkedTag: '',
         options: []
       }, // 全部的tag
       filterList: [], // tag Filter list 下的各个不同filter (选过的不会再有)
-      checkedFilterTagValue: {} // 用来存储用户创建的不同 Filter 下 选择的 value
+      checkedFilterTagValue: {}, // 用来存储用户创建的不同 Filter 下 选择的 value
+      unusedFilterList: [], // 未被使用的 Filter tag列表
+      saveAllTags: [], // 获取到的所有tag
+      isShowAddFilter: true // 是否展示添加filter icon
+    }
+  },
+  computed: {
+    filterTagLeft() {
+      return function(index) {
+        return index * 216 + 'px'
+      }
+    },
+    addFilterIconLeft() {
+      return this.filterList.length * 216 + 616 + 'px'
+    }
+  },
+  watch: {
+    unusedFilterList: {
+      handler(newValue) {
+        this.isShowAddFilter = !!newValue.length
+      }
+    },
+    measureKey: {
+      handler(newKey, oldKey) {
+        if (newKey && newKey !== oldKey) {
+          // 度量选择改变后 请求Tag列表接口
+          this.getTagsList()
+          // 重置所有用户已选择的Filter
+          this.resetFilter()
+        }
+      }
     }
   },
   methods: {
     getCustomTime() {
       // 获取自定义时间
     },
-    getProductKey() {
-      // 获取prodectKey
+    getProductKey(data) {
+      // 获取prodectList
+      console.log(data)
+      this.productKey = data.productKey
     },
-    getMeasure() {
-      // 获取度量 请求接口 返回数据赋值给baseFilter
-      this.initFilter = [
-        {
-          label: 'list1-tag1',
-          value: 11,
-          id: 1
-        },
-        {
-          label: 'list1-tag2',
-          value: 12,
-          id: 2
-        },
-        {
-          label: 'list1-tag3',
-          value: 13,
-          id: 3
-        }
-      ]
-      this.baseFilter.options = [
-        {
-          label: 'list1-tag1',
-          value: 11,
-          id: 1
-        },
-        {
-          label: 'list1-tag2',
-          value: 12,
-          id: 2
-        },
-        {
-          label: 'list1-tag3',
-          value: 13,
-          id: 3
-        }
-      ]
+    getMeasureKey(data) {
+      // 真实操作。。。。
+      console.log(data)
+      this.measureKey = data.metricRealName
     },
-    getUsedFilterList() {
-      // 获取已经被使用的tag filter
+    async getTagsList() {
+      // 获取tags列表
+      // const { data } = await getTagkByMetric({
+      //   metricRealName: this.measureKey
+      // })
+      // console.log(data)
+      // 返回数据赋值给baseFilter 并备份一份所有的tags列表 saveAllTags
+      // this.saveAllTags = [
+      //   {
+      //     label: 'list1-tag1',
+      //     value: 11,
+      //     id: 1
+      //   },
+      //   {
+      //     label: 'list1-tag2',
+      //     value: 12,
+      //     id: 2
+      //   },
+      //   {
+      //     label: 'list1-tag3',
+      //     value: 13,
+      //     id: 3
+      //   }
+      // ]
+      // this.baseFilter.options = [
+      //   {
+      //     label: 'list1-tag1',
+      //     value: 11,
+      //     id: 1
+      //   },
+      //   {
+      //     label: 'list1-tag2',
+      //     value: 12,
+      //     id: 2
+      //   },
+      //   {
+      //     label: 'list1-tag3',
+      //     value: 13,
+      //     id: 3
+      //   }
+      // ]
+      this.saveAllTags = ['list1-tag1', 'list1-tag2', 'list1-tag3']
+      this.baseFilter.options = ['list1-tag1', 'list1-tag2', 'list1-tag3']
+    },
+    getUnusedFilterList() {
+      // 获取未被使用的tag filter
       const usedFilterIds = []
       for (const key in this.checkedFilterTagValue) {
         if (Object.prototype.hasOwnProperty.call(this.checkedFilterTagValue, key)) {
@@ -314,7 +362,7 @@ export default {
         }
       }
       // 获取没有被使用过的tag Filter列表
-      this.unusedFilterList = this.initFilter.filter(item => !usedFilterIds.includes(item.id))
+      this.unusedFilterList = this.saveAllTags.filter(item => !usedFilterIds.includes(item))
     },
     addFilter() {
       // 判断filter条件是否已经选择 给提示弹窗
@@ -327,7 +375,6 @@ export default {
       }
       // 创建tag Filter 已经被选过的tag再次创建Filter时 列表过滤
       const id = Date.now()
-      this.getUsedFilterList()
       this.filterList.push({
         id,
         checkedTag: '',
@@ -348,15 +395,14 @@ export default {
     },
     computedFilterOptions() {
       // 计算每个TAG FILTER下面的options
-      this.getUsedFilterList()
+      this.getUnusedFilterList()
       this.filterList.forEach(item => {
-        item.options = [this.initFilter.find(i => i.id === item.checkedTag), ...this.unusedFilterList]
+        item.options = [this.saveAllTags.find(i => i === item.checkedTag), ...this.unusedFilterList]
       })
-      this.baseFilter.options = [this.initFilter.find(item => item.id === this.baseFilter.checkedTag), ...this.unusedFilterList]
+      this.baseFilter.options = [this.saveAllTags.find(item => item === this.baseFilter.checkedTag), ...this.unusedFilterList]
     },
     deleteFilter(id) {
       // 删除filter
-      console.log(id)
       const index = this.filterList.findIndex(item => item.id === id)
       this.filterList.splice(index, 1)
       // 删除filter的同时  需要将创建时给用户创建 的 存储容器 一并删除
@@ -375,6 +421,27 @@ export default {
         return
       }
       this.baseFilter.checkedTag = data.tag
+    },
+    resetFilter() {
+      // 重置所有已选择的Filter
+      this.filterList = []
+      this.baseFilter.checkedTag = ''
+    },
+    async submit() {
+      // 提交数据
+      console.log(this.checkedFilterTagValue)
+      // const data = await getDataForChart({
+      //   metricRealName: this.measureKey,
+      //   tagsFilter: [],
+      //   aggregator: this.algorithm,
+      //   startTime: this.startTime,
+      //   endTime: this.endTime,
+      //   downSampleAggregator: '',
+      //   downSampleTime: this.timeInterval
+      // })
+      // console.log(data)
+      this.chartData.dataList = [20, 30, 40, 20, 15, 50, 15],
+      this.chartData.dateList = ['2020-1-1', '2020-1-2', '2020-1-3', '2020-1-3', '2020-1-4', '2020-1-5']
     }
   }
 }
@@ -438,14 +505,15 @@ export default {
       .operation-from {
         display: inline-block;
         width: 400px;
-        padding: 8px;
+        padding: 4px 8px;
         border: 1px solid #999;
         height: 100%;
       }
 
       .operation-text {
         display: block;
-        margin-bottom: 6px;
+        height: 24px;
+        line-height: 24px;
         font-size: 14px;
       }
 

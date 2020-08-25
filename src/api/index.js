@@ -1,9 +1,9 @@
-import request from "@/utils/request";
-import Qs from "qs";
+import request from '@/utils/request'
+import Qs from 'qs'
 
 const headerFrom = {
-  "Content-Type": "application/x-www-form-urlencoded"
-};
+  'Content-Type': 'application/x-www-form-urlencoded'
+}
 /*
 用户登录，服务端做shiro安全认证登录
 
@@ -13,11 +13,11 @@ const headerFrom = {
 export function login(data) {
   // 登录
   return request({
-    url: "/user/login",
-    method: "post",
+    url: '/user/login',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 
 /*
@@ -30,11 +30,11 @@ export function login(data) {
 export function register(data) {
   // 注册
   return request({
-    url: "/user/register",
-    method: "post",
+    url: '/user/register',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 
 /*
@@ -46,11 +46,11 @@ export function register(data) {
 export function sendCode(data) {
   // 发送验证码
   return request({
-    url: "/user/sendPhoneCode",
-    method: "post",
+    url: '/user/sendPhoneCode',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 
 /*
@@ -62,13 +62,12 @@ export function sendCode(data) {
 export function verifyCode(data) {
   // 验证验证码
   return request({
-    url: "/user/verifyPhoneCode",
-    method: "post",
+    url: '/user/verifyPhoneCode',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
-
 
 /*
 验证账号名
@@ -79,11 +78,11 @@ export function verifyCode(data) {
 export function verifyAccount(data) {
   // 验证账号名
   return request({
-    url: "/user/verifyAccount",
-    method: "post",
+    url: '/user/verifyAccount',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 
 /*
@@ -95,13 +94,12 @@ export function verifyAccount(data) {
 export function updatePassword(data) {
   // 修改密码
   return request({
-    url: "/user/updatePassword",
-    method: "post",
+    url: '/user/updatePassword',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
-
 
 /*
 忘记密码账号密码
@@ -109,14 +107,14 @@ export function updatePassword(data) {
     account	  string	是	账号
     password	string	是	密码
 */
-export function forgetPassword (data) {
+export function forgetPassword(data) {
   // 忘记密码
   return request({
-    url: "/user/forgetPassword",
-    method: "post",
+    url: '/user/forgetPassword',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 /*
 获取个人信息，
@@ -125,10 +123,10 @@ export function forgetPassword (data) {
 export function getUserInfo() {
   // 获取个人信息
   return request({
-    url: "/user/info",
-    method: "post",
+    url: '/user/info',
+    method: 'post',
     headers: headerFrom
-  });
+  })
 }
 
 /*
@@ -139,11 +137,11 @@ export function getUserInfo() {
 export function sendMailCode(data) {
   // 发送邮箱验证码
   return request({
-    url: "/user/sendMailCode",
-    method: "post",
+    url: '/user/sendMailCode',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 
 /*
@@ -154,11 +152,11 @@ export function sendMailCode(data) {
 export function bandEmailFun(data) {
   // 邮箱绑定
   return request({
-    url: "/user/bandEmail",
-    method: "post",
+    url: '/user/bandEmail',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 
 /*
@@ -169,16 +167,16 @@ export function bandEmailFun(data) {
 
 export function logout(data) {
   return request({
-    url: "/user/logout",
-    method: "post",
+    url: '/user/logout',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 
-export function getCodeImg () {
+export function getCodeImg() {
   return request({
-    url: "/user/captcha.jpg",
+    url: '/user/captcha.jpg',
     method: 'get'
   })
 }

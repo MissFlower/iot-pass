@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-21 16:51:04
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-24 19:12:08
+ * @LastEditTime: 2020-08-25 18:44:38
 -->
 <template>
   <div class="filter-tag-container">
@@ -12,35 +12,36 @@
       <span class="operation-text">Filter</span>
       <i v-if="show" class="el-icon-close delete-filter-btn" @click="deleteFilter" />
     </div>
-    <ElSelect v-model="tag" popper-class="filter-tag-select" @change="tagChange">
+    <ElSelect v-model="tagKey" popper-class="filter-tag-select" @change="tagChange">
       <ElOption
         v-for="item in tagOptions"
-        :key="item.id"
-        :label="item.label"
-        :value="item.id"
+        :key="item"
+        :label="item"
+        :value="item"
       >
       </ElOption>
     </ElSelect>
-    <div v-show="tag" class="tag-search-container">
-      <ElInput v-model="searchValue" placeholder="请输入内容" @change="searchTagValue" />
+    <div v-show="tagKey" class="tag-search-container">
+      <ElInput v-model.trim="searchValue" placeholder="请输入内容" @input="searchTagValue" />
       <div class="tag-value-container">
-        <el-scrollbar style="height:100%;">
+        <ElScrollbar style="height:100%;">
           <ul class="checked-tag-container">
-            <li v-for="item in checkedTagsValue" :key="item.id">
-              <el-checkbox v-model="item.checked" @change="checkboxChange(item)">{{ item.tagName }}</el-checkbox>
+            <li v-for="item in checkedTagsValue" :key="item.value">
+              <ElCheckbox v-model="item.checked" @change="checkboxChange(item)">{{ item.value }}</ElCheckbox>
             </li>
           </ul>
           <ul class="no-checked-tag-container">
-            <li v-for="item in uncheckedTagsValue" :key="item.id">
-              <el-checkbox v-model="item.checked" @change="checkboxChange(item)">{{ item.tagName }}</el-checkbox>
+            <li v-for="item in uncheckedTagsValue" :key="item.value">
+              <ElCheckbox v-model="item.checked" @change="checkboxChange(item)">{{ item.value }}</ElCheckbox>
             </li>
           </ul>
-        </el-scrollbar>
+        </ElScrollbar>
       </div>
     </div>
   </div>
 </template>
 <script>
+// import { getTagValueByTagkey } from 'src/api/perspectives'
 export default {
   name: 'FilterTag',
   props: {
@@ -49,6 +50,10 @@ export default {
       default: () => {
         return []
       }
+    },
+    measureKey: {
+      type: String,
+      required: true
     },
     id: {
       type: [String, Number],
@@ -61,39 +66,59 @@ export default {
   },
   data() {
     return {
-      tag: '', // 选中的tag
+      tagKey: '', // 选中的tag
       searchValue: '', // 用户输入的搜索值
       checkedTagsValue: [], // 选中的tagValue
       uncheckedTagsValue: [ // 未选中的tagValue
         {
-          id: 1,
           checked: false,
-          tagName: '选中的tag1'
+          value: '选中的tag1'
         },
         {
-          id: 2,
           checked: false,
-          tagName: '选中的tag2'
+          value: '选中的tag2'
         },
         {
-          id: 3,
           checked: false,
-          tagName: '未选中的tag3'
+          value: '未选中的tag3'
         },
         {
-          id: 4,
           checked: false,
-          tagName: '未选中的tag4'
+          value: '未选中的tag4'
         },
         {
-          id: 5,
           checked: false,
-          tagName: '未选中的tag5'
+          value: '未选中的tag5'
         },
         {
-          id: 6,
           checked: false,
-          tagName: '未选中的tag6'
+          value: '未选中的tag6'
+        }
+      ],
+      saveUncheckedTagsValue: [
+        {
+          checked: false,
+          value: '选中的tag1'
+        },
+        {
+          checked: false,
+          value: '选中的tag2'
+        },
+        {
+          checked: false,
+          value: '未选中的tag3'
+        },
+        {
+          checked: false,
+          value: '未选中的tag4'
+        },
+        {
+          checked: false,
+          value: '未选中的tag5'
+        },
+        {
+          checked: false,
+          value: '未选中的tag6'
         }
       ]
     }
@@ -102,31 +127,51 @@ export default {
     checkboxChange(data) {
       // checkbox勾选事件逻辑处理
       if (data.checked) {
-        const index = this.uncheckedTagsValue.findIndex(item => item.id === data.id)
+        const index = this.uncheckedTagsValue.findIndex(item => item.value === data.value)
         this.uncheckedTagsValue.splice(index, 1)
         this.checkedTagsValue.unshift(data)
       } else {
-        const index = this.checkedTagsValue.findIndex(item => item.id === data.id)
+        const index = this.checkedTagsValue.findIndex(item => item.value === data.value)
         this.checkedTagsValue.splice(index, 1)
         this.uncheckedTagsValue.unshift(data)
       }
       // 每次勾选需要将该tag下的 value 和 tag 传回父级
       this.$emit('change', this.id, {
-        tag: this.tag, // tag 的 id
+        tag: this.tagKey, // tag 的 id
         value: this.checkedTagsValue
       })
     },
-    searchTagValue(value) {
+    searchTagValue() {
       // 根据搜索条件查询tag下面的value值 调用后台接口 返回数据 需要 和 之前选中的数据进行对比过滤
-      console.log(value)
+      console.log(this.searchValue)
+      // 空条件 赋予最初列表 并 return
+      if (!this.searchValue) {
+        // 搜索条件为空时 进行列表还原
+        const checkedValueIdList = this.checkedTagsValue.map(item => item.value)
+        this.uncheckedTagsValue = [...this.saveUncheckedTagsValue.filter(item => !checkedValueIdList.includes(item.value))]
+        return
+      }
+      // 过滤包含value的列表
+      const matchValue = this.uncheckedTagsValue.filter(item => item.value.includes(this.searchValue))
+      // 和选中的数据进行对比 再次过滤
+      const checkedValueIdList = this.checkedTagsValue.map(item => item.value)
+      this.uncheckedTagsValue = [...matchValue.filter(item => !checkedValueIdList.includes(item.value))]
     },
-    tagChange() {
-      // tag选择更改
+    async tagChange() {
+      // tag选择更改 请求接口 获取tag下value列表
+      // const data = await getTagValueByTagkey({
+      //   metricRealName: this.measureKey,
+      //   tagKey: this.tagKey,
+      //   tagValuePrefix: this.searchValue
+      // })
+      // console.log(data)
+      // this.uncheckedTagsValue = data.tagResult
+      // 更改tag 向父级传回最新的选择结果
       this.$emit('change', this.id, {
-        tag: this.tag,
+        tag: this.tagKey,
         value: this.checkedTagsValue
       })
-      this.$emit('tagChange', this.tagOptions.find(item => item.id === this.tag))
+      this.$emit('tagChange', this.tagOptions.find(item => item === this.tagKey))
     },
     deleteFilter() {
       // 删除过滤条件
@@ -140,11 +185,6 @@ export default {
           type: 'success',
           message: '删除成功!'
         })
-      }).catch(() => {
-        // this.$message({
-        //   type: 'info',
-        //   message: '已取消删除'
-        // })
       })
     }
   }
@@ -184,7 +224,7 @@ export default {
   }
   .tag-search-container {
     margin-top: 2px;
-    height: calc(100% - 48px);
+    height: calc(100% - 65px);
   }
   /deep/.tag-value-container {
     height: calc(100% - 32px);

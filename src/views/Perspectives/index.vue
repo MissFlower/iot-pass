@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 14:26:58
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-25 18:56:02
+ * @LastEditTime: 2020-08-25 19:06:37
 -->
 <template>
   <div class="perspective-container">
@@ -440,7 +440,7 @@ export default {
       //   downSampleTime: this.timeInterval
       // })
       // console.log(data)
-      this.chartData.dataList = [20, 30, 40, 20, 15, 50, 15],
+      this.chartData.dataList = [20, 30, 40, 20, 15, 50, 15]
       this.chartData.dateList = ['2020-1-1', '2020-1-2', '2020-1-3', '2020-1-3', '2020-1-4', '2020-1-5']
     }
   }

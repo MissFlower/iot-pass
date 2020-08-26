@@ -1,9 +1,9 @@
-import axios from "@/utils/request";
-import Qs from "qs";
+import axios from '@/utils/request'
+import Qs from 'qs'
 
 const headerFrom = {
-  "Content-Type": "application/x-www-form-urlencoded"
-};
+  'Content-Type': 'application/x-www-form-urlencoded'
+}
 /*
   用户基本信息列表
 
@@ -17,11 +17,11 @@ const headerFrom = {
 export function userList(data) {
   // 用户列表
   return axios({
-    url: "/user/list",
-    method: "post",
+    url: '/user/list',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 /*
 后台创建用户，由运营人员或管理员操作
@@ -35,11 +35,11 @@ export function userList(data) {
 export function createUser(data) {
   // 用户创建
   return axios({
-    url: "/user/create",
-    method: "post",
+    url: '/user/create',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 
 /*
@@ -56,11 +56,11 @@ export function createUser(data) {
 export function updateUser(data) {
   // 用户编辑
   return axios({
-    url: "/user/update",
-    method: "post",
+    url: '/user/update',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 /*
   逻辑删除用户
@@ -70,11 +70,11 @@ export function updateUser(data) {
 export function delUser(data) {
   // 用户删除
   return axios({
-    url: "/user/delete",
-    method: "post",
+    url: '/user/delete',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 
 /*
@@ -86,11 +86,11 @@ export function delUser(data) {
 export function updateRoleforUser(data) {
   // 编辑用户的所属角色
   return axios({
-    url: "/user/updateRole",
-    method: "post",
+    url: '/user/updateRole',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 
 /*
@@ -102,9 +102,9 @@ export function updateRoleforUser(data) {
 export function userRoleList(data) {
   // 角色列表，默认返回全部角色，用户已选的，打已选标记
   return axios({
-    url: "/role/getRolesByUserId",
-    method: "post",
+    url: '/role/getRolesByUserId',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }

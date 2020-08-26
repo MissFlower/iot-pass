@@ -4,14 +4,14 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 14:26:58
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-25 19:06:37
+ * @LastEditTime: 2020-08-26 21:29:19
 -->
 <template>
   <div class="perspective-container">
     <!-- 图表区域 -->
     <div class="chart-container">
       <!-- 图表组件 -->
-      <Chart :chart-data="chartData" class="chart-content" />
+      <Chart :chart-data="chartData" :legend="legend" class="chart-content" />
     </div>
     <!-- 功能操作区域 -->
     <div class="operation-container">
@@ -123,8 +123,8 @@ import Chart from './Chart'
 import ProductAutocomplete from './ProductAutocomplete'
 import MeasureAutocomplete from './MeasureAutocomplete'
 import FilterTag from './FilterTag'
-import { deepFreeze } from 'src/utils'
-// import { getTagkByMetric, getDataForChart } from 'src/api/perspectives'
+import { deepFreeze, parseTime } from 'src/utils'
+import { getTagkByMetric, getDataForChart } from 'src/api/perspectives'
 // 时间范围options
 const TIME_OPTIONS = deepFreeze([
   {
@@ -244,6 +244,7 @@ export default {
         dataList: [20, 30, 40, 20, 15, 50, 15],
         dateList: ['2020-1-1', '2020-1-2', '2020-1-3', '2020-1-3', '2020-1-4', '2020-1-5']
       },
+      legend: [], // 图例
       timeRange: 5, // 选择的时间范围 unit(minute)
       TIME_OPTIONS, // 可供选择的时间范围options
       timeInterval: '1m', // 选择的采样间隔 unit(second)
@@ -298,6 +299,8 @@ export default {
   methods: {
     getCustomTime() {
       // 获取自定义时间
+      this.startTime = this.customTime[0]
+      this.endTime = this.customTime[1]
     },
     getProductKey(data) {
       // 获取prodectList
@@ -306,52 +309,16 @@ export default {
     },
     getMeasureKey(data) {
       // 真实操作。。。。
-      console.log(data)
       this.measureKey = data.metricRealName
     },
     async getTagsList() {
       // 获取tags列表
-      // const { data } = await getTagkByMetric({
-      //   metricRealName: this.measureKey
-      // })
-      // console.log(data)
       // 返回数据赋值给baseFilter 并备份一份所有的tags列表 saveAllTags
-      // this.saveAllTags = [
-      //   {
-      //     label: 'list1-tag1',
-      //     value: 11,
-      //     id: 1
-      //   },
-      //   {
-      //     label: 'list1-tag2',
-      //     value: 12,
-      //     id: 2
-      //   },
-      //   {
-      //     label: 'list1-tag3',
-      //     value: 13,
-      //     id: 3
-      //   }
-      // ]
-      // this.baseFilter.options = [
-      //   {
-      //     label: 'list1-tag1',
-      //     value: 11,
-      //     id: 1
-      //   },
-      //   {
-      //     label: 'list1-tag2',
-      //     value: 12,
-      //     id: 2
-      //   },
-      //   {
-      //     label: 'list1-tag3',
-      //     value: 13,
-      //     id: 3
-      //   }
-      // ]
-      this.saveAllTags = ['list1-tag1', 'list1-tag2', 'list1-tag3']
-      this.baseFilter.options = ['list1-tag1', 'list1-tag2', 'list1-tag3']
+      const { data } = await getTagkByMetric({
+        metricRealName: this.measureKey
+      })
+      this.saveAllTags = data
+      this.baseFilter.options = data
     },
     getUnusedFilterList() {
       // 获取未被使用的tag filter
@@ -430,18 +397,55 @@ export default {
     async submit() {
       // 提交数据
       console.log(this.checkedFilterTagValue)
-      // const data = await getDataForChart({
-      //   metricRealName: this.measureKey,
-      //   tagsFilter: [],
-      //   aggregator: this.algorithm,
-      //   startTime: this.startTime,
-      //   endTime: this.endTime,
-      //   downSampleAggregator: '',
-      //   downSampleTime: this.timeInterval
-      // })
-      // console.log(data)
-      this.chartData.dataList = [20, 30, 40, 20, 15, 50, 15]
-      this.chartData.dateList = ['2020-1-1', '2020-1-2', '2020-1-3', '2020-1-3', '2020-1-4', '2020-1-5']
+      console.log(Object.values(this.checkedFilterTagValue))
+      const tagsFilter = {}
+      Object.values(this.checkedFilterTagValue).map(item => {
+        tagsFilter[item.tag] = `${item.values.map(item => item.value).join('|')}`
+      })
+      console.log(tagsFilter)
+      this.endTime = Date.now()
+      this.startTime = this.endTime - this.timeRange * 60 * 1000
+      const { data } = await getDataForChart({
+        metricRealName: this.measureKey,
+        tagsFilter: JSON.stringify(tagsFilter),
+        aggregator: this.algorithm,
+        startTime: this.startTime,
+        endTime: this.endTime,
+        downSampleAggregator: '',
+        downSampleTime: this.timeInterval
+      })
+      console.log(data)
+      const datas = []
+      data.forEach((item, index) => {
+        datas[index] = {
+          name: item.metric + index,
+          type: 'line',
+          data: []
+        }
+        const values = Object.values(item.propertyInfo)
+        Object.keys(item.propertyInfo).forEach((item, i) => {
+          datas[index].data.push({ value: [parseTime(item), values[i]] })
+        })
+      })
+      console.log(datas)
+      console.log(JSON.stringify(datas[0]))
+      this.chartData = datas
+      // this.chartData.dataList = [
+      //   {
+      //     name: '图1',
+      //     type: 'line',
+      //     stack: '总量',
+      //     data: [120, 132, 101, 134, 90, 230, 210]
+      //   },
+      //   {
+      //     name: '图2',
+      //     type: 'line',
+      //     stack: '总量',
+      //     data: [220, 182, 191, 234, 290, 330, 310]
+      //   }
+      // ]
+      // this.chartData.dateList = ['2020-1-1', '2020-1-2', '2020-1-3', '2020-1-3', '2020-1-4', '2020-1-5']
+      // this.legend = ['图1', '图2']
     }
   }
 }
@@ -456,6 +460,12 @@ export default {
     width: 100%;
     height: calc(100% - 290px);
     min-height: 300px;
+
+    .chart-content {
+      width: 100%;
+      height: 100%;
+      text-align: right;
+    }
   }
 
   .operation-container {

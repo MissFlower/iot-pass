@@ -4,10 +4,11 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-21 15:03:28
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-25 18:27:35
+ * @LastEditTime: 2020-08-26 15:03:55
 -->
 <template>
   <ElAutocomplete
+    ref="measureAutocomplete"
     v-bind="$attrs"
     :fetch-suggestions="querySearchAsync"
     popper-class="product-autocomplete"
@@ -35,28 +36,7 @@ export default {
   },
   data() {
     return {
-      measureList: [
-        {
-          metricRealName: '22ea8e3d96ba42e1b42ec4d05cd5e0a6_cellSignalStrength1',
-          metricShowName: '度量1'
-        },
-        {
-          metricRealName: '22ea8e3d96ba42e1b42ec4d05cd5e0a6_cellSignalStrength2',
-          metricShowName: '度量2'
-        },
-        {
-          metricRealName: '22ea8e3d96ba42e1b42ec4d05cd5e0a6_cellSignalStrength3',
-          metricShowName: '度量3'
-        },
-        {
-          metricRealName: '22ea8e3d96ba42e1b42ec4d05cd5e0a6_cellSignalStrength4',
-          metricShowName: '度量4'
-        },
-        {
-          metricRealName: '22ea8e3d96ba42e1b42ec4d05cd5e0a6_cellSignalStrength5',
-          metricShowName: '度量5'
-        }
-      ]
+      measureList: [] // 度量list
     }
   },
   watch: {
@@ -64,7 +44,7 @@ export default {
       handler(newKey, oldKey) {
         // 调用度量列表接口
         if (newKey && newKey !== oldKey) {
-          // this.getMetircsList()
+          this.getMetircsList()
         }
       }
     }
@@ -75,8 +55,8 @@ export default {
         const { data } = await getMetircsByProduct({
           productKey: this.productKey
         })
-        console.log(data)
-        this.measureList = data.metrics
+        this.measureList = data
+        this.$refs.measureAutocomplete.focus()
       } catch (error) {
         this.$message.error(error)
       }

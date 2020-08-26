@@ -4,13 +4,12 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-25 14:02:54
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-25 15:53:20
+ * @LastEditTime: 2020-08-26 14:48:33
  */
 import request from '@/utils/request'
-import Qs from 'qs'
 
 const POST_JSON = {
-  'Content-Type': 'application/json'
+  'Content-Type': 'application/json;charset=UTF-8'
 }
 
 /**
@@ -19,12 +18,11 @@ const POST_JSON = {
  * @return {metrics}
  * @author: AiDongYang
  */
-export function getMetircsByProduct(data) {
+export function getMetircsByProduct(params) {
   return request({
     url: 'data/analysis/getMetircsByProduct',
-    method: 'post',
-    headers: POST_JSON,
-    data: Qs.stringify(data)
+    method: 'get',
+    params
   })
 }
 
@@ -34,12 +32,11 @@ export function getMetircsByProduct(data) {
  * @return {type}
  * @author: AiDongYang
  */
-export function getTagkByMetric(data) {
+export function getTagkByMetric(params) {
   return request({
     url: 'data/analysis/getTagkByMetric',
-    method: 'post',
-    headers: POST_JSON,
-    data: Qs.stringify(data)
+    method: 'get',
+    params
   })
 }
 
@@ -56,7 +53,7 @@ export function getTagValueByTagkey(data) {
     url: 'data/analysis/getTagValueByTagkey',
     method: 'post',
     headers: POST_JSON,
-    data: Qs.stringify(data)
+    data
   })
 }
 
@@ -77,6 +74,6 @@ export function getDataForChart(data) {
     url: 'data/analysis/getDataForChart',
     method: 'post',
     headers: POST_JSON,
-    data: Qs.stringify(data)
+    data
   })
 }

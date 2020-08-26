@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-21 16:51:04
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-25 18:44:38
+ * @LastEditTime: 2020-08-26 18:04:27
 -->
 <template>
   <div class="filter-tag-container">
@@ -22,7 +22,7 @@
       </ElOption>
     </ElSelect>
     <div v-show="tagKey" class="tag-search-container">
-      <ElInput v-model.trim="searchValue" placeholder="请输入内容" @input="searchTagValue" />
+      <ElInput v-model.trim="searchValue" placeholder="请输入内容" @change="searchTagValue" />
       <div class="tag-value-container">
         <ElScrollbar style="height:100%;">
           <ul class="checked-tag-container">
@@ -41,7 +41,7 @@
   </div>
 </template>
 <script>
-// import { getTagValueByTagkey } from 'src/api/perspectives'
+import { getTagValueByTagkey } from 'src/api/perspectives'
 export default {
   name: 'FilterTag',
   props: {
@@ -138,12 +138,20 @@ export default {
       // 每次勾选需要将该tag下的 value 和 tag 传回父级
       this.$emit('change', this.id, {
         tag: this.tagKey, // tag 的 id
-        value: this.checkedTagsValue
+        values: this.checkedTagsValue
       })
     },
-    searchTagValue() {
+    async getTagValueList() {
+      // 获取 tagvalue 列表
+      const { data } = await getTagValueByTagkey({
+        metricRealName: this.measureKey,
+        tagKey: this.tagKey,
+        tagValuePrefix: this.searchValue
+      })
+      return data.length && data.map(item => { return { checked: false, value: item } })
+    },
+    async searchTagValue() {
       // 根据搜索条件查询tag下面的value值 调用后台接口 返回数据 需要 和 之前选中的数据进行对比过滤
-      console.log(this.searchValue)
       // 空条件 赋予最初列表 并 return
       if (!this.searchValue) {
         // 搜索条件为空时 进行列表还原
@@ -151,25 +159,23 @@ export default {
         this.uncheckedTagsValue = [...this.saveUncheckedTagsValue.filter(item => !checkedValueIdList.includes(item.value))]
         return
       }
+      const matchValue = await this.getTagValueList()
       // 过滤包含value的列表
-      const matchValue = this.uncheckedTagsValue.filter(item => item.value.includes(this.searchValue))
+      // const matchValue = this.uncheckedTagsValue.filter(item => item.value.includes(this.searchValue))
       // 和选中的数据进行对比 再次过滤
       const checkedValueIdList = this.checkedTagsValue.map(item => item.value)
       this.uncheckedTagsValue = [...matchValue.filter(item => !checkedValueIdList.includes(item.value))]
     },
     async tagChange() {
       // tag选择更改 请求接口 获取tag下value列表
-      // const data = await getTagValueByTagkey({
-      //   metricRealName: this.measureKey,
-      //   tagKey: this.tagKey,
-      //   tagValuePrefix: this.searchValue
-      // })
-      // console.log(data)
-      // this.uncheckedTagsValue = data.tagResult
+      const tagValueList = await this.getTagValueList()
+      console.log(tagValueList)
+      this.uncheckedTagsValue = [...tagValueList]
+      this.saveUncheckedTagsValue = [...tagValueList]
       // 更改tag 向父级传回最新的选择结果
       this.$emit('change', this.id, {
         tag: this.tagKey,
-        value: this.checkedTagsValue
+        values: this.checkedTagsValue
       })
       this.$emit('tagChange', this.tagOptions.find(item => item === this.tagKey))
     },

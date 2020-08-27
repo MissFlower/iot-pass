@@ -129,7 +129,7 @@ export default {
       type: Object,
       default: () => {}
     },
-    showFlag: {
+    showFlag: { // 是否为查看
       type: Boolean,
       default: false
     }
@@ -266,6 +266,7 @@ export default {
         this.loading = false
       }
     },
+    // 事件的成功回调
     eventPartSuccess(data) {
       if (data) {
         const obj = JSON.parse(JSON.stringify(data))
@@ -289,6 +290,9 @@ export default {
         str = '编辑'
         obj.modelType = this.editAbility.modelType * 1
         obj.modelData.index = 0
+        obj.identifier = this.editAbility.identifier
+      } else {
+        obj.modelType = '2'
       }
       obj.modelData = JSON.stringify(obj.modelData)
       const submitObj = JSON.parse(JSON.stringify(obj))

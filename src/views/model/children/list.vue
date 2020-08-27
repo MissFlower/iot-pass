@@ -183,13 +183,13 @@ export default {
               }
               if (key.indexOf('Eve') > -1) {
                 item.abilityType = '3' // 3 事件
-                item.showText = `事件类型：${this.eventType[item.type]}`
-              }
-              item.accessMode_ = item.accessMode
-              if (item.accessMode === 'rw') {
-                item.accessMode = '0'
-              } else if (item.accessMode === 'r') {
-                item.accessMode = '1'
+                if (item.type === 'alert') {
+                  item.type = 'info'
+                }
+                if (item.type === 'error') {
+                  item.type = 'fault'
+                }
+                item.showText = `事件类型：${this.eventType[item.type] ? this.eventType[item.type] : item.type}`
               }
             })
             arr = arr.filter(item => {
@@ -210,16 +210,16 @@ export default {
       if (!dataType) {
         return
       }
-      const type = this.dataTypeObj[dataType.type]
+      const type = dataType.type
       const specs = dataType.specs
       let str = ''
       switch (type) {
-        case '0':
-        case '1':
-        case '2':
+        case 'int':
+        case 'float':
+        case 'double':
           str = `取值范围：${specs.min} ~ ${specs.max}`
           break
-        case '3':
+        case 'enum':
           str = `枚举值：`
           if (specs) {
             for (const key in specs) {
@@ -227,7 +227,7 @@ export default {
             }
           }
           break
-        case '4':
+        case 'bool':
           str = `布尔值：`
           if (specs) {
             for (const key in specs) {
@@ -235,7 +235,7 @@ export default {
             }
           }
           break
-        case '5':
+        case 'text':
           str = `数据长度：${specs.length}`
           break
         default:

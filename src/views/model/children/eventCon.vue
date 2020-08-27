@@ -10,9 +10,9 @@
       <el-form-item label="事件类型" prop="type">
         <div v-if="modelType" class="disabledDiv">{{ eventType[formData.type] }}</div>
         <div v-else>
-          <el-radio v-model="formData.type" label="alert">信息</el-radio>
+          <el-radio v-model="formData.type" label="info">信息</el-radio>
           <el-radio v-model="formData.type" label="warn">告警</el-radio>
-          <el-radio v-model="formData.type" label="error">故障</el-radio>
+          <el-radio v-model="formData.type" label="fault">故障</el-radio>
         </div>
       </el-form-item>
       <el-form-item label="输出参数">
@@ -23,7 +23,14 @@
               type="primary"
               :underline="false"
               class="f12 mr10"
-              :disabled="showFlag"
+              @click.stop="editSturct(item)"
+              v-if="showFlag"
+            >查看</el-link>
+            <el-link
+              type="primary"
+              :underline="false"
+              class="f12 mr10"
+              v-if="!showFlag"
               @click.stop="editSturct(item)"
             >编辑</el-link>
             <el-link
@@ -31,7 +38,7 @@
               :underline="false"
               class="f12"
               @click.stop="deleteStruct(index)"
-              :disabled="modelType || showFlag"
+              v-if="!(showFlag || modelType)"
             >删除</el-link>
           </div>
         </div>
@@ -42,10 +49,11 @@
       v-if="flag == 1"
       :specs="specs"
       :info="structInfo"
-      :modelType="modelType"
+      :showFlag="showFlag"
+      :modelType="addParamFlag"
       @close="closeAddParam"
       @success="successAddParams"
-      :allFlag="0"
+      :allFlag="1"
     ></add-param>
   </div>
 </template>
@@ -64,7 +72,7 @@ export default {
       type: Boolean,
       default: false
     },
-    modelType: {
+    modelType: { // 是否是标准功能
       type: Boolean,
       default: false
     }
@@ -84,7 +92,8 @@ export default {
       structInfo: null,
       structIndex: -1,
       specs: [],
-      eventType: EVENT_TYPE
+      eventType: EVENT_TYPE,
+      addParamFlag: false
     }
   },
   mounted() {
@@ -99,8 +108,10 @@ export default {
       this.specs = JSON.parse(JSON.stringify(this.formData.outputData))
       this.flag = 1
       this.structInfo = null
+      this.addParamFlag = false
     },
     editSturct(row, index) {
+      this.addParamFlag = this.modelType
       this.structInfo = JSON.parse(JSON.stringify(row))
       this.structIndex = index
       let specs = this.formData.outputData

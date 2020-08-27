@@ -6,7 +6,7 @@
     <div class="con">
       <div class="info df">
         <div>
-          <svg-icon icon-class="photo" />
+          <svg-icon icon-class="photo" width="70px" height="70px" />
           <div class="tc blue">修改图像</div>
         </div>
         <div class="userInfo df fd_c jc_sa ml20">

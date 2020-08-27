@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-03 11:28:30
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-27 11:39:05
+ * @LastEditTime: 2020-08-27 18:39:57
 -->
 <template>
   <div>
@@ -72,7 +72,6 @@ export default {
   watch: {
     chartData: {
       handler(newValue) {
-        console.log(newValue)
         if (newValue.length) {
           this.drawChart(newValue)
         }
@@ -103,6 +102,7 @@ export default {
     drawChart(datas) {
       // 渲染图表
       // this.echartInstance.clear()
+      console.log(datas)
       const handleDataList = datas.map(item => {
         return {
           name: item.name,
@@ -123,8 +123,8 @@ export default {
           }
         }
       })
-      console.log(handleDataList)
-      console.log(this.legend)
+      // console.log(JSON.stringify(handleDataList))
+      // console.log(this.legend)
       this.echartInstance.setOption({
         legend: {
           data: this.legend

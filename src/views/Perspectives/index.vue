@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 14:26:58
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-27 13:24:41
+ * @LastEditTime: 2020-08-27 18:45:05
 -->
 <template>
   <div class="perspective-container">
@@ -173,6 +173,10 @@ const TIME_OPTIONS = deepFreeze([
 // 采样间隔options
 const TIME_INTERVAL_OPTIONS = deepFreeze([
   {
+    label: '1s',
+    value: '1s'
+  },
+  {
     label: '1min',
     value: '1m'
   },
@@ -225,7 +229,7 @@ const ALFORITHM_OPTIONS = deepFreeze([
   },
   {
     label: '均值',
-    value: 'average'
+    value: 'avg'
   },
   {
     label: 'None',
@@ -267,7 +271,8 @@ export default {
       saveAllTags: [], // 获取到的所有tag
       isShowAddFilter: true, // 是否展示添加filter icon
       isShowChart: true, // 是否展示图表
-      isShowBaseFilter: true // 是否显示baseFilter
+      isShowBaseFilter: true, // 是否显示baseFilter
+      saveDatas: [] // 保存图表接口 每次调用 返回的数据
     }
   },
   computed: {
@@ -283,7 +288,7 @@ export default {
   watch: {
     unusedFilterList: {
       handler(newValue) {
-        this.isShowAddFilter = !!newValue.length
+        this.isShowAddFilter = this.filterList.length < this.saveAllTags.length - 1
       }
     },
     measureKey: {
@@ -305,7 +310,6 @@ export default {
     },
     getProductKey(data) {
       // 获取prodectList
-      console.log(data)
       this.productKey = data.productKey
     },
     getMeasureKey(data) {
@@ -360,6 +364,7 @@ export default {
           this.$refs.add.style.borderLeft = '1px solid #999'
         }
       })
+      this.getUnusedFilterList()
     },
     computedFilterOptions() {
       // 计算每个TAG FILTER下面的options
@@ -400,6 +405,7 @@ export default {
     },
     submit() {
       this.chartData = []
+      this.saveDatas = []
       this.handleChartData(true)
       this.isShowChart = true
     },
@@ -407,10 +413,14 @@ export default {
       // 处理参数 请求图表接口
       const tagsFilter = {}
       Object.values(this.checkedFilterTagValue).map(item => {
-        tagsFilter[item.tag] = `${item.values.map(item => item.value).join('|')}`
+        if (item.values?.length) {
+          tagsFilter[item.tag] = `${item.values.map(item => item.value).join('|')}`
+        }
       })
-      this.endTime = Date.now()
-      this.startTime = this.endTime - this.timeRange * 60 * 1000
+      if (isRepaint) {
+        this.endTime = Date.now()
+        this.startTime = this.endTime - this.timeRange * 60 * 1000
+      }
       const { data } = await getDataForChart({
         metricRealName: this.measureKey,
         tagsFilter: JSON.stringify(tagsFilter),
@@ -421,8 +431,8 @@ export default {
         downSampleTime: this.timeInterval
       })
       // 空数据处理
-      const Len = data.length
-      if (!Len) {
+      const resultList = data.resultList
+      if (!resultList) {
         this.chartData = []
         this.legend = []
         this.isShowChart = false
@@ -430,27 +440,47 @@ export default {
         return
       }
       // 返回数据处理
-      const datas = []
       const legend = []
-      data.forEach((item, index) => {
-        legend.push(item.metric + index)
-        datas[index] = {
-          name: item.metric + index,
-          data: []
-        }
-        const values = Object.values(item.propertyInfo)
-        Object.keys(item.propertyInfo).forEach((item, i) => {
-          datas[index].data.push({ value: [parseTime(item), values[i]] })
-        })
-      })
       if (isRepaint) {
         // 重绘
         this.$refs.chart.initChart()
+
+        this.$nextTick(() => {
+          resultList.forEach((item, index) => {
+            legend.push(item.tagsFilter)
+            this.saveDatas[index] = {
+              name: item.tagsFilter,
+              data: []
+            }
+            const values = Object.values(item.propertyInfo)
+            Object.keys(item.propertyInfo).forEach((item, i) => {
+              this.saveDatas[index].data.push({ value: [parseTime(item), values[i]] })
+            })
+          })
+          this.chartData = [...this.saveDatas]
+          this.legend = legend
+        })
+      } else {
+        // 连续接口请求 处理数据
+        this.saveDatas.forEach((item, index) => {
+          const curData = resultList.find(n => n.tagsFilter === item.name)
+          if (curData) {
+            const values = Object.values(curData.propertyInfo)
+            const reverse = []
+            Object.keys(curData.propertyInfo).forEach((item, i) => {
+              reverse.push({ value: [parseTime(item), values[i]] })
+            })
+            this.saveDatas[index].data.unshift(...reverse)
+          }
+        })
+        this.chartData = [...this.saveDatas]
+        // console.log(this.chartData)
       }
-      this.$nextTick(() => {
-        this.chartData.push(...datas)
-        this.legend = legend
-      })
+      if (data.nextValid) {
+        // 接口连续调用
+        this.startTime = data.nextTime
+        this.handleChartData()
+      }
     }
   }
 }

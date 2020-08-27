@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-21 16:51:04
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-27 13:43:23
+ * @LastEditTime: 2020-08-27 17:52:02
 -->
 <template>
   <div class="filter-tag-container">
@@ -22,7 +22,7 @@
       </ElOption>
     </ElSelect>
     <div v-show="tagKey" class="tag-search-container">
-      <ElInput v-model.trim="searchValue" placeholder="请输入内容" @change="searchTagValue" />
+      <ElInput v-model.trim="searchValue" placeholder="请输入内容" @input="searchTagValue" />
       <div class="tag-value-container">
         <ElScrollbar style="height:100%;">
           <ul class="checked-tag-container">
@@ -42,6 +42,7 @@
 </template>
 <script>
 import { getTagValueByTagkey } from 'src/api/perspectives'
+// import { debounce } from 'src/utils'
 export default {
   name: 'FilterTag',
   props: {
@@ -70,7 +71,8 @@ export default {
       searchValue: '', // 用户输入的搜索值
       checkedTagsValue: [], // 选中的tagValue
       uncheckedTagsValue: [], // 未选中的tagValue
-      saveUncheckedTagsValue: []
+      saveUncheckedTagsValue: [],
+      $_searchTagValueHandler: null
     }
   },
   methods: {
@@ -98,7 +100,7 @@ export default {
         tagKey: this.tagKey,
         tagValuePre: this.searchValue
       })
-      return data.map(item => { return { checked: false, value: item } })
+      return data ? data.map(item => { return { checked: false, value: item } }) : []
     },
     async searchTagValue() {
       // 根据搜索条件查询tag下面的value值 调用后台接口 返回数据 需要 和 之前选中的数据进行对比过滤
@@ -109,6 +111,10 @@ export default {
         this.uncheckedTagsValue = [...this.saveUncheckedTagsValue.filter(item => !checkedValueIdList.includes(item.value))]
         return
       }
+      // let matchValue
+      // this.$_resizeHandler = debounce(async() => {
+      //   matchValue = await this.getTagValueList()
+      // }, 300)()
       const matchValue = await this.getTagValueList()
       // 过滤包含value的列表
       // const matchValue = this.uncheckedTagsValue.filter(item => item.value.includes(this.searchValue))
@@ -121,6 +127,8 @@ export default {
       const tagValueList = await this.getTagValueList()
       this.uncheckedTagsValue = [...tagValueList]
       this.saveUncheckedTagsValue = [...tagValueList]
+      // 将原来选中的tag value 清空
+      this.checkedTagsValue = []
       // 更改tag 向父级传回最新的选择结果
       this.$emit('change', this.id, {
         tag: this.tagKey,

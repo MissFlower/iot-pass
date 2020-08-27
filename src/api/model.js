@@ -1,9 +1,4 @@
 import request from '@/utils/request'
-import Qs from 'qs'
-
-const headerFrom = {
-  'Content-Type': 'application/x-www-form-urlencoded'
-}
 const headerFrom_json = {
   'Content-Type': 'application/json'
 }
@@ -56,7 +51,7 @@ export function getSimpleModel(data) {
     modelData： {
         name	         string	  是	名称
         identifier	   string	  是	唯一标识符
-        accessMode	       int	    是	读写类型 0读写 1只读
+        accessMode	       是	读写类型 rw读写 r只读
         dataType       {        对象	     是
                       type      数据类型 0int32整数型 1float单精度浮点 2double双精度浮点 3enum枚举
                                     4bool布尔型     5text字符串 6date时间型 7struct结构体 8array数组
@@ -83,13 +78,14 @@ export function addCustomAbility(data) {
 /**
  * 编辑自定义功能
  *
+ *  identifier
  *  productKey	   string	  是	产品key
     abilityType	   int	    是	元素类型1属性 2服务 3事件
     modelData： {
       index 用于排序
       name	         string	  是	名称
       identifier	   string	  是	唯一标识符
-      accessMode	       int	    是	读写类型 0读写 1只读
+      accessMode	    	    是	读写类型 rw读写 r只读
       dataType       {        对象	     是
                     type      数据类型 0int32整数型 1float单精度浮点 2double双精度浮点 3enum枚举
                                   4bool布尔型     5text字符串 6date时间型 7struct结构体 8array数组

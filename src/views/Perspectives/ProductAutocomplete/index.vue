@@ -94,7 +94,6 @@ export default {
     },
     handleSelect(data) {
       // 选择事件
-      console.log(1)
       this.$emit('input', data.productName)
       this.$emit('productChange', data)
     }

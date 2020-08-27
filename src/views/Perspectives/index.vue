@@ -4,14 +4,14 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 14:26:58
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-26 21:29:19
+ * @LastEditTime: 2020-08-27 13:24:41
 -->
 <template>
   <div class="perspective-container">
     <!-- 图表区域 -->
     <div class="chart-container">
       <!-- 图表组件 -->
-      <Chart :chart-data="chartData" :legend="legend" class="chart-content" />
+      <Chart ref="chart" v-show="isShowChart" :chart-data="chartData" :legend="legend" class="chart-content" />
     </div>
     <!-- 功能操作区域 -->
     <div class="operation-container">
@@ -79,6 +79,8 @@
         </div>
         <div class="base-fliter-container fl">
           <FilterTag
+            v-if="isShowBaseFilter"
+            ref="baseFilter"
             :tag-options="baseFilter.options"
             :show="false"
             :id="baseFilter.id"
@@ -240,10 +242,7 @@ export default {
   },
   data() {
     return {
-      chartData: { // 图表数据
-        dataList: [20, 30, 40, 20, 15, 50, 15],
-        dateList: ['2020-1-1', '2020-1-2', '2020-1-3', '2020-1-3', '2020-1-4', '2020-1-5']
-      },
+      chartData: [], // 图表数据
       legend: [], // 图例
       timeRange: 5, // 选择的时间范围 unit(minute)
       TIME_OPTIONS, // 可供选择的时间范围options
@@ -266,7 +265,9 @@ export default {
       checkedFilterTagValue: {}, // 用来存储用户创建的不同 Filter 下 选择的 value
       unusedFilterList: [], // 未被使用的 Filter tag列表
       saveAllTags: [], // 获取到的所有tag
-      isShowAddFilter: true // 是否展示添加filter icon
+      isShowAddFilter: true, // 是否展示添加filter icon
+      isShowChart: true, // 是否展示图表
+      isShowBaseFilter: true // 是否显示baseFilter
     }
   },
   computed: {
@@ -379,7 +380,6 @@ export default {
     },
     getCheckedTagValue(id, data) {
       // 获取tag 和 value 更新 用户 存储的内容
-      // console.log(data)
       this.checkedFilterTagValue[id] = data
       // 设置每个Filter选中的tag  存储的是id
       const index = this.filterList.findIndex(item => item.id === id)
@@ -393,16 +393,22 @@ export default {
       // 重置所有已选择的Filter
       this.filterList = []
       this.baseFilter.checkedTag = ''
+      this.isShowBaseFilter = false
+      this.$nextTick(() => {
+        this.isShowBaseFilter = true
+      })
     },
-    async submit() {
-      // 提交数据
-      console.log(this.checkedFilterTagValue)
-      console.log(Object.values(this.checkedFilterTagValue))
+    submit() {
+      this.chartData = []
+      this.handleChartData(true)
+      this.isShowChart = true
+    },
+    async handleChartData(isRepaint) {
+      // 处理参数 请求图表接口
       const tagsFilter = {}
       Object.values(this.checkedFilterTagValue).map(item => {
         tagsFilter[item.tag] = `${item.values.map(item => item.value).join('|')}`
       })
-      console.log(tagsFilter)
       this.endTime = Date.now()
       this.startTime = this.endTime - this.timeRange * 60 * 1000
       const { data } = await getDataForChart({
@@ -414,12 +420,22 @@ export default {
         downSampleAggregator: '',
         downSampleTime: this.timeInterval
       })
-      console.log(data)
+      // 空数据处理
+      const Len = data.length
+      if (!Len) {
+        this.chartData = []
+        this.legend = []
+        this.isShowChart = false
+        this.$message.warning('暂无数据!')
+        return
+      }
+      // 返回数据处理
       const datas = []
+      const legend = []
       data.forEach((item, index) => {
+        legend.push(item.metric + index)
         datas[index] = {
           name: item.metric + index,
-          type: 'line',
           data: []
         }
         const values = Object.values(item.propertyInfo)
@@ -427,25 +443,14 @@ export default {
           datas[index].data.push({ value: [parseTime(item), values[i]] })
         })
       })
-      console.log(datas)
-      console.log(JSON.stringify(datas[0]))
-      this.chartData = datas
-      // this.chartData.dataList = [
-      //   {
-      //     name: '图1',
-      //     type: 'line',
-      //     stack: '总量',
-      //     data: [120, 132, 101, 134, 90, 230, 210]
-      //   },
-      //   {
-      //     name: '图2',
-      //     type: 'line',
-      //     stack: '总量',
-      //     data: [220, 182, 191, 234, 290, 330, 310]
-      //   }
-      // ]
-      // this.chartData.dateList = ['2020-1-1', '2020-1-2', '2020-1-3', '2020-1-3', '2020-1-4', '2020-1-5']
-      // this.legend = ['图1', '图2']
+      if (isRepaint) {
+        // 重绘
+        this.$refs.chart.initChart()
+      }
+      this.$nextTick(() => {
+        this.chartData.push(...datas)
+        this.legend = legend
+      })
     }
   }
 }

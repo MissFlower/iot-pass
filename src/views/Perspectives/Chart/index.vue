@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-03 11:28:30
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-26 20:45:39
+ * @LastEditTime: 2020-08-27 11:39:05
 -->
 <template>
   <div>
@@ -73,17 +73,15 @@ export default {
     chartData: {
       handler(newValue) {
         console.log(newValue)
-        this.drawChart(newValue)
+        if (newValue.length) {
+          this.drawChart(newValue)
+        }
       },
       deep: true
     },
     dataZoom(newValue) {
       this.addAndRemoveDataZoom(newValue)
     }
-  },
-  mounted() {
-    // console.log('初始化')
-    this.initChart()
   },
   beforeDestroy() {
     if (!this.echartInstance) {
@@ -94,14 +92,14 @@ export default {
   },
   methods: {
     initChart() {
-      // 初始化echarts实例
-      if (!this.echartInstance) {
-        this.echartInstance = echarts.init(document.getElementById('echart'))
-        this.echartInstance.setOption(this.getOptions({ dataList: [], dateList: [] }), true) // 默认为 false，即合并
-        this.rewriteLengendHandler()
+      if (this.echartInstance) {
+        this.echartInstance.dispose()
+        this.echartInstance = null
       }
+      this.echartInstance = echarts.init(document.getElementById('echart'))
+      this.echartInstance.setOption(this.getOptions(), true) // 默认为 false，即合并
+      this.rewriteLengendHandler()
     },
-    // drawChart({ dataList, dateList }) {
     drawChart(datas) {
       // 渲染图表
       // this.echartInstance.clear()
@@ -126,18 +124,16 @@ export default {
         }
       })
       console.log(handleDataList)
-
+      console.log(this.legend)
       this.echartInstance.setOption({
-        // xAxis: [{
-        //   data: dateList
-        // }],
+        legend: {
+          data: this.legend
+        },
         series: [...handleDataList]
       })
     },
-    // getOptions({ dataList, dateList }) {
-    getOptions({ dataList, dateList }) {
+    getOptions() {
       // 图表配置
-      console.log(111, this.legend)
       return {
         tooltip: {
           trigger: 'axis',
@@ -145,13 +141,13 @@ export default {
           formatter: function(params) {
             const content = `
               <div style="padding:5px 10px;">
-                <div>${params[0].data.timeLabel}</div>
+                <div>${params[0].value[0]}</div>
                 <div style="display:flex;justify-content:space-between;margin-top:5px;">
                   <div>
                     <span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:${params[0].color};"></span>
                     <span>value</span>
                   </div>
-                  <span style="display:inline-block;margin-left:20px;">${params[0].value}</span>
+                  <span style="display:inline-block;margin-left:20px;">${params[0].value[1]}</span>
                 </div>
               </div>
             `
@@ -159,19 +155,18 @@ export default {
           }
         },
         legend: {
-          data: this.$attrs.legend,
+          data: [],
           orient: 'horizontal',
           x: 'center',
-          y: 'bottom',
+          y: 10,
           textStyle: {
             color: '#000',
-            lineHeight: 18,
-            height: 18,
-            padding: [3, 0, 0, 0]
+            lineHeight: 12,
+            padding: 0
           },
           icon: 'circle',
           itemWidth: 8, // icon的宽
-          itemHeight: 12 // icon的高
+          itemHeight: 8 // icon的高
         },
         toolbox: {
           show: true,
@@ -186,17 +181,15 @@ export default {
           }
         },
         grid: {
-          top: '10px',
+          top: '40px',
           left: '14px',
           right: '36px',
-          bottom: '30px',
+          bottom: '10px',
           containLabel: true
         },
         xAxis: {
-          // type: 'category',
           type: 'time',
           boundaryGap: false
-          // data: dateList
         },
         yAxis: {
           type: 'value',

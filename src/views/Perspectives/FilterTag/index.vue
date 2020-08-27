@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-21 16:51:04
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-26 18:04:27
+ * @LastEditTime: 2020-08-27 13:43:23
 -->
 <template>
   <div class="filter-tag-container">
@@ -69,58 +69,8 @@ export default {
       tagKey: '', // 选中的tag
       searchValue: '', // 用户输入的搜索值
       checkedTagsValue: [], // 选中的tagValue
-      uncheckedTagsValue: [ // 未选中的tagValue
-        {
-          checked: false,
-          value: '选中的tag1'
-        },
-        {
-          checked: false,
-          value: '选中的tag2'
-        },
-        {
-          checked: false,
-          value: '未选中的tag3'
-        },
-        {
-          checked: false,
-          value: '未选中的tag4'
-        },
-        {
-          checked: false,
-          value: '未选中的tag5'
-        },
-        {
-          checked: false,
-          value: '未选中的tag6'
-        }
-      ],
-      saveUncheckedTagsValue: [
-        {
-          checked: false,
-          value: '选中的tag1'
-        },
-        {
-          checked: false,
-          value: '选中的tag2'
-        },
-        {
-          checked: false,
-          value: '未选中的tag3'
-        },
-        {
-          checked: false,
-          value: '未选中的tag4'
-        },
-        {
-          checked: false,
-          value: '未选中的tag5'
-        },
-        {
-          checked: false,
-          value: '未选中的tag6'
-        }
-      ]
+      uncheckedTagsValue: [], // 未选中的tagValue
+      saveUncheckedTagsValue: []
     }
   },
   methods: {
@@ -146,9 +96,9 @@ export default {
       const { data } = await getTagValueByTagkey({
         metricRealName: this.measureKey,
         tagKey: this.tagKey,
-        tagValuePrefix: this.searchValue
+        tagValuePre: this.searchValue
       })
-      return data.length && data.map(item => { return { checked: false, value: item } })
+      return data.map(item => { return { checked: false, value: item } })
     },
     async searchTagValue() {
       // 根据搜索条件查询tag下面的value值 调用后台接口 返回数据 需要 和 之前选中的数据进行对比过滤
@@ -169,7 +119,6 @@ export default {
     async tagChange() {
       // tag选择更改 请求接口 获取tag下value列表
       const tagValueList = await this.getTagValueList()
-      console.log(tagValueList)
       this.uncheckedTagsValue = [...tagValueList]
       this.saveUncheckedTagsValue = [...tagValueList]
       // 更改tag 向父级传回最新的选择结果

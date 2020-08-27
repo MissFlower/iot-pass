@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 14:26:58
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-27 18:45:05
+ * @LastEditTime: 2020-08-27 19:45:30
 -->
 <template>
   <div class="perspective-container">
@@ -417,21 +417,29 @@ export default {
           tagsFilter[item.tag] = `${item.values.map(item => item.value).join('|')}`
         }
       })
+      if (JSON.stringify(tagsFilter) === '{}') {
+        this.$message.warning('请至少选择一条数据!')
+        return
+      }
       if (isRepaint) {
         this.endTime = Date.now()
         this.startTime = this.endTime - this.timeRange * 60 * 1000
       }
-      const { data } = await getDataForChart({
+      const { data, code, message } = await getDataForChart({
         metricRealName: this.measureKey,
         tagsFilter: JSON.stringify(tagsFilter),
         aggregator: this.algorithm,
         startTime: this.startTime,
         endTime: this.endTime,
-        downSampleAggregator: '',
+        // downSampleAggregator: this.algorithm,
         downSampleTime: this.timeInterval
       })
       // 空数据处理
-      const resultList = data.resultList
+      if (code !== 200) {
+        this.$message.error(message)
+        return
+      }
+      const resultList = data?.resultList
       if (!resultList) {
         this.chartData = []
         this.legend = []

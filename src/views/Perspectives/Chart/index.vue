@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-03 11:28:30
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-27 18:39:57
+ * @LastEditTime: 2020-08-28 15:21:57
 -->
 <template>
   <div>
@@ -139,18 +139,29 @@ export default {
           trigger: 'axis',
           // padding: 0,
           formatter: function(params) {
-            const content = `
-              <div style="padding:5px 10px;">
-                <div>${params[0].value[0]}</div>
-                <div style="display:flex;justify-content:space-between;margin-top:5px;">
-                  <div>
-                    <span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:${params[0].color};"></span>
-                    <span>value</span>
+            let content = ''
+            const tmp = []
+            params.forEach(param => {
+              if (!tmp.find(item => item.seriesName === param.seriesName)) {
+                tmp.push({
+                  seriesName: param.seriesName,
+                  time: param.data.value[0],
+                  value: param.data.value[1]
+                })
+                content += `
+                  <div style="padding:5px 10px;">
+                    <div style="display:flex;justify-content:space-between;margin-top:5px;">
+                      <div>
+                        <span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:${param.color};"></span>
+                        <span>${param.seriesName}</span>
+                        <span style="display:inline-block;margin-left:20px;">${param.data.value[0]}</span>
+                        <span style="display:inline-block;margin-left:20px;">${param.data.value[1]}</span>
+                      </div>
+                    </div>
                   </div>
-                  <span style="display:inline-block;margin-left:20px;">${params[0].value[1]}</span>
-                </div>
-              </div>
-            `
+                `
+              }
+            })
             return content
           }
         },

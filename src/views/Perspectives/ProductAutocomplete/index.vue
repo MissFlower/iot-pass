@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-21 15:03:28
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-26 15:03:37
+ * @LastEditTime: 2020-08-28 14:41:41
 -->
 <template>
   <ElAutocomplete
@@ -16,8 +16,9 @@
     @select="handleSelect"
   >
     <i
-      class="el-icon-search product-search"
+      class="el-icon-close product-search"
       slot="suffix"
+      @click="deleteQuery"
     />
     <template slot-scope="{ item }">
       <div class="name">{{ item.productName }}</div>
@@ -30,38 +31,8 @@ export default {
   name: 'ProductAutocomplete',
   data() {
     return {
-      productList: [
-        {
-          name: '产品1'
-        },
-        {
-          name: '产品2'
-        },
-        {
-          name: '产品3'
-        },
-        {
-          name: '产品4'
-        },
-        {
-          name: '产品5'
-        },
-        {
-          name: '产品1'
-        },
-        {
-          name: '产品2'
-        },
-        {
-          name: '产品3'
-        },
-        {
-          name: '产品4'
-        },
-        {
-          name: '产品5'
-        }
-      ]
+      productList: [],
+      saveList: []
     }
   },
   created() {
@@ -77,7 +48,8 @@ export default {
           productName: ''
         })
         this.productList = data.data
-        this.$refs.productAutocomplete.focus()
+        this.saveList = data.data
+        // this.$refs.productAutocomplete.focus()
       } catch (error) {
         this.$message.error(error)
       }
@@ -96,10 +68,20 @@ export default {
       // 选择事件
       this.$emit('input', data.productName)
       this.$emit('productChange', data)
+    },
+    deleteQuery() {
+      this.$refs.productAutocomplete.focus()
+      this.$refs.productAutocomplete.handleInput()
+      this.$emit('productChange')
     }
   }
 }
 </script>
+<style lang="scss" scoped>
+  .product-search {
+    cursor: pointer;
+  }
+</style>
 <style>
 .product-autocomplete .el-autocomplete-suggestion__wrap {
   max-height: 200px;

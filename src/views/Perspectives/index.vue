@@ -4,14 +4,17 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 14:26:58
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-27 19:45:30
+ * @LastEditTime: 2020-08-28 15:36:20
 -->
 <template>
   <div class="perspective-container">
     <!-- 图表区域 -->
-    <div class="chart-container">
+    <div class="chart-container" v-loading="loading">
       <!-- 图表组件 -->
-      <Chart ref="chart" v-show="isShowChart" :chart-data="chartData" :legend="legend" class="chart-content" />
+      <Chart ref="chart" v-show="isShowChart" :chart-data="chartData" :legend="legend" :data-zoom="dataZoom" class="chart-content" />
+      <div v-show="!isShowChart" class="default-graph-box">
+        <DeafultGraph icon-class="empty1" width="150" height="150" text="暂无数据" />
+      </div>
     </div>
     <!-- 功能操作区域 -->
     <div class="operation-container">
@@ -74,7 +77,7 @@
           <span class="operation-text">FROM</span>
           <div class="operation-from-content">
             <ProductAutocomplete v-model="productName" placeholder="搜索产品" class="product-complete" @productChange="getProductKey" />
-            <MeasureAutocomplete v-model="measureName" :product-key="productKey" placeholder="请选择" class="measure-complete" @measureChange="getMeasureKey" />
+            <MeasureAutocomplete v-model="measureName" :product-key="productKey" placeholder="请选择度量" class="measure-complete" @measureChange="getMeasureKey" />
           </div>
         </div>
         <div class="base-fliter-container fl">
@@ -85,6 +88,7 @@
             :show="false"
             :id="baseFilter.id"
             :measure-key="measureKey"
+            class="filter-list"
             @change="getCheckedTagValue"
             @tagChange="computedFilterOptions"
           />
@@ -124,6 +128,7 @@
 import Chart from './Chart'
 import ProductAutocomplete from './ProductAutocomplete'
 import MeasureAutocomplete from './MeasureAutocomplete'
+import DeafultGraph from 'src/components/DeafultGraph'
 import FilterTag from './FilterTag'
 import { deepFreeze, parseTime } from 'src/utils'
 import { getTagkByMetric, getDataForChart } from 'src/api/perspectives'
@@ -172,10 +177,6 @@ const TIME_OPTIONS = deepFreeze([
 ])
 // 采样间隔options
 const TIME_INTERVAL_OPTIONS = deepFreeze([
-  {
-    label: '1s',
-    value: '1s'
-  },
   {
     label: '1min',
     value: '1m'
@@ -242,7 +243,8 @@ export default {
     Chart,
     ProductAutocomplete,
     MeasureAutocomplete,
-    FilterTag
+    FilterTag,
+    DeafultGraph
   },
   data() {
     return {
@@ -270,9 +272,11 @@ export default {
       unusedFilterList: [], // 未被使用的 Filter tag列表
       saveAllTags: [], // 获取到的所有tag
       isShowAddFilter: true, // 是否展示添加filter icon
-      isShowChart: true, // 是否展示图表
+      isShowChart: false, // 是否展示图表
       isShowBaseFilter: true, // 是否显示baseFilter
-      saveDatas: [] // 保存图表接口 每次调用 返回的数据
+      saveDatas: [], // 保存图表接口 每次调用 返回的数据
+      loading: false, // loading 动画状态
+      dataZoom: true // 是否开启dataZoom
     }
   },
   computed: {
@@ -310,11 +314,15 @@ export default {
     },
     getProductKey(data) {
       // 获取prodectList
-      this.productKey = data.productKey
+      this.productKey = data ? data.productKey : ''
+      this.measureKey = ''
+      this.measureName = ''
+      this.resetFilter()
     },
     getMeasureKey(data) {
       // 真实操作。。。。
-      this.measureKey = data.metricRealName
+      this.measureKey = data ? data.metricRealName : ''
+      this.resetFilter()
     },
     async getTagsList() {
       // 获取tags列表
@@ -397,8 +405,13 @@ export default {
     resetFilter() {
       // 重置所有已选择的Filter
       this.filterList = []
-      this.baseFilter.checkedTag = ''
+      this.baseFilter = {
+        id: 'base',
+        checkedTag: '',
+        options: []
+      }
       this.isShowBaseFilter = false
+      this.checkedFilterTagValue = {}
       this.$nextTick(() => {
         this.isShowBaseFilter = true
       })
@@ -407,7 +420,6 @@ export default {
       this.chartData = []
       this.saveDatas = []
       this.handleChartData(true)
-      this.isShowChart = true
     },
     async handleChartData(isRepaint) {
       // 处理参数 请求图表接口
@@ -422,6 +434,7 @@ export default {
         return
       }
       if (isRepaint) {
+        this.loading = true
         this.endTime = Date.now()
         this.startTime = this.endTime - this.timeRange * 60 * 1000
       }
@@ -434,6 +447,7 @@ export default {
         // downSampleAggregator: this.algorithm,
         downSampleTime: this.timeInterval
       })
+      this.loading = false
       // 空数据处理
       if (code !== 200) {
         this.$message.error(message)
@@ -444,51 +458,52 @@ export default {
         this.chartData = []
         this.legend = []
         this.isShowChart = false
-        this.$message.warning('暂无数据!')
         return
       }
+      this.isShowChart = true
+      this.$nextTick(() => {
       // 返回数据处理
-      const legend = []
-      if (isRepaint) {
+        const legend = []
+        if (isRepaint) {
         // 重绘
-        this.$refs.chart.initChart()
+          this.$refs.chart.initChart()
 
-        this.$nextTick(() => {
-          resultList.forEach((item, index) => {
-            legend.push(item.tagsFilter)
-            this.saveDatas[index] = {
-              name: item.tagsFilter,
-              data: []
-            }
-            const values = Object.values(item.propertyInfo)
-            Object.keys(item.propertyInfo).forEach((item, i) => {
-              this.saveDatas[index].data.push({ value: [parseTime(item), values[i]] })
+          this.$nextTick(() => {
+            resultList.forEach((item, index) => {
+              legend.push(item.tagsFilter)
+              this.saveDatas[index] = {
+                name: item.tagsFilter,
+                data: []
+              }
+              const values = Object.values(item.propertyInfo)
+              Object.keys(item.propertyInfo).forEach((item, i) => {
+                this.saveDatas[index].data.push({ value: [parseTime(item), values[i]] })
+              })
             })
+            this.chartData = [...this.saveDatas]
+            this.legend = legend
+          })
+        } else {
+        // 连续接口请求 处理数据
+          this.saveDatas.forEach((item, index) => {
+            const curData = resultList.find(n => n.tagsFilter === item.name)
+            if (curData) {
+              const values = Object.values(curData.propertyInfo)
+              const reverse = []
+              Object.keys(curData.propertyInfo).forEach((item, i) => {
+                reverse.push({ value: [parseTime(item), values[i]] })
+              })
+              this.saveDatas[index].data.unshift(...reverse)
+            }
           })
           this.chartData = [...this.saveDatas]
-          this.legend = legend
-        })
-      } else {
-        // 连续接口请求 处理数据
-        this.saveDatas.forEach((item, index) => {
-          const curData = resultList.find(n => n.tagsFilter === item.name)
-          if (curData) {
-            const values = Object.values(curData.propertyInfo)
-            const reverse = []
-            Object.keys(curData.propertyInfo).forEach((item, i) => {
-              reverse.push({ value: [parseTime(item), values[i]] })
-            })
-            this.saveDatas[index].data.unshift(...reverse)
-          }
-        })
-        this.chartData = [...this.saveDatas]
-        // console.log(this.chartData)
-      }
-      if (data.nextValid) {
+        }
+        if (data.nextValid) {
         // 接口连续调用
-        this.startTime = data.nextTime
-        this.handleChartData()
-      }
+          this.startTime = data.nextTime
+          this.handleChartData()
+        }
+      })
     }
   }
 }
@@ -504,17 +519,24 @@ export default {
     height: calc(100% - 290px);
     min-height: 300px;
 
-    .chart-content {
+    .chart-content,
+    .default-graph-box {
       width: 100%;
       height: 100%;
       text-align: right;
+    }
+
+    .default-graph-box {
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
 
   .operation-container {
     width: 100%;
     height: 300px;
-    border-top: 1px solid #f1f1f1;
+    // border-top: 1px solid #f1f1f1;
 
     .operation-header {
       display: flex;
@@ -552,7 +574,7 @@ export default {
       margin-top: 6px;
       height: 262px;
       overflow: hidden;
-      border-right: 1px solid #999;
+      // border-right: 1px solid #999;
       position: relative;
 
       .operation-from {
@@ -588,6 +610,9 @@ export default {
     .base-fliter-container {
       display: inline-block;
       height: 100%;
+      .filter-list {
+        width: 216px;
+      }
     }
 
     .other-filter-container {

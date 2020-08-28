@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-31 15:42:42
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-19 10:48:54
+ * @LastEditTime: 2020-08-28 13:26:06
 -->
 <template>
   <div class="card-container">
@@ -17,7 +17,7 @@
         <div class="f18 card-unit">
           <DynamicToolTip :content="cardValueUnit" effect="light">
             <span class="card-unit-text" slot="content" :style="{'font-size': valueFontSize}">
-              {{ cardData.value ? cardData.value : '--' }}
+              {{ cardValue }}
               <span :style="{'font-size': unitFontSize}">{{ cardData.unit }}</span>
             </span>
           </DynamicToolTip>
@@ -68,6 +68,10 @@ export default {
     unitFontSize() {
       // 单位字体大小设置
       return (this.cardData.dataType === 'bool' || this.cardData.dataType === 'enum') ? '28px' : '18px'
+    },
+    cardValue() {
+      // 处理value展示
+      return (this.cardData.value || this.cardData.value === 0) ? this.cardData.value : '--'
     }
   },
   methods: {

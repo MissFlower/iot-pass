@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-21 16:51:04
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-27 17:52:02
+ * @LastEditTime: 2020-08-28 13:49:57
 -->
 <template>
   <div class="filter-tag-container">
@@ -42,7 +42,7 @@
 </template>
 <script>
 import { getTagValueByTagkey } from 'src/api/perspectives'
-// import { debounce } from 'src/utils'
+import { throttle } from 'src/utils'
 export default {
   name: 'FilterTag',
   props: {
@@ -75,6 +75,10 @@ export default {
       $_searchTagValueHandler: null
     }
   },
+  mounted() {
+    // 搜索 value 进行 绑定 节流函数
+    this.$_searchTagValueHandler = throttle(this.filterUncheckedTagsValue, 300)
+  },
   methods: {
     checkboxChange(data) {
       // checkbox勾选事件逻辑处理
@@ -102,8 +106,8 @@ export default {
       })
       return data ? data.map(item => { return { checked: false, value: item } }) : []
     },
-    async searchTagValue() {
-      // 根据搜索条件查询tag下面的value值 调用后台接口 返回数据 需要 和 之前选中的数据进行对比过滤
+    searchTagValue() {
+      // 根据条件搜索value
       // 空条件 赋予最初列表 并 return
       if (!this.searchValue) {
         // 搜索条件为空时 进行列表还原
@@ -111,23 +115,22 @@ export default {
         this.uncheckedTagsValue = [...this.saveUncheckedTagsValue.filter(item => !checkedValueIdList.includes(item.value))]
         return
       }
-      // let matchValue
-      // this.$_resizeHandler = debounce(async() => {
-      //   matchValue = await this.getTagValueList()
-      // }, 300)()
+      this.$_searchTagValueHandler()
+    },
+    async filterUncheckedTagsValue() {
+      // 根据搜索条件查询tag下面的value值 调用后台接口 返回数据 需要 和 之前选中的数据进行对比过滤
       const matchValue = await this.getTagValueList()
-      // 过滤包含value的列表
-      // const matchValue = this.uncheckedTagsValue.filter(item => item.value.includes(this.searchValue))
       // 和选中的数据进行对比 再次过滤
       const checkedValueIdList = this.checkedTagsValue.map(item => item.value)
       this.uncheckedTagsValue = [...matchValue.filter(item => !checkedValueIdList.includes(item.value))]
     },
     async tagChange() {
       // tag选择更改 请求接口 获取tag下value列表
+      this.searchValue = ''
       const tagValueList = await this.getTagValueList()
       this.uncheckedTagsValue = [...tagValueList]
       this.saveUncheckedTagsValue = [...tagValueList]
-      // 将原来选中的tag value 清空
+      // 将原来选中的tag value 和 搜索关键字 清空
       this.checkedTagsValue = []
       // 更改tag 向父级传回最新的选择结果
       this.$emit('change', this.id, {

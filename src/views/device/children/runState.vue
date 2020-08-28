@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 15:57:06
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-17 15:07:30
+ * @LastEditTime: 2020-08-28 13:21:26
 -->
 <template>
   <div v-loading="loading">
@@ -132,6 +132,8 @@ export default {
     this.getAllProperties()
   },
   beforeDestroy() {
+    clearInterval(this.timer)
+    this.timer = null
     // console.log('runState组件即将被销毁')
   },
   methods: {

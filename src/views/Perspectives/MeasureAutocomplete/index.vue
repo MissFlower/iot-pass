@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-21 15:03:28
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-27 10:15:28
+ * @LastEditTime: 2020-08-28 14:57:45
 -->
 <template>
   <ElAutocomplete
@@ -16,8 +16,9 @@
     @select="handleSelect"
   >
     <i
-      class="el-icon-search product-search"
+      class="el-icon-close measure-search"
       slot="suffix"
+      @click="deleteQuery"
     />
     <template slot-scope="{ item }">
       <div class="name">{{ item.metricShowName }}</div>
@@ -45,6 +46,8 @@ export default {
         // 调用度量列表接口
         if (newKey && newKey !== oldKey) {
           this.getMetircsList()
+        } else {
+          this.measureList = []
         }
       }
     }
@@ -56,7 +59,7 @@ export default {
           productKey: this.productKey
         })
         this.measureList = data
-        this.$refs.measureAutocomplete.focus()
+        // this.$refs.measureAutocomplete.focus()
       } catch (error) {
         this.$message.error(error)
       }
@@ -75,10 +78,20 @@ export default {
       // 选择事件
       this.$emit('input', data.metricShowName)
       this.$emit('measureChange', data)
+    },
+    deleteQuery() {
+      this.$refs.measureAutocomplete.focus()
+      this.$refs.measureAutocomplete.handleInput()
+      this.$emit('measureChange')
     }
   }
 }
 </script>
+<style lang="scss" scoped>
+  .measure-search {
+    cursor: pointer;
+  }
+</style>
 <style>
 .product-autocomplete .el-autocomplete-suggestion__wrap {
   max-height: 200px;

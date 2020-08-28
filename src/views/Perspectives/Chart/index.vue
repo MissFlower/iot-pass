@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-03 11:28:30
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-28 15:45:11
+ * @LastEditTime: 2020-08-28 17:31:54
 -->
 <template>
   <div>
@@ -209,7 +209,8 @@ export default {
             lineStyle: {
               type: 'dashed'
             }
-          }
+          },
+          min: 'dataMin'
         },
         series: []
       }

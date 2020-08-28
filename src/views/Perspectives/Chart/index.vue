@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-03 11:28:30
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-28 15:21:57
+ * @LastEditTime: 2020-08-28 15:45:11
 -->
 <template>
   <div>
@@ -59,7 +59,7 @@ export default {
      */
     dataZoom: {
       type: Boolean,
-      default: false
+      default: true
     }
   },
   data() {
@@ -98,6 +98,7 @@ export default {
       this.echartInstance = echarts.init(document.getElementById('echart'))
       this.echartInstance.setOption(this.getOptions(), true) // 默认为 false，即合并
       this.rewriteLengendHandler()
+      this.addAndRemoveDataZoom(true)
     },
     drawChart(datas) {
       // 渲染图表

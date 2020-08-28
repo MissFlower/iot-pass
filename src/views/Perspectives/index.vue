@@ -4,14 +4,14 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 14:26:58
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-28 15:36:20
+ * @LastEditTime: 2020-08-28 15:42:31
 -->
 <template>
   <div class="perspective-container">
     <!-- 图表区域 -->
     <div class="chart-container" v-loading="loading">
       <!-- 图表组件 -->
-      <Chart ref="chart" v-show="isShowChart" :chart-data="chartData" :legend="legend" :data-zoom="dataZoom" class="chart-content" />
+      <Chart ref="chart" v-show="isShowChart" :chart-data="chartData" :legend="legend" class="chart-content" />
       <div v-show="!isShowChart" class="default-graph-box">
         <DeafultGraph icon-class="empty1" width="150" height="150" text="暂无数据" />
       </div>
@@ -275,8 +275,7 @@ export default {
       isShowChart: false, // 是否展示图表
       isShowBaseFilter: true, // 是否显示baseFilter
       saveDatas: [], // 保存图表接口 每次调用 返回的数据
-      loading: false, // loading 动画状态
-      dataZoom: true // 是否开启dataZoom
+      loading: false // loading 动画状态
     }
   },
   computed: {

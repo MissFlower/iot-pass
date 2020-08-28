@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 14:26:58
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-28 15:42:31
+ * @LastEditTime: 2020-08-28 18:18:33
 -->
 <template>
   <div class="perspective-container">
@@ -42,18 +42,6 @@
             :picker-options="pickerOptions"
             @change="getCustomTime"
           />
-          <div class="time-interval-content">
-            <span class="operation-header-text">采样间隔:</span>
-            <ElSelect v-model="timeInterval" placeholder="请选择">
-              <ElOption
-                v-for="item in TIME_INTERVAL_OPTIONS"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              >
-              </ElOption>
-            </ElSelect>
-          </div>
           <div class="algorithm-content">
             <span class="operation-header-text">算法:</span>
             <ElSelect v-model="algorithm" placeholder="请选择">
@@ -66,9 +54,21 @@
               </ElOption>
             </ElSelect>
           </div>
+          <div v-show="algorithm !== 'none'" class="time-interval-content">
+            <span class="operation-header-text">采样间隔:</span>
+            <ElSelect v-model="timeInterval" placeholder="请选择">
+              <ElOption
+                v-for="item in TIME_INTERVAL_OPTIONS"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </ElOption>
+            </ElSelect>
+          </div>
         </div>
         <div class="operation-header-right">
-          <ElButton type="primary" @click="submit">Submit</ElButton>
+          <ElButton type="primary" @click="submit">提交</ElButton>
           <ElButton type="primary">更新SQL</ElButton>
         </div>
       </div>
@@ -254,6 +254,7 @@ export default {
       TIME_OPTIONS, // 可供选择的时间范围options
       timeInterval: '1m', // 选择的采样间隔 unit(second)
       TIME_INTERVAL_OPTIONS, // 时间间隔options
+      customTime: [], // 自定义时间
       algorithm: 'none', // 选择的算法值 默认值 none
       ALFORITHM_OPTIONS, // 算法options
       startTime: '', // 开始时间
@@ -286,6 +287,13 @@ export default {
     },
     addFilterIconLeft() {
       return this.filterList.length * 216 + 616 + 'px'
+    },
+    pickerOptions() {
+      return {
+        disabledDate: (date) => {
+          return (date.getTime() < Date.now() - 180 * 24 * 60 * 60 * 1000) || (date.getTime() > Date.now())
+        }
+      }
     }
   },
   watch: {

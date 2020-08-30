@@ -32,11 +32,12 @@ export function getMetircsByProduct(params) {
  * @return {type}
  * @author: AiDongYang
  */
-export function getTagkByMetric(params) {
+export function getTagkByMetric(data) {
   return request({
     url: 'data/analysis/getTagkByMetric',
-    method: 'get',
-    params
+    method: 'post',
+    headers: POST_JSON,
+    data
   })
 }
 

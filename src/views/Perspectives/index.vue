@@ -88,6 +88,7 @@
             :show="false"
             :id="baseFilter.id"
             :measure-key="measureKey"
+            :product-key="productKey"
             class="filter-list"
             @change="getCheckedTagValue"
             @tagChange="computedFilterOptions"
@@ -262,7 +263,7 @@ export default {
       productName: '', // 选择的产品name
       productKey: '', // 选择的产品key
       measureName: '', //  度量名称
-      measureKey: '', // 选择的度量key
+      measureKey: {}, // 选择的度量key
       baseFilter: {
         id: 'base',
         checkedTag: '',
@@ -275,7 +276,7 @@ export default {
       isShowAddFilter: true, // 是否展示添加filter icon
       isShowChart: false, // 是否展示图表
       isShowBaseFilter: true, // 是否显示baseFilter
-      saveDatas: [], // 保存图表接口 每次调用 返回的数据
+      saveData: {}, // 保存图表接口 每次调用 返回的数据
       loading: false // loading 动画状态
     }
   },
@@ -304,7 +305,7 @@ export default {
     },
     measureKey: {
       handler(newKey, oldKey) {
-        if (newKey && newKey !== oldKey) {
+        if (newKey.identifier && newKey.identifier !== oldKey.identifier) {
           // 度量选择改变后 请求Tag列表接口
           this.getTagsList()
           // 重置所有用户已选择的Filter
@@ -322,20 +323,22 @@ export default {
     getProductKey(data) {
       // 获取prodectList
       this.productKey = data ? data.productKey : ''
-      this.measureKey = ''
+      this.measureKey = {}
       this.measureName = ''
       this.resetFilter()
     },
     getMeasureKey(data) {
       // 真实操作。。。。
-      this.measureKey = data ? data.metricRealName : ''
+      this.measureKey = data || {}
       this.resetFilter()
     },
     async getTagsList() {
       // 获取tags列表
       // 返回数据赋值给baseFilter 并备份一份所有的tags列表 saveAllTags
       const { data } = await getTagkByMetric({
-        metricRealName: this.measureKey
+        productKey: this.productKey,
+        identifier: this.measureKey.identifier,
+        childIdentifier: this.measureKey.childIdentifier
       })
       this.saveAllTags = data
       this.baseFilter.options = data
@@ -425,8 +428,10 @@ export default {
     },
     submit() {
       this.chartData = []
-      this.saveDatas = []
+      this.saveData = {}
       this.handleChartData(true)
+      this.chartData = [...Object.keys(this.saveData).map(key => this.saveData[key].line)]
+      this.legend = Object.keys(this.saveData)
     },
     async handleChartData(isRepaint) {
       // 处理参数 请求图表接口
@@ -446,12 +451,12 @@ export default {
         this.startTime = this.endTime - this.timeRange * 60 * 1000
       }
       const { data, code, message } = await getDataForChart({
-        metricRealName: this.measureKey,
+        metricRealName: this.measureKey.metricRealName,
+        productKey: this.productKey,
         tagsFilter: JSON.stringify(tagsFilter),
         aggregator: this.algorithm,
         startTime: this.startTime,
         endTime: this.endTime,
-        // downSampleAggregator: this.algorithm,
         downSampleTime: this.timeInterval
       })
       this.loading = false
@@ -469,44 +474,36 @@ export default {
       }
       this.isShowChart = true
       this.$nextTick(() => {
-      // 返回数据处理
-        const legend = []
+        // 返回数据处理
         if (isRepaint) {
-        // 重绘
+          // 重绘
           this.$refs.chart.initChart()
-
-          this.$nextTick(() => {
-            resultList.forEach((item, index) => {
-              legend.push(item.tagsFilter)
-              this.saveDatas[index] = {
-                name: item.tagsFilter,
+        }
+        resultList.forEach((resultData, index) => {
+          const propertyInfo = resultData.propertyInfo
+          let lineData = this.saveData[resultData.tagsFilter]
+          if (!lineData) {
+            lineData = {
+              line: {
+                name: resultData.tagsFilter,
                 data: []
-              }
-              const values = Object.values(item.propertyInfo)
-              Object.keys(item.propertyInfo).forEach((item, i) => {
-                this.saveDatas[index].data.push({ value: [parseTime(item), values[i]] })
-              })
-            })
-            this.chartData = [...this.saveDatas]
-            this.legend = legend
-          })
-        } else {
-        // 连续接口请求 处理数据
-          this.saveDatas.forEach((item, index) => {
-            const curData = resultList.find(n => n.tagsFilter === item.name)
-            if (curData) {
-              const values = Object.values(curData.propertyInfo)
-              const reverse = []
-              Object.keys(curData.propertyInfo).forEach((item, i) => {
-                reverse.push({ value: [parseTime(item), values[i]] })
-              })
-              this.saveDatas[index].data.unshift(...reverse)
+              },
+              maxTime: 0
+            }
+            this.saveData[resultData.tagsFilter] = lineData
+          }
+          const values = Object.values(propertyInfo)
+          Object.keys(propertyInfo).forEach((timestamp, i) => {
+            if (timestamp > lineData.maxTime) {
+              lineData.line.data.push({ value: [parseTime(timestamp), values[i]] })
+              lineData.maxTime = timestamp
             }
           })
-          this.chartData = [...this.saveDatas]
-        }
+        })
+        this.chartData = [...Object.keys(this.saveData).map(key => this.saveData[key].line)]
+        this.legend = Object.keys(this.saveData)
         if (data.nextValid) {
-        // 接口连续调用
+          // 接口连续调用
           this.startTime = data.nextTime
           this.handleChartData()
         }

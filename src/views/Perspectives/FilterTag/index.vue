@@ -52,8 +52,12 @@ export default {
         return []
       }
     },
-    measureKey: {
+    productKey: {
       type: String,
+      required: true
+    },
+    measureKey: {
+      type: Object,
       required: true
     },
     id: {
@@ -100,7 +104,7 @@ export default {
     async getTagValueList() {
       // 获取 tagvalue 列表
       const { data } = await getTagValueByTagkey({
-        metricRealName: this.measureKey,
+        productKey: this.productKey,
         tagKey: this.tagKey,
         tagValuePre: this.searchValue
       })

@@ -103,7 +103,6 @@ export default {
     drawChart(datas) {
       // 渲染图表
       // this.echartInstance.clear()
-      console.log(datas)
       const handleDataList = datas.map(item => {
         return {
           name: item.name,

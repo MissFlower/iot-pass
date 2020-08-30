@@ -9,7 +9,7 @@
 <template>
   <div class="filter-tag-container">
     <div class="icon-container">
-      <span class="operation-text">Filter</span>
+      <span class="operation-text">标签</span>
       <i v-if="show" class="el-icon-close delete-filter-btn" @click="deleteFilter" />
     </div>
     <ElSelect v-model="tagKey" popper-class="filter-tag-select" @change="tagChange">

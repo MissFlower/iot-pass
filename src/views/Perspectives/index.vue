@@ -69,12 +69,12 @@
         </div>
         <div class="operation-header-right">
           <ElButton type="primary" @click="submit">提交</ElButton>
-          <ElButton type="primary">更新SQL</ElButton>
+<!--          <ElButton type="primary">更新SQL</ElButton>-->
         </div>
       </div>
       <div class="operation-content clearfix">
         <div class="operation-from fl">
-          <span class="operation-text">FROM</span>
+          <span class="operation-text">度量</span>
           <div class="operation-from-content">
             <ProductAutocomplete v-model="productName" placeholder="搜索产品" class="product-complete" @productChange="getProductKey" />
             <MeasureAutocomplete v-model="measureName" :product-key="productKey" placeholder="请选择度量" class="measure-complete" @measureChange="getMeasureKey" />
@@ -235,7 +235,7 @@ const ALFORITHM_OPTIONS = deepFreeze([
     value: 'avg'
   },
   {
-    label: 'None',
+    label: '无',
     value: 'none'
   }
 ])
@@ -442,8 +442,12 @@ export default {
           tagsFilter[item.tag] = `${item.values.map(item => item.value).join('|')}`
         }
       })
+      if (this.measureName === '') {
+        this.$message.warning('请选择度量!')
+        return
+      }
       if (JSON.stringify(tagsFilter) === '{}') {
-        this.$message.warning('请至少选择一条数据!')
+        this.$message.warning('请至少选择一个标签!')
         return
       }
       if (isRepaint) {

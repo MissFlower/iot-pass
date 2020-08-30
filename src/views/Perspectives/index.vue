@@ -110,6 +110,7 @@
               :id="item.id"
               :tag-options="item.options"
               :measure-key="measureKey"
+              :product-key="productKey"
               :style="{'left': filterTagLeft(index)}"
               class="filter-list"
               @deleteFilter="deleteFilter"

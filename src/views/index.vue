@@ -66,8 +66,8 @@
           </div>
         </div>
       </div>
+      <paas-footer></paas-footer>
     </main>
-    <paas-footer></paas-footer>
   </div>
 </template>
 

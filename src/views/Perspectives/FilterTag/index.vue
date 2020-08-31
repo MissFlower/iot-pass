@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-21 16:51:04
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-28 13:49:57
+ * @LastEditTime: 2020-08-31 13:25:01
 -->
 <template>
   <div class="filter-tag-container">
@@ -54,10 +54,6 @@ export default {
     },
     productKey: {
       type: String,
-      required: true
-    },
-    measureKey: {
-      type: Object,
       required: true
     },
     id: {

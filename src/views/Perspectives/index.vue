@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 14:26:58
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-31 13:16:44
+ * @LastEditTime: 2020-08-31 13:32:46
 -->
 <template>
   <div class="perspective-container">
@@ -430,8 +430,6 @@ export default {
       this.legend = []
       this.saveData = {}
       this.handleChartData(true)
-      // this.chartData = [...Object.keys(this.saveData).map(key => this.saveData[key].line)]
-      // this.legend = Object.keys(this.saveData)
     },
     async handleChartData(isRepaint) {
       // 处理参数 请求图表接口
@@ -451,8 +449,10 @@ export default {
       }
       if (isRepaint) {
         this.loading = true
-        this.endTime = Date.now()
-        this.startTime = this.endTime - this.timeRange * 60 * 1000
+        if (this.timeRange) {
+          this.endTime = Date.now()
+          this.startTime = this.endTime - this.timeRange * 60 * 1000
+        }
       }
       const { data, code, message } = await getDataForChart({
         metricRealName: this.measureObj.metricRealName,

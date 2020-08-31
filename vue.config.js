@@ -47,7 +47,7 @@ module.exports = {
     config
       .plugin('html')
       .tap(args => {
-        args[0].title = 'IOT管理系统'
+        args[0].title = 'IoT管理系统'
         return args
       })
     // // 一个规则里的 基础Loader

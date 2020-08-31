@@ -2,7 +2,7 @@
   <div id="header">
     <div class="con">
       <img class="logo hand" src="../assets/logo.png" @click.stop="gotoIndex" />
-      <span class="title b ml10">IOT管理系统</span>
+      <span class="title b ml10">IoT管理系统</span>
       <div class="flex1 control f16">
         <span>文档</span>
         <span>控制台</span>

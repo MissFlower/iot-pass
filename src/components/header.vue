@@ -3,7 +3,7 @@
     <div class="con">
       <img class="logo hand" src="../assets/logo.png" @click.stop="gotoIndex" />
       <div class="flex1 ml10 hand">
-        <span @click.stop="gotoIndex">IOT管理系统</span>
+        <span @click.stop="gotoIndex">IoT管理系统</span>
       </div>
       <div class="f12 mr20">文档</div>
       <div class="f12 mr20 text hand" v-if="!flag" @click="handleGoHome">控制台</div>

@@ -127,7 +127,7 @@
             <el-option label="24小时后重试" value="1440"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="升级重试上限次数" v-if="form.retryInterval != -1">
+        <el-form-item label="升级重试上限次数" v-if="form.retryInterval != -1" required>
           <el-select v-model="form.maxRetryCnt">
             <el-option label="1次" value="1"></el-option>
             <el-option label="2次" value="2"></el-option>
@@ -321,6 +321,10 @@ export default {
           obj.ugStartTime = this.$fun.dateFormat(this.form.ugStartTime, 'yyyy-MM-dd hh:mm:ss')
           obj.ugEndTime = this.$fun.dateFormat(this.form.ugEndTime, 'yyyy-MM-dd hh:mm:ss')
           this.loading = true
+          console.log(obj)
+          if (obj.retryInterval === '-1') {
+            obj.maxRetryCnt = ''
+          }
           saveUpgrade(obj).then(res => {
             if (res.code === 200) {
               this.$emit('upgradeVisible', this.upgradeFmVisible)

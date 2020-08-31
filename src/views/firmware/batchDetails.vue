@@ -174,7 +174,13 @@
                 <div class="edit_info-rf">{{ batchDetailList.retryInterval }}</div>
               </div>
             </el-col>
-            <el-col :xs="24" :sm="12" :md="16" :lg="16" :xl="16">
+            <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
+              <div class="edit_info">
+                <div class="edit_info-lf">升级重试上限次数</div>
+                <div class="edit_info-rf">{{ batchDetailList.maxRetryCnt }}</div>
+              </div>
+            </el-col>
+            <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
               <div class="edit_info">
                 <div class="edit_info-lf">设备升级超时时间</div>
                 <div class="edit_info-rf">{{ batchDetailList.timeOut }}</div>

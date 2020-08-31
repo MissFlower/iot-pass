@@ -35,7 +35,7 @@
 
     <div class="mb20 df jc_sb">
       <div class="df">
-        <el-input v-model="searchInputValue" placeholder="请输入名称" class="searchInput" @change="searchBtnTouch">
+        <el-input v-model="searchInputValue" placeholder="请输入名称" class="searchInput" @change="searchBtnTouch" style="width: 360px">
           <el-select
             slot="prepend"
             v-model="searchTypeSelect"

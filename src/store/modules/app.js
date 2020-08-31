@@ -11,7 +11,7 @@ const app = {
     loginStatus: false,
     breadcrumdList: [
       {
-        name: 'IOT平台',
+        name: 'IoT平台',
         path: '/home'
       }
     ],

@@ -10,7 +10,7 @@
       <div class="top_con">
         <img src="../assets/imgs/banner.png">
         <div class="con">
-          <div class="top_con_title">IOT管理系统</div>
+          <div class="top_con_title">IoT管理系统</div>
           <div class="top_con_con">{{ con }}</div>
         </div>
       </div>
@@ -66,14 +66,15 @@
           </div>
         </div>
       </div>
+      <paas-footer></paas-footer>
     </main>
   </div>
 </template>
 
 <script>
-
+import paasFooter from '@/components/footer'
 export default {
-  // components: { headerIot },
+  components: { paasFooter },
   data() {
     return {
       con: '立足中国，服务全球，致力于高效、便捷地联结生活的每一个角落，支持您的物联网项目快速落地。这里提供设备接入、管理、监控、运维，数据存储、隔离、流转、分析等全场景、一站式解决方案。本平台安全可信、支持高并发，性价比高，助力合作伙伴快速、低成本订制专属的物联网服务。',

@@ -1,37 +1,37 @@
 <!--
   文件作者：mawenjuan
-  创建日期：2020.8.26
-  文件说明：新账号密码重置
+  创建日期：2020.6.16
+  文件说明：账号密码重置
  -->
 <template>
   <div id="register" v-loading="loading">
-    <div class="login-con1 df">
+    <div class="login-con df">
+      <div class="showImg"></div>
       <div class="form-con">
         <div class="f24 b">注册</div>
         <el-form ref="form" :model="formData" label-width="0" :rules="rules" class="wp100">
           <el-form-item prop="account">
-            <el-input v-model="formData.account" size="larger" placeholder="请输入账号名"></el-input>
+            <el-input v-model="formData.account" placeholder="请输入账号名"></el-input>
           </el-form-item>
           <el-form-item prop="password">
             <el-input
               v-model="formData.password"
-              size="larger"
               placeholder="密码必须由8到14个字符包括大小写字母、数字组成"
               show-password
             />
           </el-form-item>
           <el-form-item prop="phone">
-            <el-input v-model="formData.phone" size="larger" placeholder="请输入手机号" />
+            <el-input v-model="formData.phone" placeholder="请输入手机号" />
           </el-form-item>
           <el-form-item prop="code">
             <div class="pr wp100 df ai_c">
-              <el-input v-model="code" size="larger" placeholder="请输入验证码" class="flex1" />
-              <el-button class="ml10" size="larger" @click="handleSendCode">{{ msg }}</el-button>
+              <el-input v-model="code" placeholder="请输入验证码" class="flex1" />
+              <el-button class="ml10 w100" @click="handleSendCode">{{ msg }}</el-button>
             </div>
           </el-form-item>
         </el-form>
         <div class="wp100">
-          <el-button type="success" size="larger" class="wp100" @click="handleSubmit">注册</el-button>
+          <el-button type="primary" class="wp100" @click="handleSubmit">注册</el-button>
           <div class="df f12 c6 jc_sb mt10">
             <!-- <div>忘记密码</div> -->
             <!-- <div class="hand" @click="handleRedister">注册</div> -->
@@ -105,9 +105,9 @@ export default {
     }
   },
   mounted() {
-    // if (this.$cookie.getValue('access_token')) {
-    //   this.$router.push('/index')
-    // }
+    if (this.$cookie.getValue('access_token')) {
+      this.$router.push('/index')
+    }
   },
   methods: {
     handleSubmit() {
@@ -215,7 +215,5 @@ export default {
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-image: url('../../assets/imgs/bg1.png');
-  background-size: 100% auto;
 }
 </style>

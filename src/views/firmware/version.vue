@@ -48,7 +48,8 @@
       </div>
     </div>
     <div v-else class="noCon df jc_c">
-      <svg-icon icon-class="noVersion"></svg-icon>
+      <!-- <svg-icon icon-class="noVersion"></svg-icon> -->
+      <img src="../../assets/imgs/fm_version.png" width="80px">
       <div class="ml20 f12">
         <div class="b">请选择固件所属产品</div>
         <div class="c9 mt5">选择后，您可随时从页面左上方选项进行切换</div>

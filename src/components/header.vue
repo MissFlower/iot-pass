@@ -1,35 +1,38 @@
 <template>
   <header id="header">
-    <img class="logo hand" src="../assets/logo.png" @click.stop="gotoIndex" />
-    <div class="flex1 ml10 hand">
-      <span @click.stop="gotoIndex">IOT管理系统</span>
-    </div>
-    <div class="f12 mr20 text hand" v-if="!flag" @click="handleGoHome">控制台</div>
-    <el-dropdown class="avatar-container" trigger="hover" v-if="loginStatus">
-      <div class="avatar-wrapper df ai_c">
-        <svg-icon icon-class="photo" class="user-avatar" @click.stop="handleGoUserCenter"></svg-icon>
-        <!-- <span>{{ userName }}</span> -->
-        <!-- <i class="el-icon-caret-bottom c2" /> -->
+    <div class="con">
+      <img class="logo hand" src="../assets/logo.png" @click.stop="gotoIndex" />
+      <div class="flex1 ml10 hand">
+        <span @click.stop="gotoIndex">IOT管理系统</span>
       </div>
-      <el-dropdown-menu slot="dropdown" class="user-dropdown">
-        <div class="df ai_c p10">
-          <svg-icon icon-class="photo" class="user-avatar mr10"></svg-icon>
-          <span>{{ userName }}</span>
+      <div class="f12 mr20">文档</div>
+      <div class="f12 mr20 text hand" v-if="!flag" @click="handleGoHome">控制台</div>
+      <el-dropdown class="avatar-container" trigger="hover" v-if="loginStatus">
+        <div class="avatar-wrapper df ai_c">
+          <img src="../assets/imgs/photo.png" class="user-avatar" @click.stop="handleGoUserCenter">
         </div>
-        <div class="drop-link df ai_c f12 c6">
-          <div
-            class="drop-link-item hand"
-            v-for="(item, index) in dropArr"
-            :key="index"
-            @click.stop="handleGoPath(item)"
-          >{{ item.name }}</div>
-        </div>
-        <el-dropdown-item divided class="tc">
-          <span style="display:block;" @click="logoutFun">退出登录</span>
-        </el-dropdown-item>
-      </el-dropdown-menu>
-    </el-dropdown>
-    <span v-if="!flag && !loginStatus" class="f12 hand blue" @click="handleLogin">登录</span>
+        <el-dropdown-menu slot="dropdown" class="user-dropdown">
+          <div class="df ai_c p10">
+            <img src="../assets/imgs/photo.png" class="user-avatar mr10">
+            <span>{{ userName }}1</span>
+          </div>
+          <div class="drop-link df ai_c f12 c6">
+            <div
+              class="drop-link-item hand"
+              v-for="(item, index) in dropArr"
+              :key="index"
+              @click.stop="handleGoPath(item)"
+            >{{ item.name }}</div>
+          </div>
+          <el-dropdown-item divided class="tc">
+            <span style="display:block;" @click="logoutFun">退出登录</span>
+          </el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+      <span v-if="!flag && !loginStatus" class="f12 hand success mr20" @click="handleLogin">登录</span>
+      <!-- <span v-if="!flag && !loginStatus" class="f12 hand blue" @click="handleRegister">注册</span> -->
+      <el-button v-if="!flag && !loginStatus" type="success" size="mini" @click="handleRegister">注册</el-button>
+    </div>
   </header>
 </template>
 
@@ -133,6 +136,9 @@ export default {
     handleLogin() {
       this.$router.push('/login')
     },
+    handleRegister() {
+      this.$router.push('/register')
+    },
     handleGoHome() {
       if (this.loginStatus) {
         this.$router.push('/home')
@@ -178,11 +184,16 @@ export default {
   width: 100%;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) !important;
   line-height: 60px;
-  display: flex;
-  align-items: center;
-  padding: 0 20px;
-  z-index: 2;
+  z-index: 1;
   background: #fff;
+  padding: 0 20px;
+  .con {
+    // max-width: 1200px;
+    height: 100%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+  }
   .text:hover {
     color: #1890ff;
   }

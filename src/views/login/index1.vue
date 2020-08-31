@@ -5,13 +5,14 @@
  -->
 <template>
   <div id="login">
-    <div class="login-con1 df">
+    <div class="login-con df">
+      <div class="showImg"></div>
       <div class="form-con">
         <div class="f24 b">登录</div>
-        <el-input v-model="account" size="larger" placeholder="请输入账号名" prefix-icon="el-icon-user"></el-input>
-        <el-input v-model="password" size="larger" placeholder="请输入密码" prefix-icon="el-icon-lock" show-password />
+        <el-input v-model="account" placeholder="请输入账号名"></el-input>
+        <el-input v-model="password" placeholder="请输入密码" show-password />
         <div class="wp100">
-          <el-button type="success" size="larger" class="wp100" @click="handleSubmit">登录</el-button>
+          <el-button type="primary" class="wp100" @click="handleSubmit">登录</el-button>
           <div class="df f12 c6 jc_sb mt10">
             <div class="hand" @click="handleFind">忘记密码</div>
             <div class="hand" @click="handleRedister">注册</div>
@@ -33,9 +34,9 @@ export default {
     }
   },
   mounted() {
-    // if (this.$cookie.getValue('access_token')) {
-    //   this.$router.push('/index')
-    // }
+    if (this.$cookie.getValue('access_token')) {
+      this.$router.push('/index')
+    }
   },
   methods: {
     handleSubmit() {
@@ -95,7 +96,5 @@ export default {
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-image: url('../../assets/imgs/bg1.png');
-  background-size: 100% auto;
 }
 </style>

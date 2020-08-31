@@ -14,7 +14,7 @@
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <div class="df ai_c p10">
             <img src="../assets/imgs/photo.png" class="user-avatar mr10">
-            <span>{{ userName }}1</span>
+            <span>{{ userName }}</span>
           </div>
           <div class="drop-link df ai_c f12 c6">
             <div

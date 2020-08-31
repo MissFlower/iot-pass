@@ -71,6 +71,36 @@ export function dealFun(list) {
     return []
   }
 }
+// 处理菜单为tree的函数
+export function dealFun1(list) {
+  const len = list.length
+  if (list && len > 0) {
+    const obj = {}
+    list.forEach(item => {
+      if (!obj[item.pcode]) {
+        obj[item.pcode] = []
+      }
+      obj[item.pcode].push(item)
+    })
+    const arr = obj[0]
+    delete obj[0]
+    fun(arr, obj)
+    return arr
+  } else {
+    return []
+  }
+}
+function fun(arr, obj) {
+  arr.forEach(item => {
+    if (item.code && obj[item.code]) {
+      item.children = obj[item.code]
+      delete obj[item.code]
+    }
+    if (item.children && item.children.length > 0) {
+      fun(item.children, obj)
+    }
+  })
+}
 
 // 处理角色权限tree的函数
 export function dealAuthTreeFun(list) {

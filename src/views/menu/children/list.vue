@@ -33,7 +33,7 @@
       </div>
       <el-button v-if="authArr.indexOf('menu_add') > -1" type="primary" @click="handleEdit(2)">新建菜单</el-button>
     </div>
-    <el-table :data="list" border>
+    <!-- <el-table :data="list" border>
       <el-table-column label="ID" prop="menuId" width="80"></el-table-column>
       <el-table-column label="菜单名称" prop="name"></el-table-column>
       <el-table-column label="菜单编号" prop="code"></el-table-column>
@@ -87,9 +87,9 @@
       layout="total, prev, pager, next"
       :total="total"
       class="tr mt20"
-    ></el-pagination>
-    <el-table :data="list1" border>
-      <el-table-column label="ID" prop="menuId" width="80"></el-table-column>
+    ></el-pagination> -->
+    <el-table :data="list" border :tree-props="{children: 'children', hasChildren: 'hasChildren'}" row-key="menuId" :expand-row-keys="expands">
+      <el-table-column label="ID" prop="menuId" min-width="80"></el-table-column>
       <el-table-column label="菜单名称" prop="name"></el-table-column>
       <el-table-column label="菜单编号" prop="code"></el-table-column>
       <el-table-column label="上层菜单">
@@ -139,7 +139,7 @@
 </template>
 
 <script>
-// import { dealFun } from "@/data/fun";
+import { dealFun1 } from '@/data/fun'
 import { getMenuList, delMenu } from '@/api/menu'
 export default {
   data() {
@@ -152,9 +152,9 @@ export default {
         code: ''
       },
       list: [],
-      list1: [],
       total: 0,
-      menuObj: {}
+      menuObj: {},
+      expands: []
     }
   },
   computed: {
@@ -176,34 +176,9 @@ export default {
   },
   mounted() {
     this.getData()
-    this.getData1()
   },
   methods: {
     getData() { // 获取菜单列表
-      this.loading = true
-      this.list = []
-      // this.menuObj = {}
-      getMenuList(this.formData).then(res => {
-        if (res.code === 200) {
-          if (res.data.data) {
-            if (res.data.data.length > 0) {
-              res.data.data.forEach(item => {
-                this.menuObj[item.code] = item.name
-              })
-            }
-            this.list = res.data.data
-            this.total = res.data.total
-          }
-        } else {
-          this.$message.error(res.message)
-        }
-        this.loading = false
-      }).catch(() => {
-        this.loading = false
-        this.$message.warning('菜单列表获取失败')
-      })
-    },
-    getData1() { // 获取菜单列表
       this.loading = true
       this.list = []
       // this.menuObj = {}
@@ -218,8 +193,9 @@ export default {
                 this.menuObj[item.code] = item.name
               })
             }
-            this.list1 = res.data.data
-            // this.total = res.data.total
+            this.list = dealFun1(res.data.data)
+            this.expands.push(this.list[0].menuId + '')
+            console.log(this.expands)
           }
         } else {
           this.$message.error(res.message)

@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 14:26:58
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-28 18:18:33
+ * @LastEditTime: 2020-08-31 13:16:44
 -->
 <template>
   <div class="perspective-container">
@@ -69,7 +69,7 @@
         </div>
         <div class="operation-header-right">
           <ElButton type="primary" @click="submit">提交</ElButton>
-<!--          <ElButton type="primary">更新SQL</ElButton>-->
+          <!--          <ElButton type="primary">更新SQL</ElButton>-->
         </div>
       </div>
       <div class="operation-content clearfix">
@@ -87,7 +87,6 @@
             :tag-options="baseFilter.options"
             :show="false"
             :id="baseFilter.id"
-            :measure-key="measureKey"
             :product-key="productKey"
             class="filter-list"
             @change="getCheckedTagValue"
@@ -109,7 +108,6 @@
               :key="item.id"
               :id="item.id"
               :tag-options="item.options"
-              :measure-key="measureKey"
               :product-key="productKey"
               :style="{'left': filterTagLeft(index)}"
               class="filter-list"
@@ -264,7 +262,7 @@ export default {
       productName: '', // 选择的产品name
       productKey: '', // 选择的产品key
       measureName: '', //  度量名称
-      measureKey: {}, // 选择的度量key
+      measureObj: {}, // 选择的度量key
       baseFilter: {
         id: 'base',
         checkedTag: '',
@@ -304,9 +302,9 @@ export default {
         this.isShowAddFilter = this.filterList.length < this.saveAllTags.length - 1
       }
     },
-    measureKey: {
+    measureObj: {
       handler(newKey, oldKey) {
-        if (newKey.identifier && newKey.identifier !== oldKey.identifier) {
+        if (newKey.metricRealName && newKey.metricRealName !== oldKey.metricRealName) {
           // 度量选择改变后 请求Tag列表接口
           this.getTagsList()
           // 重置所有用户已选择的Filter
@@ -324,13 +322,13 @@ export default {
     getProductKey(data) {
       // 获取prodectList
       this.productKey = data ? data.productKey : ''
-      this.measureKey = {}
+      this.measureObj = {}
       this.measureName = ''
       this.resetFilter()
     },
     getMeasureKey(data) {
       // 真实操作。。。。
-      this.measureKey = data || {}
+      this.measureObj = data || {}
       this.resetFilter()
     },
     async getTagsList() {
@@ -338,8 +336,8 @@ export default {
       // 返回数据赋值给baseFilter 并备份一份所有的tags列表 saveAllTags
       const { data } = await getTagkByMetric({
         productKey: this.productKey,
-        identifier: this.measureKey.identifier,
-        childIdentifier: this.measureKey.childIdentifier
+        identifier: this.measureObj.identifier,
+        childIdentifier: this.measureObj.childIdentifier
       })
       this.saveAllTags = data
       this.baseFilter.options = data
@@ -429,10 +427,11 @@ export default {
     },
     submit() {
       this.chartData = []
+      this.legend = []
       this.saveData = {}
       this.handleChartData(true)
-      this.chartData = [...Object.keys(this.saveData).map(key => this.saveData[key].line)]
-      this.legend = Object.keys(this.saveData)
+      // this.chartData = [...Object.keys(this.saveData).map(key => this.saveData[key].line)]
+      // this.legend = Object.keys(this.saveData)
     },
     async handleChartData(isRepaint) {
       // 处理参数 请求图表接口
@@ -456,7 +455,7 @@ export default {
         this.startTime = this.endTime - this.timeRange * 60 * 1000
       }
       const { data, code, message } = await getDataForChart({
-        metricRealName: this.measureKey.metricRealName,
+        metricRealName: this.measureObj.metricRealName,
         productKey: this.productKey,
         tagsFilter: JSON.stringify(tagsFilter),
         aggregator: this.algorithm,
@@ -470,10 +469,10 @@ export default {
         this.$message.error(message)
         return
       }
-      const resultList = data?.resultList
-      if (!resultList) {
-        this.chartData = []
-        this.legend = []
+      const resultList = data.resultList
+      const emptyFlag = resultList && !resultList.length
+      console.log(emptyFlag)
+      if (isRepaint && emptyFlag) {
         this.isShowChart = false
         return
       }

@@ -1,6 +1,7 @@
 <template>
   <div class="empty">
-    <svg-icon icon-class="empty1" class="empty"></svg-icon>
+    <!-- <svg-icon icon-class="empty1" class="empty"></svg-icon> -->
+    <img src="../assets/imgs/empty.png" width="80px">
     <div class="lh20 f12">暂无数据</div>
   </div>
 </template>

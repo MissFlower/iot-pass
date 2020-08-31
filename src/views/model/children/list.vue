@@ -2,7 +2,8 @@
   <div class="modelList">
     <el-table :data="list" border v-loading="loading" class="mb20" :max-height="tableHeight">
       <div slot="empty" class="mt30 mb20 df jc_c" v-if="typeTab">
-        <svg-icon icon-class="empty" style="width: 50px; height: 50px"></svg-icon>
+        <!-- <svg-icon icon-class="empty" style="width: 50px; height: 50px"></svg-icon> -->
+        <img src="../../../assets/imgs/no-model.png" width="80px">
         <div class="lh16 w300 tl ml20">
           <div class="b">尚未添加任何功能</div>
           <div class="c9 f12 mt10">您可以通过添加属性、事件、服务三类功能完成产品物模型的定义，产品下的设备都会继承该模型。</div>

@@ -316,7 +316,7 @@ body {
   }
 
   .success {
-    color: #67C23A;
+    color: #39AF59;
   }
 
   .blue {
@@ -346,6 +346,9 @@ body {
   .ai_c {
     align-items: center;
   }
+  .ai_b {
+    align-items: baseline!important;
+  }
 
   .jc_c {
     justify-content: center;
@@ -361,6 +364,9 @@ body {
 
   .jc_sa {
     justify-content: space-around;
+  }
+  .jc_se {
+    justify-content: space-evenly;
   }
 
   .fww {
@@ -572,6 +578,15 @@ body {
       margin-left: 5px;
     }
   }
+  .el-button--success {
+    background-color: #39B05A;
+    border-color: #39B05A;
+  }
+  .el-button--success:focus, .el-button--success:hover {
+    background: #39B05A;
+    border-color: #39B05A;
+    color: #FFF;
+}
 
   .point {
     width: 6px;

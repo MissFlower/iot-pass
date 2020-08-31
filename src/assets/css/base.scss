@@ -578,12 +578,16 @@ body {
     background-color: #39B05A;
     border-color: #39B05A;
   }
-  .el-button--success:focus, .el-button--success:hover {
+  .el-button--success:focus, .el-button--success:hover, .el-button--success.is-plain:focus, .el-button--success.is-plain:hover {
     background: #39B05A;
     border-color: #39B05A;
     color: #FFF;
-}
-
+  }
+  .el-button--success.is-plain {
+    color: #39B05A;
+    background: #f0f9eb;
+    border-color: #39B05A;
+  }
   .point {
     width: 6px;
     height: 6px;

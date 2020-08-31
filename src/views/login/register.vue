@@ -26,7 +26,7 @@
           <el-form-item prop="code">
             <div class="pr wp100 df ai_c">
               <el-input v-model="code" size="larger" placeholder="请输入验证码" class="flex1" />
-              <el-button class="ml10" size="larger" @click="handleSendCode">{{ msg }}</el-button>
+              <el-button type="success" class="ml10" size="larger" @click="handleSendCode" plain>{{ msg }}</el-button>
             </div>
           </el-form-item>
         </el-form>

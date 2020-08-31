@@ -112,7 +112,7 @@
             placeholder="请输入每分钟推送的设备数"
           ></el-input>
         </el-form-item>
-        <!-- <el-form-item
+        <el-form-item
           label="升级失败重试间隔"
           label-width="150px"
           prop="retryInterval"
@@ -126,7 +126,14 @@
             <el-option label="1小时后重试" value="60"></el-option>
             <el-option label="24小时后重试" value="1440"></el-option>
           </el-select>
-        </el-form-item>-->
+        </el-form-item>
+        <el-form-item label="升级重试上限次数" v-if="form.retryInterval != -1">
+          <el-select v-model="form.maxRetryCnt">
+            <el-option label="1次" value="1"></el-option>
+            <el-option label="2次" value="2"></el-option>
+            <el-option label="5次" value="5"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="设备升级超时时间（分钟）" label-width="150px" prop="timeOut">
           <el-input
             class="w200"
@@ -241,6 +248,7 @@ export default {
         ugTimeType: '0',
         timeOut: '',
         retryInterval: '0',
+        maxRetryCnt: '5',
         rate: '',
         deviceNames: '',
         ugStartTime: '',

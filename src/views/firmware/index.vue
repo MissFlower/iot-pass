@@ -5,7 +5,7 @@
  -->
 <template>
   <div id="firmware">
-    <h2>固件升级</h2>
+    <h2 class="mb20">固件升级</h2>
     <el-tabs v-model="activeTag" type="card">
       <el-tab-pane label="固件列表" name="1">
         <fm-list v-if="activeTag == '1'"></fm-list>

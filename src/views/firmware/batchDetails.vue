@@ -401,6 +401,7 @@ export default {
     // 选择状态
     handleSelectCountItem(item) {
       this.selectCountItemStatus = item.status
+      this.getCount()
       this.handleBatchChange(1)
     },
     // 获取转台统计

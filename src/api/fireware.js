@@ -241,7 +241,9 @@ export function getDirectedUpgradeList(data) {
    * 待升级版本列表
    * 请求方式:post ,json格式
       productKey  Long	  是	产品key
-      moduleType	String	是	选中的固件产品类型
+      moduleType	String	是	选中的固件产品类型，
+      productType 产品型号
+      destVersion  可选
    */
 
 export function getSrcVersionList(data) {
@@ -290,8 +292,8 @@ export function getVersionByProductId(data) {
   return request({
     url: '/fm/getproductDeviceVersion',
     method: 'post',
-    headers: headerFrom,
-    data: Qs.stringify(data)
+    // headers: headerFrom,
+    data
   })
 }
 
@@ -349,6 +351,18 @@ export function getDeviceCount(data) {
     url: 'upgrade/getUpgradeDeviceBySrcVersion',
     method: 'post',
     data
+  })
+}
+
+/**
+ * 根据产品KEY获取产品型号和固件产品类型
+ * productKey
+*/
+
+export function getListModuleConfigByProductKey(key) {
+  return request({
+    url: `/fm/listModuleConfigByProductKey?productKey=${key}`,
+    method: 'get'
   })
 }
 

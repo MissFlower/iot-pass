@@ -28,13 +28,18 @@
           <el-input type="text" class="w200" v-model="ruleForm.fmName" placeholder="请输入固件名称"></el-input>
         </el-form-item>
         <el-form-item label="所属产品" prop="productKey">
-          <el-select v-model="ruleForm.productKey" filterable :filter-method="userFilter" @change="changeSelect">
+          <el-select v-model="ruleForm.productKey" filterable :filter-method="userFilter" @change="changeSelectProduct">
             <el-option
               v-for="item in products"
               :key="item.productKey"
               :label="item.productName"
               :value="item.productKey"
             ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="产品型号" required>
+          <el-select v-model="ruleForm.productType" @change="changeSelectProdunctType">
+            <el-option v-for="(item, index) in productTypeArr" :key="index" :label="item.productType" :value="item.productType"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="固件产品类型" required>
@@ -44,7 +49,7 @@
             :disabled="typeDisabled"
             class="w200"
           >
-            <el-option v-for="(key, value) in moduleTypeMap" :key="key" :label="value" :value="key"></el-option>
+            <el-option v-for="(value, index) in moduleTypeMap" :key="index" :label="value" :value="value"></el-option>
           </el-select>
         </el-form-item>
         <!-- <el-form-item label="固件模块" required>
@@ -108,7 +113,7 @@
   </div>
 </template>
 <script>
-import { uploadFile, saveFm, getProducts, getSrcVersionList } from '@/api/fireware'
+import { uploadFile, saveFm, getProducts, getSrcVersionList, getListModuleConfigByProductKey } from '@/api/fireware'
 export default {
   props: {
     dialogFormVisible: {
@@ -143,6 +148,7 @@ export default {
       ruleForm: {
         fmType: 1, // 固件名称 1整包、2差分
         productKey: '', // 固件所属产品名称
+        productType: '', // 产品型号
         moduleType: '', // 固件产品类型
         srcVersion: '', // 待升级版本号
         destVersion: '', // 升级后固定版本
@@ -158,7 +164,8 @@ export default {
       typelTag: '1',
       products: [],
       productMap: {},
-      moduleTypeMap: {},
+      moduleTypeMap: [],
+      productTypeArr: [],
       timeout: null,
       productForm: {
         pageNum: 1,
@@ -230,17 +237,6 @@ export default {
         }
       })
     },
-    // 获取固件产品类型
-    getFmType(fmTypes) {
-      const moduleTypeMap = {}
-      if (fmTypes) {
-        fmTypes.split(',').forEach(item => {
-          moduleTypeMap[item] = item
-        })
-      }
-      this.moduleTypeMap = moduleTypeMap
-      this.ruleForm.moduleType = ''
-    },
     closeDialog() {
       this.$refs['ruleForm'].resetFields() // 清空弹出框校验
       this.uploadText = '上传文件'
@@ -304,33 +300,51 @@ export default {
         }
       })
     },
-    changeSelect() {
-      const curPrd = this.productMap[this.ruleForm.productKey]
+    changeSelectProduct() {
+      this.productTypeArr = []
+      this.ruleForm.productType = ''
+      this.ruleForm.moduleType = ''
       this.srcVersionList = []
       this.ruleForm.srcVersion = ''
-      this.getFmType(curPrd.fmTypes)
+      this.moduleTypeMap = []
+      this.getProductType(this.ruleForm.productKey)
+    },
+    getProductType(key) {
+      getListModuleConfigByProductKey(key).then(res => {
+        if (res.code === 200) {
+          this.productTypeArr = res.data ? res.data : []
+        }
+      })
+    },
+    changeSelectProdunctType() {
+      for (let i = 0; i < this.productTypeArr.length; i++) {
+        const row = this.productTypeArr[i]
+        if (row.productType === this.ruleForm.productType) {
+          this.moduleTypeMap = row.moduleTypeList
+          break
+        }
+      }
     },
     srcVersionFocus() {
       if (this.srcVersionList.length === 0) {
         if (!this.ruleForm.productKey) {
           this.$message.warning('请选择所属产品')
-        } else if (!this.ruleForm.moduleType) {
+        } else if (this.ruleForm.moduleType === '') {
           this.$message.warning('请选择固件产品类型')
         }
       }
     },
     getVersionList() {
       if (!this.ruleForm.productKey) {
-        // this.$message.warning('请选择所属产品')
         return
-      } else if (!this.ruleForm.moduleType) {
-        // this.$message.warning('请选择固件产品类型')
+      } else if (this.ruleForm.moduleType === '') {
         return
       }
       this.loading = true
       getSrcVersionList({
         productKey: this.ruleForm.productKey,
-        moduleType: this.ruleForm.moduleType
+        moduleType: this.ruleForm.moduleType,
+        productType: this.ruleForm.productType
       }).then(res => {
         if (res.code === 200) {
           this.srcVersionList = res.data

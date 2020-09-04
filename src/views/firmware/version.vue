@@ -3,13 +3,26 @@
     <div v-if="productKey">
       <div class="topCon">
         <span>产品：</span>
-        <el-select v-model="productKey">
+        <el-select v-model="productKey" size="mini">
           <el-option
             v-for="item in productList"
             :key="item.productKey"
             :value="item.productKey"
             :label="item.productName"
           ></el-option>
+        </el-select>
+        <span class="ml20">产品型号：</span>
+        <el-select v-model="productType" @change="changeSelectProdunctType">
+          <el-option v-for="(item, index) in productTypeArr" :key="index" :label="item.productType" :value="item.productType"></el-option>
+        </el-select>
+        <span class="ml20">固件产品类型：</span>
+        <el-select
+          v-model="moduleType"
+          placeholder="固件产品类型"
+          :disabled="productType == ''"
+          class="w200"
+        >
+          <el-option v-for="(value, index) in moduleTypeMap" :key="index" :label="value" :value="value"></el-option>
         </el-select>
         <div class="df mt10">
           <div class="item">
@@ -45,6 +58,14 @@
           <el-table-column label="固件版本" prop="version"></el-table-column>
           <el-table-column label="固件类型" prop="moduleType"></el-table-column>
         </el-table>
+        <el-pagination
+          @current-change="handleChange"
+          :current-page.sync="versionForm.pageNum"
+          :page-size="versionForm.pageSize"
+          layout="total, prev, pager, next"
+          class="tr mt20"
+          :total="versionTotal"
+        ></el-pagination>
       </div>
     </div>
     <div v-else class="noCon df jc_c">
@@ -69,24 +90,50 @@
 <script>
 import drawEcharts from '@/data/echartDrawFun.js'
 import emptyCon from '@/components/empty'
-import { getProducts, getFmVers, getDeviceByVersiob, getVersionByProductId } from '@/api/fireware'
+import { getProducts, getFmVers, getDeviceByVersiob, getVersionByProductId, getListModuleConfigByProductKey } from '@/api/fireware'
 export default {
   components: { emptyCon },
   data() {
     return {
       loading: false,
       productKey: '',
+      hardwareVersion: '',
+      moduleType: '',
       rightTableList: [],
       version: '',
       versionList: [],
       list: [],
-      productList: []
+      productList: [],
+      versionForm: {
+        version: '',
+        pageNum: 1,
+        pageSize: 10,
+        productKey: '',
+        productType: '',
+        moduleType: ''
+      },
+      versionTotal: 0,
+      productType: '',
+      productTypeArr: [],
+      moduleTypeMap: []
     }
   },
   watch: {
     productKey: function() {
-      this.getData()
+      this.productType = ''
+      this.moduleType = ''
+      this.productTypeArr = []
+      this.moduleTypeMap = []
+      this.versionForm.version = ''
       this.getVersion()
+      this.getProductType()
+    },
+    moduleType: function() {
+      this.versionForm.version = ''
+      if (this.moduleType !== '') {
+        this.getData()
+        this.getVersion()
+      }
     }
   },
   mounted() {
@@ -99,16 +146,17 @@ export default {
       getFmVers({
         productKey: this.productKey,
         pageNum: 1,
-        pageSize: 200
+        pageSize: 200,
+        productType: this.productType,
+        moduleType: this.moduleType
       }).then(res => {
-        // console.log(res)
         if (res.code === 200) {
-          if (res.data.data.length > 0) {
+          if (res.data.length > 0) {
             const obj = {}
             const setVersion = new Set()
             const setModuleType = new Set()
-            this.rightTableList = res.data.data
-            res.data.data.forEach(item => {
+            this.rightTableList = res.data
+            res.data.forEach(item => {
               setVersion.add(item.version)
               setModuleType.add(item.moduleType)
               if (!obj[item.version]) {
@@ -120,6 +168,7 @@ export default {
               }
               row[item.moduleType] = item
             })
+            console.log(obj, setVersion, setModuleType)
             this.drawFun(obj, setVersion, setModuleType)
           }
         }
@@ -167,23 +216,29 @@ export default {
     getDevice() {
       this.loading = true
       this.list = []
-      getDeviceByVersiob({
-        version: this.version,
-        pageNum: 1,
-        pageSize: 200,
-        productKey: this.productKey
-      }).then(res => {
+      this.versionForm.version = this.version
+      this.versionForm.productKey = this.productKey
+      this.versionForm.moduleType = this.moduleType
+      this.versionForm.productType = this.productType
+      getDeviceByVersiob(this.versionForm).then(res => {
         if (res.code === 200) {
-          this.list = res.data.data
+          this.list = res.data.data ? res.data.data : []
+          this.versionTotal = res.data.total
         }
         this.loading = false
       })
+    },
+    handleChange(page) {
+      this.versionForm.pageNum = page
+      this.getDevice()
     },
     getVersion() {
       this.versionList = []
       this.loading = true
       getVersionByProductId({
-        productKey: this.productKey
+        productKey: this.productKey,
+        moduleType: this.moduleType,
+        productType: this.productType
       }).then(res => {
         if (res.code === 200) {
           this.versionList = res.data
@@ -191,6 +246,31 @@ export default {
         }
         this.loading = false
       })
+    },
+    getProductType() {
+      this.productTypeArr = []
+      getListModuleConfigByProductKey(this.productKey).then(res => {
+        if (res.code === 200) {
+          this.productTypeArr = res.data ? res.data : []
+          if (this.productTypeArr.length > 0) {
+            this.productType = this.productTypeArr[0].productType
+            this.changeSelectProdunctType()
+          }
+        }
+      })
+    },
+    changeSelectProdunctType() {
+      for (let i = 0; i < this.productTypeArr.length; i++) {
+        const row = this.productTypeArr[i]
+        if (row.productType === this.productType) {
+          this.moduleTypeMap = row.moduleTypeList
+          if (this.moduleTypeMap.length > 0) {
+            this.moduleType = this.moduleTypeMap[0]
+            // this.getData()
+          }
+          break
+        }
+      }
     }
   }
 }

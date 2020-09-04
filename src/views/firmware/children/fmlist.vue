@@ -244,7 +244,7 @@ export default {
     checkFm(row) {
       // 未验证的固件进行验证，验证中或已验证的固件弹窗提示
       if (row.fmStatus === 0 || row.fmStatus === 3) {
-        this.getVerifyFirmInfo(row.id, row.srcVersion)
+        this.getVerifyFirmInfo(row)
         this.checkInfo = row
       } else {
         this.checkStatus = row.fmStatus
@@ -253,12 +253,13 @@ export default {
       }
     },
     // 验证固件前校验是否存在设备
-    getVerifyFirmInfo(fmId, versions) {
+    getVerifyFirmInfo(row) {
       const data = {
         pageNum: 1,
         pageSize: 10,
-        fmId: fmId,
-        srcVersions: versions
+        fmId: row.id,
+        srcVersions: row.srcVersion,
+        productType: row.productType
       }
       getVerifyFirmInfo(data).then(res => {
         if (res.code === 200) {

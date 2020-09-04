@@ -154,10 +154,7 @@
     </el-dialog>
     <select-device
       v-if="selectDeviceFlag"
-      :productKey="checkInfo.productKey"
-      :moduleType="checkInfo.moduleType"
-      :fmId="checkInfo.id"
-      :destVersion="checkInfo.destVersion"
+      :checkInfo="checkInfo"
       :srcVersion="srcVersion"
       @success="successDeviceDrawer"
       @close="closeDeviceDrawer"
@@ -370,7 +367,8 @@ export default {
       getSrcVersionList({
         productKey: this.checkInfo.productKey,
         moduleType: this.checkInfo.moduleType,
-        destVersion: this.checkInfo.destVersion
+        destVersion: this.checkInfo.destVersion,
+        productType: this.checkInfo.productType
       }).then(res => {
         if (res.code === 200) {
           this.srcVersionList = res.data

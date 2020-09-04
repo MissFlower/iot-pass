@@ -88,6 +88,7 @@ export default {
       const row = {
         name: key,
         type: 'bar',
+        barMaxWidth: 12,
         label: {
           show: true,
           position: 'right',

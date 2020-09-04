@@ -612,7 +612,8 @@ export default {
         pageNum: 1,
         pageSize: 10,
         fmId: fmId,
-        srcVersions: versions
+        srcVersions: versions,
+        productType: this.checkInfo.productType
       }
       getVerifyFirmInfo(data).then(res => {
         if (res.code === 200) {

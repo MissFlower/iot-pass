@@ -240,7 +240,8 @@ export default {
       getSrcVersionList({
         productKey: this.checkInfo.productKey,
         moduleType: this.checkInfo.moduleType,
-        destVersion: this.checkInfo.destVersion
+        destVersion: this.checkInfo.destVersion,
+        productType: this.checkInfo.productType
       }).then(res => {
         if (res.code === 200) {
           this.srcVersionList = res.data
@@ -255,7 +256,8 @@ export default {
         pageNum: 1,
         pageSize: 10,
         fmId: this.checkInfo.id,
-        srcVersions: this.version.join(',')
+        srcVersions: this.version.join(','),
+        productType: this.checkInfo.productType
       }
       getVerifyFirmInfo(data).then(res => {
         if (res.code === 200) {

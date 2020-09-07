@@ -168,7 +168,6 @@ export default {
               }
               row[item.moduleType] = item
             })
-            console.log(obj, setVersion, setModuleType)
             this.drawFun(obj, setVersion, setModuleType)
           }
         }
@@ -178,7 +177,7 @@ export default {
       })
     },
     drawFun(obj, setVersion, setModuleType) {
-      const versionArr = [...setVersion]
+      const versionArr = [...setVersion].reverse()
       const moduleTypeArr = [...setModuleType]
       const reObj = {}
       moduleTypeArr.forEach(type => {

@@ -199,6 +199,7 @@ export default {
   },
   watch: {
     'ruleForm.moduleType': function() {
+      this.srcVersion = []
       this.getVersionList()
     },
     'ruleForm.productKey': function() {
@@ -317,6 +318,7 @@ export default {
       })
     },
     changeSelectProdunctType() {
+      this.ruleForm.moduleType = ''
       for (let i = 0; i < this.productTypeArr.length; i++) {
         const row = this.productTypeArr[i]
         if (row.productType === this.ruleForm.productType) {

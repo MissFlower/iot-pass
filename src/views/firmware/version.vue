@@ -129,7 +129,8 @@ export default {
       this.getProductType()
     },
     moduleType: function() {
-      this.versionForm.version = ''
+      this.version = ''
+      this.versionForm.pageNum = 1
       if (this.moduleType !== '') {
         this.getData()
         this.getVersion()

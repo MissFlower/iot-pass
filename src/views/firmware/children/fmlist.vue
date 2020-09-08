@@ -7,6 +7,17 @@
   <div id="fmList">
     <div class="df ai_c mb20">
       <el-button type="primary" @click="addItem">新增固件</el-button>
+      <el-input
+        v-model="form.fmName"
+        placeholder="请输入固件名称"
+        class="searchInput w180 ml20"
+        @keyup.enter.native="searchList"
+      >
+        <span slot="suffix">
+          <i class="el-icon-search hand" @click="searchList"></i>
+          <i class="el-icon-close hand" v-if="form.fmName != ''" @click="clearFun"></i>
+        </span>
+      </el-input>
       <el-select
         v-model="form.productKey"
         class="w180 ml20"
@@ -23,17 +34,20 @@
           :value="item.productKey"
         ></el-option>
       </el-select>
-      <el-input
-        v-model="form.fmName"
-        placeholder="请输入固件名称"
-        class="searchInput w180 ml20"
-        @keyup.enter.native="searchList"
+      <span class="ml20 f12">产品型号：</span>
+      <el-select v-model="form.productType" @change="changeSelectProdunctType" class="w100">
+        <el-option v-for="(item, index) in productTypeArr" :key="index" :label="item.productType" :value="item.productType"></el-option>
+      </el-select>
+      <span class="ml20 f12">固件产品类型：</span>
+      <el-select
+        v-model="form.moduleType"
+        placeholder="固件产品类型"
+        :disabled="form.productType == ''"
+        class="w100"
+        @change="searchList()"
       >
-        <span slot="suffix">
-          <i class="el-icon-search hand" @click="searchList"></i>
-          <i class="el-icon-close hand" v-if="form.fmName != ''" @click="clearFun"></i>
-        </span>
-      </el-input>
+        <el-option v-for="(value, index) in moduleTypeArr" :key="index" :label="value" :value="value"></el-option>
+      </el-select>
     </div>
     <el-table :data="list" border stripe v-loading="loading">
       <!-- <el-table-column label="固件ID" prop="id"></el-table-column> -->
@@ -52,6 +66,8 @@
         </template>
       </el-table-column>
       <el-table-column label="产品名称" prop="productName"></el-table-column>
+      <el-table-column label="产品型号" prop="productType"></el-table-column>
+      <el-table-column label="固件类型" prop="moduleType"></el-table-column>
       <el-table-column label="升级前版本" prop="srcVersion"></el-table-column>
       <el-table-column label="升级后版本" prop="destVersion"></el-table-column>
       <el-table-column label="创建时间" prop="createTime" :formatter="formatCreateTime"></el-table-column>
@@ -131,7 +147,7 @@ import checkFirmware from './checkFirmware'
 import upgradeFirmware from './upgradeFirmware'
 import checkProcess from './checkProcess'
 
-import { getFmList, deleteFm, getProducts, getVerifyFirmInfo } from '@/api/fireware'
+import { getFmList, deleteFm, getProducts, getVerifyFirmInfo, getListModuleConfigByProductKey } from '@/api/fireware'
 
 export default {
   components: { AddFirmware, checkProcess, checkFirmware, upgradeFirmware },
@@ -142,6 +158,8 @@ export default {
       form: {
         fmName: '',
         productKey: '',
+        productType: '',
+        moduleType: '',
         pageSize: 20,
         pageNum: 1
       },
@@ -162,7 +180,9 @@ export default {
       checkFmVisible: false, // 固件验证弹框
       fmDeviceList: [],
       upgradeFmVisible: false, // 批量升级弹框
-      fmStatusObj
+      fmStatusObj,
+      moduleTypeArr: [],
+      productTypeArr: []
     }
   },
   mounted() {
@@ -206,6 +226,11 @@ export default {
       }
     },
     changeSelect() {
+      this.form.productType = ''
+      this.form.moduleType = ''
+      this.productTypeArr = []
+      this.moduleTypeArr = []
+      this.getProductType()
       this.searchList()
     },
     // 筛选函数
@@ -334,6 +359,33 @@ export default {
       }).catch(error => {
         console.log(error)
       })
+    },
+    getProductType() {
+      this.productTypeArr = []
+      getListModuleConfigByProductKey(this.form.productKey).then(res => {
+        if (res.code === 200) {
+          this.productTypeArr = res.data ? res.data : []
+          // if (this.productTypeArr.length > 0) {
+          //   this.productType = this.productTypeArr[0].productType
+          //   this.changeSelectProdunctType()
+          // }
+        }
+      })
+    },
+    changeSelectProdunctType() {
+      this.searchList()
+      this.form.moduleType = ''
+      for (let i = 0; i < this.productTypeArr.length; i++) {
+        const row = this.productTypeArr[i]
+        if (row.productType === this.form.productType) {
+          this.moduleTypeArr = row.moduleTypeList
+          // if (this.moduleTypeArr.length > 0) {
+          //   this.form.moduleType = this.moduleTypeArr[0]
+          //   // this.getData()
+          // }
+          break
+        }
+      }
     }
   }
 }

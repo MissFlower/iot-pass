@@ -131,9 +131,13 @@ export default {
     moduleType: function() {
       this.version = ''
       this.versionForm.pageNum = 1
+      this.getData()
       if (this.moduleType !== '') {
-        this.getData()
         this.getVersion()
+        this.getDevice()
+      } else {
+        this.versionList = ''
+        this.list = []
       }
     }
   },
@@ -242,7 +246,6 @@ export default {
       }).then(res => {
         if (res.code === 200) {
           this.versionList = res.data
-          this.getDevice()
         }
         this.loading = false
       })

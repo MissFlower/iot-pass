@@ -42,10 +42,10 @@
             <el-option v-for="(item, index) in productTypeArr" :key="index" :label="item.productType" :value="item.productType"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="固件产品类型" required>
+        <el-form-item label="固件模块类型" required>
           <el-select
             v-model="ruleForm.moduleType"
-            placeholder="固件产品类型"
+            placeholder="固件模块类型"
             :disabled="typeDisabled"
             class="w200"
           >
@@ -149,7 +149,7 @@ export default {
         fmType: 1, // 固件名称 1整包、2差分
         productKey: '', // 固件所属产品名称
         productType: '', // 产品型号
-        moduleType: '', // 固件产品类型
+        moduleType: '', // 固件模块类型
         srcVersion: '', // 待升级版本号
         destVersion: '', // 升级后固定版本
         fmName: '', // 固件名称
@@ -332,7 +332,7 @@ export default {
         if (!this.ruleForm.productKey) {
           this.$message.warning('请选择所属产品')
         } else if (this.ruleForm.moduleType === '') {
-          this.$message.warning('请选择固件产品类型')
+          this.$message.warning('请选择固件模块类型')
         }
       }
     },

@@ -37,7 +37,7 @@ export function uploadFile(data) {
   })
 }
 /**
- * 获取固件产品类型
+ * 获取固件模块类型
  * @param data
  */
 export function getFmType(data) {
@@ -241,7 +241,7 @@ export function getDirectedUpgradeList(data) {
    * 待升级版本列表
    * 请求方式:post ,json格式
       productKey  Long	  是	产品key
-      moduleType	String	是	选中的固件产品类型，
+      moduleType	String	是	选中的固件模块类型，
       productType 产品型号
       destVersion  可选
    */
@@ -355,7 +355,7 @@ export function getDeviceCount(data) {
 }
 
 /**
- * 根据产品KEY获取产品型号和固件产品类型
+ * 根据产品KEY获取产品型号和固件模块类型
  * productKey
 */
 

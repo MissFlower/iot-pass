@@ -35,15 +35,15 @@
         ></el-option>
       </el-select>
       <span class="ml20 f12">产品型号：</span>
-      <el-select v-model="form.productType" @change="changeSelectProdunctType" class="w100">
+      <el-select v-model="form.productType" @change="changeSelectProdunctType" class="w120">
         <el-option v-for="(item, index) in productTypeArr" :key="index" :label="item.productType" :value="item.productType"></el-option>
       </el-select>
-      <span class="ml20 f12">固件产品类型：</span>
+      <span class="ml20 f12">固件模块类型：</span>
       <el-select
         v-model="form.moduleType"
-        placeholder="固件产品类型"
+        placeholder="固件模块类型"
         :disabled="form.productType == ''"
-        class="w100"
+        class="w120"
         @change="searchList()"
       >
         <el-option v-for="(value, index) in moduleTypeArr" :key="index" :label="value" :value="value"></el-option>

@@ -15,10 +15,10 @@
         <el-select v-model="productType" @change="changeSelectProdunctType">
           <el-option v-for="(item, index) in productTypeArr" :key="index" :label="item.productType" :value="item.productType"></el-option>
         </el-select>
-        <span class="ml20">固件产品类型：</span>
+        <span class="ml20">固件模块类型：</span>
         <el-select
           v-model="moduleType"
-          placeholder="固件产品类型"
+          placeholder="固件模块类型"
           :disabled="productType == ''"
           class="w200"
         >

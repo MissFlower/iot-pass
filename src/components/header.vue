@@ -31,7 +31,7 @@
       </el-dropdown>
       <span v-if="!flag && !loginStatus" class="f12 hand success mr20" @click="handleLogin">登录</span>
       <!-- <span v-if="!flag && !loginStatus" class="f12 hand blue" @click="handleRegister">注册</span> -->
-      <el-button v-if="!flag && !loginStatus" type="success" size="mini" @click="handleRegister">注册</el-button>
+      <!-- <el-button v-if="!flag && !loginStatus" type="success" size="mini" @click="handleRegister">注册</el-button> -->
     </div>
   </header>
 </template>

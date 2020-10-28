@@ -139,7 +139,7 @@
 </template>
 
 <script>
-import { dealFun1 } from '@/data/fun'
+import { dealFun2 } from '@/data/fun'
 import { getMenuList, delMenu } from '@/api/menu'
 export default {
   data() {
@@ -147,7 +147,7 @@ export default {
       loading: false,
       formData: {
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 1000,
         name: '',
         code: ''
       },
@@ -182,10 +182,7 @@ export default {
       this.loading = true
       this.list = []
       // this.menuObj = {}
-      getMenuList({
-        pageNum: 1,
-        pageSize: 1000
-      }).then(res => {
+      getMenuList(this.formData).then(res => {
         if (res.code === 200) {
           if (res.data.data) {
             if (res.data.data.length > 0) {
@@ -193,9 +190,8 @@ export default {
                 this.menuObj[item.code] = item.name
               })
             }
-            this.list = dealFun1(res.data.data)
+            this.list = dealFun2(res.data.data, 'code', 'pcode')
             this.expands.push(this.list[0].menuId + '')
-            console.log(this.expands)
           }
         } else {
           this.$message.error(res.message)

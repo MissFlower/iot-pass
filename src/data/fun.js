@@ -43,6 +43,9 @@ export function dealFun(list) {
   if (list && len > 0) {
     const obj = {}
     list.forEach(item => {
+      if (!item.levels) {
+        item.levels = 0
+      }
       if (!obj[item.levels]) {
         obj[item.levels] = []
       }
@@ -82,6 +85,7 @@ export function dealFun1(list) {
       }
       obj[item.pcode].push(item)
     })
+    console.log(obj)
     const arr = obj[0]
     delete obj[0]
     fun(arr, obj)
@@ -100,6 +104,49 @@ function fun(arr, obj) {
       fun(item.children, obj)
     }
   })
+}
+export function dealFun2(list, key, pkey) {
+  if (list.length > 0) {
+    const objList = {}
+    const obj = {}
+    list.forEach(item => {
+      const code = key ? item[key] : 'code'
+      const pcode = pkey ? item[pkey] : 'pcode'
+      if (!objList[code]) {
+        objList[code] = item
+      }
+      if (!obj[pcode]) {
+        obj[pcode] = []
+      }
+      obj[pcode].push(item)
+    })
+    const obj2 = JSON.parse(JSON.stringify(obj))
+    for (const k in obj) {
+      const rows = obj[k]
+      rows.forEach(row => {
+        const val = row[key]
+        if (obj2[val]) {
+          delete obj2[val]
+        }
+      })
+    }
+    for (const key in obj) {
+      if (objList[key]) {
+        objList[key].children = obj[key]
+      }
+    }
+    const arr = []
+    for (const k in obj2) {
+      const rows = obj2[k]
+      rows.forEach(row => {
+        const code = row[key]
+        arr.push(objList[code])
+      })
+    }
+    return arr
+  } else {
+    return []
+  }
 }
 
 // 处理角色权限tree的函数

@@ -14,7 +14,7 @@
           <el-button type="success" size="larger" class="wp100" @click="handleSubmit">登录</el-button>
           <div class="f12 c6 mt10 tc pr">
             <div class="hand pa" style="right: 0px" @click="handleFind">忘记密码</div>
-            <div class="hand success" @click="handleRedister">立即注册</div>
+            <!-- <div class="hand success" @click="handleRedister">立即注册</div> -->
           </div>
         </div>
       </div>

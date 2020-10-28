@@ -95,8 +95,11 @@
           <a
             class="oprate_btn"
             @click="toDetails(scope.row.id, scope.row.productName, scope.row.srcVersion)"
-          >查看</a> |
-          <a class="oprate_btn" @click="delItem(scope.row.id)">删除</a>
+          >查看</a>
+          <span v-if="authArr.indexOf('firmware_del') > -1">
+            <span> | </span>
+            <a class="oprate_btn" @click="delItem(scope.row.id)"> 删除</a>
+          </span>
         </template>
       </el-table-column>
     </el-table>
@@ -183,6 +186,11 @@ export default {
       fmStatusObj,
       moduleTypeArr: [],
       productTypeArr: []
+    }
+  },
+  computed: {
+    authArr() {
+      return this.$store.state.app.functionArr
     }
   },
   mounted() {

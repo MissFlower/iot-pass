@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 15:57:06
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-18 18:39:41
+ * @LastEditTime: 2020-10-29 14:27:11
 -->
 
 <template>
@@ -87,19 +87,19 @@
     <!-- 列表 -->
     <div class="table-list-container">
       <ElTable v-loading="loading" :data="listData" border>
-        <ElTableColumn label="时间" prop="time">
+        <ElTableColumn label="时间" prop="time" width="200">
           <template slot-scope="{ row }">{{ row.time | parseMillTime }}</template>
         </ElTableColumn>
 
-        <ElTableColumn label="标识符" prop="identifier" />
+        <ElTableColumn label="标识符" prop="identifier" min-width="100" />
 
-        <ElTableColumn label="事件名称" prop="name" />
+        <ElTableColumn label="事件名称" prop="name" min-width="100" />
 
-        <ElTableColumn label="事件类型" prop="eventType">
+        <ElTableColumn label="事件类型" prop="eventType" min-width="100">
           <template slot-scope="{ row }">{{ EVENT_TYPE_TEXT[row.eventType] }}</template>
         </ElTableColumn>
 
-        <ElTableColumn label="输出参数" prop="outputData" show-overflow-tooltip />
+        <ElTableColumn label="输出参数" prop="outputData" min-width="300" show-overflow-tooltip />
 
         <div slot="empty" class="defalut-graph-box">
           <DeafultGraph icon-class="empty1" text="暂无数据" />

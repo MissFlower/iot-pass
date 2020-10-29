@@ -1,13 +1,6 @@
-/*
- * @Description:
- * @Version: 0.1.0
- * @Autor: AiDongYang
- * @Date: 2020-07-29 14:26:58
- * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-25 18:02:17
- */
 'use strict'
 const path = require('path')
+const config = require('./package.json')
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
@@ -30,6 +23,10 @@ module.exports = {
         '@': resolve('src'),
         'src': resolve('src')
       }
+    },
+    output: {
+      filename: `js/[name].${config.version}.js`,
+      chunkFilename: `js/[name].${config.version}.js`
     }
   },
   chainWebpack: config => {

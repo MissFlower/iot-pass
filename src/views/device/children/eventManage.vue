@@ -155,7 +155,6 @@ export default {
     // 获取事件管理列表
     getList(isLoadMore) {
       this.loading = true
-      console.log(this)
       getEventForList({
         productKey: this.$attrs['device-info'].productKey,
         deviceName: this.$attrs['device-info'].deviceName,

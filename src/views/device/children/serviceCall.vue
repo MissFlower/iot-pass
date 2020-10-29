@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 15:57:06
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-24 19:17:36
+ * @LastEditTime: 2020-10-29 13:53:32
 -->
 
 <template>
@@ -154,7 +154,7 @@ export default {
           this.loading = false
           if (res.code === 200) {
             // 成功处理
-            this.isShowLoadMoreBtn = res.nextValid
+            this.isShowLoadMoreBtn = res.data.nextValid
             this.endTime = res.data.nextTime
             const data = res.data.serviceInfo ? res.data.serviceInfo : []
             if (!isLoadMore) {

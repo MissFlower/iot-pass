@@ -170,7 +170,7 @@ export default {
           if (res.code === 200) {
             // 成功处理
             this.isShowLoadMoreBtn = res.data.nextValid
-            this.endTime = res.nextTime
+            this.endTime = res.data.nextTime
             const data = res.data.eventInfo ? res.data.eventInfo : []
             if (!isLoadMore) {
               // 不是加载更多，将表格数据清空

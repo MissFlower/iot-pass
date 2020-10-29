@@ -155,7 +155,7 @@ export default {
           if (res.code === 200) {
             // 成功处理
             this.isShowLoadMoreBtn = res.nextValid
-            this.endTime = res.nextTime
+            this.endTime = res.data.nextTime
             const data = res.data.serviceInfo ? res.data.serviceInfo : []
             if (!isLoadMore) {
               // 不是加载更多，将表格数据清空

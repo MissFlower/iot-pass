@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 15:57:06
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-10-29 14:27:11
+ * @LastEditTime: 2020-10-29 16:06:36
 -->
 
 <template>
@@ -133,6 +133,7 @@ export default {
       curtomTime: '', // 自定义时间
       startTime: '', // 开始时间
       endTime: '', // 结束时间
+      nextTime: '', // 下次接口请求结束时间
       loading: false, // loading状态
       isShowLoadMoreBtn: false // 是否展示加载数据
     }
@@ -159,7 +160,7 @@ export default {
         productKey: this.$attrs['device-info'].productKey,
         deviceName: this.$attrs['device-info'].deviceName,
         startTime: this.startTime,
-        endTime: this.endTime,
+        endTime: isLoadMore ? this.nextTime : this.endTime,
         pageSize: 20,
         asc: 1,
         ...this.formInline
@@ -169,7 +170,7 @@ export default {
           if (res.code === 200) {
             // 成功处理
             this.isShowLoadMoreBtn = res.data.nextValid
-            this.endTime = res.data.nextTime
+            this.nextTime = res.data.nextTime
             const data = res.data.eventInfo ? res.data.eventInfo : []
             if (!isLoadMore) {
               // 不是加载更多，将表格数据清空
@@ -188,12 +189,8 @@ export default {
     },
     chooseTime(value) {
       // 选择时间范围 转换 startTime endTime 除自定义之外
-      // console.log(value)
       this.setStartEndTime()
-      if (!value) {
-        this.startTime = this.endTime - (7 * 24 * 60 * 60 * 1000)
-        this.curtomTime = [this.startTime, this.endTime]
-      }
+      this.curtomTime = !value && [this.startTime, this.endTime]
       this.getList()
     },
     dateChange() {
@@ -207,9 +204,10 @@ export default {
       this.getList(true)
     },
     setStartEndTime() {
-      // 设置开始和结束时间
-      this.endTime = new Date().getTime()
-      this.startTime = this.endTime - (this.timeRange * 60 * 60 * 1000)
+      // 设置开始和结束时间  自定义的时候每次接口请求 最新事件不更改 非自定义每次获取最新时间
+      this.endTime = this.timeRange ? new Date().getTime() : this.endTime
+      const timeRange = this.timeRange || 7 * 24
+      this.startTime = this.endTime - (timeRange * 60 * 60 * 1000)
     },
     change() {
       this.setStartEndTime()

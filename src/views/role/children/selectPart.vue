@@ -7,10 +7,10 @@
       :class="type > 1 ? 'df' : ''"
     >
       <div class="w200 mt10">
+        <!-- :disabled="item.pid != 0 && selects.indexOf(item.pid) == -1" -->
         <el-checkbox
           :label="item.id"
           @change="handeleChangeNode(item)"
-          :disabled="item.pid != 0 && selects.indexOf(item.pid) == -1"
         >{{ item.name }}</el-checkbox>
       </div>
       <div class="df selectPartChildren" v-if="item.children">

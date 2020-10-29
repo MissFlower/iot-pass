@@ -22,7 +22,7 @@
         </el-form-item>
         <el-form-item label="验证码" prop="code">
           <el-input v-model="code" placeholder="请输入手机验证码" class="w200"></el-input>
-          <el-button type="text" class="ml10 c9" @click="getCode">{{ msg }}</el-button>
+          <el-button class="ml10 c9" @click="getCode">{{ msg }}</el-button>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" class="w120" @click="handleSave">确定</el-button>

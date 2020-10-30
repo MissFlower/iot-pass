@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 15:57:06
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-10-29 16:23:35
+ * @LastEditTime: 2020-10-30 17:38:29
 -->
 
 <template>
@@ -35,7 +35,7 @@
 
         <ElFormItem prop="curtomTime">
           <ElDatePicker
-            v-if="timeRange === 0"
+            v-show="timeRange === 0"
             v-model="curtomTime"
             type="datetimerange"
             range-separator="至"
@@ -157,10 +157,10 @@ export default {
             // 成功处理
             this.isShowLoadMoreBtn = res.data.nextValid
             this.nextTime = res.data.nextTime
-            const data = res.data.serviceInfo ? res.data.serviceInfo : []
+            const data = res.data.serviceInfo || []
             if (!isLoadMore) {
               // 不是加载更多，将表格数据清空
-              this.listData = [...data]
+              this.listData = []
             }
             this.listData.push(...deepFreeze(data))
           } else {
@@ -189,8 +189,7 @@ export default {
     setStartEndTime() {
       // 设置开始和结束时间  自定义的时候每次接口请求 最新事件不更改 非自定义每次获取最新时间
       this.endTime = this.timeRange ? new Date().getTime() : this.endTime
-      const timeRange = this.timeRange || 7 * 24
-      this.startTime = this.endTime - (timeRange * 60 * 60 * 1000)
+      this.startTime = (this.curtomTime && !this.timeRange) ? this.curtomTime[0] : this.endTime - (this.timeRange || 7 * 24) * 60 * 60 * 1000
     },
     change() {
       this.setStartEndTime()

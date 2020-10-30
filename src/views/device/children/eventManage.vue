@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 15:57:06
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-10-29 16:06:36
+ * @LastEditTime: 2020-10-30 17:40:20
 -->
 
 <template>
@@ -171,13 +171,12 @@ export default {
             // 成功处理
             this.isShowLoadMoreBtn = res.data.nextValid
             this.nextTime = res.data.nextTime
-            const data = res.data.eventInfo ? res.data.eventInfo : []
+            const data = res.data.eventInfo || []
             if (!isLoadMore) {
               // 不是加载更多，将表格数据清空
-              this.listData = [...data]
-            } else {
-              this.listData.push(...deepFreeze(data))
+              this.listData = []
             }
+            this.listData.push(...deepFreeze(data))
           } else {
             this.$message.error(res.message)
           }
@@ -206,8 +205,7 @@ export default {
     setStartEndTime() {
       // 设置开始和结束时间  自定义的时候每次接口请求 最新事件不更改 非自定义每次获取最新时间
       this.endTime = this.timeRange ? new Date().getTime() : this.endTime
-      const timeRange = this.timeRange || 7 * 24
-      this.startTime = this.endTime - (timeRange * 60 * 60 * 1000)
+      this.startTime = (this.curtomTime && !this.timeRange) ? this.curtomTime[0] : this.endTime - (this.timeRange || 7 * 24) * 60 * 60 * 1000
     },
     change() {
       this.setStartEndTime()

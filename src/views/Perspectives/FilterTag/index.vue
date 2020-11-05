@@ -22,7 +22,10 @@
       </ElOption>
     </ElSelect>
     <div v-show="tagKey" class="tag-search-container">
-      <ElInput v-model.trim="searchValue" placeholder="请输入内容" @input="searchTagValue" />
+      <div class="tag-search-con df ai_c">
+        <el-checkbox v-model="allFlag" @change="selectAllFun" class="ml10 mr10"></el-checkbox>
+        <ElInput v-model.trim="searchValue" placeholder="请输入内容" class="tagSearch" @input="searchTagValue" />
+      </div>
       <div class="tag-value-container">
         <ElScrollbar style="height:100%;">
           <ul class="checked-tag-container">
@@ -72,7 +75,17 @@ export default {
       checkedTagsValue: [], // 选中的tagValue
       uncheckedTagsValue: [], // 未选中的tagValue
       saveUncheckedTagsValue: [],
-      $_searchTagValueHandler: null
+      $_searchTagValueHandler: null,
+      allFlag: false
+    }
+  },
+  watch: {
+    checkedTagsValue() {
+      if (this.saveUncheckedTagsValue.length > 0 && (this.checkedTagsValue.length === this.saveUncheckedTagsValue.length)) {
+        this.allFlag = true
+      } else {
+        this.allFlag = false
+      }
     }
   },
   mounted() {
@@ -80,6 +93,23 @@ export default {
     this.$_searchTagValueHandler = throttle(this.filterUncheckedTagsValue, 300)
   },
   methods: {
+    selectAllFun() {
+      const tags = JSON.parse(JSON.stringify(this.saveUncheckedTagsValue))
+      tags.forEach(item => {
+        item.checked = this.allFlag
+      })
+      if (this.allFlag) {
+        this.uncheckedTagsValue = []
+        this.checkedTagsValue = tags
+      } else {
+        this.uncheckedTagsValue = tags
+        this.checkedTagsValue = []
+      }
+      this.$emit('change', this.id, {
+        tag: this.tagKey, // tag 的 id
+        values: this.checkedTagsValue
+      })
+    },
     checkboxChange(data) {
       // checkbox勾选事件逻辑处理
       if (data.checked) {
@@ -127,6 +157,7 @@ export default {
     async tagChange() {
       // tag选择更改 请求接口 获取tag下value列表
       this.searchValue = ''
+      // this.allFlag = false
       const tagValueList = await this.getTagValueList()
       this.uncheckedTagsValue = [...tagValueList]
       this.saveUncheckedTagsValue = [...tagValueList]
@@ -191,6 +222,12 @@ export default {
   .tag-search-container {
     margin-top: 2px;
     height: calc(100% - 65px);
+    .tag-search-con {
+      position: relative;
+      border: 1px solid #DCDFE6;
+      box-sizing: border-box;
+      border-radius: 4px;
+    }
   }
   /deep/.tag-value-container {
     height: calc(100% - 32px);
@@ -223,8 +260,17 @@ export default {
     }
   }
 </style>
-<style>
+<style lang="scss">
 .filter-tag-select .el-select-dropdown__wrap {
   max-height: 200px;
+}
+.tag-search-container .tag-search-con {
+  .el-input__inner {
+    padding-left: 10px;
+    border: none;
+    border-left: 1px solid #DCDFE6;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
 }
 </style>

@@ -122,6 +122,9 @@
         <event-manage v-show="modelType == 'eventManage'" :device-info="deviceObj" />
         <service-Call v-show="modelType == 'serviceCall'" :device-info="deviceObj" /> -->
       </el-tab-pane>
+      <el-tab-pane label="设备日志" name="deviceLog">
+        <device-log :device-obj="deviceObj" />
+      </el-tab-pane>
     </el-tabs>
 
     <el-dialog title="设备证书" :visible.sync="lookDeviceSecret" width="50%">
@@ -197,6 +200,7 @@ import deviceTopic from './topic/topic'
 import runState from './runState'
 import eventManage from './eventManage'
 import serviceCall from './serviceCall'
+import deviceLog from './deviceLog'
 import { deviceInfo } from '@/api/deviceRequest'
 export default {
   components: {
@@ -204,7 +208,8 @@ export default {
     runState,
     eventManage,
     serviceCall,
-    deviceTopic
+    deviceTopic,
+    deviceLog
   },
   data() {
     return {

@@ -199,3 +199,48 @@ export function getTableData(params) {
     data: params
   })
 }
+
+/**
+ * @description: 下发日志上传指令
+ * @param { productKey: 产品key, deviceName: 设备名称, remark: 备注, param: 参数 }
+ * @return {type}
+ * @author: AiDongYang | ZhouChangBao
+ */
+export function uploadInstruct(params) {
+  return request({
+    url: '/api/localLog/uploadInstruct',
+    method: 'post',
+    headers: headerFrom_json,
+    data: params
+  })
+}
+
+/**
+ * @description: 获取下载地址
+ * @param { recordId: 日志ID }
+ * @return {type}
+ * @author: AiDongYang | ZhouChangBao
+ */
+export function downloadPath(params) {
+  return request({
+    url: '/api/localLog/downloadPath',
+    method: 'post',
+    headers: headerFrom_json,
+    data: params
+  })
+}
+
+/**
+ * @description: 本地日志列表
+ * @param { productKey: 产品key, deviceName: 设备名称, pageNum: 页码, pageSize: 每页条数 }
+ * @return {type}
+ * @author: AiDongYang | ZhouChangBao
+ */
+export function localLogList(params) {
+  return request({
+    url: '/api/localLog/list',
+    method: 'post',
+    headers: headerFrom_json,
+    data: params
+  })
+}

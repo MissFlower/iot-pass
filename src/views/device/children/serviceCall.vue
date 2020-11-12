@@ -88,7 +88,7 @@
         <ElTableColumn label="输出参数" prop="outputData" min-width="200" show-overflow-tooltip />
 
         <div slot="empty" class="defalut-graph-box">
-          <DeafultGraph icon-class="empty1" text="暂无数据" />
+          <DeafultGraph icon-class="empty" text="暂无数据" />
         </div>
       </ElTable>
       <ElButton v-if="isShowLoadMoreBtn" class="load-more-button" @click="loadMore">加载更多</ElButton>

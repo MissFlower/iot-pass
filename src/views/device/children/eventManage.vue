@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 15:57:06
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-10-30 17:40:20
+ * @LastEditTime: 2020-11-11 17:58:12
 -->
 
 <template>
@@ -102,7 +102,7 @@
         <ElTableColumn label="输出参数" prop="outputData" min-width="300" show-overflow-tooltip />
 
         <div slot="empty" class="defalut-graph-box">
-          <DeafultGraph icon-class="empty1" text="暂无数据" />
+          <DeafultGraph icon-class="empty" text="暂无数据" />
         </div>
       </ElTable>
       <ElButton v-show="isShowLoadMoreBtn" class="load-more-button" @click="loadMore">加载更多</ElButton>

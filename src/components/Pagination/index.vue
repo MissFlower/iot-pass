@@ -1,3 +1,11 @@
+<!--
+ * @Description:
+ * @Version: 0.1.0
+ * @Author: AiDongYang
+ * @Date: 2020-08-27 15:17:40
+ * @LastEditors: AiDongYang
+ * @LastEditTime: 2020-11-12 14:03:00
+-->
 
 <template>
   <div :class="{'hidden':hidden}" class="pagination-container">
@@ -57,9 +65,9 @@ export default {
   },
   methods: {
     /**
-       * 一页大小
-       * @param size
-       */
+     * 一页大小
+     * @param size
+     */
     handleSizeChange(size) {
       this.data.pageSize = size
       this.$emit('pagination')
@@ -68,9 +76,9 @@ export default {
       }
     },
     /**
-       * 页数跳转
-       * @param page
-       */
+     * 页数跳转
+     * @param page
+     */
     handleCurrentChange(page) {
       this.data.pageNum = page
       this.$emit('pagination')

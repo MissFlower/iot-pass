@@ -1,9 +1,9 @@
-import request from "@/utils/request";
-import Qs from "qs";
+import request from '@/utils/request'
+import Qs from 'qs'
 
 const headerFrom = {
-  "Content-Type": "application/x-www-form-urlencoded"
-};
+  'Content-Type': 'application/x-www-form-urlencoded'
+}
 
 /*
 菜单列表
@@ -15,11 +15,11 @@ const headerFrom = {
 export function getMenuList(data) {
   // 菜单列表
   return request({
-    url: "/menu/list",
-    method: "post",
+    url: '/menu/list',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 /*
 菜单创建
@@ -35,11 +35,11 @@ export function getMenuList(data) {
 export function createMenu(data) {
   // 新建菜单
   return request({
-    url: "/menu/create",
-    method: "post",
+    url: '/menu/create',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 /*
 菜单编辑
@@ -56,11 +56,11 @@ export function createMenu(data) {
 export function updateMenu(data) {
   // 编辑菜单
   return request({
-    url: "/menu/update",
-    method: "post",
+    url: '/menu/update',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 
 /*
@@ -71,9 +71,9 @@ export function updateMenu(data) {
 export function delMenu(data) {
   // 菜单删除
   return request({
-    url: "/menu/delete",
-    method: "post",
+    url: '/menu/delete',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }

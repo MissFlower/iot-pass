@@ -1,9 +1,9 @@
-import axios from "@/utils/request";
-import Qs from "qs";
+import axios from '@/utils/request'
+import Qs from 'qs'
 
 const headerFrom = {
-  "Content-Type": "application/x-www-form-urlencoded"
-};
+  'Content-Type': 'application/x-www-form-urlencoded'
+}
 
 /*
   角色列表
@@ -15,11 +15,11 @@ const headerFrom = {
 export function roleList(data) {
   // 角色列表
   return axios({
-    url: "/role/list",
-    method: "post",
+    url: '/role/list',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 
 /*
@@ -31,11 +31,11 @@ export function roleList(data) {
 export function addRole(data) {
   // 角色添加
   return axios({
-    url: "/role/create",
-    method: "post",
+    url: '/role/create',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 
 /*
@@ -48,11 +48,11 @@ export function addRole(data) {
 export function updateRole(data) {
   // 角色编辑
   return axios({
-    url: "/role/update",
-    method: "post",
+    url: '/role/update',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 
 /*
@@ -63,11 +63,11 @@ export function updateRole(data) {
 export function delRole(data) {
   // 角色删除
   return axios({
-    url: "/role/delete",
-    method: "post",
+    url: '/role/delete',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 
 /*
@@ -78,11 +78,11 @@ export function delRole(data) {
 export function getMenusTree(data) {
   // 根据角色ID展示角色下菜单树
   return axios({
-    url: "/menu/menuTreeListByRoleId",
-    method: "post",
+    url: '/menu/menuTreeListByRoleId',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }
 
 /*
@@ -94,9 +94,9 @@ export function getMenusTree(data) {
 export function setAuthorityForRole(data) {
   // 为角色配置菜单权限，先移除现有角色跟菜单关系，再保存新配置
   return axios({
-    url: "/role/setAuthority",
-    method: "post",
+    url: '/role/setAuthority',
+    method: 'post',
     headers: headerFrom,
     data: Qs.stringify(data)
-  });
+  })
 }

@@ -22,9 +22,9 @@
 </template>
 
 <script>
-import SidebarItem from "./SidebarItem";
+import SidebarItem from './SidebarItem'
 // import variables from "@/styles/variables.scss";
-import { dealUserTreeFun } from "@/data/fun";
+import { dealUserTreeFun } from '@/data/fun'
 
 export default {
   components: { SidebarItem },
@@ -32,31 +32,31 @@ export default {
     return {
       baseList: [
         {
-          icon: "home",
-          name: "首页",
-          path: "/home"
+          icon: 'home',
+          name: '首页',
+          path: '/home'
         }
       ],
       list: []
-    };
+    }
   },
   computed: {
     activeMenu() {
-      const route = this.$route;
-      let { path } = route;
+      const route = this.$route
+      let { path } = route
       const pathArr = path.split('/')
       path = '/' + pathArr[1]
-      return path;
+      return path
     },
     // showLogo() {
     //   return this.$store.state.settings.sidebarLogo;
     // },
-    menuLists () {
+    menuLists() {
       return this.$store.state.app.menuLists
     }
   },
   watch: {
-    menuLists () {
+    menuLists() {
       this.menuListDealFun()
     }
   },
@@ -64,9 +64,8 @@ export default {
     this.menuListDealFun()
   },
   methods: {
-    menuListDealFun () {
-      let arr = new Array()
-      let arr1 = []
+    menuListDealFun() {
+      let arr = []
       this.menuLists.forEach(item => {
         if (!item.path) {
           item.path = '404'
@@ -90,5 +89,5 @@ export default {
       }
     }
   }
-};
+}
 </script>

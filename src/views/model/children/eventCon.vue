@@ -31,7 +31,7 @@
               :underline="false"
               class="f12 mr10"
               v-if="!showFlag"
-              @click.stop="editSturct(item)"
+              @click.stop="editSturct(item, index)"
             >编辑</el-link>
             <el-link
               type="primary"

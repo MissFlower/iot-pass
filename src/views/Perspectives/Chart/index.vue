@@ -22,6 +22,7 @@ require('echarts/lib/chart/line')
 require('echarts/lib/component/tooltip')
 require('echarts/lib/component/title')
 require('echarts/lib/component/legend')
+require('echarts/lib/component/legendScroll')
 require('echarts/lib/component/toolbox')
 require('echarts/lib/component/dataZoom')
 import resize from '../mixins/resize'
@@ -127,7 +128,8 @@ export default {
       // console.log(this.legend)
       this.echartInstance.setOption({
         legend: {
-          data: this.legend
+          data: this.legend,
+          type: 'scroll'
         },
         series: [...handleDataList]
       })

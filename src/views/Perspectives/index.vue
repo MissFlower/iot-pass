@@ -401,6 +401,7 @@ export default {
       this.computedFilterOptions()
     },
     getCheckedTagValue(id, data) {
+      this.getCustomTime()
       // 获取tag 和 value 更新 用户 存储的内容
       this.checkedFilterTagValue[id] = data
       // 设置每个Filter选中的tag  存储的是id
@@ -471,7 +472,6 @@ export default {
       }
       const resultList = data.resultList
       const emptyFlag = resultList && !resultList.length
-      console.log(emptyFlag)
       if (isRepaint && emptyFlag) {
         this.isShowChart = false
         return

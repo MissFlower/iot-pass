@@ -271,6 +271,7 @@ export default {
     },
     // 搜索按钮
     searchBtnTouch() {
+      this.tableData.pageNum = 1
       this.getDeviceList()
     },
 
@@ -424,7 +425,7 @@ export default {
 
     // 列表翻页
     handleCurrentChange() {
-      this.tableData.pageNum = 1
+      // this.tableData.pageNum = 1
       this.getDeviceList()
     }
 

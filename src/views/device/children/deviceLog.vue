@@ -4,7 +4,7 @@
  * @Author: AiDongYang
  * @Date: 2020-11-09 18:25:36
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-11-12 13:56:09
+ * @LastEditTime: 2020-11-12 15:02:00
 -->
 <template>
   <div>
@@ -123,6 +123,7 @@ export default {
           })
           this.tableData.pageNum = 1
           this.getList()
+          this.$refs.form.resetFields()
           this.dialogVisible = false
         }
       })

@@ -4,11 +4,6 @@
  * @Author: AiDongYang
  * @Date: 2020-11-09 18:25:36
  * @LastEditors: AiDongYang
-<<<<<<< HEAD
- * @LastEditTime: 2020-11-12 15:09:58
-=======
- * @LastEditTime: 2020-11-12 13:56:09
->>>>>>> bb56b3e025bce7f15c73dabd260f8d232b82911a
 -->
 <template>
   <div>
@@ -34,7 +29,9 @@
     <ElDialog
       title="上传指令"
       :visible.sync="dialogVisible"
+      :close-on-click-modal="false"
       width="480px"
+      @close="close"
     >
       <ElForm ref="form" :model="form" :rules="rules">
         <ElFormItem label="备注" prop="remark">
@@ -120,15 +117,21 @@ export default {
       // 下发指令
       this.$refs.form.validate(async valid => {
         if (valid) {
-          await uploadInstruct({
+          const { code, message } = await uploadInstruct({
             productKey: this.deviceObj.productKey,
             deviceName: this.deviceObj.deviceName,
             ...this.form
           })
-          this.tableData.pageNum = 1
-          this.getList()
-          this.$refs.form.resetFields()
-          this.dialogVisible = false
+          this.$message({
+            type: code === 200 ? 'success' : 'warning',
+            message
+          })
+          if (code === 200) {
+            this.tableData.pageNum = 1
+            this.getList()
+            this.$refs.form.resetFields()
+            this.dialogVisible = false
+          }
         }
       })
     },

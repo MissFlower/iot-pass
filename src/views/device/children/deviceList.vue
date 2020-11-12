@@ -57,12 +57,12 @@
             <i v-if="fmVersionValue != ''" class="el-icon-close hand" @click="clearFun('fmVersionValue')" />
           </span>
         </el-input>
-        <!-- <el-select v-model="deviceStatus" placeholder="状态" @change="searchBtnTouch">
+        <el-select v-model="deviceStatus" placeholder="状态" @change="searchBtnTouch">
           <el-option value="" label="全部"></el-option>
           <el-option value="0" label="未激活"></el-option>
           <el-option value="1" label="在线"></el-option>
           <el-option value="2" label="离线"></el-option>
-        </el-select> -->
+        </el-select>
         <!-- <el-button icon="el-icon-search" @click="searchBtnTouch"></el-button> -->
       </div>
       <div>

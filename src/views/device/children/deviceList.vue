@@ -57,6 +57,12 @@
             <i v-if="fmVersionValue != ''" class="el-icon-close hand" @click="clearFun('fmVersionValue')" />
           </span>
         </el-input>
+        <el-select v-model="deviceStatus" placeholder="状态" @change="searchBtnTouch">
+          <el-option value="" label="全部"></el-option>
+          <el-option value="0" label="未激活"></el-option>
+          <el-option value="1" label="在线"></el-option>
+          <el-option value="2" label="离线"></el-option>
+        </el-select>
         <!-- <el-button icon="el-icon-search" @click="searchBtnTouch"></el-button> -->
       </div>
       <div>
@@ -146,6 +152,7 @@ export default {
       searchTypeSelect: '1',
       searchInputValue: '',
       fmVersionValue: '',
+      deviceStatus: '',
       showNewDevice: false,
       showBatchNewDevice: false,
       loading: false,
@@ -178,6 +185,7 @@ export default {
         deviceName: this.searchTypeSelect === '1' ? this.searchInputValue : '',
         nickName: this.searchTypeSelect === '2' ? this.searchInputValue : '',
         fmVersion: this.fmVersionValue,
+        deviceStatus: this.deviceStatus,
         pageNum: this.tableData.pageNum,
         pageSize: this.tableData.pageSize,
         productId: this.productId
@@ -416,6 +424,7 @@ export default {
 
     // 列表翻页
     handleCurrentChange() {
+      this.tableData.pageNum = 1
       this.getDeviceList()
     }
 

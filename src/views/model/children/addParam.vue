@@ -86,7 +86,7 @@ export default {
     const validateName = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('参数名不能为空'))
-      } else if (this.specsArr.indexOf(value) > -1) {
+      } else if (this.nameArr.indexOf(value) > -1) {
         callback(new Error('参数名已存在'))
       } else {
         callback()

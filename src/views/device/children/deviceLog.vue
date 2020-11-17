@@ -7,7 +7,18 @@
 -->
 <template>
   <div>
-    <ElButton type="primary" class="upload-order" @click="uploadOrder">上传指令</ElButton>
+    <div class="top-btn">
+      <ElButton type="primary" class="upload-order" @click="uploadOrder">上传指令</ElButton>
+      <ElTooltip
+        content="刷新"
+        placement="top"
+        effect="light"
+        popper-class="custom-tooltip-style"
+        class="refresh-icon"
+      >
+        <i class="el-icon-refresh-right" @click="getList" />
+      </ElTooltip>
+    </div>
     <ElTable :data="tableList" border>
       <ElTableColumn prop="createTime" label="时间" min-width="150" />
 
@@ -19,7 +30,7 @@
         </template>
       </ElTableColumn>
 
-      <div slot="empty" class="defalut-graph-box">
+      <div slot="empty" v-loading="loading" class="defalut-graph-box">
         <DeafultGraph icon-class="empty" text="暂无数据" />
       </div>
     </ElTable>
@@ -41,6 +52,7 @@
           <ElInput type="text" v-model="form.fileName" placeholder="请输入文件名" show-word-limit maxlength="20" />
         </ElFormItem>
       </ElForm>
+      <span class="tips-info">Tips：指令下发成功后，请耐心等待几分钟，刷新表格查看</span>
       <span slot="footer">
         <ElButton @click="close">取 消</ElButton>
         <ElButton type="primary" @click="issueOrder">下发指令</ElButton>
@@ -52,6 +64,7 @@
 import DeafultGraph from 'src/components/DeafultGraph'
 import Pagination from 'src/components/Pagination'
 import { uploadInstruct, downloadPath, localLogList } from 'src/api/deviceRequest'
+import { deepFreeze } from '@/utils'
 export default {
   name: 'DeviceLog',
   components: {
@@ -81,7 +94,8 @@ export default {
         total: 0, // 总条数
         pageSize: 10, // 一页大小
         pageNum: 1 // 第几页 从0开始
-      }
+      },
+      loading: false
     }
   },
   watch: {
@@ -93,13 +107,15 @@ export default {
   },
   methods: {
     async getList() {
+      this.loading = true
       const { data } = await localLogList({
         productKey: this.deviceObj.productKey,
         deviceName: this.deviceObj.deviceName,
         pageNum: this.tableData.pageNum,
         pageSize: this.tableData.pageSize
       })
-      this.tableList = data.data
+      this.loading = false
+      this.tableList = deepFreeze(data.data)
       this.tableData.total = data.total
     },
     uploadOrder() {
@@ -154,5 +170,30 @@ export default {
   justify-content: center;
   padding: 50px 0;
 }
+.top-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.tips-info {
+  font-size: 12px;
+  color: #666;
+  cursor: default;
+}
+.refresh-icon {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #dcdfe6;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: rgb(136, 136, 136);
+  transition: all ease-out 0.3s;
 
+  &:hover {
+    border-color: #737373;
+  }
+}
 </style>

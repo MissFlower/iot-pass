@@ -46,10 +46,6 @@
 import { updateFm } from '@/api/fireware'
 export default {
   props: {
-    editDialogVisible: {
-      type: Boolean,
-      default: false
-    },
     detailInfo: {
       type: Object,
       default: () => {}
@@ -57,11 +53,18 @@ export default {
   },
   data() {
     return {
+      editDialogVisible: true,
       ruleForm: {
         fmName: '', // 固件名称
         id: '',
         fmDesc: ''
       }
+    }
+  },
+  mounted() {
+    if (this.detailInfo) {
+      this.ruleForm.fmName = this.detailInfo.fmName
+      this.ruleForm.fmDesc = this.detailInfo.fmDesc
     }
   },
   methods: {
@@ -78,10 +81,10 @@ export default {
       updateFm(this.ruleForm)
         .then(res => {
           if (res.code === 200) {
-            this.$emit('changeVisible', this.editDialogVisible)
             this.$emit('changeDetail', true)
             this.ruleForm.fmDesc = ''
             this.ruleForm.fmName = ''
+            this.$emit('changeVisible')
           } else {
             this.$message.warning(res.message)
           }
@@ -94,7 +97,7 @@ export default {
     closeDialog() {
       this.ruleForm.fmDesc = ''
       this.ruleForm.fmName = ''
-      this.$emit('changeVisible', this.editDialogVisible)
+      this.$emit('changeVisible')
     }
   }
 }

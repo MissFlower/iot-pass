@@ -383,6 +383,7 @@ export default {
       if (this.form.scopeType !== '' && this.form.scopeType * 1 === 0 && this.srcVersion.length > 0) {
         getDeviceCount({
           productKey: this.checkInfo.productKey,
+          productType: this.checkInfo.productType,
           srcVersions: this.srcVersion.join(','),
           moduleType: this.checkInfo.moduleType
         }).then(res => {

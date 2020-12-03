@@ -244,3 +244,19 @@ export function localLogList(params) {
     data: params
   })
 }
+
+/**
+ * /device/getDeviceVersions
+ * 设备详情  固件版本查看
+ * deviceName  设备名称
+ * productKey  产品key
+ */
+
+export function getDeviceVersions(data) {
+  return request({
+    url: '/device/getDeviceVersions',
+    method: 'post',
+    headers: headerFrom_json,
+    data
+  })
+}

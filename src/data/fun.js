@@ -85,7 +85,6 @@ export function dealFun1(list) {
       }
       obj[item.pcode].push(item)
     })
-    console.log(obj)
     const arr = obj[0]
     delete obj[0]
     fun(arr, obj)

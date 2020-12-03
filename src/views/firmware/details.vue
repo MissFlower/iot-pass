@@ -229,7 +229,7 @@
         <el-tab-pane label="固件信息" name="third">
           <div class="edit_info-tit">
             <h4>固件基本信息</h4>
-            <a class="edit_icon" @click="editClick">
+            <a class="edit_icon" @click.stop="editClick">
               <i class="el-icon-edit"></i>编辑
             </a>
           </div>
@@ -316,7 +316,7 @@
     </div>
     <!--编辑固件信息-->
     <EditFirmware
-      :EditDialogVisible="fmInfo.EditDialogVisible"
+      v-if="fmInfo.EditDialogVisible"
       :detailInfo="fmInfo.fmInfoList"
       @changeVisible="changeVisible"
       @changeDetail="changeDetail"

@@ -48,6 +48,12 @@
       </div>
       <div class="main mt20">
         <div class="f16 b mb20">设备列表</div>
+        <el-input v-model="versionForm.deviceName" placeholder="请输入设备名称" class="w200 mr20 searchInput">
+          <span slot="suffix">
+            <i class="el-icon-search hand" @click="getDevice" />
+            <i v-if="versionForm.deviceName != ''" class="el-icon-close hand" @click="clearFun" />
+          </span>
+        </el-input>
         <el-select v-model="version" @change="getDevice">
           <el-option value label="全部版本"></el-option>
           <el-option v-for="(ver, index) in versionList" :key="index" :label="ver" :value="ver"></el-option>
@@ -110,7 +116,8 @@ export default {
         pageSize: 10,
         productKey: '',
         productType: '',
-        moduleType: ''
+        moduleType: '',
+        deviceName: ''
       },
       versionTotal: 0,
       productType: '',
@@ -231,6 +238,10 @@ export default {
         }
         this.loading = false
       })
+    },
+    clearFun() {
+      this.versionForm.deviceName = ''
+      this.getDevice()
     },
     handleChange(page) {
       this.versionForm.pageNum = page

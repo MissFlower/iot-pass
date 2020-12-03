@@ -80,7 +80,12 @@
             </div>
             <div class="device_infoItem">
               <span class="infoItemName">固件版本</span>
-              <span>{{ deviceObj.fmVersion }}</span>
+              <span>
+                <template v-for="(item, index) in fmVersionList">
+                  <span :key="index" v-if="index == 0">{{ item.moduleType }} - {{ item.version }}</span>
+                </template>
+                <el-link v-if="fmVersionList.length > 1" type="primary" class="f12 ml10" :underline="false" @click="showMoreVersion">更多</el-link>
+              </span>
             </div>
             <div class="device_infoItem">
               <span class="infoItemName">激活时间</span>
@@ -188,6 +193,8 @@
 
     <!-- 备注名称编辑 -->
     <deviceNameEdit v-if="showDeviceNameEdit" :device-obj="deviceObj" />
+
+    <moreVerision v-if="moreFlag" :list="fmVersionList" @close="closeMoreVer"></moreVerision>
     <div id="copy_content_wrp">
       <input type="text" id="copy_content" />
     </div>
@@ -201,7 +208,9 @@ import runState from './runState'
 import eventManage from './eventManage'
 import serviceCall from './serviceCall'
 import deviceLog from './deviceLog'
-import { deviceInfo } from '@/api/deviceRequest'
+import moreVerision from './moreVerision'
+
+import { deviceInfo, getDeviceVersions } from '@/api/deviceRequest'
 export default {
   components: {
     deviceNameEdit,
@@ -209,7 +218,8 @@ export default {
     eventManage,
     serviceCall,
     deviceTopic,
-    deviceLog
+    deviceLog,
+    moreVerision
   },
   data() {
     return {
@@ -226,7 +236,9 @@ export default {
         '1': 'success',
         '2': 'error'
       },
-      currentComponent: null
+      currentComponent: null,
+      fmVersionList: [],
+      moreFlag: false
     }
   },
 
@@ -280,6 +292,7 @@ export default {
               deviceObj.enableBool = deviceObj.enable === 0
             }
             this.deviceObj = deviceObj
+            this.getVersions()
           }
           // this.modelType = 'runState'
           this.modelShow = true
@@ -289,7 +302,25 @@ export default {
           this.loading = false
         })
     },
-
+    // 获取固件版本信息
+    getVersions() {
+      this.fmVersionList = []
+      this.loading = true
+      getDeviceVersions({
+        productKey: this.deviceObj.productKey,
+        deviceName: this.deviceObj.deviceName
+      }).then(res => {
+        this.fmVersionList = res.data ? res.data : []
+        this.loading = false
+      })
+    },
+    // 展示更多的固件版本信息
+    showMoreVersion() {
+      this.moreFlag = true
+    },
+    closeMoreVer() {
+      this.moreFlag = false
+    },
     // 设备名称编辑
     deviceNameEdit() {
       this.showDeviceNameEdit = true
@@ -310,13 +341,11 @@ export default {
     toProduct() {
       this.$router.push(`../product/detail/${this.deviceObj.productKey}`)
     },
-
     /*
     复制
     copyStr  复制内容
     */
     copy(copyStr) {
-      console.log(copyStr)
       if (copyStr === '一键复制') {
         copyStr = `{\r"ProductKey":${this.deviceObj.productKey},\r"DeviceName":${this.deviceObj.deviceName},\r"DeviceSecret":${this.deviceObj.deviceSecret}\r}`
       }

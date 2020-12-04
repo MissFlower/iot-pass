@@ -278,9 +278,10 @@ export default {
         const row = this.productTypeArr[i]
         if (row.productType === this.productType) {
           this.moduleTypeMap = row.moduleTypeList
-          if (this.moduleTypeMap.length > 0) {
+          if (this.moduleTypeMap.length > 0 && this.moduleTypeMap.indexOf(this.moduleType) > -1) {
+            this.getData()
+          } else {
             this.moduleType = this.moduleTypeMap[0]
-            // this.getData()
           }
           break
         }

@@ -61,6 +61,7 @@
             multiple
             placeholder="请选择"
             @focus="handleFocus"
+            @change="handleChange"
             class="w200"
           ></el-select>
         </el-form-item>
@@ -344,6 +345,9 @@ export default {
     },
     handleFocus() {
       this.selectDeviceFlag = true
+    },
+    handleChange() {
+      this.deviceCount = this.selectDevicenames.length
     },
     closeDeviceDrawer() {
       this.selectDeviceFlag = false

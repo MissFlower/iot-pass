@@ -326,6 +326,7 @@
       v-if="checkFmVisible"
       :checkFmVisible="checkFmVisible"
       :checkInfo="checkInfo"
+      :fmDeviceList="fmDeviceList"
       @checkVisible="checkVisible"
       @refreshList="refreshList"
     ></CheckFirmware>
@@ -431,6 +432,7 @@ export default {
         row: null
       },
       checkInfo: null,
+      fmDeviceList: [],
       checkStatus: 0,
       checkProcessFlag: false,
       visible: false

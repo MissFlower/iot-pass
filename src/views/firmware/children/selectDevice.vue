@@ -67,6 +67,7 @@
           <el-table-column label="ProductKey" prop="productKey"></el-table-column>
           <el-table-column label="版本号" prop="version"></el-table-column>
         </el-table>
+        <pagination v-if="allFlag" :data="pageInfo" :layout="`prev, pager, next`" small @pagination="getData"></pagination>
       </div>
       <div class="drawer__footer f14 df ai_c">
         <div class="flex1">
@@ -81,7 +82,10 @@
 
 <script>
 import { getDirectedUpgradeList, getSrcVersionList } from '@/api/fireware'
+
+import pagination from '@/components/Pagination'
 export default {
+  components: { pagination },
   props: {
     srcVersion: {
       type: Array,
@@ -101,9 +105,12 @@ export default {
         deviceName: '',
         srcVersions: '',
         fmId: '',
+        status: ''
+      },
+      pageInfo: {
         pageNum: 1,
         pageSize: 100,
-        status: ''
+        total: 0
       },
       allFlag: '1',
       list: [],
@@ -165,11 +172,13 @@ export default {
     getData() {
       this.loading = true
       this.list = []
-      getDirectedUpgradeList(this.formData).then(res => {
+      const obj = Object.assign(this.formData, this.pageInfo)
+      getDirectedUpgradeList(obj).then(res => {
         if (res.code === 200) {
           this.list = res.data.data.filter(item => {
             return item.version !== this.checkInfo.destVersion
           })
+          this.pageInfo.total = res.data.total
           this.tableList = this.list
           if (this.selectList.length > 0) {
             const selectList_ = JSON.parse(JSON.stringify(this.selectList))
@@ -209,7 +218,8 @@ export default {
       // }
     },
     handleSelectAll(selection) {
-      this.selectList = selection
+      this.handleSelect(selection)
+      // this.selectList = selection
     },
     toggleSelection(rows) {
       if (rows && rows.length > 0) {

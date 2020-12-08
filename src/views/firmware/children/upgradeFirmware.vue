@@ -19,7 +19,7 @@
         v-loading="loading"
       >
         <el-form-item label="升级前版本号" label-width="150px" prop="srcVersion">
-          <el-select v-model="srcVersion" multiple class="w200" @change="scopeTypeChange">
+          <el-select v-model="srcVersion" multiple class="w240" @change="scopeTypeChange">
             <el-option
               v-for="version in srcVersionList"
               :key="version"
@@ -33,11 +33,11 @@
             v-model="form.destVersion"
             auto-complete="off"
             :disabled="checkInfo.destVersion != ''"
-            class="w200"
+            class="w240"
           ></el-input>
         </el-form-item>
         <el-form-item label="升级策略" prop="ugStrategy" required>
-          <el-select v-model="form.ugStrategy" placeholder="请选择升级策略" class="w200" @change="ugStrategyChange">
+          <el-select v-model="form.ugStrategy" placeholder="请选择升级策略" class="w240" @change="ugStrategyChange">
             <el-option label="静态升级" value="0"></el-option>
             <el-option label="动态升级" value="1"></el-option>
           </el-select>
@@ -46,7 +46,7 @@
           <el-select
             v-model="form.scopeType"
             placeholder="请选择升级范围"
-            class="w200"
+            class="w240"
             @change="scopeTypeChange"
           >
             <el-option label="全部设备" value="0"></el-option>
@@ -59,14 +59,15 @@
           <el-select
             v-model="selectDevicenames"
             multiple
+            collapse-tags
             placeholder="请选择"
             @focus="handleFocus"
             @change="handleChange"
-            class="w200"
+            class="w240"
           ></el-select>
         </el-form-item>
         <el-form-item label="升级时间" prop="ugTimeType" required>
-          <el-select v-model="form.ugTimeType" placeholder="请选择升级时间类型" class="w200">
+          <el-select v-model="form.ugTimeType" placeholder="请选择升级时间类型" class="w240">
             <el-option label="立即升级" value="0"></el-option>
             <el-option label="定时升级" value="1" v-if="form.ugStrategy != 1"></el-option>
           </el-select>
@@ -77,7 +78,7 @@
               升级开始时间
               <el-tooltip effect="light">
                 <i class="el-icon-question c9"></i>
-                <div slot="content" class="f12 c6 w200">选择的开始时间距当前时间最少 10 分钟，最多 7 天</div>
+                <div slot="content" class="f12 c6 w240">选择的开始时间距当前时间最少 10 分钟，最多 7 天</div>
               </el-tooltip>
             </span>
             <el-date-picker
@@ -85,7 +86,7 @@
               type="datetime"
               :picker-options="pickerOptions"
               placeholder="选择日期时间"
-              class="w200"
+              class="w240"
             ></el-date-picker>
           </el-form-item>
           <el-form-item prop="ugEndTime">
@@ -93,7 +94,7 @@
               升级结束时间
               <el-tooltip effect="light">
                 <i class="el-icon-question c9"></i>
-                <div slot="content" class="f12 c6 w200">不填写默认不会强制结束，选择的结束时间距开始时间最少 1 小时，最多为 30 天</div>
+                <div slot="content" class="f12 c6 w240">不填写默认不会强制结束，选择的结束时间距开始时间最少 1 小时，最多为 30 天</div>
               </el-tooltip>
             </span>
             <el-date-picker
@@ -101,13 +102,13 @@
               type="datetime"
               :picker-options="pickerOptions1"
               placeholder="选择日期时间"
-              class="w200"
+              class="w240"
             ></el-date-picker>
           </el-form-item>
         </div>
         <el-form-item label="固件推送速率" label-width="150px" prop="rate" required>
           <el-input
-            class="w200"
+            class="w240"
             v-model.number="form.rate"
             auto-complete="off"
             placeholder="请输入每分钟推送的设备数"
@@ -119,7 +120,7 @@
           prop="retryInterval"
           required
         >
-          <el-select v-model="form.retryInterval">
+          <el-select v-model="form.retryInterval" class="w240">
             <el-option label="不重试" value="-1"></el-option>
             <el-option label="立即重试" value="0"></el-option>
             <el-option label="10分钟后重试" value="10"></el-option>
@@ -129,7 +130,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="升级重试上限次数" v-if="form.retryInterval != -1" required>
-          <el-select v-model="form.maxRetryCnt">
+          <el-select v-model="form.maxRetryCnt" class="w240">
             <el-option label="1次" value="1"></el-option>
             <el-option label="2次" value="2"></el-option>
             <el-option label="5次" value="5"></el-option>
@@ -137,7 +138,7 @@
         </el-form-item>
         <el-form-item label="设备升级超时时间（分钟）" label-width="150px" prop="timeOut">
           <el-input
-            class="w200"
+            class="w240"
             v-model.number="form.timeOut"
             auto-complete="off"
             placeholder="请输入升级超时时间（分钟）"

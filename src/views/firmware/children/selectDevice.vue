@@ -211,9 +211,9 @@ export default {
         this.loading = false
       })
     },
-    scopeTypeChange(val) {
+    scopeTypeChange() {
       this.formData.srcVersions = this.srcVersions.join(',')
-      this.getData(val)
+      this.getData()
     },
     handleSelect(selection, row) {
       if (this.selectList.length > 0) {

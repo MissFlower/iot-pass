@@ -356,6 +356,7 @@ export default {
     successDeviceDrawer(list, version) {
       this.srcVersion = version
       this.scopeTypeChange()
+      this.selectDeviceList = []
       this.selectDevicenames = []
       this.selectDeviceIds = []
       this.selectDeviceList = list

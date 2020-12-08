@@ -36,11 +36,11 @@
               :disabled="allFlag == 0"
             >
               <span slot="suffix">
-                <i class="el-icon-search hand" @click="getData"></i>
+                <i class="el-icon-search hand" @click="getData()"></i>
                 <i class="el-icon-close hand" v-if="formData.deviceName != ''" @click="resetFun"></i>
               </span>
             </el-input>
-            <el-select v-model="formData.status" class="w80" placeholder="状态" @change="getData">
+            <el-select v-model="formData.status" class="w80" placeholder="状态" @change="getData()">
               <el-option value="" label="全部"></el-option>
               <el-option value="1" label="在线"></el-option>
               <el-option value="0" label="离线"></el-option>
@@ -68,7 +68,7 @@
           <el-table-column label="ProductKey" prop="productKey"></el-table-column>
           <el-table-column label="版本号" prop="version"></el-table-column>
         </el-table>
-        <pagination v-if="allFlag == 1" :data="pageInfo" :layout="`prev, pager, next`" small @pagination="getData"></pagination>
+        <pagination v-if="allFlag == 1" :data="pageInfo" :layout="`prev, pager, next`" small @pagination="getData()"></pagination>
       </div>
       <div class="drawer__footer f14 df ai_c">
         <div class="flex1">
@@ -192,6 +192,8 @@ export default {
             return item.version !== this.checkInfo.destVersion
           })
           this.pageInfo.total = res.data.total
+          console.log(this.list)
+          console.log(!val)
           if (!val) {
             this.tableList = this.list
           }

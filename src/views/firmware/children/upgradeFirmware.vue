@@ -356,7 +356,6 @@ export default {
     successDeviceDrawer(list, version) {
       this.srcVersion = version
       this.scopeTypeChange()
-      this.selectDeviceList = []
       this.selectDevicenames = []
       this.selectDeviceIds = []
       this.selectDeviceList = list
@@ -386,6 +385,7 @@ export default {
     },
     // 选择的设备数量统计
     scopeTypeChange() {
+      this.selectDeviceList = []
       if (this.form.scopeType !== '' && this.form.scopeType * 1 === 0 && this.srcVersion.length > 0) {
         getDeviceCount({
           productKey: this.checkInfo.productKey,

@@ -156,6 +156,7 @@
     </el-dialog>
     <select-device
       v-if="selectDeviceFlag"
+      :selectDeviceList="selectDeviceList"
       :checkInfo="checkInfo"
       :srcVersion="srcVersion"
       @success="successDeviceDrawer"
@@ -320,7 +321,6 @@ export default {
           obj.ugStartTime = this.$fun.dateFormat(this.form.ugStartTime, 'yyyy-MM-dd hh:mm:ss')
           obj.ugEndTime = this.$fun.dateFormat(this.form.ugEndTime, 'yyyy-MM-dd hh:mm:ss')
           this.loading = true
-          console.log(obj)
           if (obj.retryInterval === '-1') {
             obj.maxRetryCnt = ''
           }

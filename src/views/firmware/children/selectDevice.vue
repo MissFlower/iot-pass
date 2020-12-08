@@ -57,6 +57,7 @@
           :max-height="tableHeight"
           @select="handleSelect"
           @select-all="handleSelectAll"
+          v-loading="loading"
         >
           <div slot="empty" class="emptyTable tc">
             <svg-icon icon-class="empty1" class="empty"></svg-icon>
@@ -67,7 +68,7 @@
           <el-table-column label="ProductKey" prop="productKey"></el-table-column>
           <el-table-column label="版本号" prop="version"></el-table-column>
         </el-table>
-        <pagination v-if="allFlag" :data="pageInfo" :layout="`prev, pager, next`" small @pagination="getData"></pagination>
+        <pagination v-if="allFlag == 1" :data="pageInfo" :layout="`prev, pager, next`" small @pagination="getData"></pagination>
       </div>
       <div class="drawer__footer f14 df ai_c">
         <div class="flex1">
@@ -94,6 +95,10 @@ export default {
     checkInfo: {
       type: Object,
       default: () => {}
+    },
+    selectDeviceList: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -130,6 +135,9 @@ export default {
   mounted() {
     if (this.srcVersion && this.srcVersion.length > 0) {
       this.srcVersions = JSON.parse(JSON.stringify(this.srcVersion))
+    }
+    if (this.selectDeviceList && this.selectDeviceList.length > 0) {
+      this.selectList = this.selectDeviceList
     }
     this.formData.fmId = this.checkInfo.id
     this.scopeTypeChange()
@@ -272,7 +280,7 @@ export default {
   }
   .con {
     padding: 22px;
-    margin-bottom: 20px;
+    margin-bottom: -15px;
     flex: 1;
     overflow: auto;
     .emptyTable {

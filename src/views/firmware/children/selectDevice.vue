@@ -247,8 +247,12 @@ export default {
       this.$emit('close')
     },
     handleSubmit() {
-      this.$refs.drawer.closeDrawer()
-      this.$emit('success', this.selectList, this.srcVersions)
+      if (this.selectList.length > 5000) {
+        this.$message.error('选择的设备数量过大')
+      } else {
+        this.$refs.drawer.closeDrawer()
+        this.$emit('success', this.selectList, this.srcVersions)
+      }
     }
   }
 }

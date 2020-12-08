@@ -136,11 +136,14 @@ export default {
     if (this.srcVersion && this.srcVersion.length > 0) {
       this.srcVersions = JSON.parse(JSON.stringify(this.srcVersion))
     }
+    let str = null
     if (this.selectDeviceList && this.selectDeviceList.length > 0) {
       this.selectList = this.selectDeviceList
+      this.allFlag = '0'
+      str = '0'
     }
     this.formData.fmId = this.checkInfo.id
-    this.scopeTypeChange()
+    this.scopeTypeChange(str)
     this.getVersionList()
   },
   methods: {
@@ -154,7 +157,9 @@ export default {
         })
       } else {
         this.tableList = this.selectList
-        this.$refs.table.toggleAllSelection()
+        this.$nextTick(() => {
+          this.$refs.table.toggleAllSelection()
+        })
       }
     },
     getVersionList() {
@@ -168,16 +173,16 @@ export default {
         if (res.code === 200) {
           this.srcVersionList = res.data
         }
-        this.loading = false
+        // this.loading = false
       }).catch(() => {
-        this.loading = false
+        // this.loading = false
       })
     },
     resetFun() {
       this.formData.deviceName = ''
       this.getData()
     },
-    getData() {
+    getData(val) {
       this.loading = true
       this.list = []
       const obj = Object.assign(this.formData, this.pageInfo)
@@ -187,7 +192,9 @@ export default {
             return item.version !== this.checkInfo.destVersion
           })
           this.pageInfo.total = res.data.total
-          this.tableList = this.list
+          if (!val) {
+            this.tableList = this.list
+          }
           if (this.selectList.length > 0) {
             const selectList_ = JSON.parse(JSON.stringify(this.selectList))
             this.$nextTick(() => {
@@ -195,17 +202,33 @@ export default {
             })
           }
         }
-        this.loading = false
+        this.$nextTick(() => {
+          this.loading = false
+        })
       }).catch(() => {
         this.loading = false
       })
     },
-    scopeTypeChange() {
+    scopeTypeChange(val) {
       this.formData.srcVersions = this.srcVersions.join(',')
-      this.getData()
+      this.getData(val)
     },
     handleSelect(selection, row) {
       if (this.selectList.length > 0) {
+        if (row) {
+          let index = -1
+          if (selection.length > 0) {
+            index = selection.findIndex((item, index) => {
+              return item.deviceName === row.deviceName
+            })
+          }
+          const index1 = this.selectList.findIndex((item, index) => {
+            return item.deviceName === row.deviceName
+          })
+          if (index === -1 && index1 > -1) {
+            this.selectList.splice(index1, 1)
+          }
+        }
         if (selection.length > 0) {
           const nameSet = new Set()
           this.selectList.forEach(item => {
@@ -221,12 +244,25 @@ export default {
       } else {
         this.selectList = selection
       }
-      // if (this.allFlag * 1 === 0) {
-      //   this.dealListFun()
-      // }
     },
     handleSelectAll(selection) {
-      this.handleSelect(selection)
+      if (selection.length > 0) {
+        this.handleSelect(selection)
+      } else {
+        // 表示清除本页选择
+        const nameSet = new Set()
+        this.tableList.forEach(item => {
+          nameSet.add(item.deviceName)
+        })
+        const nameArr = [...nameSet]
+        const list = []
+        this.selectList.forEach(item => {
+          if (nameArr.indexOf(item.deviceName) === -1) {
+            list.push(item)
+          }
+        })
+        this.selectList = list
+      }
       // this.selectList = selection
     },
     toggleSelection(rows) {

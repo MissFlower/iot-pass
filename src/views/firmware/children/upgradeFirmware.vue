@@ -59,7 +59,7 @@
           <el-select
             v-model="selectDevicenames"
             multiple
-            collapse-tags
+            :collapse-tags="selectDevicenames.length > 5"
             placeholder="请选择"
             @focus="handleFocus"
             @change="handleChange"

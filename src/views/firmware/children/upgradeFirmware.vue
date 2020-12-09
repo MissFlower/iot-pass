@@ -144,15 +144,15 @@
             placeholder="请输入升级超时时间（分钟）"
           ></el-input>
         </el-form-item>
-      </el-form>
-      <div slot="footer" class="df ai_c">
-        <div class="flex1 tl f12">
-          本次批量升级共
-          <span class="blue">{{ deviceCount }}</span> 个设备
+        <div class="df ai_c">
+          <div class="flex1 tl f12">
+            本次批量升级共
+            <span class="blue">{{ deviceCount }}</span> 个设备
+          </div>
+          <el-button size="mini" @click="closeDialog">取 消</el-button>
+          <el-button type="primary" size="mini" @click="upgradeSubmit('ruleFormUpgrade')">确 定</el-button>
         </div>
-        <el-button size="mini" @click="closeDialog">取 消</el-button>
-        <el-button type="primary" size="mini" @click="upgradeSubmit('ruleFormUpgrade')">确 定</el-button>
-      </div>
+      </el-form>
     </el-dialog>
     <select-device
       v-if="selectDeviceFlag"
@@ -353,8 +353,8 @@ export default {
     closeDeviceDrawer() {
       this.selectDeviceFlag = false
     },
-    successDeviceDrawer(list, version) {
-      this.srcVersion = version
+    successDeviceDrawer(list) {
+      const version = new Set()
       this.scopeTypeChange()
       this.selectDevicenames = []
       this.selectDeviceIds = []
@@ -363,8 +363,10 @@ export default {
         list.forEach(item => {
           this.selectDevicenames.push(item.deviceName)
           this.selectDeviceIds.push(item.deviceId)
+          version.add(item.version)
         })
       }
+      this.srcVersion = [...version]
       this.deviceCount = list.length
     },
     getVersionList() {

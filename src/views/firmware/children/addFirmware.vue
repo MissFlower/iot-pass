@@ -219,6 +219,7 @@ export default {
             formData[item] = this.ruleForm[item]
           }
           formData.srcVersion = this.srcVersion.join(',')
+          this.loading = true
           saveFm(formData)
             .then(res => {
               if (res.code === 200) {
@@ -228,9 +229,11 @@ export default {
               } else {
                 this.$message.warning(res.message)
               }
+              this.loading = false
             })
             .catch(error => {
               console.log(error)
+              this.loading = false
             })
         } else {
           console.log('error submit!!')

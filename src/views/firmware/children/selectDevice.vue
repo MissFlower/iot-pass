@@ -192,8 +192,6 @@ export default {
             return item.version !== this.checkInfo.destVersion
           })
           this.pageInfo.total = res.data.total
-          console.log(this.list)
-          console.log(!val)
           if (!val) {
             this.tableList = this.list
           }
@@ -297,7 +295,7 @@ export default {
         this.$message.error('选择的设备数量过大')
       } else {
         this.$refs.drawer.closeDrawer()
-        this.$emit('success', this.selectList, this.srcVersions)
+        this.$emit('success', this.selectList)
       }
     }
   }

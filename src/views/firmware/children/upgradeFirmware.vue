@@ -257,7 +257,7 @@ export default {
       rules: {
         rate: [
           { required: true, message: '请输入固件推送速率', trigger: 'blur' },
-          { type: 'number', min: 1, message: '推送速率必须为大于0的数字值' }
+          { type: 'number', min: 1, max: 1000, message: '推送速率必须为大于0小于1000的数字值' }
         ],
         srcVersion: [
           { required: true, message: '请输入待升级版本号', trigger: 'blur' },
@@ -315,12 +315,12 @@ export default {
       this.form.srcVersion = this.srcVersion.join(',')
       this.$refs[formName].validate(valid => {
         if (valid) {
+          this.loading = true
           this.form.fmId = this.checkInfo.id
           this.form.deviceNames = this.selectDevicenames
           const obj = JSON.parse(JSON.stringify(this.form))
           obj.ugStartTime = this.$fun.dateFormat(this.form.ugStartTime, 'yyyy-MM-dd hh:mm:ss')
           obj.ugEndTime = this.$fun.dateFormat(this.form.ugEndTime, 'yyyy-MM-dd hh:mm:ss')
-          this.loading = true
           if (obj.retryInterval === '-1') {
             obj.maxRetryCnt = ''
           }

@@ -4,17 +4,19 @@
       <paas-menu></paas-menu>
     </div>
     <div class="right">
-      <!-- <breadcrumb v-if="flag"></breadcrumb> -->
+      <breadcrumb></breadcrumb>
+      <!-- <div class="right-main"> -->
       <router-view />
+      <!-- </div> -->
     </div>
   </main>
 </template>
 
 <script>
 import paasMenu from './children/menu'
-// import breadcrumb from "./breadcrumb";
+import breadcrumb from './breadcrumb'
 export default {
-  components: { paasMenu },
+  components: { paasMenu, breadcrumb },
   computed: {
     flag() {
       if (this.$route.path === '/home') {
@@ -46,6 +48,12 @@ main {
     width: calc(100% - 200px);
     height: 100%;
     overflow: auto;
+    padding-top: 45px;
+    .right-main {
+      position: relative;
+      width: 100%;
+      margin-top: 40px;
+    }
   }
 }
 </style>

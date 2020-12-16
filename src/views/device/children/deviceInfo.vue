@@ -248,6 +248,12 @@ export default {
     }
   },
 
+  watch: {
+    $route() {
+      this.getDeviceInfo()
+    }
+  },
+
   mounted() {
     this.getDeviceInfo()
   },

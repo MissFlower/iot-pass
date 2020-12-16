@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { delBreadCrumbFun, clearLoginInfo } from '@/data/fun'
+import { clearLoginInfo } from '@/data/fun'
 import { logout } from '@/api'
 // import { resetRouter } from "@/router"
 export default {
@@ -71,15 +71,12 @@ export default {
     },
     loginStatus() {
       return this.$store.state.app.loginStatus
-    },
-    breadcrumdList() {
-      return this.$store.state.app.breadcrumdList
     }
   },
   watch: {
     $route() {
       this.flag = this.$route.path === '/login'
-      this.pathChange()
+      // this.pathChange()
       this.showEmailTips()
     },
     loginStatus() {
@@ -90,22 +87,22 @@ export default {
   },
   mounted() {
     this.flag = this.$route.path === '/login'
-    this.pathChange()
+    // this.pathChange()
     this.showEmailTips()
   },
   methods: {
-    pathChange() {
-      delBreadCrumbFun(1)
-      const list = JSON.parse(JSON.stringify(this.breadcrumdList))
-      const paths = this.$route.matched
-      paths.forEach(item => {
-        list.push({
-          name: item.meta.name,
-          path: item.path
-        })
-      })
-      this.$store.dispatch('setBreadcrumb', list)
-    },
+    // pathChange() {
+    //   // delBreadCrumbFun(1)
+    //   const list = JSON.parse(JSON.stringify(this.breadcrumdList))
+    //   const paths = this.$route.matched
+    //   paths.forEach(item => {
+    //     list.push({
+    //       name: item.meta.name,
+    //       path: item.path
+    //     })
+    //   })
+    //   this.$store.dispatch('setBreadcrumb', list)
+    // },
     logoutFun() {
       if (this.userInfo && this.userInfo.id) {
         this.$store.dispatch('setLoading', true)

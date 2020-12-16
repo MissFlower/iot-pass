@@ -1,6 +1,8 @@
 <template>
   <div id="app" v-loading="loading">
-    <router-view v-if="isRouterAlive" />
+    <keep-alive :exclude="excludeStr">
+      <router-view v-if="isRouterAlive" />
+    </keep-alive>
   </div>
 </template>
 
@@ -13,7 +15,8 @@ export default {
   },
   data() {
     return {
-      isRouterAlive: true
+      isRouterAlive: true,
+      excludeStr: 'Breadcrumb'
     }
   },
   computed: {

@@ -96,14 +96,14 @@ export default {
       return this.$store.state.app.functionArr
     }
   },
+  watch: {
+    $route() {
+      this.productKey = this.$route.params.key
+      this.getInfo()
+    }
+  },
   created() {
-    this.getProDetail()
-    // 获取产品密钥
-    findSecret({ productKey: this.productKey }).then(res => {
-      if (res.code === 200) {
-        this.productSecret = res.data
-      }
-    })
+    this.getInfo()
   },
   mounted() {
     if (this.$route.query.activetab) {
@@ -111,6 +111,17 @@ export default {
     }
   },
   methods: {
+    getInfo() {
+      if (this.productKey) {
+        this.getProDetail()
+        // 获取产品密钥
+        findSecret({ productKey: this.productKey }).then(res => {
+          if (res.code === 200) {
+            this.productSecret = res.data
+          }
+        })
+      }
+    },
     // 复制文本内容
     copyContent(text) {
       var inputElement = document.getElementById('copy_content')

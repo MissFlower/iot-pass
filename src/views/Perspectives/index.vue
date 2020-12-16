@@ -518,6 +518,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .perspective-container {
+  width: 100%;
   min-width: 1200px;
   height: 100%;
   padding: 20px;

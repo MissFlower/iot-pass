@@ -438,15 +438,23 @@ export default {
       visible: false
     }
   },
+  watch: {
+    $route() {
+      this.init()
+    }
+  },
   mounted() {
-    this.fmId = String(this.$route.query.id)
-    this.productName = this.$route.query.productName
-    this.srcVersion = this.$route.query.srcVersion
-    this.getDetails()
-    this.getUpgradeList() // 批次管理
-    this.getStatistics() // 获取 标签页 上方数据
+    this.init()
   },
   methods: {
+    init() {
+      this.fmId = String(this.$route.query.id)
+      this.productName = this.$route.query.productName
+      this.srcVersion = this.$route.query.srcVersion
+      this.getDetails()
+      this.getUpgradeList() // 批次管理
+      this.getStatistics() // 获取 标签页 上方数据
+    },
     // tab切换方法
     handleClick(value) {
       if (value.index === '0') {

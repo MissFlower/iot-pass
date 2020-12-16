@@ -9,12 +9,12 @@ const app = {
     userInfo: null,
     loading: false,
     loginStatus: false,
-    breadcrumdList: [
-      {
-        name: 'IoT平台',
-        path: '/home'
+    breadcrumdList: [{
+      path: '/home',
+      meta: {
+        name: '首页'
       }
-    ],
+    }],
     menuLists: [], // 用户的菜单列表
     functionLists: [], // 系统功能权限的具体项
     functionArr: [], // 系统功能权限的code数组
@@ -30,7 +30,14 @@ const app = {
     SET_LOGIN_STATUS: (state, flag) => {
       state.loginStatus = flag
     },
-    SET_BTEADCRUMB_LIST: (state, list) => {
+    SET_BTEADCRUMB_LIST: (state, obj) => {
+      const list = JSON.parse(JSON.stringify(state.breadcrumdList))
+      const paths = list.map(item => item.path)
+      if (paths.indexOf(obj.path) === -1) {
+        state.breadcrumdList.push(obj)
+      }
+    },
+    RESET_BTEADCRUMB_LIST: (state, list) => {
       state.breadcrumdList = list
     },
     SET_MENU_LISTS: (state, list) => {
@@ -91,9 +98,15 @@ const app = {
         resolve()
       })
     },
-    setBreadcrumb({ commit }, list) {
+    setBreadcrumb({ commit }, obj) {
       return new Promise(resolve => {
-        commit('SET_BTEADCRUMB_LIST', list)
+        commit('SET_BTEADCRUMB_LIST', obj)
+        resolve()
+      })
+    },
+    resetBreadcrumb({ commit }, list) {
+      return new Promise(resolve => {
+        commit('RESET_BTEADCRUMB_LIST', list)
         resolve()
       })
     },

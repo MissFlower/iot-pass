@@ -277,16 +277,24 @@ export default {
       visible: false
     }
   },
+  watch: {
+    $route() {
+      this.init()
+    }
+  },
   mounted() {
-    this.batchManage.fmId = this.$route.query.id
-    // this.upgradeId = this.$route.query.upgradeId
-    this.batchManage.batchNo = this.$route.query.batchNo
-    this.productName = this.$route.query.productName
-    this.getDetails()
-    this.getDeviceList()
-    this.getCount()
+    this.init()
   },
   methods: {
+    init() {
+      this.batchManage.fmId = this.$route.query.id
+      // this.upgradeId = this.$route.query.upgradeId
+      this.batchManage.batchNo = this.$route.query.batchNo
+      this.productName = this.$route.query.productName
+      this.getDetails()
+      this.getDeviceList()
+      this.getCount()
+    },
     // 获取详情
     getDetails() {
       this.loading = true

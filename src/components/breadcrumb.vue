@@ -1,20 +1,12 @@
 <template>
   <div id="breadcrumb">
-    <el-breadcrumb separator="/">
-      <!-- <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item> -->
-      <el-breadcrumb-item
-        v-for="(item, index) in list"
-        :key="index"
-        :to="{ path: item.path }"
-        @click.native="handleClick(item, index)"
-      >{{ item.name }}</el-breadcrumb-item>
-    </el-breadcrumb>
+    <el-tag v-for="(tag, index) in list" :key="index" class="mr10 hand" :closable="tag.path != '/home'" :type="$route.fullPath == tag.path ? '' : 'info'" @close.stop="handleClose(index, tag)" @click.native="handleSelect(index)">{{ tag.meta.name }}</el-tag>
   </div>
 </template>
 
 <script>
-// import { delBreadCrumbFun } from "@/data/fun";
 export default {
+  name: 'Breadcrumb',
   data() {
     return {}
   },
@@ -22,20 +14,37 @@ export default {
     list() {
       return this.$store.state.app.breadcrumdList
     }
+  },
+  methods: {
+    handleClose(index, row) {
+      const curPath = this.$route.fullPath
+      if (curPath === row.path) {
+        this.handleSelect(index - 1)
+      }
+      const list_ = JSON.parse(JSON.stringify(this.list))
+      list_.splice(index, 1)
+      this.$store.dispatch('resetBreadcrumb', list_)
+    },
+    handleSelect(index) {
+      const path = this.list[index].path
+      this.$router.push(path)
+    }
   }
-  // methods: {
-  //   handleClick(row, index) {
-  //     if (row.path) {
-  //       delBreadCrumbFun(index + 1);
-  //     }
-  //   }
-  // }
 }
 </script>
 
 <style lang="scss" scoped>
 #breadcrumb {
-  display: inline-block;
-  padding: 20px;
+  position: fixed;
+  height: 45px;
+  // display: flex;
+  background: #fff;
+  padding: 10px;
+  width: calc(100% - 235px);
+  border-bottom: 1px solid #e6e6e6;
+  overflow-x: auto;
+  z-index: 3;
+  top: 61px;
+  white-space: nowrap;
 }
 </style>

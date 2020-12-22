@@ -98,7 +98,12 @@ export default {
       } else if (this.specsArr.indexOf(value) > -1) {
         callback(new Error('参数标识符已存在'))
       } else {
-        callback()
+        const reg = /^[a-zA-Z0-9_]+$/
+        if (value && (!reg.test(value) || value.length > 50)) {
+          callback(new Error('必填，支持大小写字母、数字和下划线、不超过50个字符'))
+        } else {
+          callback()
+        }
       }
     }
     return {

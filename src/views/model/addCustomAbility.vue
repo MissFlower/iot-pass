@@ -151,7 +151,7 @@ export default {
     const validateIdentifier = (rule, value, callback) => {
       const identifier = this.formData.modelData.identifier
       if (identifier === '') {
-        callback(new Error('标识符1不能为空'))
+        callback(new Error('标识符不能为空'))
       } else {
         const reg = /^[a-zA-Z0-9_]+$/
         if (identifier && (!reg.test(identifier) || identifier.length > 50)) {

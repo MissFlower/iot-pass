@@ -250,7 +250,7 @@ export default {
 
   watch: {
     $route() {
-      if (this.$route.path === '/device/deviceInfo') {
+      if (this.$route.path === 'device_detail') {
         this.getDeviceInfo()
       }
     }

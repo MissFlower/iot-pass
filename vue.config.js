@@ -23,10 +23,6 @@ module.exports = {
         '@': resolve('src'),
         'src': resolve('src')
       }
-    },
-    output: {
-      filename: `js/[name].${config.version}.js`,
-      chunkFilename: `js/[name].${config.version}.js`
     }
   },
   chainWebpack: config => {

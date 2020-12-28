@@ -250,7 +250,9 @@ export default {
 
   watch: {
     $route() {
-      this.getDeviceInfo()
+      if (this.$route.path === '/device/deviceInfo') {
+        this.getDeviceInfo()
+      }
     }
   },
 
@@ -261,6 +263,9 @@ export default {
   methods: {
     // 获取设备详情
     getDeviceInfo() {
+      if (!this.$route.query.id) {
+        return
+      }
       this.loading = true
       deviceInfo({
         id: this.$route.query.id
@@ -268,36 +273,40 @@ export default {
         .then(res => {
           if (res.code === 200) {
             var deviceObj = res.data
-            // 设备状态
-            var statusDict = { '0': '未激活', '1': '在线', '2': '离线' }
-            // 节点类型
-            var nodeTypeDict = {
-              '1': '直连设备',
-              '2': '网关子设备',
-              '3': '网关设备'
+            if (!res.data) {
+              this.$message.warning('设备不存在')
+            } else {
+              // 设备状态
+              var statusDict = { '0': '未激活', '1': '在线', '2': '离线' }
+              // 节点类型
+              var nodeTypeDict = {
+                '1': '直连设备',
+                '2': '网关子设备',
+                '3': '网关设备'
+              }
+              // 认证方式
+              var authTypeDict = {
+                '1': '设备秘钥',
+                '2': 'ID2',
+                '3': 'X.509证书'
+              }
+              if (deviceObj.deviceStatus != null) {
+                deviceObj.deviceStatusStr =
+                  statusDict[deviceObj.deviceStatus.toString()]
+              }
+              if (deviceObj.nodeType != null) {
+                deviceObj.nodeTypeStr =
+                  nodeTypeDict[deviceObj.nodeType.toString()]
+              }
+              if (deviceObj.authType != null) {
+                deviceObj.authTypeStr =
+                  authTypeDict[deviceObj.authType.toString()]
+              }
+              if (deviceObj.enable != null) {
+                deviceObj.enableBool = deviceObj.enable === 0
+              }
+              this.deviceObj = deviceObj
             }
-            // 认证方式
-            var authTypeDict = {
-              '1': '设备秘钥',
-              '2': 'ID2',
-              '3': 'X.509证书'
-            }
-            if (deviceObj.deviceStatus != null) {
-              deviceObj.deviceStatusStr =
-                statusDict[deviceObj.deviceStatus.toString()]
-            }
-            if (deviceObj.nodeType != null) {
-              deviceObj.nodeTypeStr =
-                nodeTypeDict[deviceObj.nodeType.toString()]
-            }
-            if (deviceObj.authType != null) {
-              deviceObj.authTypeStr =
-                authTypeDict[deviceObj.authType.toString()]
-            }
-            if (deviceObj.enable != null) {
-              deviceObj.enableBool = deviceObj.enable === 0
-            }
-            this.deviceObj = deviceObj
             this.getVersions()
           }
           // this.modelType = 'runState'

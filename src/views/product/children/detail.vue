@@ -98,8 +98,10 @@ export default {
   },
   watch: {
     $route() {
-      this.productKey = this.$route.params.key
-      this.getInfo()
+      if (this.$route.path.indexOf('/product/detail/') > -1 && this.$route.params.key) {
+        this.productKey = this.$route.params.key
+        this.getInfo()
+      }
     }
   },
   created() {

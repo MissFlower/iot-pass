@@ -440,7 +440,9 @@ export default {
   },
   watch: {
     $route() {
-      this.init()
+      if (this.$route.meta.code === 'fm_details') {
+        this.init()
+      }
     }
   },
   mounted() {
@@ -448,6 +450,9 @@ export default {
   },
   methods: {
     init() {
+      if (!this.$route.query.id) {
+        return
+      }
       this.fmId = String(this.$route.query.id)
       this.productName = this.$route.query.productName
       this.srcVersion = this.$route.query.srcVersion

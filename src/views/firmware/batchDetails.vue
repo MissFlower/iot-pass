@@ -279,7 +279,9 @@ export default {
   },
   watch: {
     $route() {
-      this.init()
+      if (this.$route.meta.code === 'fm_batchDetails') {
+        this.init()
+      }
     }
   },
   mounted() {
@@ -287,6 +289,9 @@ export default {
   },
   methods: {
     init() {
+      if (!this.$route.query.id) {
+        return
+      }
       this.batchManage.fmId = this.$route.query.id
       // this.upgradeId = this.$route.query.upgradeId
       this.batchManage.batchNo = this.$route.query.batchNo

@@ -475,6 +475,10 @@ export default {
       this.loading = true
       getFmDetails(formData).then(res => {
         if (res.code === 200) {
+          if (!res.data) {
+            this.$message.warning('固件不存在')
+            return
+          }
           this.details.detailList = res.data
           this.checkInfo = res.data
           res.data.createTime_ = res.data.createTime

@@ -204,7 +204,7 @@
   </div>
 </template>
 <script>
-import { upgradeList, upgradeDeviceList, retryPublishUpdateMsg, cancelDeviceUpgrade, getSttatusCount } from '@/api/fireware'
+import { upgradeList, upgradeDeviceList, retryPublishUpdateMsg, cancelDeviceUpgrade, getSttatusCount, getFmDetails } from '@/api/fireware'
 import { upgradeStatusObj, taskStatusObj, scopeTypeObj } from '@/data/constants'
 export default {
   data() {
@@ -296,9 +296,27 @@ export default {
       // this.upgradeId = this.$route.query.upgradeId
       this.batchManage.batchNo = this.$route.query.batchNo
       this.productName = this.$route.query.productName
-      this.getDetails()
-      this.getDeviceList()
-      this.getCount()
+      this.queryFM()
+      // this.getDeviceList()
+      // this.getCount()
+    },
+    queryFM() { // 查询固件是否存在
+      this.loading = true
+      getFmDetails({
+        id: this.batchManage.fmId
+      }).then(res => {
+        this.loading = false
+        if (res.code === 200) {
+          if (!res.data) {
+            this.$message.warning('固件不存在')
+            return
+          } else {
+            this.getDetails()
+            this.getDeviceList()
+            this.getCount()
+          }
+        }
+      })
     },
     // 获取详情
     getDetails() {

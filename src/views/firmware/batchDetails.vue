@@ -274,7 +274,8 @@ export default {
       ],
       selectCountItemStatus: '',
       color: '#0070cc',
-      visible: false
+      visible: false,
+      operateFlag: true
     }
   },
   watch: {
@@ -309,8 +310,10 @@ export default {
         if (res.code === 200) {
           if (!res.data) {
             this.$message.warning('固件不存在')
+            this.operateFlag = false
             return
           } else {
+            this.operateFlag = true
             this.getDetails()
             this.getDeviceList()
             this.getCount()
@@ -431,6 +434,9 @@ export default {
     },
     // 选择状态
     handleSelectCountItem(item) {
+      if (!this.operateFlag) {
+        return
+      }
       this.selectCountItemStatus = item.status
       this.getCount()
       this.handleBatchChange(1)

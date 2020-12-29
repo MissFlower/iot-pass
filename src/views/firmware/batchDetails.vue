@@ -302,9 +302,9 @@ export default {
     },
     queryFM() { // 查询固件是否存在
       this.loading = true
-      getFmDetails({
-        id: this.batchManage.fmId
-      }).then(res => {
+      const formData = new FormData()
+      formData.append('id', this.batchManage.fmId)
+      getFmDetails(formData).then(res => {
         this.loading = false
         if (res.code === 200) {
           if (!res.data) {

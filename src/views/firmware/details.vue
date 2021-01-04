@@ -31,7 +31,7 @@
             <span class="info_left">固件签名</span>
             <span>
               {{ details.detailList.fmSign }}
-              <el-link type="primary" :underline="false" class="f12 ml10" @click="downLoad">下载</el-link>
+              <el-link type="primary" :underline="false" class="f12 ml10" @click="downLoad" v-if="operateFlag">下载</el-link>
             </span>
           </div>
         </el-col>
@@ -86,10 +86,10 @@
     </div>
     <div>
       <el-tabs v-model="detailsTab" type="card" @tab-click="handleClick" v-loading="loading">
-        <el-tab-pane label="批次管理" name="first">
+        <el-tab-pane label="批次管理" name="first" :disabled="!operateFlag">
           <el-form ref="form" :model="batchManage" label-width="80px" :inline="true">
             <el-form-item>
-              <el-button type="primary" @click="checkFm">验证固件</el-button>
+              <el-button type="primary" @click="checkFm" :disabled="!operateFlag">验证固件</el-button>
               <el-tooltip
                 class="item"
                 effect="dark"
@@ -99,7 +99,7 @@
               >
                 <el-button disabled>批量升级</el-button>
               </el-tooltip>
-              <el-button v-else @click="upgradeSubmit">批量升级</el-button>
+              <el-button v-else @click="upgradeSubmit" :disabled="!operateFlag">批量升级</el-button>
             </el-form-item>
             <el-form-item>
               <el-input
@@ -107,6 +107,7 @@
                 placeholder="请输入批次ID"
                 @keyup.enter.native="searchBatchManage"
                 class="searchInput"
+                :disabled="!operateFlag"
               >
                 <span slot="suffix">
                   <i class="el-icon-search hand" @click="searchBatchManage"></i>
@@ -156,7 +157,7 @@
             :total="batchManage.total"
           ></el-pagination>
         </el-tab-pane>
-        <el-tab-pane label="设备列表" name="second">
+        <el-tab-pane label="设备列表" name="second" :disabled="!operateFlag">
           <el-form ref="form" :model="devManage" label-width="80px" :inline="true">
             <el-form-item>
               <el-input
@@ -226,7 +227,7 @@
             class="tr mt20"
           ></el-pagination>
         </el-tab-pane>
-        <el-tab-pane label="固件信息" name="third">
+        <el-tab-pane label="固件信息" name="third" :disabled="!operateFlag">
           <div class="edit_info-tit">
             <h4>固件基本信息</h4>
             <a class="edit_icon" @click.stop="editClick">
@@ -435,7 +436,8 @@ export default {
       fmDeviceList: [],
       checkStatus: 0,
       checkProcessFlag: false,
-      visible: false
+      visible: false,
+      operateFlag: false
     }
   },
   watch: {
@@ -477,8 +479,11 @@ export default {
         if (res.code === 200) {
           if (!res.data) {
             this.$message.warning('固件不存在')
+            this.operateFlag = false
+            this.detailsTab = 'first'
             return
           }
+          this.operateFlag = true
           this.details.detailList = res.data
           this.checkInfo = res.data
           res.data.createTime_ = res.data.createTime
@@ -537,6 +542,9 @@ export default {
     },
     // 搜索批次管理
     searchBatchManage() {
+      if (!this.operateFlag) {
+        return
+      }
       this.batchManage.pageNum = 1
       this.getUpgradeList()
     },

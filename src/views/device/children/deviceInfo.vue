@@ -252,7 +252,7 @@ export default {
 
   watch: {
     $route() {
-      if (this.$route.path === 'device_detail') {
+      if (this.$route.meta.code === 'device_detail') {
         this.getDeviceInfo()
       }
     }
@@ -276,6 +276,7 @@ export default {
           if (res.code === 200) {
             var deviceObj = res.data
             if (!res.data) {
+              this.infoType = 'first'
               this.$message.warning('设备不存在')
               this.existenceFlag = false
             } else {

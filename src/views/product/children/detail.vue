@@ -8,29 +8,29 @@
       <el-button
         :type="btnType"
         @click="releaseProduct"
-        v-if="authArr.indexOf('product_release') > -1"
+        v-if="authArr.indexOf('product_release') > -1 && operateFlag"
       >{{ btnType ? '发布' : '撤销发布' }}</el-button>
     </div>
     <div class="p_key">
       <div>
         <span>ProductKey:</span>
         <span class="key">{{ productKey }}</span>
-        <el-link :underline="false" type="primary" @click="copyContent(productKey)">复制</el-link>
+        <el-link :underline="false" type="primary" @click="copyContent(productKey)" v-if="operateFlag">复制</el-link>
       </div>
       <div>
         <span>ProductSecret:</span>
         <span class="key">*******</span>
-        <el-link :underline="false" type="primary" @click="seeSecret">查看</el-link>
+        <el-link :underline="false" type="primary" @click="seeSecret" v-if="operateFlag">查看</el-link>
       </div>
     </div>
     <div class="deviceCount">
       <span class="text">设备数:</span>
       <span class="key">{{ productData.deviceCount }}</span>
-      <el-link :underline="false" type="primary" @click="goEqu">前往管理</el-link>
+      <el-link :underline="false" type="primary" @click="goEqu" v-if="operateFlag">前往管理</el-link>
     </div>
     <div class="tab_wrp mt20">
       <el-tabs v-model="activeName" type="card" @tab-click="tabChange">
-        <el-tab-pane label="产品信息" name="product">
+        <el-tab-pane label="产品信息" name="product" :disabled="!operateFlag">
           <product-info
             :product-data="productData"
             :btn-type="btnType"
@@ -38,14 +38,15 @@
           />
         </el-tab-pane>
 
-        <el-tab-pane label="Topic类列表" name="topic">
+        <el-tab-pane label="Topic类列表" name="topic" :disabled="!operateFlag">
           <product-topic :productId="productData.id" :productStatus="productData.productStatus" />
         </el-tab-pane>
 
-        <el-tab-pane label="功能定义" name="second">
+        <el-tab-pane label="功能定义" name="second" :disabled="!operateFlag">
           <product-ability
             v-if="productData.productKey && activeName == 'second'"
             :productData="productData"
+            :operateFlag="operateFlag"
           ></product-ability>
         </el-tab-pane>
       </el-tabs>
@@ -88,7 +89,8 @@ export default {
       productName: '',
       loading: false,
       productSecret: '',
-      productData: {}
+      productData: {},
+      operateFlag: false
     }
   },
   computed: {
@@ -215,7 +217,7 @@ export default {
       this.loading = true
       getProduct({ productKey: this.productKey }).then(res => {
         this.loading = false
-        if (res.code === 200) {
+        if (res.code === 200 && res.data) {
           this.productName = res.data.productName
           this.productData = res.data
           if (res.data.productStatus === 0) {
@@ -223,7 +225,13 @@ export default {
           } else {
             this.btnType = ''
           }
+          this.operateFlag = true
         } else {
+          if (!res.data) {
+            this.operateFlag = false
+            this.activeName = 'product'
+          }
+          this.productData = {}
           this.$message.warning(res.message)
         }
       }).catch(err => {

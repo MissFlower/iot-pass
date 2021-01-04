@@ -6,7 +6,7 @@
         icon="el-icon-edit"
         v-show="btnType"
         @click="dialogProEditBtn"
-        v-if="authArr.indexOf('edit_product') > -1"
+        v-if="authArr.indexOf('edit_product') > -1 && operateFlag"
       >编辑</el-link>
     </div>
     <div class="grid_wrp">
@@ -62,7 +62,7 @@
                 inactive-text="关闭"
                 :active-value="1"
                 :inactive-value="0"
-                :disabled="authArr.indexOf('dynamic_product') === -1"
+                :disabled="authArr.indexOf('dynamic_product') === -1 || !operateFlag"
                 @change="dynRegisterChange"
               ></el-switch>
             </div>
@@ -143,6 +143,10 @@ export default {
     btnType: {
       type: String,
       default: ''
+    },
+    operateFlag: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

@@ -20,7 +20,7 @@
     </div>
     <div>
       <el-tabs v-model="tab" type="card" v-loading="loading">
-        <el-tab-pane label="设备列表" name="first">
+        <el-tab-pane label="设备列表" name="first" :disabled="!operateFlag">
           <div class="selectCon df f12">
             <div
               v-for="(item, index) in countArr"
@@ -99,7 +99,7 @@
             :total="devManage.total"
           ></el-pagination>
         </el-tab-pane>
-        <el-tab-pane label="批次信息" name="second">
+        <el-tab-pane label="批次信息" name="second" :disabled="!operateFlag">
           <el-row v-if="JSON.stringify(batchDetailList) != '{}'">
             <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
               <div class="edit_info">
@@ -275,7 +275,7 @@ export default {
       selectCountItemStatus: '',
       color: '#0070cc',
       visible: false,
-      operateFlag: true
+      operateFlag: false
     }
   },
   watch: {
@@ -309,8 +309,12 @@ export default {
         this.loading = false
         if (res.code === 200) {
           if (!res.data) {
+            this.tab = 'first'
             this.$message.warning('固件不存在')
             this.operateFlag = false
+            this.selectCountItemStatus = ''
+            this.batchDetailList = {}
+            this.devManage.devList = []
             return
           } else {
             this.operateFlag = true

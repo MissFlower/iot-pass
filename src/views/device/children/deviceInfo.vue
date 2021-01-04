@@ -8,13 +8,13 @@
     <div class="f20 b">
       <i class="el-icon-back" @click="back" />
       {{ deviceObj.deviceName }}
-      <el-tag :type="deviceStatusType[deviceObj.deviceStatus]">{{ deviceObj.deviceStatusStr }}</el-tag>
+      <el-tag :type="deviceStatusType[deviceObj.deviceStatus]" v-if="existenceFlag">{{ deviceObj.deviceStatusStr }}</el-tag>
     </div>
     <div class="f12 c6 mt20 mb20 df fww">
       <div class="productInfo">
         <span class="dib w100 mr20 c9">产品:</span>
         <span>{{ deviceObj.productName }}</span>
-        <el-button type="text" class="ml10" @click="toProduct">查看</el-button>
+        <el-button type="text" class="ml10" @click="toProduct" v-if="existenceFlag">查看</el-button>
       </div>
       <div class="productInfo">
         <span class="dib w100 mr20 c9">DeviceSecret:</span>
@@ -23,17 +23,18 @@
           type="text"
           class="ml10"
           @click="(lookDeviceSecret = true), (burnShow = false)"
+          v-if="existenceFlag"
         >查看</el-button>
       </div>
       <div class="productInfo">
         <span class="dib w100 mr20 c9">ProductKey:</span>
         <span>{{ deviceObj.productKey }}</span>
-        <el-button type="text" class="ml10" @click="copy(deviceObj.productKey)">复制</el-button>
+        <el-button type="text" class="ml10" @click="copy(deviceObj.productKey)" v-if="existenceFlag">复制</el-button>
       </div>
     </div>
 
     <el-tabs v-model="infoType" type="card">
-      <el-tab-pane label="设备信息" name="first">
+      <el-tab-pane label="设备信息" name="first" :disabled="!existenceFlag">
         设备信息
         <div class="infoType_device">
           <div class="device_lineView">
@@ -59,13 +60,13 @@
             <div class="device_infoItem">
               <span class="infoItemName">设备名称</span>
               <span>{{ deviceObj.deviceName }}</span>
-              <el-button type="text" class="ml10" @click="copy(deviceObj.deviceName)">复制</el-button>
+              <el-button type="text" class="ml10" @click="copy(deviceObj.deviceName)" v-if="existenceFlag">复制</el-button>
             </div>
             <div class="device_infoItem">
               <span class="infoItemName">备注名称</span>
               <span>{{ deviceObj.nickName }}</span>
               <el-button
-                v-if="authArr.indexOf('device_nameEdit') > -1"
+                v-if="authArr.indexOf('device_nameEdit') > -1 && existenceFlag"
                 type="text"
                 class="ml10"
                 @click="deviceNameEdit"
@@ -109,10 +110,10 @@
           </div>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="Topic列表" name="topic">
+      <el-tab-pane label="Topic列表" name="topic" :disabled="!existenceFlag">
         <device-topic :device-obj="deviceObj" />
       </el-tab-pane>
-      <el-tab-pane v-if="modelShow" label="物模型数据" name="model">
+      <el-tab-pane v-if="modelShow" label="物模型数据" name="model" :disabled="!existenceFlag">
         <!-- 二级标签页 -->
         <el-radio-group v-model="modelType">
           <el-radio-button label="runState">运行状态</el-radio-button>
@@ -127,7 +128,7 @@
         <event-manage v-show="modelType == 'eventManage'" :device-info="deviceObj" />
         <service-Call v-show="modelType == 'serviceCall'" :device-info="deviceObj" /> -->
       </el-tab-pane>
-      <el-tab-pane label="设备日志" name="deviceLog">
+      <el-tab-pane label="设备日志" name="deviceLog" :disabled="!existenceFlag">
         <device-log :device-obj="deviceObj" />
       </el-tab-pane>
     </el-tabs>
@@ -238,7 +239,8 @@ export default {
       },
       currentComponent: null,
       fmVersionList: [],
-      moreFlag: false
+      moreFlag: false,
+      existenceFlag: false
     }
   },
 
@@ -275,6 +277,7 @@ export default {
             var deviceObj = res.data
             if (!res.data) {
               this.$message.warning('设备不存在')
+              this.existenceFlag = false
             } else {
               // 设备状态
               var statusDict = { '0': '未激活', '1': '在线', '2': '离线' }
@@ -306,6 +309,7 @@ export default {
                 deviceObj.enableBool = deviceObj.enable === 0
               }
               this.deviceObj = deviceObj
+              this.existenceFlag = true
             }
             this.getVersions()
           }

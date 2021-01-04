@@ -459,8 +459,8 @@ export default {
       this.productName = this.$route.query.productName
       this.srcVersion = this.$route.query.srcVersion
       this.getDetails()
-      this.getUpgradeList() // 批次管理
-      this.getStatistics() // 获取 标签页 上方数据
+      // this.getUpgradeList() // 批次管理
+      // this.getStatistics() // 获取 标签页 上方数据
     },
     // tab切换方法
     handleClick(value) {
@@ -481,6 +481,8 @@ export default {
             this.$message.warning('固件不存在')
             this.operateFlag = false
             this.detailsTab = 'first'
+            this.batchManage.batchList = []
+            this.loading = false
             return
           }
           this.operateFlag = true
@@ -490,6 +492,8 @@ export default {
             ? new Date(res.data.createTime.replace(/-/g, '/')).toLocaleString()
             : ''
           this.fmInfo.fmInfoList = res.data
+          this.getUpgradeList() // 批次管理
+          this.getStatistics() // 获取 标签页 上方数据
         } else {
           this.$message.error(res.message)
         }

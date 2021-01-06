@@ -55,9 +55,16 @@
             <!-- <el-option label="灰度升级" value="3"></el-option> -->
           </el-select>
         </el-form-item>
+        <el-form-item v-if="form.scopeType === '1'" label="设备选择方式" required>
+          <el-radio-group v-model="form.selectType">
+            <el-radio :label="1">手动选择</el-radio>
+            <el-radio :label="2">文件上传</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item label="设备范围" v-if="form.scopeType == 1" prop="selectDevicenames">
           <el-select
             v-model="selectDevicenames"
+            v-if="form.selectType == 1"
             multiple
             :collapse-tags="selectDevicenames.length > 5"
             placeholder="请选择"
@@ -65,6 +72,13 @@
             @change="handleChange"
             class="w240"
           ></el-select>
+          <div v-else>
+            <label for="upload-file" class="el-button--mini el-button--primary">{{ file ? '重新上传' : '上传文件' }}</label>
+            <input id="upload-file" type="file" title="" hidden="hidden" accept=".xls, .xlsx" @change="changeUpload()" />
+            <span class="ml20">{{ file ? file.name : '' }}</span>
+            <el-progress v-if="file" class="w240 mt5 " :percentage="progress" :color="customColorMethod" :status="pFlag == 0 ? 'exception' : 'success'" :stroke-width="3"></el-progress>
+            <span v-if="file" class="f12 red" :class="pFlag == 0 ? 'red' : 'success'">{{ pFlag == 0 ? '上传的文件数据有问题' : '上传成功' }}</span>
+          </div>
         </el-form-item>
         <el-form-item label="升级时间" prop="ugTimeType" required>
           <el-select v-model="form.ugTimeType" placeholder="请选择升级时间类型" class="w240">
@@ -165,7 +179,7 @@
   </div>
 </template>
 <script>
-import { saveUpgrade, getSrcVersionList, getDeviceCount } from '@/api/fireware'
+import { saveUpgrade, getSrcVersionList, getDeviceCount, uploadDeviceFile } from '@/api/fireware'
 import selectDevice from './selectDevice'
 
 export default {
@@ -181,10 +195,20 @@ export default {
   },
   data() {
     const validateSelectNames = (rules, value, callback) => {
-      if (this.selectDeviceIds.length === 0) {
-        callback(new Error('请选择设备范围'))
+      if (this.form.scopeType === 1) {
+        if (this.selectDeviceIds.length === 0) {
+          callback(new Error('请选择设备范围'))
+        } else {
+          callback()
+        }
       } else {
-        callback()
+        if (!this.file) {
+          callback(new Error('请选择上传文件'))
+        } else if (this.pFlag === 0) {
+          callback(new Error(''))
+        } else {
+          callback()
+        }
       }
     }
     const validSrcVersion = (rule, value, callback) => {
@@ -252,7 +276,8 @@ export default {
         rate: '',
         deviceNames: '',
         ugStartTime: '',
-        ugEndTime: ''
+        ugEndTime: '',
+        selectType: 1
       },
       rules: {
         rate: [
@@ -297,7 +322,12 @@ export default {
           return time.getTime() < Date.now() - 1000 * 60 * 60 * 24 || time.getTime() > Date.now() + 1000 * 60 * 60 * 24 * 90
         }
       },
-      deviceCount: 0
+      deviceCount: 0,
+      // 文件上传
+      file: null,
+      progress: 0,
+      pFlag: 0,
+      tokenId: ''
     }
   },
   mounted() {
@@ -324,8 +354,12 @@ export default {
           if (obj.retryInterval === '-1') {
             obj.maxRetryCnt = ''
           }
+          if (this.form.selectType === 2) {
+            obj.tokenId = this.tokenId
+          }
           saveUpgrade(obj).then(res => {
             if (res.code === 200) {
+              this.$message.success('操作成功')
               this.$emit('upgradeVisible', this.upgradeFmVisible)
             } else {
               this.$message.warning(res.message)
@@ -414,7 +448,54 @@ export default {
           this.form.ugTimeType = '0'
         }
       }
+    },
+    // 文件上传
+    changeUpload() {
+      this.file = document.getElementById('upload-file').files[0]
+      if (this.file) {
+        const formData = new FormData()
+        formData.append('file', this.file)
+        formData.append('fmId', this.checkInfo.id)
+        this.loading = true
+        const onUploadProgress = progressEvent => {
+          const comp = (progressEvent.loaded / progressEvent.total * 100 | 0)
+          this.progress = comp // 赋值，进度条变化
+        }
+        uploadDeviceFile(formData, onUploadProgress).then(res => {
+          if (res.code === 200) {
+            this.pFlag = 1
+            this.tokenId = res.data.tokenId
+            this.srcVersion = res.data.srcVersions
+          } else {
+            this.pFlag = 0
+            this.$message.error(res.message)
+          }
+          this.loading = false
+        })
+      }
+    },
+    // 进度条颜色函数
+    customColorMethod(percentage) {
+      if (percentage < 100) {
+        return '#1890FF'
+      } else {
+        if (this.pFlag === 1) {
+          return '#67c23a'
+        } else {
+          return '#FF5500'
+        }
+      }
     }
   }
 }
 </script>
+
+<style scoped>
+.filepath {
+  /* opacity: 0; */
+  /* // border: 1px solid red; */
+  /* color: transparent; */
+  width: 100px;
+  display: inline-block;
+}
+</style>

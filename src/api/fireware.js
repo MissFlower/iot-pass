@@ -366,3 +366,19 @@ export function getListModuleConfigByProductKey(key) {
   })
 }
 
+/**
+ * 定向升级文件上传
+ * file	文件	是	上传文件
+ * fmId	文件	是	固件id
+ */
+
+export function uploadDeviceFile(data, cb) {
+  return request({
+    url: `/upgrade/uploadDeviceFile`,
+    method: 'post',
+    data,
+    onUploadProgress: cb || function() {
+    }
+  })
+}
+

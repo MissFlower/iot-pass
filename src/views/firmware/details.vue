@@ -704,7 +704,7 @@ export default {
       })
         .then(res => {
           if (res.code === 200) {
-            this.getDeviceList()
+            this.getUpgradeList()
             this.$message.success('取消成功')
           } else {
             this.$message.error(res.message)

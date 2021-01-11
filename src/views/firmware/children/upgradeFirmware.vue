@@ -161,7 +161,7 @@
         <div class="df ai_c">
           <div class="flex1 tl f12">
             本次批量升级共
-            <span class="blue">{{ deviceCount }}</span> 个设备
+            <span class="blue">{{ form.selectType == 1 ? deviceCount : deviceNum }}</span> 个设备
           </div>
           <el-button size="mini" @click="closeDialog">取 消</el-button>
           <el-button type="primary" size="mini" @click="upgradeSubmit('ruleFormUpgrade')">确 定</el-button>
@@ -195,7 +195,7 @@ export default {
   },
   data() {
     const validateSelectNames = (rules, value, callback) => {
-      if (this.form.scopeType === 1) {
+      if (this.form.selectType * 1 === 1) {
         if (this.selectDeviceIds.length === 0) {
           callback(new Error('请选择设备范围'))
         } else {
@@ -327,7 +327,8 @@ export default {
       file: null,
       progress: 0,
       pFlag: 0,
-      tokenId: ''
+      tokenId: '',
+      deviceNum: 0 // 文件中设备的数量
     }
   },
   mounted() {
@@ -451,8 +452,10 @@ export default {
     },
     // 文件上传
     changeUpload() {
-      this.file = document.getElementById('upload-file').files[0]
-      if (this.file) {
+      const upload = document.getElementById('upload-file')
+      const file = upload.files[0]
+      if (file) {
+        this.file = file
         const formData = new FormData()
         formData.append('file', this.file)
         formData.append('fmId', this.checkInfo.id)
@@ -466,9 +469,17 @@ export default {
             this.pFlag = 1
             this.tokenId = res.data.tokenId
             this.srcVersion = res.data.srcVersions
+            this.deviceNum = res.data.deviceNum
           } else {
             this.pFlag = 0
-            this.$message.error(res.message)
+            this.deviceNum = 0
+            upload.value = ''
+            this.$alert(`<div style="word-break: break-all;max-height: 200px;overflow: auto;">${res.message}</div>`, '错误信息', {
+              dangerouslyUseHTMLString: true,
+              confirmButtonText: '确定',
+              callback: action => {
+              }
+            })
           }
           this.loading = false
         })

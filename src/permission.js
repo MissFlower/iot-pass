@@ -15,16 +15,19 @@ router.beforeEach(async(to, from, next) => {
     } else {
       const hasGetUserInfo = store.getters.addRoutes.length > 0
       if (hasGetUserInfo) {
-        const meta = JSON.parse(JSON.stringify(to.meta))
-        if (to.query.id) {
-          meta.name += `（ ${to.query.id} ）`
-        } else if (to.params.key) {
-          meta.name += `（ ${to.params.key} ）`
+        const path = to.fullPath
+        if (path.indexOf('/center/') === -1) {
+          const meta = JSON.parse(JSON.stringify(to.meta))
+          if (to.query.id) {
+            meta.name += `（ ${to.query.id} ）`
+          } else if (to.params.key) {
+            meta.name += `（ ${to.params.key} ）`
+          }
+          store.dispatch('setBreadcrumb', {
+            path: to.fullPath,
+            meta: meta
+          })
         }
-        store.dispatch('setBreadcrumb', {
-          path: to.fullPath,
-          meta: meta
-        })
         next()
       } else {
         // 没有获取权限菜单的情况下

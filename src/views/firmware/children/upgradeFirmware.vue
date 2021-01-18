@@ -75,7 +75,8 @@
           <div v-else>
             <label for="upload-file" class="el-button--mini el-button--primary">{{ file ? '重新上传' : '上传文件' }}</label>
             <input id="upload-file" type="file" title="" hidden="hidden" accept=".xls, .xlsx" @change="changeUpload()" />
-            <el-button v-if="!file" type="text" class="ml20" @click="downFile">模板下载</el-button>
+            <!-- <el-button v-if="!file" type="text" class="ml20" @click="downFile">模板下载</el-button> -->
+            <a v-if="!file" href="下载模板.xlsx" class="f12 ml20" target="_blank" download>模板下载</a>
             <span class="ml20">{{ file ? file.name : '' }}</span>
             <el-progress v-if="file" class="w240 mt5 " :percentage="progress" :color="customColorMethod" :status="pFlag == 0 ? 'exception' : 'success'" :stroke-width="3"></el-progress>
             <span v-if="file" class="f12 red" :class="pFlag == 0 ? 'red' : 'success'">{{ pFlag == 0 ? '上传的文件数据有问题' : '上传成功' }}</span>
@@ -501,30 +502,30 @@ export default {
     // 导出文件时进行编码
     base64(s) {
       return window.btoa(unescape(encodeURIComponent(s)))
-    },
-    // 模板下载
-    downFile() {
-      // 列标题
-      const str = '<tr><th>deviceName</th></tr>'
-      // Worksheet名
-      const worksheet = 'Sheet1'// 文件名称
-      const uri = 'data:application/vnd.ms-Excel;base64,'
-      // 下载的表格模板数据
-      const template = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:excel' xmlns='http://www.w3.org/TR/REC-html40'>
-      <head><meta http-equiv= 'Content-Type' content='text/html'; charset='utf-8' /><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
-        <x:Name>${worksheet}</x:Name>
-        <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
-        </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
-        </head><body><table>${str}</table></body></html>`
-      // 下载模板
-      const elink = document.createElement('a')
-      elink.download = '下载模板.xls'
-      elink.style.display = 'none'
-      elink.href = uri + this.base64(template) // base64编码
-      document.body.appendChild(elink)
-      elink.click()
-      document.body.removeChild(elink)
     }
+    // 模板下载
+    // downFile() {
+    //   // 列标题
+    //   const str = '<tr><th>deviceName</th></tr>'
+    //   // Worksheet名
+    //   const worksheet = 'Sheet1'// 文件名称
+    //   const uri = 'data:application/vnd.ms-Excel;base64,'
+    //   // 下载的表格模板数据
+    //   const template = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:excel' xmlns='http://www.w3.org/TR/REC-html40'>
+    //   <head><meta http-equiv= 'Content-Type' content='text/html'; charset='utf-8' /><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+    //     <x:Name>${worksheet}</x:Name>
+    //     <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
+    //     </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+    //     </head><body><table>${str}</table></body></html>`
+    //   // 下载模板
+    //   const elink = document.createElement('a')
+    //   elink.download = '下载模板.xls'
+    //   elink.style.display = 'none'
+    //   elink.href = uri + this.base64(template) // base64编码
+    //   document.body.appendChild(elink)
+    //   elink.click()
+    //   document.body.removeChild(elink)
+    // }
   }
 }
 </script>

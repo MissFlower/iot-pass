@@ -76,7 +76,7 @@
             <label for="upload-file" class="el-button--mini el-button--primary">{{ file ? '重新上传' : '上传文件' }}</label>
             <input id="upload-file" type="file" title="" hidden="hidden" accept=".xls, .xlsx" @change="changeUpload()" />
             <!-- <el-button v-if="!file" type="text" class="ml20" @click="downFile">模板下载</el-button> -->
-            <a v-if="!file" href="下载模板.xlsx" class="f12 ml20" target="_blank" download>模板下载</a>
+            <a v-if="!file" href="下载模板.xlsx" class="f12 ml20 blue" target="_blank" download>模板下载</a>
             <span class="ml20">{{ file ? file.name : '' }}</span>
             <el-progress v-if="file" class="w240 mt5 " :percentage="progress" :color="customColorMethod" :status="pFlag == 0 ? 'exception' : 'success'" :stroke-width="3"></el-progress>
             <span v-if="file" class="f12 red" :class="pFlag == 0 ? 'red' : 'success'">{{ pFlag == 0 ? '上传的文件数据有问题' : '上传成功' }}</span>

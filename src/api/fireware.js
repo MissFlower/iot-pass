@@ -382,3 +382,46 @@ export function uploadDeviceFile(data, cb) {
   })
 }
 
+/**
+ * 模块列表
+ * fm/moduleList
+ */
+export function moudleList(data) {
+  return request({
+    url: `/fm/moduleList`,
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 添加模块
+ * 参数同编辑
+ * fm/saveModule
+ */
+
+export function saveModule(data) {
+  return request({
+    url: `/fm/saveModule`,
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 编辑模块
+ * fm/updateModule
+ * productKey	String	是	前端选择产品，传给后端产productKey
+ * productType	String	是	输入,前端控制:不包含特殊字符，长度限制不大于50个字符
+ * moduleType	String	是	输入,前端控制:不包含特殊字符，长度限制不大于50个字符
+ * hardwareVersion	String	是	|输入,前端控制:不包含特殊字符，长度限制不大于50个字符
+ * uid	Long	是	|当前登录用户userId。user/info接口返回的id
+ */
+
+export function updateModule(data) {
+  return request({
+    url: `/fm/updateModule`,
+    method: 'post',
+    data
+  })
+}

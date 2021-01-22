@@ -13,6 +13,9 @@
       <el-tab-pane label="版本分布" name="2">
         <version-list v-if="activeTag == '2'"></version-list>
       </el-tab-pane>
+      <el-tab-pane label="模块列表" name="3">
+        <modular v-if="activeTag == '3'"></modular>
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -20,9 +23,10 @@
 <script>
 import fmList from './children/fmlist'
 import versionList from './version'
+import modular from './modular'
 
 export default {
-  components: { fmList, versionList },
+  components: { fmList, versionList, modular },
   data() {
     return {
       loading: true,

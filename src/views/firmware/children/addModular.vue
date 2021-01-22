@@ -88,9 +88,7 @@ export default {
   mounted() {
     if (this.row) {
       for (const key in this.formData) {
-        if (key !== 'id') {
-          this.formData[key] = this.row[key]
-        }
+        this.formData[key] = this.row[key]
       }
     }
     this.formData.uid = this.userInfo.id

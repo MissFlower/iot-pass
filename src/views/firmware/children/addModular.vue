@@ -64,7 +64,7 @@ export default {
       },
       rules: {
         moduleType: [
-          { required: true, message: '请输入模块名称', trigger: 'blur' }
+          { required: true, message: '请输入固件模块类型', trigger: 'blur' }
         ],
         productKey: [
           { required: true, message: '请选择所属产品', trigger: 'blur' }

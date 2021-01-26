@@ -59,8 +59,7 @@ export default {
         productKey: '',
         productType: '',
         moduleType: '',
-        hardwareVersion: '',
-        id: 1
+        hardwareVersion: ''
       },
       rules: {
         moduleType: [
@@ -92,6 +91,7 @@ export default {
     if (this.row) {
       for (const key in this.formData) {
         this.formData[key] = this.row[key]
+        this.formData['id'] = this.row['id']
       }
     }
     this.formData.uid = this.userInfo.id

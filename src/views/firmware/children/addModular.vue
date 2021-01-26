@@ -64,16 +64,19 @@ export default {
       },
       rules: {
         moduleType: [
-          { required: true, message: '请输入固件模块类型', trigger: 'blur' }
+          { required: true, message: '请输入固件模块类型', trigger: 'blur' },
+          { max: 50, message: '长度不大于50个字符', trigger: 'blur' }
         ],
         productKey: [
           { required: true, message: '请选择所属产品', trigger: 'blur' }
         ],
         productType: [
-          { required: true, message: '请选择产品类型', trigger: 'blur' }
+          { required: true, message: '请选择产品类型', trigger: 'blur' },
+          { max: 50, message: '长度不大于50个字符', trigger: 'blur' }
         ],
         hardwareVersion: [
-          { required: true, message: '请输入硬件版本', trigger: 'blur' }
+          { required: true, message: '请输入硬件版本', trigger: 'blur' },
+          { max: 50, message: '长度不大于50个字符', trigger: 'blur' }
         ]
       },
       productList: [],

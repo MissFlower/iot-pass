@@ -7,12 +7,12 @@
   <div id="modular" v-loading="loading">
     <div>
       <el-button type="primary" size="mini" @click="addFun">添加模块</el-button>
-      <el-input v-model="modular" placeholder="请输入模块名称" size="mini" class="w200 ml20 searchInput">
+      <!-- <el-input v-model="modular" placeholder="请输入模块名称" size="mini" class="w200 ml20 searchInput">
         <span slot="suffix">
           <i class="el-icon-search hand" @click="handleChange(1)" />
           <i v-if="modular != ''" class="el-icon-close hand" @click="clearFun" />
         </span>
-      </el-input>
+      </el-input> -->
       <el-select v-model="formData.productKey" size="mini" class="ml20" @change="changeSelect">
         <el-option label="全部产品" value=""></el-option>
         <el-option
@@ -26,10 +26,10 @@
       <el-select v-model="formData.productType" @change="changeSelectProdunctType" class="w120">
         <el-option v-for="(item, index) in productTypeArr" :key="index" :label="item.productType" :value="item.productType"></el-option>
       </el-select>
-      <span class="ml20 f12">固件模块类型：</span>
+      <span class="ml20 f12">模块名称：</span>
       <el-select
         v-model="formData.moduleType"
-        placeholder="固件模块类型"
+        placeholder="模块名称"
         :disabled="formData.productType == ''"
         class="w120"
         @change="handleChange(1)"

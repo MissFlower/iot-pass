@@ -6,8 +6,8 @@
 <template>
   <el-dialog :visible.sync="dialogVisible" width="400px" :title="`${row ? '编辑' : '添加'}模块`" @close="close" v-loading="loading">
     <el-form ref="addModular" :model="formData" :rules="rules" label-width="120px">
-      <el-form-item label="模块名称:" prop="moduleType">
-        <el-input v-model="formData.moduleType" placeholder="请输入模块名称" class="w200"></el-input>
+      <el-form-item label="固件模块类型:" prop="moduleType">
+        <el-input v-model="formData.moduleType" placeholder="请输入固件模块类型" class="w200"></el-input>
       </el-form-item>
       <el-form-item label="所属产品:" prop="productKey">
         <el-select v-model="formData.productKey" placeholder="请选择所属产品" @change="getProductType" class="w200">

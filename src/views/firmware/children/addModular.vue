@@ -140,7 +140,7 @@ export default {
               this.close()
               this.$parent.getModular()
             } else {
-              this.$message.error(`${str}模块失败`)
+              this.$message.error(res.message)
             }
             this.loading = false
           })

@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 14:26:58
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-31 13:32:46
+ * @LastEditTime: 2021-03-01 14:51:23
 -->
 <template>
   <div class="perspective-container">
@@ -80,7 +80,7 @@
             <MeasureAutocomplete v-model="measureName" :product-key="productKey" placeholder="请选择度量" class="measure-complete" @measureChange="getMeasureKey" />
           </div>
         </div>
-        <div class="base-fliter-container fl">
+        <!-- <div class="base-fliter-container fl">
           <FilterTag
             v-if="isShowBaseFilter"
             ref="baseFilter"
@@ -92,7 +92,7 @@
             @change="getCheckedTagValue"
             @tagChange="computedFilterOptions"
           />
-        </div>
+        </div> -->
         <div class="other-filter-container fl">
           <!-- <ElScrollbar ref="scroll" wrap-class="scrollbar-wrapper">
             <div class="other-filter-box">
@@ -107,6 +107,7 @@
               v-for="(item, index) in filterList"
               :key="item.id"
               :id="item.id"
+              :show="index !== 0"
               :tag-options="item.options"
               :product-key="productKey"
               :style="{'left': filterTagLeft(index)}"
@@ -263,16 +264,22 @@ export default {
       productKey: '', // 选择的产品key
       measureName: '', //  度量名称
       measureObj: {}, // 选择的度量key
-      baseFilter: {
-        id: 'base',
-        checkedTag: '',
-        options: []
-      }, // 全部的tag
-      filterList: [], // tag Filter list 下的各个不同filter (选过的不会再有)
+      // baseFilter: {
+      //   id: 'base',
+      //   checkedTag: '',
+      //   options: []
+      // }, // 全部的tag
+      filterList: [
+        {
+          id: Date.now(),
+          checkedTag: '',
+          options: []
+        }
+      ], // tag Filter list 下的各个不同filter (选过的不会再有)
+      saveAllTags: [], // 获取到的所有tag
       checkedFilterTagValue: {}, // 用来存储用户创建的不同 Filter 下 选择的 value
       unusedFilterList: [], // 未被使用的 Filter tag列表
-      saveAllTags: [], // 获取到的所有tag
-      isShowAddFilter: true, // 是否展示添加filter icon
+      // isShowAddFilter: true, // 是否展示添加filter icon
       isShowChart: false, // 是否展示图表
       isShowBaseFilter: true, // 是否显示baseFilter
       saveData: {}, // 保存图表接口 每次调用 返回的数据
@@ -286,7 +293,7 @@ export default {
       }
     },
     addFilterIconLeft() {
-      return this.filterList.length * 216 + 616 + 'px'
+      return this.filterList.length * 216 + 400 + 'px'
     },
     pickerOptions() {
       return {
@@ -294,21 +301,24 @@ export default {
           return (date.getTime() < Date.now() - 180 * 24 * 60 * 60 * 1000) || (date.getTime() > Date.now())
         }
       }
+    },
+    isShowAddFilter() {
+      return this.saveAllTags.length === 0
+        ? true
+        : this.filterList.length < this.saveAllTags.length
     }
   },
   watch: {
-    unusedFilterList: {
-      handler(newValue) {
-        this.isShowAddFilter = this.filterList.length < this.saveAllTags.length - 1
-      }
-    },
+    // unusedFilterList: {
+    //   handler(newValue) {
+    //     this.isShowAddFilter = this.filterList.length < this.saveAllTags.length - 1
+    //   }
+    // },
     measureObj: {
       handler(newKey, oldKey) {
         if (newKey.metricRealName && newKey.metricRealName !== oldKey.metricRealName) {
           // 度量选择改变后 请求Tag列表接口
           this.getTagsList()
-          // 重置所有用户已选择的Filter
-          this.resetFilter()
         }
       }
     }
@@ -329,7 +339,7 @@ export default {
     getMeasureKey(data) {
       // 真实操作。。。。
       this.measureObj = data || {}
-      this.resetFilter()
+      // this.measureChangeRestFilter()
     },
     async getTagsList() {
       // 获取tags列表
@@ -340,7 +350,11 @@ export default {
         childIdentifier: this.measureObj.childIdentifier
       })
       this.saveAllTags = data
-      this.baseFilter.options = data
+      this.filterList[0].options = data
+      // 调用度量改变重置方法
+      this.measureChangeRestFilter()
+      this.getUnusedFilterList()
+      // this.baseFilter.options = data
     },
     getUnusedFilterList() {
       // 获取未被使用的tag filter
@@ -351,11 +365,12 @@ export default {
         }
       }
       // 获取没有被使用过的tag Filter列表
-      this.unusedFilterList = this.saveAllTags.filter(item => !usedFilterIds.includes(item))
+      this.unusedFilterList = this.saveAllTags.filter(tag => !usedFilterIds.includes(tag))
+      console.log(this.unusedFilterList)
     },
     addFilter() {
       // 判断filter条件是否已经选择 给提示弹窗
-      if (!this.baseFilter.checkedTag || this.filterList.some(item => item.checkedTag === '')) {
+      if (this.filterList.some(item => item.checkedTag === '')) {
         this.$message({
           type: 'warning',
           message: '请完善Filter!'
@@ -374,6 +389,7 @@ export default {
         tag: '', // tag 的 id
         value: []
       }
+      this.getUnusedFilterList()
       this.$nextTick(() => {
         if (this.$refs.filterTags.offsetWidth < this.$refs.filterTags.scrollWidth) {
           this.$refs.add.style.left = ''
@@ -381,7 +397,6 @@ export default {
           this.$refs.add.style.borderLeft = '1px solid #999'
         }
       })
-      this.getUnusedFilterList()
     },
     computedFilterOptions() {
       // 计算每个TAG FILTER下面的options
@@ -389,7 +404,7 @@ export default {
       this.filterList.forEach(item => {
         item.options = [this.saveAllTags.find(i => i === item.checkedTag), ...this.unusedFilterList]
       })
-      this.baseFilter.options = [this.saveAllTags.find(item => item === this.baseFilter.checkedTag), ...this.unusedFilterList]
+      // this.baseFilter.options = [this.saveAllTags.find(item => item === this.baseFilter.checkedTag), ...this.unusedFilterList]
     },
     deleteFilter(id) {
       // 删除filter
@@ -401,30 +416,66 @@ export default {
       this.computedFilterOptions()
     },
     getCheckedTagValue(id, data) {
+      // console.log(id, data)
       this.getCustomTime()
       // 获取tag 和 value 更新 用户 存储的内容
       this.checkedFilterTagValue[id] = data
       // 设置每个Filter选中的tag  存储的是id
       const index = this.filterList.findIndex(item => item.id === id)
-      if (~index) {
-        this.filterList[index].checkedTag = data.tag
-        return
-      }
-      this.baseFilter.checkedTag = data.tag
+
+      this.filterList[index].checkedTag = data.tag
+      // if (~index) {
+      //   this.filterList[index].checkedTag = data.tag
+      //   return
+      // }
+      // this.baseFilter.checkedTag = data.tag
     },
     resetFilter() {
       // 重置所有已选择的Filter
-      this.filterList = []
-      this.baseFilter = {
-        id: 'base',
-        checkedTag: '',
-        options: []
-      }
-      this.isShowBaseFilter = false
+      this.filterList = [
+        {
+          id: Date.now(),
+          checkedTag: '',
+          options: []
+        }
+      ]
+      // this.baseFilter = {
+      //   id: 'base',
+      //   checkedTag: '',
+      //   options: []
+      // }
+      // this.isShowBaseFilter = false
       this.checkedFilterTagValue = {}
       this.$nextTick(() => {
         this.isShowBaseFilter = true
       })
+    },
+    measureChangeRestFilter() {
+      // 当度量改变时 进行重置
+      // 逻辑：产品key改变时按之前逻辑 全部清空
+      // 度量改变获取新的filter字段列表， 如果度量改变前选中的filter存在于新的filter字段列表中， 则保留已选中的filter，反之进行删除
+      if (this.filterList.length === 1 && this.filterList[0].checkedTag === '') { return }
+
+      this.filterList = this.filterList.filter(item => this.saveAllTags.includes(item.checkedTag))
+
+      for (const key in this.checkedFilterTagValue) {
+        if (Object.hasOwnProperty.call(this.checkedFilterTagValue, key)) {
+          const element = this.checkedFilterTagValue[key]
+          if (!this.saveAllTags.includes(element.tag)) {
+            delete this.checkedFilterTagValue[key]
+          }
+        }
+      }
+
+      if (!this.filterList.length) {
+        this.filterList = [
+          {
+            id: Date.now(),
+            checkedTag: '',
+            options: this.saveAllTags
+          }
+        ]
+      }
     },
     submit() {
       this.chartData = []

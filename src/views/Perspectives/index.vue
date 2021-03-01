@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 14:26:58
  * @LastEditors: AiDongYang
- * @LastEditTime: 2021-03-01 14:51:23
+ * @LastEditTime: 2021-03-01 14:59:40
 -->
 <template>
   <div class="perspective-container">
@@ -677,7 +677,7 @@ export default {
 
     .other-filter-container {
       display: inline-block;
-      width: calc(100% - 636px);
+      width: calc(100% - 420px);
       height: 100%;
     }
 

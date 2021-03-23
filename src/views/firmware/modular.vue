@@ -6,7 +6,7 @@
 <template>
   <div id="modular" v-loading="loading">
     <div>
-      <el-button type="primary" size="mini" @click="addFun">添加模块</el-button>
+      <el-button type="primary" size="mini" @click="addFun" v-if="authArr.indexOf('moduleType_createOrUpdate') > -1">添加模块</el-button>
       <!-- <el-input v-model="modular" placeholder="请输入模块名称" size="mini" class="w200 ml20 searchInput">
         <span slot="suffix">
           <i class="el-icon-search hand" @click="handleChange(1)" />
@@ -45,7 +45,7 @@
       <el-table-column label="硬件版本" prop="hardwareVersion"></el-table-column>
       <el-table-column label="添加时间" prop="createTime"></el-table-column>
       <!-- <el-table-column label="模块描述"></el-table-column> -->
-      <el-table-column label="操作" align="center">
+      <el-table-column label="操作" align="center" v-if="authArr.indexOf('moduleType_createOrUpdate') > -1">
         <template slot-scope="scope">
           <span class="hand blue" @click="handleEdit(scope.row)">编辑</span>
           <!-- <span class="hand red ml20">删除</span> -->
@@ -87,6 +87,11 @@ export default {
       moduleTypeArr: [],
       productTypeArr: [],
       editRow: null
+    }
+  },
+  computed: {
+    authArr() {
+      return this.$store.state.app.functionArr
     }
   },
   mounted() {

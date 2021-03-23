@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-21 16:51:04
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-31 13:25:01
+ * @LastEditTime: 2021-03-01 14:36:11
 -->
 <template>
   <div class="filter-tag-container">
@@ -23,7 +23,7 @@
     </ElSelect>
     <div v-show="tagKey" class="tag-search-container">
       <div class="tag-search-con df ai_c">
-        <el-checkbox v-model="allFlag" @change="selectAllFun" class="ml10 mr10"></el-checkbox>
+        <ElCheckbox v-model="allFlag" @change="selectAllFun" class="ml10 mr10" />
         <ElInput v-model.trim="searchValue" placeholder="请输入内容" class="tagSearch" @input="searchTagValue" />
       </div>
       <div class="tag-value-container">
@@ -156,19 +156,20 @@ export default {
     },
     async tagChange() {
       // tag选择更改 请求接口 获取tag下value列表
-      this.searchValue = ''
       // this.allFlag = false
-      const tagValueList = await this.getTagValueList()
-      this.uncheckedTagsValue = [...tagValueList]
-      this.saveUncheckedTagsValue = [...tagValueList]
       // 将原来选中的tag value 和 搜索关键字 清空
+      this.searchValue = ''
       this.checkedTagsValue = []
+      this.uncheckedTagsValue = []
       // 更改tag 向父级传回最新的选择结果
       this.$emit('change', this.id, {
         tag: this.tagKey,
         values: this.checkedTagsValue
       })
       this.$emit('tagChange', this.tagOptions.find(item => item === this.tagKey))
+      const tagValueList = await this.getTagValueList()
+      this.uncheckedTagsValue = [...tagValueList]
+      this.saveUncheckedTagsValue = [...tagValueList]
     },
     deleteFilter() {
       // 删除过滤条件

@@ -8,7 +8,7 @@
       <el-button
         :type="btnType"
         @click="releaseProduct"
-        v-if="authArr.indexOf('product_release') > -1 && operateFlag"
+        v-if="authArr.indexOf('product_release') > -1 && f"
       >{{ btnType ? '发布' : '撤销发布' }}</el-button>
     </div>
     <div class="p_key">
@@ -34,6 +34,7 @@
           <product-info
             :product-data="productData"
             :btn-type="btnType"
+            :operateFlag="operateFlag"
             @changeProName="changeProName"
           />
         </el-tab-pane>

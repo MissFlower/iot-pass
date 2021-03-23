@@ -8,7 +8,7 @@
       <el-button
         :type="btnType"
         @click="releaseProduct"
-        v-if="authArr.indexOf('product_release') > -1 && f"
+        v-if="authArr.indexOf('product_release') > -1 && operateFlag"
       >{{ btnType ? '发布' : '撤销发布' }}</el-button>
     </div>
     <div class="p_key">

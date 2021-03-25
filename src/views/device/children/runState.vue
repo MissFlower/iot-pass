@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 15:57:06
  * @LastEditors: AiDongYang
- * @LastEditTime: 2020-08-28 13:21:26
+ * @LastEditTime: 2021-03-25 19:32:21
 -->
 <template>
   <div v-loading="loading">
@@ -48,8 +48,8 @@
     <!-- 卡片结构 -->
     <div v-if="showType === 'card'" class="runstate-card-container">
       <RunStateCard
-        v-for="item in tableData"
-        :key="item.identifier"
+        v-for="(item, index) in tableData"
+        :key="index"
         :card-data="item"
       />
     </div>
@@ -131,9 +131,14 @@ export default {
   mounted() {
     this.getAllProperties()
   },
-  beforeDestroy() {
-    clearInterval(this.timer)
-    this.timer = null
+  activated() {
+    if (this.realTimeRefresh) {
+      this.realTimeHandler(this.realTimeRefresh)
+    }
+  },
+  deactivated() {
+    // clearTimeout(this.timer)
+    // this.timer = null
     // console.log('runState组件即将被销毁')
   },
   methods: {
@@ -218,19 +223,27 @@ export default {
       })
       this.tableData = deepFreeze([...res])
     },
+    interval(fn, wait) {
+      const interv = () => {
+        fn.call()
+        this.timer = setTimeout(interv, wait)
+      }
+      this.timer = setTimeout(interv, wait)
+    },
     realTimeHandler(flag) {
       // 实时刷新功能
       if (!flag) {
-        clearInterval(this.timer)
+        clearTimeout(this.timer)
         return
       }
       if (this.timer) {
-        clearInterval(this.timer)
+        clearTimeout(this.timer)
       }
-      this.timer = setInterval(() => {
-        this.getPropertyStatus()
-        // 轮询接口
-      }, this.timeInterval)
+      this.interval(this.getPropertyStatus, this.timeInterval)
+      this.$once('hook:deactivated', () => {
+        clearTimeout(this.timer)
+        this.timer = null
+      })
     },
     viewDataHandler({ identifier, name }) {
       // 查看数据

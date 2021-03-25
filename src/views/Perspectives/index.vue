@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 14:26:58
  * @LastEditors: AiDongYang
- * @LastEditTime: 2021-03-01 14:59:40
+ * @LastEditTime: 2021-03-25 18:29:59
 -->
 <template>
   <div class="perspective-container">
@@ -110,6 +110,7 @@
               :show="index !== 0"
               :tag-options="item.options"
               :product-key="productKey"
+              :metric="metric"
               :style="{'left': filterTagLeft(index)}"
               class="filter-list"
               @deleteFilter="deleteFilter"
@@ -283,7 +284,8 @@ export default {
       isShowChart: false, // 是否展示图表
       isShowBaseFilter: true, // 是否显示baseFilter
       saveData: {}, // 保存图表接口 每次调用 返回的数据
-      loading: false // loading 动画状态
+      loading: false, // loading 动画状态
+      metric: ''
     }
   },
   computed: {
@@ -339,7 +341,8 @@ export default {
     getMeasureKey(data) {
       // 真实操作。。。。
       this.measureObj = data || {}
-      // this.measureChangeRestFilter()
+      this.metric = data?.identifier + (data?.childIdentifier ? `_${data?.childIdentifier}` : '')
+      console.log(this.metric)
     },
     async getTagsList() {
       // 获取tags列表
@@ -366,7 +369,7 @@ export default {
       }
       // 获取没有被使用过的tag Filter列表
       this.unusedFilterList = this.saveAllTags.filter(tag => !usedFilterIds.includes(tag))
-      console.log(this.unusedFilterList)
+      // console.log(this.unusedFilterList)
     },
     addFilter() {
       // 判断filter条件是否已经选择 给提示弹窗

@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-07-29 14:26:58
  * @LastEditors: AiDongYang
- * @LastEditTime: 2021-03-25 18:29:59
+ * @LastEditTime: 2021-03-26 10:20:10
 -->
 <template>
   <div class="perspective-container">
@@ -341,8 +341,9 @@ export default {
     getMeasureKey(data) {
       // 真实操作。。。。
       this.measureObj = data || {}
-      this.metric = data?.identifier + (data?.childIdentifier ? `_${data?.childIdentifier}` : '')
-      console.log(this.metric)
+      if (data.identifier) {
+        this.metric = data.identifier + (data.childIdentifier ? `_${data.childIdentifier}` : '')
+      }
     },
     async getTagsList() {
       // 获取tags列表

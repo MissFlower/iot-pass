@@ -5,8 +5,8 @@
  -->
 <template>
   <div v-loading="loading">
-    <h2>设备管理</h2>
-    <div class="mb20 df ai_c">
+    <!-- <h2>设备管理</h2> -->
+    <div class="mb20 df ai_c mt10">
       <el-select v-model="productId" class="w200" placeholder="请选择产品" @change="changeProductFun">
         <el-option
           v-for="(item,index) in productList"
@@ -80,22 +80,29 @@
     </div>
     <el-table ref="multipleTable" :data="list" border @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="40" />
-      <el-table-column prop="id" label="ID" />
-      <el-table-column prop="deviceName" label="设备名称" />
-      <el-table-column prop="productName" label="产品名称" />
-      <el-table-column prop="nodeTypeStr" label="节点类型" />
-      <el-table-column prop="nickName" label="备注名称" />
-      <el-table-column prop="lastLoginTime" label="最后登录时间" />
-      <el-table-column prop="lastLogoutTime" label="最后登出时间" />
-      <el-table-column prop="deviceStatus" label="状态/启用状态">
+      <el-table-column label="设备信息" width="300">
+        <template slot-scope="{ row }">
+          <div class="f14 blue hand mb10" @click="lookClick(row)">{{ row.deviceName }}</div>
+          <!-- <div>所属产品：{{ row.productName }}</div> -->
+          <div>设备ID：{{ row.id }}</div>
+        </template>
+      </el-table-column>
+      <!-- <el-table-column prop="id" label="ID" />
+      <el-table-column prop="deviceName" label="设备名称" /> -->
+      <el-table-column prop="productName" label="产品名称" align="center" />
+      <el-table-column prop="nodeTypeStr" label="节点类型" align="center" />
+      <el-table-column prop="nickName" label="备注名称" align="center" />
+      <el-table-column prop="deviceStatus" label="状态/启用状态" align="center">
         <template v-slot="device">
           <span class="deviceStatusView"><div :style="{background: device.row.statusColor}" />{{ device.row.enableBool?device.row.deviceStatusStr:'已禁用' }}</span>
           <el-switch v-model="device.row.enableBool" :disabled="authArr.indexOf('device_enable')<0" @change="deviceEnable([device.row])" />
         </template>
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column prop="lastLoginTime" label="最后登录时间" align="center" width="95" />
+      <el-table-column prop="lastLogoutTime" label="最后登出时间" align="center" width="95" />
+      <el-table-column label="操作" align="center" width="80">
         <template v-slot="scope">
-          <el-button type="text" size="small" @click="lookClick(scope.row)">查看</el-button>
+          <!-- <el-button type="text" size="small" >查看</el-button> -->
           <el-button v-if="authArr.indexOf('device_delete')>-1" type="text" size="small" @click="deleteClick(scope.row)">删除</el-button>
         </template>
       </el-table-column>

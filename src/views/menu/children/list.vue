@@ -97,13 +97,13 @@
           slot-scope="scope"
         >{{ menuObj[scope.row.pcode] ? menuObj[scope.row.pcode] : scope.row.pcode }}</template>
       </el-table-column>
-      <el-table-column label="请求地址" prop="url"></el-table-column>
+      <el-table-column label="请求地址" prop="url" width="140"></el-table-column>
       <el-table-column label="菜单标记" width="80" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.menuFlag == "Y" ? "是" : "否" }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="排序" prop="sort"></el-table-column>
+      <el-table-column label="排序" prop="sort" width="50" align="center"></el-table-column>
       <el-table-column label="图标" prop="icon"></el-table-column>
       <el-table-column label="状态" prop="status" width="80" align="center">
         <template slot-scope="scope">
@@ -114,7 +114,7 @@
       </el-table-column>
       <el-table-column
         label="操作"
-        width="80"
+        width="120"
         align="center"
         v-if="
           authArr.indexOf('menu_edit') > -1 ||
@@ -122,16 +122,8 @@
         "
       >
         <template slot-scope="scope">
-          <i
-            v-if="authArr.indexOf('menu_edit') > -1"
-            class="el-icon-edit blue f18"
-            @click="handleEdit(2, scope.row)"
-          ></i>
-          <i
-            v-if="authArr.indexOf('menu_remove') > -1"
-            class="el-icon-close red f18"
-            @click="handleClose(scope.row)"
-          ></i>
+          <el-button type="text" v-if="authArr.indexOf('menu_edit') > -1" @click="handleEdit(2, scope.row)">编辑</el-button>
+          <el-button type="text" v-if="authArr.indexOf('menu_remove') > -1" @click="handleClose(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

@@ -45,7 +45,7 @@ export default {
       topArr: [
         {
           text: '当月设备消息量',
-          sub: 'product按计费逻辑统计)',
+          sub: '(product按计费逻辑统计)',
           value: 0
         },
         {

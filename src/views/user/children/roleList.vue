@@ -8,14 +8,14 @@
   <div id="accRoleList" v-loading="loading">
     <div class="pl20 mb20">
       <span>{{ info.name ? info.name : info.account }}的角色列表</span>
-      <svg-icon
+      <!-- <svg-icon
         icon-class="roleSet"
         class="success orange f16 ml20"
         @click.stop="handleShowAddRole"
-      />
+      /> -->
     </div>
-    <el-table :data="roleList" border class="w400">
-      <el-table-column label="ID" prop="roleId" />
+    <el-table :data="roleList" border class="w200">
+      <el-table-column label="ID" prop="roleId" width="60" />
       <el-table-column label="角色名称" prop="name" />
     </el-table>
   </div>

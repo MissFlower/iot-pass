@@ -6,7 +6,7 @@
 -->
 <template>
   <div id="product">
-    <div class="mb20 tr">
+    <div class="mb20">
       <div class="search_box">
         <el-input
           placeholder="请输入产品名称查询"
@@ -21,7 +21,7 @@
         </el-input>
       </div>
 
-      <el-button type="primary" @click="handleAdd" v-if="authArr.indexOf('add_product') > -1">新建产品</el-button>
+      <el-button class="fr" type="primary" @click="handleAdd" v-if="authArr.indexOf('add_product') > -1">新建产品</el-button>
     </div>
     <product-list v-if="flag == 0" :data="listData" :loading="loading" @getList="getList"></product-list>
     <!-- 分页 -->

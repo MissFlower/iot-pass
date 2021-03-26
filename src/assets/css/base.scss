@@ -10,6 +10,9 @@ body {
   .pa {
     position: absolute;
   }
+  .pf {
+    position: fixed;
+  }
 
   .b {
     font-weight: 600;
@@ -592,9 +595,12 @@ body {
     background: #f0f9eb;
     border-color: #39B05A;
   }
+  .el-link {
+    font-size: 12px;
+  }
   .point {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
     display: inline-block;
     border-radius: 50%;
     margin-right: 6px;

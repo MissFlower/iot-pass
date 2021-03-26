@@ -42,8 +42,18 @@
       >新建用户</el-button>
     </div>
     <el-table v-loading="loading" :data="list" border>
-      <el-table-column label="ID" prop="id" align="center" />
-      <el-table-column label="账号名" prop="account" align="center" />
+      <el-table-column label="ID" prop="id" align="center" width="50" />
+      <el-table-column label="账号名" prop="account">
+        <template slot-scope="{ row }">
+          <span>{{ row.account }}</span>
+          <el-tooltip>
+            <div slot="content">
+              <roleList :info="row"></roleList>
+            </div>
+            <svg-icon v-if="authArr.indexOf('mgr_updateRole') > -1" icon-class="accountRole" class="success hand f14 ml10" @hover.stop="showRoleList(3, row)" />
+          </el-tooltip>
+        </template>
+      </el-table-column>
       <el-table-column label="姓名" prop="name" align="center" />
       <el-table-column label="电话" prop="phone" align="center" />
       <el-table-column label="邮箱" prop="email" align="center" />
@@ -56,28 +66,9 @@
       </el-table-column>-->
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
-          <svg-icon
-            v-if="authArr.indexOf('mgr_updateRole') > -1"
-            icon-class="accountRole"
-            class="success hand f20"
-            @click.stop="handleShowCon(3, scope.row)"
-          />
-          <svg-icon
-            v-if="authArr.indexOf('mgr_updateRole') > -1"
-            icon-class="roleSet"
-            class="success orange f16"
-            @click.stop="handleShowAddRole(scope.row)"
-          />
-          <i
-            v-if="authArr.indexOf('mgr_edit') > -1"
-            class="el-icon-edit blue hand f18"
-            @click="handleShowCon(1, scope.row)"
-          />
-          <i
-            v-if="authArr.indexOf('mgr_delete') > -1"
-            class="el-icon-close red hand f20"
-            @click="handleClose(scope.row)"
-          />
+          <el-button type="text" v-if="authArr.indexOf('mgr_updateRole') > -1" @click.stop="handleShowAddRole(scope.row)">角色配置</el-button>
+          <el-button type="text" v-if="authArr.indexOf('mgr_edit') > -1" @click="handleShowCon(1, scope.row)">编辑</el-button>
+          <el-button type="text" v-if="authArr.indexOf('mgr_delete') > -1" @click="handleClose(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -94,7 +85,11 @@
 
 <script>
 import { userList, delUser } from '@/api/user'
+
+import roleList from './roleList'
+
 export default {
+  components: { roleList },
   data() {
     return {
       list: [],

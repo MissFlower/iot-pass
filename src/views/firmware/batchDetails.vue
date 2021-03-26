@@ -548,10 +548,6 @@ $default: #409eff;
       border-radius: 3px;
       margin-right: 9px;
       position: relative;
-      .point {
-        width: 8px;
-        height: 8px;
-      }
       .select {
         width: 0;
         height: 0;

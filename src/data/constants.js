@@ -139,7 +139,7 @@ export const scopeTypeObj = {
   2: '区域',
   3: '灰度'
 }
-export const fmStatusObj = {
+export const fmStatusObj = { // 固件验证状态
   0: {
     label: '未验证',
     color: '#888'
@@ -155,5 +155,15 @@ export const fmStatusObj = {
   3: {
     label: '验证失败',
     color: '#d93026'
+  }
+}
+export const productStatusObj = { // 产品状态
+  0: {
+    label: '发布中',
+    color: '#0070cc'
+  },
+  1: {
+    label: '已发布',
+    color: '#1e8e3e'
   }
 }

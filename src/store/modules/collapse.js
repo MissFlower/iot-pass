@@ -1,6 +1,6 @@
 const collapse = {
   state: {
-    opened: false
+    opened: true // 菜单栏是否打开
   },
   mutations: {
     SET_OPENED: (state, de) => {

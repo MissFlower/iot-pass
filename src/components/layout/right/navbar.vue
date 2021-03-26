@@ -1,6 +1,8 @@
 <template>
-  <div id="breadcrumb">
-    <el-tag v-for="(tag, index) in list" :key="index" class="mr10 hand" :closable="tag.path != '/home'" :type="$route.fullPath == tag.path ? '' : 'info'" @close.stop="handleClose(index, tag)" @click.native="handleSelect(index)">{{ tag.meta.name }}</el-tag>
+  <div id="navbar">
+    <template v-for="(tag, index) in list">
+      <el-tag v-if="tag.meta.name" :key="index" class="mr10 hand" :closable="tag.path != '/home'" :type="$route.fullPath == tag.path ? '' : 'info'" @close.stop="handleClose(index, tag)" @click.native="handleSelect(index)">{{ tag.meta.name }}</el-tag>
+    </template>
   </div>
 </template>
 
@@ -34,13 +36,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#breadcrumb {
-  position: fixed;
+#navbar {
   height: 45px;
-  // display: flex;
+  width: 100%;
+  background: #efefef;
   background: #fff;
   padding: 10px;
-  width: calc(100% - 235px);
   border-bottom: 1px solid #e6e6e6;
   overflow-x: auto;
   z-index: 3;

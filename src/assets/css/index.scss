@@ -6,15 +6,6 @@ html, body, #app {
 
 #app {
   div, header, main {box-sizing: border-box!important;}
-  .sidebar-container {
-    .el-menu {
-      border: none;
-    }
-    .svg-icon {
-      margin-right: 16px;
-    }
-  
-  }
   .pre-icon {
     position: absolute;
     top: 22px;

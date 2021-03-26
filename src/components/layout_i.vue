@@ -1,6 +1,6 @@
 <template>
   <div id="layout_i">
-    <paas-header></paas-header>
+    <paas-header class="pf"></paas-header>
     <div class="main">
       <router-view />
     </div>
@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import paasHeader from './header'
+import paasHeader from './layout/header'
 export default {
   components: { paasHeader }
 }

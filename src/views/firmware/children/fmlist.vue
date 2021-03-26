@@ -5,59 +5,59 @@
  -->
 <template>
   <div id="fmList">
-    <div class="df ai_c mb20">
+    <div class="df ai_c mb20 mt10">
+      <div class="flex1">
+        <el-input
+          v-model="form.fmName"
+          placeholder="请输入固件名称"
+          class="searchInput w180"
+          @keyup.enter.native="searchList"
+        >
+          <span slot="suffix">
+            <i class="el-icon-search hand" @click="searchList"></i>
+            <i class="el-icon-close hand" v-if="form.fmName != ''" @click="clearFun"></i>
+          </span>
+        </el-input>
+        <el-select
+          v-model="form.productKey"
+          class="w180 ml20"
+          filterable
+          :filter-method="userFilter"
+          @change="changeSelect"
+          clearable
+        >
+          <el-option label="全部产品" value></el-option>
+          <el-option
+            v-for="item in products"
+            :key="item.id"
+            :label="item.productName"
+            :value="item.productKey"
+          ></el-option>
+        </el-select>
+        <span class="ml20 f12">产品型号：</span>
+        <el-select v-model="form.productType" @change="changeSelectProdunctType" class="w120">
+          <el-option v-for="(item, index) in productTypeArr" :key="index" :label="item.productType" :value="item.productType"></el-option>
+        </el-select>
+        <span class="ml20 f12">固件模块类型：</span>
+        <el-select
+          v-model="form.moduleType"
+          placeholder="固件模块类型"
+          :disabled="form.productType == ''"
+          class="w150"
+          @change="searchList()"
+        >
+          <el-option v-for="(value, index) in moduleTypeArr" :key="index" :label="value" :value="value"></el-option>
+        </el-select>
+      </div>
       <el-button type="primary" @click="addItem">新增固件</el-button>
-      <el-input
-        v-model="form.fmName"
-        placeholder="请输入固件名称"
-        class="searchInput w180 ml20"
-        @keyup.enter.native="searchList"
-      >
-        <span slot="suffix">
-          <i class="el-icon-search hand" @click="searchList"></i>
-          <i class="el-icon-close hand" v-if="form.fmName != ''" @click="clearFun"></i>
-        </span>
-      </el-input>
-      <el-select
-        v-model="form.productKey"
-        class="w180 ml20"
-        filterable
-        :filter-method="userFilter"
-        @change="changeSelect"
-        clearable
-      >
-        <el-option label="全部产品" value></el-option>
-        <el-option
-          v-for="item in products"
-          :key="item.id"
-          :label="item.productName"
-          :value="item.productKey"
-        ></el-option>
-      </el-select>
-      <span class="ml20 f12">产品型号：</span>
-      <el-select v-model="form.productType" @change="changeSelectProdunctType" class="w120">
-        <el-option v-for="(item, index) in productTypeArr" :key="index" :label="item.productType" :value="item.productType"></el-option>
-      </el-select>
-      <span class="ml20 f12">固件模块类型：</span>
-      <el-select
-        v-model="form.moduleType"
-        placeholder="固件模块类型"
-        :disabled="form.productType == ''"
-        class="w120"
-        @change="searchList()"
-      >
-        <el-option v-for="(value, index) in moduleTypeArr" :key="index" :label="value" :value="value"></el-option>
-      </el-select>
     </div>
     <el-table :data="list" border stripe v-loading="loading">
       <!-- <el-table-column label="固件ID" prop="id"></el-table-column> -->
-      <el-table-column label="固件名称" prop="fmName">
+      <el-table-column label="固件名称" prop="fmName" width="240">
         <template slot-scope="scope">
-          {{ scope.row.fmName }}
+          <span class="blue mr10 hand" @click="toDetails(scope.row)">{{ scope.row.fmName }}</span>
           <el-tooltip>
-            <el-tag
-              type="primary"
-            >{{ scope.row.fmType == 1 ? '整包' : (scope.row.fmType == 2 ? '差分' : scope.row.fmType) }}</el-tag>
+            <el-tag type="info">{{ scope.row.fmType == 1 ? '整包' : (scope.row.fmType == 2 ? '差分' : scope.row.fmType) }}</el-tag>
             <div slot="content">
               <div>{{ scope.row.fmName }} / {{ scope.row.fmType == 1 ? '整包' : (scope.row.fmType == 2 ? '差分' : scope.row.fmType) }}</div>
               <div>固件ID：{{ scope.row.id }}</div>
@@ -65,41 +65,32 @@
           </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column label="产品名称" prop="productName"></el-table-column>
-      <el-table-column label="产品型号" prop="productType"></el-table-column>
-      <el-table-column label="固件类型" prop="moduleType"></el-table-column>
-      <el-table-column label="升级前版本" prop="srcVersion"></el-table-column>
-      <el-table-column label="升级后版本" prop="destVersion"></el-table-column>
-      <el-table-column label="创建时间" prop="createTime" :formatter="formatCreateTime"></el-table-column>
-      <el-table-column label="固件状态" prop="fmStatus">
+      <el-table-column label="产品名称" prop="productName" align="center"></el-table-column>
+      <el-table-column label="产品型号" prop="productType" align="center"></el-table-column>
+      <el-table-column label="固件类型" prop="moduleType" align="center"></el-table-column>
+      <el-table-column label="升级前版本" prop="srcVersion" align="center"></el-table-column>
+      <el-table-column label="升级后版本" prop="destVersion" align="center"></el-table-column>
+      <el-table-column label="固件状态" prop="fmStatus" align="center">
         <template slot-scope="scope">
           <div :style="{'background-color': fmStatusObj[scope.row.fmStatus].color}" class="point"></div>
           {{ fmStatusObj[scope.row.fmStatus].label }}
         </template>
       </el-table-column>
-      <el-table-column label="操作">
+      <el-table-column label="创建时间" prop="createTime" :formatter="formatCreateTime" align="center" width="95"></el-table-column>
+      <el-table-column label="操作" align="center">
         <template slot-scope="scope">
-          <a class="oprate_btn" @click="checkFm(scope.row)">验证固件</a>
-          |
-          <el-tooltip
-            class="item"
-            effect="dark"
-            content="请先验证固件，再进行批量升级"
-            placement="top"
-            v-if="scope.row.fmStatus !== 2"
-          >
-            <a class="oprate_btn disabled">批量升级</a>
+          <el-button type="text" @click="checkFm(scope.row)">验证固件</el-button>
+          <el-tooltip effect="light">
+            <div slot="content" class="tc">
+              <el-tooltip content="请先验证固件，再进行批量升级" placement="left" v-if="scope.row.fmStatus !== 2">
+                <el-link type="info" :underline="false">批量升级</el-link>
+              </el-tooltip>
+              <el-button v-else type="text" @click="upgradeList(scope.row)">批量升级</el-button>
+              <br />
+              <el-link type="danger" :underline="false" @click="delItem(scope.row.id)" :disabled="authArr.indexOf('firmware_del') == -1">删除</el-link>
+            </div>
+            <i class="el-icon-more ml10 blue"></i>
           </el-tooltip>
-          <a v-else class="oprate_btn" @click="upgradeList(scope.row)">批量升级</a>
-          |
-          <a
-            class="oprate_btn"
-            @click="toDetails(scope.row.id, scope.row.productName, scope.row.srcVersion)"
-          >查看</a>
-          <span v-if="authArr.indexOf('firmware_del') > -1">
-            <span> | </span>
-            <a class="oprate_btn" @click="delItem(scope.row.id)"> 删除</a>
-          </span>
         </template>
       </el-table-column>
     </el-table>
@@ -334,13 +325,13 @@ export default {
       this.upgradeFmVisible = false
     },
     // 查看详情
-    toDetails(id, productName, srcVersion) {
+    toDetails(row) {
       this.$router.push({
         path: 'details',
         query: {
-          id: id,
-          productName: productName,
-          srcVersion: srcVersion
+          id: row.id,
+          productName: row.productName,
+          srcVersion: row.srcVersion
         }
       })
     },
@@ -400,15 +391,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$default: #409eff;
-#fmList {
-  .oprate_btn {
-    color: $default;
-    cursor: pointer;
+  .el-button + .el-button {
+    margin-left: 0;
   }
-  .disabled {
-    color: #999;
-    cursor: text;
-  }
-}
+
+// $default: #409eff;
+// #fmList {
+//   .oprate_btn {
+//     color: $default;
+//     cursor: pointer;
+//   }
+//   .disabled {
+//     color: #999;
+//     cursor: text;
+//   }
+// }
 </style>

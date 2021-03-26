@@ -27,30 +27,17 @@
       >新建角色</el-button>
     </div>
     <el-table :data="list" border>
-      <el-table-column label="ID" prop="roleId"></el-table-column>
+      <el-table-column label="ID" prop="roleId" width="60"></el-table-column>
       <el-table-column label="角色名" prop="name"></el-table-column>
       <!-- <el-table-column label="排序"></el-table-column> -->
       <el-table-column label="描述" prop="description"></el-table-column>
-      <el-table-column label="创建时间" prop="createTime_"></el-table-column>
-      <el-table-column label="更新时间" prop="updateTime_"></el-table-column>
+      <el-table-column label="创建时间" prop="createTime_" align="center"></el-table-column>
+      <el-table-column label="更新时间" prop="updateTime_" align="center"></el-table-column>
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
-          <svg-icon
-            v-if="authArr.indexOf('role_setAuthority') > -1"
-            icon-class="auth"
-            class="success hand f20"
-            @click.stop="handleShowCon(2, scope.row)"
-          ></svg-icon>
-          <i
-            v-if="authArr.indexOf('role_edit') > -1"
-            class="el-icon-edit blue hand f18"
-            @click="handleShowEdit(scope.row)"
-          ></i>
-          <i
-            v-if="authArr.indexOf('role_remove') > -1"
-            class="el-icon-close red hand f20"
-            @click="handleDelete(scope.row)"
-          ></i>
+          <el-button type="text" v-if="authArr.indexOf('role_setAuthority') > -1" @click.stop="handleShowCon(2, scope.row)">权限配置</el-button>
+          <el-button type="text" v-if="authArr.indexOf('role_edit') > -1" @click="handleShowEdit(scope.row)">编辑</el-button>
+          <el-button type="text" v-if="authArr.indexOf('role_remove') > -1" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

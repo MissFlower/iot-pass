@@ -54,7 +54,7 @@
 
         <el-col :span="8" v-show="btnType">
           <div class="grid-content">
-            <div class="grid_col grid_left">动态注册</div>
+            <div class="grid_col grid_left">动态注册{{ authArr.indexOf('dynamic_product') === -1 || !operateFlag }}</div>
             <div class="grid_col grid_right">
               <el-switch
                 v-model="productData.dynRegister"
@@ -62,7 +62,7 @@
                 inactive-text="关闭"
                 :active-value="1"
                 :inactive-value="0"
-                :disabled="authArr.indexOf('dynamic_product') === -1 || !operateFlag"
+                :disabled="authArr.indexOf('dynamic_product') === -1 || operateFlag"
                 @change="dynRegisterChange"
               ></el-switch>
             </div>

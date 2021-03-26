@@ -1,33 +1,17 @@
 <template>
-  <div>
-    <el-scrollbar wrap-class="scrollbar-wrapper">
-      <el-menu
-        :default-active="activeMenu"
-        background-color="#fff"
-        text-color="#3A3E4A"
-        :unique-opened="false"
-        active-text-color="#4F94FF"
-        :collapse-transition="false"
-        mode="vertical"
-      >
-        <sidebar-item
-          v-for="route in list"
-          :key="route.path"
-          :item="route"
-          :base-path="route.path"
-        />
-      </el-menu>
-    </el-scrollbar>
+  <div id="left">
+    <collapse />
+    <sidebar class="sidebar-container" :list="list" />
   </div>
 </template>
 
 <script>
-import SidebarItem from './SidebarItem'
-// import variables from "@/styles/variables.scss";
-import { dealUserTreeFun } from '@/data/fun'
+import collapse from './collapse'
+import Sidebar from '../Sidebar'
 
+import { dealUserTreeFun } from '@/data/fun'
 export default {
-  components: { SidebarItem },
+  components: { collapse, Sidebar },
   data() {
     return {
       baseList: [
@@ -41,16 +25,6 @@ export default {
     }
   },
   computed: {
-    activeMenu() {
-      const route = this.$route
-      let { path } = route
-      const pathArr = path.split('/')
-      path = '/' + pathArr[1]
-      return path
-    },
-    // showLogo() {
-    //   return this.$store.state.settings.sidebarLogo;
-    // },
     menuLists() {
       return this.$store.state.app.menuLists
     }
@@ -91,3 +65,12 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+#left {
+  border-right: 1px solid #eeeff1;
+  // width: 200px;
+  position: relative;
+  height: 100%;
+}
+</style>

@@ -6,7 +6,7 @@
 
 <template>
   <div id="userCenter">
-    <paas-header />
+    <paas-header class="pf" />
     <div class="main df">
       <div class="left f12 mr20">
         <div class="title">账号管理</div>
@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import paasHeader from '@/components/header'
+import paasHeader from '@/components/layout/header'
 export default {
   components: { paasHeader },
   data() {

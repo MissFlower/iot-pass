@@ -16,7 +16,7 @@ router.beforeEach(async(to, from, next) => {
       const hasGetUserInfo = store.getters.addRoutes.length > 0
       if (hasGetUserInfo) {
         const path = to.fullPath
-        if (path.indexOf('/center/') === -1) {
+        if (path.indexOf('/center/') === -1 && to.meta) {
           const meta = JSON.parse(JSON.stringify(to.meta))
           if (to.query.id) {
             meta.name += `（ ${to.query.id} ）`

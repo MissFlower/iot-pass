@@ -1,7 +1,7 @@
 <template>
-  <header id="header">
+  <div class="header">
     <div class="con">
-      <img class="logo hand" src="../assets/logo.png" @click.stop="gotoIndex" />
+      <img class="logo hand" src="../../assets/logo.png" @click.stop="gotoIndex" />
       <div class="flex1 ml10 hand">
         <span @click.stop="gotoIndex">IoT管理系统</span>
       </div>
@@ -9,11 +9,11 @@
       <div class="f12 mr20 text hand" v-if="!flag" @click="handleGoHome">控制台</div>
       <el-dropdown class="avatar-container" trigger="hover" v-if="loginStatus">
         <div class="avatar-wrapper df ai_c">
-          <img src="../assets/imgs/photo.png" class="user-avatar" @click.stop="handleGoUserCenter">
+          <img src="../../assets/imgs/photo.png" class="user-avatar" @click.stop="handleGoUserCenter">
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <div class="df ai_c p10">
-            <img src="../assets/imgs/photo.png" class="user-avatar mr10">
+            <img src="../../assets/imgs/photo.png" class="user-avatar mr10">
             <span>{{ userName }}</span>
           </div>
           <div class="drop-link df ai_c f12 c6">
@@ -33,7 +33,7 @@
       <!-- <span v-if="!flag && !loginStatus" class="f12 hand blue" @click="handleRegister">注册</span> -->
       <!-- <el-button v-if="!flag && !loginStatus" type="success" size="mini" @click="handleRegister">注册</el-button> -->
     </div>
-  </header>
+  </div>
 </template>
 
 <script>
@@ -175,8 +175,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#header {
-  position: fixed;
+.header {
   height: 60px;
   width: 100%;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) !important;

@@ -53,6 +53,7 @@ import { sendCode, verifyCode } from '@/api'
 import { phoneValidate } from '@/data/fun'
 import { updateUser } from '@/api/user'
 export default {
+  name: 'PhoneBand',
   components: { sendCodeVerify },
   data() {
     const validatePhone = (rule, value, callback) => {

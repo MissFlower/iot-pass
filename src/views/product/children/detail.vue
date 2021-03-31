@@ -15,18 +15,18 @@
       <div>
         <span>ProductKey:</span>
         <span class="key">{{ productKey }}</span>
-        <el-link :underline="false" type="primary" @click="copyContent(productKey)" v-if="operateFlag">复制</el-link>
+        <iconToolTip ref="iconToolTip" :content="`复制`" :icon="`el-icon-copy-document`" :copyStr="productKey" v-if="operateFlag" class="ml10"></iconToolTip>
       </div>
       <div>
         <span>ProductSecret:</span>
         <span class="key">*******</span>
-        <el-link :underline="false" type="primary" @click="seeSecret" v-if="operateFlag">查看</el-link>
+        <iconToolTip ref="iconToolTip" :content="`查看`" :icon="`eye`" @clickFun="seeSecret" v-if="operateFlag" class="ml10"></iconToolTip>
       </div>
     </div>
     <div class="deviceCount">
       <span class="text">设备数:</span>
       <span class="key">{{ productData.deviceCount }}</span>
-      <el-link :underline="false" type="primary" @click="goEqu" v-if="operateFlag">前往管理</el-link>
+      <iconToolTip ref="iconToolTip" :content="`前往管理`" :icon="`manage`" @clickFun="goEqu" v-if="goEqu" class="ml10"></iconToolTip>
     </div>
     <div class="tab_wrp mt20">
       <el-tabs v-model="activeName" type="card" @tab-click="tabChange">
@@ -56,15 +56,12 @@
       <div class="dialogSecret">
         <span class="text">ProductSecret</span>
         <span class="secret">{{ productSecret }}</span>
-        <el-link :underline="false" type="primary" @click="copyContent(productSecret)">复制</el-link>
+        <iconToolTip ref="iconToolTip" :content="`复制`" :icon="`el-icon-copy-document`" :copyStr="productSecret" class="ml10"></iconToolTip>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">关 闭</el-button>
       </span>
     </el-dialog>
-    <div id="copy_content_wrp">
-      <input type="text" id="copy_content" />
-    </div>
   </div>
 </template>
 
@@ -73,11 +70,13 @@ import { findSecret, getProduct, cancelRelease, release } from '@/api/product'
 import productInfo from './info'
 import productTopic from './topic/topic'
 import productAbility from '@/views/model/modelTab'
+import iconToolTip from '@/components/iconToolTip'
 export default {
   components: {
     productInfo,
     productTopic,
-    productAbility
+    productAbility,
+    iconToolTip
   },
   data() {
     return {
@@ -126,17 +125,6 @@ export default {
           }
         })
       }
-    },
-    // 复制文本内容
-    copyContent(text) {
-      var inputElement = document.getElementById('copy_content')
-      inputElement.value = text
-      inputElement.select()
-      document.execCommand('Copy')
-      this.$message({
-        message: '复制成功',
-        type: 'success'
-      })
     },
     // 设备管理
     goEqu() {
@@ -245,16 +233,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#copy_content_wrp {
-  position: relative;
-  overflow: hidden;
-}
-
-#copy_content {
-  position: absolute;
-  left: -10000px;
-  opacity: 0;
-}
 .deviceCount {
   margin-top: 15px;
   color: #888;

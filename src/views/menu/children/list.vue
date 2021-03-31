@@ -33,61 +33,6 @@
       </div>
       <el-button v-if="authArr.indexOf('menu_add') > -1" type="primary" @click="handleEdit(2)">新建菜单</el-button>
     </div>
-    <!-- <el-table :data="list" border>
-      <el-table-column label="ID" prop="menuId" width="80"></el-table-column>
-      <el-table-column label="菜单名称" prop="name"></el-table-column>
-      <el-table-column label="菜单编号" prop="code"></el-table-column>
-      <el-table-column label="上层菜单">
-        <template
-          slot-scope="scope"
-        >{{ menuObj[scope.row.pcode] ? menuObj[scope.row.pcode] : scope.row.pcode }}</template>
-      </el-table-column>
-      <el-table-column label="请求地址" prop="url"></el-table-column>
-      <el-table-column label="菜单标记" width="80" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.menuFlag == "Y" ? "是" : "否" }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="排序" prop="sort"></el-table-column>
-      <el-table-column label="图标" prop="icon"></el-table-column>
-      <el-table-column label="状态" prop="status" width="80" align="center">
-        <template slot-scope="scope">
-          <span
-            :class="scope.row.status == 'ENABLE' ? 'success' : 'red'"
-          >{{ scope.row.status == "ENABLE" ? "启用" : "禁用" }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        label="操作"
-        width="80"
-        align="center"
-        v-if="
-          authArr.indexOf('menu_edit') > -1 ||
-            authArr.indexOf('menu_remove') > -1
-        "
-      >
-        <template slot-scope="scope">
-          <i
-            v-if="authArr.indexOf('menu_edit') > -1"
-            class="el-icon-edit blue f18"
-            @click="handleEdit(2, scope.row)"
-          ></i>
-          <i
-            v-if="authArr.indexOf('menu_remove') > -1"
-            class="el-icon-close red f18"
-            @click="handleClose(scope.row)"
-          ></i>
-        </template>
-      </el-table-column>
-    </el-table>
-    <el-pagination
-      @current-change="handleCurrentChange"
-      :current-page.sync="formData.pageNum"
-      :page-size="formData.pageSize"
-      layout="total, prev, pager, next"
-      :total="total"
-      class="tr mt20"
-    ></el-pagination> -->
     <el-table :data="list" border :tree-props="{children: 'children', hasChildren: 'hasChildren'}" row-key="menuId" :expand-row-keys="expands">
       <el-table-column label="ID" prop="menuId" min-width="80"></el-table-column>
       <el-table-column label="菜单名称" prop="name"></el-table-column>
@@ -104,7 +49,18 @@
         </template>
       </el-table-column>
       <el-table-column label="排序" prop="sort" width="50" align="center"></el-table-column>
-      <el-table-column label="图标" prop="icon"></el-table-column>
+      <el-table-column label="图标" prop="icon" align="center">
+        <template slot-scope="{row}">
+          <span v-if="icons.indexOf(row.icon) > -1">
+            <svg-icon :icon-class="row.icon"></svg-icon>
+          </span>
+          <!-- <span v-else-if="row.icon.indexOf('el-icon-') > 0">
+            <i :class="row.icon"></i>
+          </span> -->
+          <span v-else>{{ row.icon }}</span>
+
+        </template>
+      </el-table-column>
       <el-table-column label="状态" prop="status" width="80" align="center">
         <template slot-scope="scope">
           <span
@@ -133,6 +89,8 @@
 <script>
 import { dealFun2 } from '@/data/fun'
 import { getMenuList, delMenu } from '@/api/menu'
+
+import objData from '@/data/icon'
 export default {
   data() {
     return {
@@ -146,7 +104,8 @@ export default {
       list: [],
       total: 0,
       menuObj: {},
-      expands: []
+      expands: [],
+      icons: objData.icons
     }
   },
   computed: {

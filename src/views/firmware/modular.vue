@@ -6,14 +6,13 @@
 <template>
   <div id="modular" v-loading="loading">
     <div>
-      <el-button type="primary" size="mini" @click="addFun" v-if="authArr.indexOf('moduleType_createOrUpdate') > -1">添加模块</el-button>
       <!-- <el-input v-model="modular" placeholder="请输入模块名称" size="mini" class="w200 ml20 searchInput">
         <span slot="suffix">
           <i class="el-icon-search hand" @click="handleChange(1)" />
           <i v-if="modular != ''" class="el-icon-close hand" @click="clearFun" />
         </span>
       </el-input> -->
-      <el-select v-model="formData.productKey" size="mini" class="ml20" @change="changeSelect">
+      <el-select v-model="formData.productKey" @change="changeSelect">
         <el-option label="全部产品" value=""></el-option>
         <el-option
           v-for="item in productList"
@@ -31,21 +30,22 @@
         v-model="formData.moduleType"
         placeholder="固件模块类型"
         :disabled="formData.productType == ''"
-        class="w120"
+        class="w140"
         @change="handleChange(1)"
       >
         <el-option v-for="(value, index) in moduleTypeArr" :key="index" :label="value" :value="value"></el-option>
       </el-select>
+      <el-button type="primary" size="mini" class="fr" @click="addFun" v-if="authArr.indexOf('moduleType_createOrUpdate') > -1">添加模块</el-button>
     </div>
-    <el-table :data="list" border class="mt20">
+    <el-table :data="list" border class="mt20" :max-height="tableHeight">
       <el-table-column label="固件模块类型" prop="moduleType"></el-table-column>
       <!-- <el-table-column label="模块类型" prop="moduleType"></el-table-column> -->
-      <el-table-column label="所属产品" prop="productName"></el-table-column>
-      <el-table-column label="产品型号" prop="productType"></el-table-column>
-      <el-table-column label="硬件版本" prop="hardwareVersion"></el-table-column>
-      <el-table-column label="添加时间" prop="createTime"></el-table-column>
+      <el-table-column label="所属产品" prop="productName" align="center"></el-table-column>
+      <el-table-column label="产品型号" prop="productType" align="center"></el-table-column>
+      <el-table-column label="硬件版本" prop="hardwareVersion" align="center"></el-table-column>
+      <el-table-column label="添加时间" prop="createTime" align="center"></el-table-column>
       <!-- <el-table-column label="模块描述"></el-table-column> -->
-      <el-table-column label="操作" align="center" v-if="authArr.indexOf('moduleType_createOrUpdate') > -1">
+      <el-table-column label="操作" align="center" width="70" v-if="authArr.indexOf('moduleType_createOrUpdate') > -1">
         <template slot-scope="scope">
           <span class="hand blue" @click="handleEdit(scope.row)">编辑</span>
           <!-- <span class="hand red ml20">删除</span> -->
@@ -86,7 +86,8 @@ export default {
       addFlag: false,
       moduleTypeArr: [],
       productTypeArr: [],
-      editRow: null
+      editRow: null,
+      tableHeight: window.innerHeight - 300
     }
   },
   computed: {

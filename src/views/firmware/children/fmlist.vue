@@ -51,7 +51,7 @@
       </div>
       <el-button type="primary" @click="addItem">新增固件</el-button>
     </div>
-    <el-table :data="list" border stripe v-loading="loading">
+    <el-table :data="list" border stripe v-loading="loading" :max-height="tableHeight">
       <!-- <el-table-column label="固件ID" prop="id"></el-table-column> -->
       <el-table-column label="固件名称" prop="fmName" width="240">
         <template slot-scope="scope">
@@ -176,7 +176,8 @@ export default {
       upgradeFmVisible: false, // 批量升级弹框
       fmStatusObj,
       moduleTypeArr: [],
-      productTypeArr: []
+      productTypeArr: [],
+      tableHeight: window.innerHeight - 300
     }
   },
   computed: {
@@ -253,11 +254,11 @@ export default {
         'yyyy-MM-dd hh:mm:ss'
       ) : ''
     },
-    // 新增固件弹框显示
+    // 新增固件显示
     addItem() {
       this.dialogFormVisible = true
     },
-    // 新增固件弹框关闭
+    // 新增固件关闭
     changeVisible() {
       this.dialogFormVisible = false
     },

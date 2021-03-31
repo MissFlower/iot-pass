@@ -18,7 +18,7 @@
       <div class="flex1 df ai_c">
         <div class="w120">productKey</div>
         <div>{{ productKey }}</div>
-        <el-link type="primary" :underline="false" class="f12 ml10" @click="copyFun">复制</el-link>
+        <iconToolTip ref="iconToolTip" :content="`复制`" :icon="`el-icon-copy-document`" :copyStr="productKey" class="ml10"></iconToolTip>
       </div>
     </div>
     <div class="mb10">
@@ -116,9 +116,10 @@ import importAbility from './importAbility'
 import checkModel from './checkModel'
 import modelList from './children/list'
 import moreList from './children/historyList'
+import iconToolTip from '@/components/iconToolTip'
 
 export default {
-  components: { addCustomAbility, addStdAbility, importAbility, checkModel, modelList, moreList },
+  components: { addCustomAbility, addStdAbility, importAbility, checkModel, modelList, moreList, iconToolTip },
   data() {
     return {
       loading: false,
@@ -243,16 +244,6 @@ export default {
     // 查看弹框关闭回调
     closeCheck() {
       this.checkFlag = false
-    },
-    // 复制
-    copyFun() {
-      const _input = document.createElement('input')
-      document.body.appendChild(_input)
-      _input.value = this.productKey
-      _input.select()
-      document.execCommand('Copy')
-      this.$message.success('复制成功')
-      document.body.removeChild(_input) // 删除临时实例
     },
     // 显示更多的显示函数
     showMoreHistory() {

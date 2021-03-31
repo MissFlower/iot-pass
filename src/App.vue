@@ -16,7 +16,7 @@ export default {
   data() {
     return {
       isRouterAlive: true,
-      excludeStr: 'Breadcrumb'
+      excludeStr: 'Breadcrumb, Register, EmailBand, PhoneBand, SedCodeVerify, Verify'
     }
   },
   computed: {

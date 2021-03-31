@@ -6,8 +6,8 @@
 
 <template>
   <div id="menu">
-    <i v-if="activeIndex == 2" class="el-icon-back b pre-icon" @click="showCon(1)"></i>
-    <menu-list ref="list" v-if="activeIndex == 1"></menu-list>
+    <!-- <i v-if="activeIndex == 2" class="el-icon-back b pre-icon" @click="showCon(1)"></i> -->
+    <menu-list ref="list"></menu-list>
     <edit-menu v-if="activeIndex == 2" :activeItem="selectRow" @success="successFun"></edit-menu>
   </div>
 </template>
@@ -35,6 +35,7 @@ export default {
     },
     successFun() {
       this.activeIndex = 1
+      this.$refs.list.getData()
       // this.$nextTick(() => {
       //   this.$refs.list.getData();
       // });

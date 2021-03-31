@@ -4,8 +4,9 @@
   文件说明：菜单的选择图标的组件
  -->
 <template>
-  <el-dialog :visible.sync="dialogVisible" title="选择图标">
-    <div class="df ai_c fww">
+  <el-popover v-model="dialogVisible" title="选择图标" trigger="manual" placement="right">
+    <i class="el-icon-close fr" style="position: absolute;top: 10px;right: 10px;" @click="close"></i>
+    <div class="w400 df ai_c fww mt20">
       <div
         v-for="(item, index) in icons"
         :key="index"
@@ -17,11 +18,8 @@
         <div>{{ item }}</div>
       </div>
     </div>
-    <span slot="footer" class="dialog-footer">
-      <el-button @click="handleCancel">取 消</el-button>
-      <el-button type="primary" @click="submit">确 定</el-button>
-    </span>
-  </el-dialog>
+    <el-input slot="reference" v-model="selectIcon" placeholder="请输入图标" class="w200" @focus="handleShowIcons"></el-input>
+  </el-popover>
 </template>
 
 <script>
@@ -35,9 +33,16 @@ export default {
   },
   data() {
     return {
-      dialogVisible: true,
+      dialogVisible: false,
       icons: objData.icons,
       selectIcon: ''
+    }
+  },
+  watch: {
+    icon() {
+      if (this.icon) {
+        this.selectIcon = this.icon
+      }
     }
   },
   mounted() {
@@ -47,14 +52,15 @@ export default {
   },
   methods: {
     handleSelect(icon) {
-      this.selectIcon = icon
+      this.$emit('select', icon)
     },
-    submit() {
-      this.$emit('select', this.selectIcon)
-      this.handleCancel()
+    handleShowIcons() {
+      this.dialogVisible = true
+      this.$emit('changeShowFlag', true)
     },
-    handleCancel() {
-      this.$emit('close')
+    close() {
+      this.dialogVisible = false
+      this.$emit('changeShowFlag', false)
     }
   }
 }

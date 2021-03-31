@@ -6,7 +6,7 @@
 
 <template>
   <div id="accRoleList" v-loading="loading">
-    <div class="pl20 mb20">
+    <div class="mb20">
       <span>{{ info.name ? info.name : info.account }}的角色列表</span>
       <!-- <svg-icon
         icon-class="roleSet"

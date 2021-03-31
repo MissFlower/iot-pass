@@ -46,12 +46,13 @@
       <el-table-column label="账号名" prop="account">
         <template slot-scope="{ row }">
           <span>{{ row.account }}</span>
-          <el-tooltip>
+          <svg-icon icon-class="accountRole" class="success hand f14 ml10" @mouseout="showRoleList($event, row)" @mouseleave.stop="hideRoleList" />
+          <!-- <el-tooltip v-if="authArr.indexOf('mgr_updateRole') > -1" placement="right">
             <div slot="content">
               <roleList :info="row"></roleList>
             </div>
-            <svg-icon v-if="authArr.indexOf('mgr_updateRole') > -1" icon-class="accountRole" class="success hand f14 ml10" @hover.stop="showRoleList(3, row)" />
-          </el-tooltip>
+            <svg-icon icon-class="accountRole" class="success hand f14 ml10" @hover.native="showRoleList(3, row)" />
+          </el-tooltip> -->
         </template>
       </el-table-column>
       <el-table-column label="姓名" prop="name" align="center" />
@@ -80,6 +81,10 @@
       class="tr mt20"
       @current-change="handleCurrentChange"
     />
+    <el-popover placement="right" ref="popover" width="200" trigger="manual" v-model="visible">
+      <role-list v-if="userInfo" :info="userInfo"></role-list>
+      <el-button v-show="false" slot="reference">手动激活</el-button>
+    </el-popover>
   </div>
 </template>
 
@@ -92,6 +97,8 @@ export default {
   components: { roleList },
   data() {
     return {
+      visible: false,
+      userInfo: null,
       list: [],
       loading: false,
       total: 0,
@@ -166,7 +173,7 @@ export default {
     },
     handleCurrentChange(page) {
       // 页面切换函数
-      this.formData.pageNum = page
+      this.formData.pageNum = page && page > 0 ? page : this.formData.pageNum
       this.getData()
     },
     handleShowCon(key, row) {
@@ -205,6 +212,26 @@ export default {
         .catch(() => {
           this.$message('操作已取消')
         })
+    },
+    // 显示角色列表
+    showRoleList(e, row) {
+      if (this.userInfo && row.id === this.userInfo.id) { // 防止弹框抖动
+        return
+      }
+      this.userInfo = row
+      const el = e.target
+      this.visible = true
+      this.$nextTick(() => {
+        const pop = this.$refs.popover
+        pop.popperJS._reference = el
+        pop.popperJS.state.position = pop.popperJS._getPosition(pop.popperJS._popper, pop.popperJS._reference)
+        pop.popperJS.update()
+      })
+    },
+    // 隐藏角色列表
+    hideRoleList() {
+      this.visible = false
+      this.userInfo = null
     }
   }
 }

@@ -1,86 +1,83 @@
 <template>
   <div id="version" v-loading="loading">
-    <div v-if="productKey">
-      <div class="topCon">
-        <span>产品：</span>
-        <el-select v-model="productKey" size="mini">
-          <el-option
-            v-for="item in productList"
-            :key="item.productKey"
-            :value="item.productKey"
-            :label="item.productName"
-          ></el-option>
-        </el-select>
-        <span class="ml20">产品型号：</span>
-        <el-select v-model="productType" @change="changeSelectProdunctType">
-          <el-option v-for="(item, index) in productTypeArr" :key="index" :label="item.productType" :value="item.productType"></el-option>
-        </el-select>
-        <span class="ml20">固件模块类型：</span>
-        <el-select
-          v-model="moduleType"
-          placeholder="固件模块类型"
-          :disabled="productType == ''"
-          class="w200"
-        >
-          <el-option v-for="(value, index) in moduleTypeMap" :key="index" :label="value" :value="value"></el-option>
-        </el-select>
-        <div class="df mt10">
-          <div class="item">
-            <div class="titlt">固件版本分布</div>
-            <div class="con">
-              <div id="chart" class="chart" v-if="rightTableList.length > 0"></div>
-              <empty-con v-else></empty-con>
-            </div>
+    <div class="topCon">
+      <span>产品：</span>
+      <el-select v-model="productKey" size="mini">
+        <el-option
+          v-for="item in productList"
+          :key="item.productKey"
+          :value="item.productKey"
+          :label="item.productName"
+        ></el-option>
+      </el-select>
+      <span class="ml20">产品型号：</span>
+      <el-select v-model="productType" @change="changeSelectProdunctType">
+        <el-option v-for="(item, index) in productTypeArr" :key="index" :label="item.productType" :value="item.productType"></el-option>
+      </el-select>
+      <span class="ml20">固件模块类型：</span>
+      <el-select
+        v-model="moduleType"
+        placeholder="固件模块类型"
+        :disabled="productType == ''"
+        class="w200"
+      >
+        <el-option v-for="(value, index) in moduleTypeMap" :key="index" :label="value" :value="value"></el-option>
+      </el-select>
+      <div class="df mt10">
+        <div class="item">
+          <div class="titlt">固件版本分布</div>
+          <div class="con">
+            <div id="chart" class="chart" v-if="rightTableList.length > 0"></div>
+            <empty-con v-else></empty-con>
           </div>
-          <div class="item">
-            <div class="titlt">固件版本占比</div>
-            <div class="con">
-              <el-table :data="rightTableList">
-                <empty-con slot="empty" class="mb20"></empty-con>
-                <el-table-column label="版本号" prop="version"></el-table-column>
-                <el-table-column label="固件类型" prop="moduleType"></el-table-column>
-                <el-table-column label="设备数" prop="deviceCount"></el-table-column>
-                <el-table-column label="占比数" prop="proportion"></el-table-column>
-              </el-table>
-            </div>
+        </div>
+        <div class="item">
+          <div class="titlt">固件版本占比</div>
+          <div class="con">
+            <el-table :data="rightTableList">
+              <empty-con slot="empty" class="mb20"></empty-con>
+              <el-table-column label="版本号" prop="version"></el-table-column>
+              <el-table-column label="固件类型" prop="moduleType"></el-table-column>
+              <el-table-column label="设备数" prop="deviceCount"></el-table-column>
+              <el-table-column label="占比数" prop="proportion"></el-table-column>
+            </el-table>
           </div>
         </div>
       </div>
-      <div class="main mt20">
-        <div class="f16 b mb20">设备列表</div>
-        <el-input v-model="versionForm.deviceName" placeholder="请输入设备名称" class="w200 mr20 searchInput">
-          <span slot="suffix">
-            <i class="el-icon-search hand" @click="getDevice" />
-            <i v-if="versionForm.deviceName != ''" class="el-icon-close hand" @click="clearFun" />
-          </span>
-        </el-input>
-        <el-select v-model="version" @change="getDevice">
-          <el-option value label="全部版本"></el-option>
-          <el-option v-for="(ver, index) in versionList" :key="index" :label="ver" :value="ver"></el-option>
-        </el-select>
-        <el-table :data="list">
-          <empty-con slot="empty" class="mb20"></empty-con>
-          <el-table-column label="设备名称" prop="deviceName"></el-table-column>
-          <el-table-column label="固件版本" prop="version"></el-table-column>
-          <el-table-column label="固件类型" prop="moduleType"></el-table-column>
-        </el-table>
-        <el-pagination
-          @current-change="handleChange"
-          :current-page.sync="versionForm.pageNum"
-          :page-size="versionForm.pageSize"
-          layout="total, prev, pager, next"
-          class="tr mt20"
-          :total="versionTotal"
-        ></el-pagination>
-      </div>
     </div>
-    <div v-else class="noCon df jc_c">
-      <!-- <svg-icon icon-class="noVersion"></svg-icon> -->
+    <div class="main mt20">
+      <div class="f16 b mb20">设备列表</div>
+      <el-input v-model="versionForm.deviceName" placeholder="请输入设备名称" class="w200 mr20 searchInput">
+        <span slot="suffix">
+          <i class="el-icon-search hand" @click="getDevice" />
+          <i v-if="versionForm.deviceName != ''" class="el-icon-close hand" @click="clearFun" />
+        </span>
+      </el-input>
+      <el-select v-model="version" @change="getDevice">
+        <el-option value label="全部版本"></el-option>
+        <el-option v-for="(ver, index) in versionList" :key="index" :label="ver" :value="ver"></el-option>
+      </el-select>
+      <el-table :data="list">
+        <empty-con slot="empty" class="mb20"></empty-con>
+        <el-table-column label="设备名称" prop="deviceName"></el-table-column>
+        <el-table-column label="固件版本" prop="version"></el-table-column>
+        <el-table-column label="固件类型" prop="moduleType"></el-table-column>
+      </el-table>
+      <el-pagination
+        @current-change="handleChange"
+        :current-page.sync="versionForm.pageNum"
+        :page-size="versionForm.pageSize"
+        layout="total, prev, pager, next"
+        class="tr mt20"
+        :total="versionTotal"
+      ></el-pagination>
+    </div>
+    <!-- <div v-else class="noCon df jc_c">
       <img src="../../assets/imgs/fm_version.png" width="80px">
       <div class="ml20 f12">
         <div class="b">请选择固件所属产品</div>
         <div class="c9 mt5">选择后，您可随时从页面左上方选项进行切换</div>
-        <el-select v-model="productKey" size="mini" class="mt10" placeholder="请选择所属产品" filterable>
+        <el-select v-model="productKey" class="mt10" placeholder="请选择所属产品" filterable>
           <el-option
             v-for="item in productList"
             :key="item.productKey"
@@ -89,7 +86,7 @@
           ></el-option>
         </el-select>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -220,6 +217,9 @@ export default {
       }).then(res => {
         if (res.code === 200) {
           this.productList = res.data.data
+          if (this.productList.length > 0) {
+            this.productKey = this.productList[0].productKey
+          }
         }
         this.loading = false
       })

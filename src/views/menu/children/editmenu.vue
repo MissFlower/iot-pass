@@ -4,9 +4,8 @@
   文件说明：菜单的详情、编辑、创建页面
  -->
 <template>
-  <div id="menu_right_con" v-loading="loading">
-    <div class="mb20 ml20">{{ activeItem ? "编辑" : "创建" }}菜单</div>
-    <el-form ref="form" :model="info" label-width="100px" class="mb20" :rules="rules" v-if="info">
+  <el-dialog id="menu_right_con" :visible.sync="dialogVisible" :title="`${activeItem ? '编辑' : '创建'}菜单`" :close-on-click-modal="false" v-loading="loading" @closed="close">
+    <el-form ref="form" :model="info" label-width="100px" class="mb20" :rules="rules">
       <el-form-item label="菜单名称" prop="name">
         <el-input v-model="info.name" placeholder="请输入菜单名称" class="w200"></el-input>
       </el-form-item>
@@ -35,15 +34,14 @@
         <el-input v-model="info.sort" placeholder="请输入菜单排序" class="w200"></el-input>
       </el-form-item>
       <el-form-item label="图标">
-        <el-input v-model="info.icon" placeholder="请输入图标" class="w200" @focus="handleShowIcons"></el-input>
+        <icon-select-con :icon="info.icon" @select="selectIcon" @changeShowFlag="changeShowFlag"></icon-select-con>
       </el-form-item>
     </el-form>
     <div class="tc">
-      <el-button @click="handleCancel">取消</el-button>
-      <el-button type="primary" @click.stop="handleSave">保存</el-button>
+      <el-button :disabled="show" @click.stop="close">取消</el-button>
+      <el-button type="primary" :disabled="show" @click.stop="handleSave">保存</el-button>
     </div>
-    <icon-select-con v-if="show" :icon="info.icon" @select="selectIcon" @close="closeSelectIconCon"></icon-select-con>
-  </div>
+  </el-dialog>
 </template>
 
 <script>
@@ -74,7 +72,7 @@ export default {
     }
     return {
       loading: false,
-      show: false,
+      dialogVisible: true,
       list: [],
       cascaderProps: {
         label: 'name',
@@ -92,7 +90,7 @@ export default {
         frontPath: '',
         sort: ''
       },
-      info: null,
+      info: {},
       rules: {
         name: [{ required: true, message: '请输入菜单', trigger: 'blur' }],
         code: [{ required: true, message: '请输入编号', trigger: 'blur' }],
@@ -106,7 +104,8 @@ export default {
           { validator: validateSort, trigger: 'change' }
         ]
       },
-      menuObj: null
+      menuObj: null,
+      show: false // 判断选择图标的弹框是否弹出
     }
   },
   watch: {
@@ -216,7 +215,7 @@ export default {
         .then(res => {
           if (res.code === 200) {
             this.$message.success(`菜单${str}成功`)
-            this.reload(1)
+            this.reload(1) // 更新页面路由
             this.$emit('success')
           } else {
             this.$message.error(res.message)
@@ -229,17 +228,15 @@ export default {
         })
       })
     },
-    handleCancel() {
+    close() {
       this.$parent.showCon(1)
-    },
-    handleShowIcons() { // 显示选择icon的弹框
-      this.show = true
+      this.dialogVisible = true
     },
     selectIcon(icon) { // icon选择成功
       this.info.icon = icon
     },
-    closeSelectIconCon() { // 关闭icon弹框
-      this.show = false
+    changeShowFlag(bool) {
+      this.show = bool
     }
   }
 }

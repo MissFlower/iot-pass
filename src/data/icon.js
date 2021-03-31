@@ -17,6 +17,9 @@ export default {
     'pre',
     'product',
     'role',
-    'roleSet'
+    'roleSet',
+    'eye',
+    'manage',
+    'allCopy'
   ]
 }

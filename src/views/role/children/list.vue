@@ -27,7 +27,7 @@
       >新建角色</el-button>
     </div>
     <el-table :data="list" border>
-      <el-table-column label="ID" prop="roleId" width="60"></el-table-column>
+      <el-table-column label="ID" prop="roleId" width="60" align="center"></el-table-column>
       <el-table-column label="角色名" prop="name"></el-table-column>
       <!-- <el-table-column label="排序"></el-table-column> -->
       <el-table-column label="描述" prop="description"></el-table-column>

@@ -31,7 +31,7 @@
             <span class="info_left">固件签名</span>
             <span>
               {{ details.detailList.fmSign }}
-              <el-link type="primary" :underline="false" class="f12 ml10" @click="downLoad" v-if="operateFlag">下载</el-link>
+              <iconToolTip ref="iconToolTip" :content="`下载`" :icon="`el-icon-download`" @clickFun="downLoad" v-if="operateFlag" class="ml10"></iconToolTip>
             </span>
           </div>
         </el-col>
@@ -377,10 +377,11 @@ import EditFirmware from './children/editFirmware'
 import CheckFirmware from './children/checkFirmware'
 import UpgradeFirmware from './children/upgradeFirmware'
 import checkProcess from './children/checkProcess'
+import iconToolTip from '@/components/iconToolTip'
 
 import { taskStatusObj, upgradeStatusObj, fmStatusObj } from '@/data/constants'
 export default {
-  components: { EditFirmware, CheckFirmware, UpgradeFirmware, checkProcess },
+  components: { EditFirmware, CheckFirmware, UpgradeFirmware, checkProcess, iconToolTip },
   data() {
     return {
       loading: false,

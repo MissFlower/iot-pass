@@ -48,6 +48,7 @@ import sendCodeVerify from '@/components/sendCodeVerify'
 import { register, sendCode, verifyCode } from '@/api'
 import { phoneValidate } from '@/data/fun'
 export default {
+  name: 'Register',
   components: { sendCodeVerify },
   data() {
     const validatePhone = (rule, value, callback) => {

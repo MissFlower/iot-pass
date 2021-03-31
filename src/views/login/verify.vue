@@ -51,6 +51,7 @@ import passwordUpdate from './children/updatePassword'
 import sendCodeVerify from '@/components/sendCodeVerify'
 
 export default {
+  name: 'Verify',
   components: { emailBand, phoneBand, passwordUpdate, sendCodeVerify },
   data() {
     return {
@@ -109,6 +110,12 @@ export default {
       this.$message.warning('没有用户信息，请重新登录')
       this.$router.push('/login')
     }
+  },
+  beforeDestroy() {
+    console.log('--销毁--')
+  },
+  destroyed() {
+    console.log('--销毁--------')
   },
   methods: {
     getCode() {

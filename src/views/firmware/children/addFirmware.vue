@@ -5,111 +5,114 @@
  -->
 <template>
   <div>
-    <el-dialog
+    <el-drawer
       title="添加固件"
       :visible.sync="dialogFormVisible"
-      width="400px"
-      :before-close="closeDialog"
+      size="500px"
+      :before-close="closeDrawer"
+      :destroy-on-close="true"
     >
-      <el-form
-        :model="ruleForm"
-        ref="ruleForm"
-        :rules="rules"
-        label-width="120px"
-        v-loading="loading"
-      >
-        <el-form-item label="固件类型" required>
-          <el-radio-group v-model="ruleForm.fmType">
-            <el-radio-button label="1">整包</el-radio-button>
-            <el-radio-button label="2">差分</el-radio-button>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="固件名称" prop="fmName">
-          <el-input type="text" class="w200" v-model="ruleForm.fmName" placeholder="请输入固件名称"></el-input>
-        </el-form-item>
-        <el-form-item label="所属产品" prop="productKey">
-          <el-select v-model="ruleForm.productKey" filterable :filter-method="userFilter" @change="changeSelectProduct">
-            <el-option
-              v-for="item in products"
-              :key="item.productKey"
-              :label="item.productName"
-              :value="item.productKey"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="产品型号" required>
-          <el-select v-model="ruleForm.productType" @change="changeSelectProdunctType">
-            <el-option v-for="(item, index) in productTypeArr" :key="index" :label="item.productType" :value="item.productType"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="固件模块类型" required>
-          <el-select
-            v-model="ruleForm.moduleType"
-            placeholder="固件模块类型"
-            :disabled="typeDisabled"
-            class="w200"
-          >
-            <el-option v-for="(value, index) in moduleTypeMap" :key="index" :label="value" :value="value"></el-option>
-          </el-select>
-        </el-form-item>
-        <!-- <el-form-item label="固件模块" required>
-          <el-radio v-model="ruleForm.typel" label="1">选择模块</el-radio>
-          <el-radio v-model="ruleForm.typel" label="2">新增模块</el-radio>
-          <el-select v-model="typelTag">
-            <el-option label="default" value="1"></el-option>
-          </el-select>
-        </el-form-item>-->
-        <el-form-item label="待升级版本号" prop="srcVersion">
-          <el-select v-model="srcVersion" multiple @focus="srcVersionFocus" class="w200">
-            <el-option
-              v-for="version in srcVersionList"
-              :key="version"
-              :label="version"
-              :value="version"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="升级后版本号" prop="destVersion">
-          <el-input type="text" v-model="ruleForm.destVersion" class="w200"></el-input>
-        </el-form-item>
-        <el-form-item label="签名算法" required>
-          <el-select v-model="ruleForm.signMethod" placeholder="请选择签名算法" class="w200">
-            <el-option label="Md5" value="1"></el-option>
-            <el-option label="SHA256" value="2"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="选择固件" required>
-          <el-upload
-            action
-            :http-request="uploadFile"
-            accept=".zip, .tar, .gz, .tar.gz, .gzip, .bin, .hex"
-            :show-file-list="false"
-            :disabled="ruleForm.fmName == '' ? true : false"
-          >
-            <el-button size="small" @click="beforeSelectFile">{{ uploadText }}</el-button>
-            <div slot="tip" class="el-upload__tip">仅支持bin、tar、gz、tar.gz、zip、gzip、hex类型的文件</div>
-          </el-upload>
-          <el-progress
-            v-if="uploadProgressShow"
-            :percentage="100"
-            :status="uploadStatus ? 'success':'exception'"
-          ></el-progress>
-        </el-form-item>
-        <el-form-item label="固件描述" prop="fmDesc">
-          <el-input
-            type="textarea"
-            v-model="ruleForm.fmDesc"
-            placeholder="请简要描述应用的功能"
-            :rows="4"
-            class="w200"
-          ></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="addFmSubmit('ruleForm')">确 定</el-button>
-        <el-button @click="closeDialog">取 消</el-button>
+      <div class="p10">
+        <el-form
+          :model="ruleForm"
+          ref="ruleForm"
+          :rules="rules"
+          label-width="120px"
+          v-loading="loading"
+        >
+          <el-form-item label="固件类型" required>
+            <el-radio-group v-model="ruleForm.fmType">
+              <el-radio-button label="1">整包</el-radio-button>
+              <el-radio-button label="2">差分</el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="固件名称" prop="fmName">
+            <el-input type="text" class="w200" v-model="ruleForm.fmName" placeholder="请输入固件名称"></el-input>
+          </el-form-item>
+          <el-form-item label="所属产品" prop="productKey">
+            <el-select v-model="ruleForm.productKey" filterable :filter-method="userFilter" @change="changeSelectProduct">
+              <el-option
+                v-for="item in products"
+                :key="item.productKey"
+                :label="item.productName"
+                :value="item.productKey"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="产品型号" required>
+            <el-select v-model="ruleForm.productType" @change="changeSelectProdunctType">
+              <el-option v-for="(item, index) in productTypeArr" :key="index" :label="item.productType" :value="item.productType"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="固件模块类型" required>
+            <el-select
+              v-model="ruleForm.moduleType"
+              placeholder="固件模块类型"
+              :disabled="typeDisabled"
+              class="w200"
+            >
+              <el-option v-for="(value, index) in moduleTypeMap" :key="index" :label="value" :value="value"></el-option>
+            </el-select>
+          </el-form-item>
+          <!-- <el-form-item label="固件模块" required>
+            <el-radio v-model="ruleForm.typel" label="1">选择模块</el-radio>
+            <el-radio v-model="ruleForm.typel" label="2">新增模块</el-radio>
+            <el-select v-model="typelTag">
+              <el-option label="default" value="1"></el-option>
+            </el-select>
+          </el-form-item>-->
+          <el-form-item label="待升级版本号" prop="srcVersion">
+            <el-select v-model="srcVersion" multiple @focus="srcVersionFocus" class="w200">
+              <el-option
+                v-for="version in srcVersionList"
+                :key="version"
+                :label="version"
+                :value="version"
+              ></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="升级后版本号" prop="destVersion">
+            <el-input type="text" v-model="ruleForm.destVersion" class="w200"></el-input>
+          </el-form-item>
+          <el-form-item label="签名算法" required>
+            <el-select v-model="ruleForm.signMethod" placeholder="请选择签名算法" class="w200">
+              <el-option label="Md5" value="1"></el-option>
+              <el-option label="SHA256" value="2"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="选择固件" required>
+            <el-upload
+              action
+              :http-request="uploadFile"
+              accept=".zip, .tar, .gz, .tar.gz, .gzip, .bin, .hex"
+              :show-file-list="false"
+              :disabled="ruleForm.fmName == '' ? true : false"
+            >
+              <el-button size="small" @click="beforeSelectFile">{{ uploadText }}</el-button>
+              <div slot="tip" class="el-upload__tip">仅支持bin、tar、gz、tar.gz、zip、gzip、hex类型的文件</div>
+            </el-upload>
+            <el-progress
+              v-if="uploadProgressShow"
+              :percentage="100"
+              :status="uploadStatus ? 'success':'exception'"
+            ></el-progress>
+          </el-form-item>
+          <el-form-item label="固件描述" prop="fmDesc">
+            <el-input
+              type="textarea"
+              v-model="ruleForm.fmDesc"
+              placeholder="请简要描述应用的功能"
+              :rows="4"
+              class="w200"
+            ></el-input>
+          </el-form-item>
+        </el-form>
+        <div class="tr">
+          <el-button type="primary" @click="addFmSubmit('ruleForm')">确 定</el-button>
+          <el-button @click="closeDrawer">取 消</el-button>
+        </div>
       </div>
-    </el-dialog>
+    </el-drawer>
   </div>
 </template>
 <script>
@@ -223,9 +226,10 @@ export default {
           saveFm(formData)
             .then(res => {
               if (res.code === 200) {
-                this.$emit('changeVisible', this.dialogFormVisible)
+                this.closeDrawer()
+                // this.$emit('changeVisible', this.dialogFormVisible)
                 this.$emit('changeList', true)
-                this.$refs['ruleForm'].resetFields() // 清空弹出框校验
+                // this.$refs['ruleForm'].resetFields() // 清空弹出框校验
               } else {
                 this.$message.warning(res.message)
               }
@@ -241,10 +245,10 @@ export default {
         }
       })
     },
-    closeDialog() {
-      this.$refs['ruleForm'].resetFields() // 清空弹出框校验
-      this.uploadText = '上传文件'
-      this.uploadProgressShow = false
+    closeDrawer() {
+      // this.$refs['ruleForm'].resetFields() // 清空弹出框校验
+      // this.uploadText = '点击上传'
+      // this.uploadProgressShow = false
       this.$emit('changeVisible', this.dialogFormVisible)
     },
     beforeSelectFile() {

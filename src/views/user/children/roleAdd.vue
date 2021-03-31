@@ -15,8 +15,8 @@
     @close="close"
   >
     <div class="df">
-      <div class="w200 info">
-        <div class="blue tc">用户的基础信息</div>
+      <div class="info">
+        <!-- <div class="blue tc">用户的基础信息</div> -->
         <div class="df">
           <div class="w50">账号:</div>
           {{ info.account }}
@@ -34,7 +34,7 @@
           {{ info.phone }}
         </div>
       </div>
-      <div class="pt20 mt15">
+      <div class="mt15">
         <el-checkbox-group v-model="selectIds">
           <el-checkbox
             v-for="item in roleList"
@@ -142,12 +142,15 @@ export default {
 <style lang="scss" scoped>
 #accRole {
   .info {
-    width: 200px;
+    width: 300px;
     border-right: 1px solid #efefef;
     margin-right: 20px;
     div + div {
-      margin-top: 20px;
+      margin-top: 10px;
     }
+  }
+  .el-checkbox + .el-checkbox {
+    margin-top: 10px;
   }
 }
 </style>

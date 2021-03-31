@@ -9,24 +9,24 @@
 <template>
   <div id="account">
     <i
-      v-if="activeIndex == 3 || activeIndex == 1"
+      v-if="activeIndex == 3"
       class="el-icon-back b pre-icon"
       @click="switchCon(0)"
     />
-    <account-list v-if="activeIndex == 0" />
-    <add-account v-if="activeIndex == 1" :info="selectRow" />
-    <role-list v-if="activeIndex == 3" ref="roleList" :info="selectRow" />
+    <account-list ref="accountList" v-if="activeIndex == 0 || activeIndex == 1" />
+    <!-- <role-list v-if="activeIndex == 3" ref="roleList" :info="selectRow" /> -->
     <add-role v-if="roleFlag" :info="roleRow" @close="dialogClose" />
+    <add-account v-if="activeIndex == 1" :info="selectRow" />
   </div>
 </template>
 
 <script>
 import accountList from './children/list'
 import addAccount from './children/add'
-import roleList from './children/roleList'
+// import roleList from './children/roleList'
 import addRole from './children/roleAdd'
 export default {
-  components: { accountList, addAccount, roleList, addRole },
+  components: { accountList, addAccount, addRole },
   data() {
     return {
       roleFlag: false,
@@ -47,6 +47,9 @@ export default {
     showAddRole(row) {
       this.roleRow = row
       this.roleFlag = true
+    },
+    userEditAfter(page) {
+      this.$refs.accountList.handleCurrentChange(page)
     },
     dialogClose() {
       this.roleFlag = false

@@ -8,7 +8,7 @@
     <div class="ml20 mb20">
       <span>角色权限</span>
       <span v-if="flag" class="f12 blue ml20">(编辑中)</span>
-      <i v-else class="el-icon-edit blue fr" @click="handleEdit" />
+      <el-button v-else type="primary" class="fr" icon="el-icon-edit" @click="handleEdit">编辑</el-button>
     </div>
     <div class="main">
       <el-checkbox-group v-model="ids" :disabled="!flag">

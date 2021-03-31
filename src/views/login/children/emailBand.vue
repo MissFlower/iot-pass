@@ -42,6 +42,7 @@
 import { sendMailCode, bandEmailFun } from '@/api'
 import sendCodeVerify from '@/components/sendCodeVerify'
 export default {
+  name: 'EmailBand',
   components: { sendCodeVerify },
   data() {
     const validateCode = (value, rules, callback) => {

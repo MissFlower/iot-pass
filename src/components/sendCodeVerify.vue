@@ -25,6 +25,7 @@
 <script>
 import { getCodeImg } from '@/api'
 export default {
+  name: 'SedCodeVerify',
   data() {
     return {
       dialogVisible: true,
@@ -39,6 +40,9 @@ export default {
   },
   mounted() {
     this.getImg()
+  },
+  beforeDestroy() {
+    console.log('----')
   },
   methods: {
     getImg() {

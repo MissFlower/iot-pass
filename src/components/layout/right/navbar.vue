@@ -42,6 +42,7 @@ export default {
   background: #efefef;
   background: #fff;
   padding: 10px;
+  padding-left: 40px;
   border-bottom: 1px solid #e6e6e6;
   overflow-x: auto;
   z-index: 3;

@@ -7,35 +7,34 @@
  * @LastEditTime: 2020-08-04 15:58:52
 -->
 <template>
-  <div id="editAccount" v-loading="loading">
-    <div class="pl20 pb20">{{ editItem.id ? "编辑" : "新建" }}用户</div>
-    <el-form ref="form" :model="editItem" label-width="120px" class="mt20" :rules="rules">
+  <el-dialog id="editAccount" v-loading="loading" :visible.sync="dialogVisible" :title="`${editItem.id ? '编辑' : '新建'}用户`" width="37%" @closed="close">
+    <el-form ref="form" :model="editItem" label-width="120px" :rules="rules">
       <el-form-item label="账号：" prop="account">
-        <el-input v-model="editItem.account" placeholder="请输入用户名" class="w200" />
+        <el-input v-model="editItem.account" placeholder="请输入用户名" />
       </el-form-item>
       <el-form-item v-if="info" label="密码：" prop="password">
-        <el-input v-model="editItem.password" placeholder="不输入保持原来的密码" show-password class="w200" />
-        <span class="f12 ml20 c6">密码必须由8到14个字符包括大小写字母、数字组成</span>
+        <el-input v-model="editItem.password" placeholder="不输入保持原来的密码" show-password />
+        <div class="f12 c6">密码必须由8到14个字符包括大小写字母、数字组成</div>
       </el-form-item>
       <el-form-item v-else label="密码：" prop="passwordAdd">
-        <el-input v-model="editItem.password" placeholder="请输入密码" show-password class="w200" />
-        <span class="f12 ml20 c6">密码必须由8到14个字符包括大小写字母、数字组成</span>
+        <el-input v-model="editItem.password" placeholder="请输入密码" show-password />
+        <div class="f12 c6">密码必须由8到14个字符包括大小写字母、数字组成</div>
       </el-form-item>
       <el-form-item label="姓名：">
-        <el-input v-model="editItem.name" placeholder="请输入姓名" class="w200" />
+        <el-input v-model="editItem.name" placeholder="请输入姓名" />
       </el-form-item>
       <el-form-item label="邮箱：" prop="email">
-        <el-input v-model="editItem.email" placeholder="请输入邮箱" class="w200" />
+        <el-input v-model="editItem.email" placeholder="请输入邮箱" />
       </el-form-item>
       <el-form-item label="电话：" prop="phone">
-        <el-input v-model="editItem.phone" placeholder="请输入电话" class="w200" />
+        <el-input v-model="editItem.phone" placeholder="请输入电话" />
       </el-form-item>
-      <div class="tc mb20">
-        <el-button @click="handleCancel">取消</el-button>
+      <div class="tr mb20">
+        <el-button @click="close">取消</el-button>
         <el-button type="primary" @click="handleSave">保存</el-button>
       </div>
     </el-form>
-  </div>
+  </el-dialog>
 </template>
 
 <script>
@@ -77,6 +76,7 @@ export default {
     }
     return {
       loading: false,
+      dialogVisible: true,
       editItem: {
         account: '', //	账号
         password: '', //	密码
@@ -133,9 +133,6 @@ export default {
     }
   },
   methods: {
-    handleCancel() {
-      this.$parent.switchCon(0)
-    },
     // 保存函数
     handleSave() {
       this.$refs.form.validate(valid => {
@@ -143,17 +140,21 @@ export default {
           this.loading = true
           let promise = null
           let str = ''
+          let page
           if (this.info) {
             promise = updateUser
             str = '编辑'
           } else {
             promise = createUser
             str = '创建'
+            page = 1
           }
           promise(this.editItem)
             .then(res => {
               if (res.code === 200) {
-                this.$parent.switchCon(0)
+                // this.$parent.switchCon(0)
+                this.$parent.userEditAfter(page)
+                this.close()
               } else {
                 this.$message.error(res.message)
               }
@@ -165,6 +166,10 @@ export default {
             })
         }
       })
+    },
+    close() {
+      this.$parent.switchCon(0)
+      this.dialogVisible = true
     }
   }
 }

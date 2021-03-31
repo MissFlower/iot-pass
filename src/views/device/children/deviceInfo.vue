@@ -14,22 +14,18 @@
       <div class="productInfo">
         <span class="dib w100 mr20 c9">产品:</span>
         <span>{{ deviceObj.productName }}</span>
-        <el-button type="text" class="ml10" @click="toProduct" v-if="existenceFlag">查看</el-button>
+        <iconToolTip ref="iconToolTip" :content="`查看`" :icon="`eye`" @clickFun="toProduct" v-if="existenceFlag" class="ml10"></iconToolTip>
       </div>
       <div class="productInfo">
         <span class="dib w100 mr20 c9">DeviceSecret:</span>
         <span>********</span>
-        <el-button
-          type="text"
-          class="ml10"
-          @click="(lookDeviceSecret = true), (burnShow = false)"
-          v-if="existenceFlag"
-        >查看</el-button>
+        <!-- <svg-icon icon-class="eye" class="hand ml10" @click="(lookDeviceSecret = true), (burnShow = false)" v-if="existenceFlag"></svg-icon> -->
+        <iconToolTip ref="iconToolTip" :content="`查看`" :icon="`eye`" @clickFun="showDeviceSecret" v-if="existenceFlag" class="ml10"></iconToolTip>
       </div>
       <div class="productInfo">
         <span class="dib w100 mr20 c9">ProductKey:</span>
         <span>{{ deviceObj.productKey }}</span>
-        <el-button type="text" class="ml10" @click="copy(deviceObj.productKey)" v-if="existenceFlag">复制</el-button>
+        <iconToolTip ref="iconToolTip" :content="`复制`" :icon="`el-icon-copy-document`" :copyStr="deviceObj.productKey" v-if="existenceFlag" class="ml10"></iconToolTip>
       </div>
     </div>
 
@@ -60,17 +56,12 @@
             <div class="device_infoItem">
               <span class="infoItemName">设备名称</span>
               <span>{{ deviceObj.deviceName }}</span>
-              <el-button type="text" class="ml10" @click="copy(deviceObj.deviceName)" v-if="existenceFlag">复制</el-button>
+              <iconToolTip ref="iconToolTip" :content="`复制`" :icon="`el-icon-copy-document`" :copyStr="deviceObj.deviceName" v-if="existenceFlag" class="ml10"></iconToolTip>
             </div>
             <div class="device_infoItem">
               <span class="infoItemName">备注名称</span>
               <span>{{ deviceObj.nickName }}</span>
-              <el-button
-                v-if="authArr.indexOf('device_nameEdit') > -1 && existenceFlag"
-                type="text"
-                class="ml10"
-                @click="deviceNameEdit"
-              >编辑</el-button>
+              <iconToolTip ref="iconToolTip" :content="`编辑`" :icon="`el-icon-edit`" @clickFun="deviceNameEdit" v-if="authArr.indexOf('device_nameEdit') > -1 && existenceFlag" class="ml10"></iconToolTip>
             </div>
           </div>
 
@@ -134,23 +125,23 @@
     </el-tabs>
 
     <el-dialog title="设备证书" :visible.sync="lookDeviceSecret" width="50%">
-      <span class="b mb10">设备证书</span>
-      <el-button type="text" class="ml10" @click="copy('一键复制')">一键复制</el-button>
-      <div class="mb50" style="borderBottom: 1px solid #ecedee;">
+      <span class="b">设备证书</span>
+      <iconToolTip ref="iconToolTip" :content="`一键复制`" :icon="`allCopy`" :copyStr="allCopy" v-if="existenceFlag" class="ml10"></iconToolTip>
+      <div class="mb50 mt20" style="borderBottom: 1px solid #ecedee;">
         <div class="dialogSecret">
           <span class="title">ProductKey</span>
           <span class="secret">{{ deviceObj.productKey }}</span>
-          <el-button type="text" class="ml10" @click="copy(deviceObj.productKey)">复制</el-button>
+          <iconToolTip ref="iconToolTip" :content="`复制`" :icon="`el-icon-copy-document`" :copyStr="deviceObj.productKey" v-if="existenceFlag" class="ml10"></iconToolTip>
         </div>
         <div class="dialogSecret">
           <span class="title">DeviceName</span>
           <span class="secret">{{ deviceObj.deviceName }}</span>
-          <el-button type="text" class="ml10" @click="copy(deviceObj.deviceName)">复制</el-button>
+          <iconToolTip ref="iconToolTip" :content="`复制`" :icon="`el-icon-copy-document`" :copyStr="deviceObj.deviceName" v-if="existenceFlag" class="ml10"></iconToolTip>
         </div>
         <div class="dialogSecret">
           <span class="title">DeviceSecret</span>
           <span class="secret">{{ deviceObj.deviceSecret }}</span>
-          <el-button type="text" class="ml10" @click="copy(deviceObj.deviceSecret)">复制</el-button>
+          <iconToolTip ref="iconToolTip" :content="`复制`" :icon="`el-icon-copy-document`" :copyStr="deviceObj.deviceSecret" v-if="existenceFlag" class="ml10"></iconToolTip>
         </div>
       </div>
       <span class="b mb10">烧录方式介绍</span>
@@ -196,9 +187,6 @@
     <deviceNameEdit v-if="showDeviceNameEdit" :device-obj="deviceObj" />
 
     <moreVerision v-if="moreFlag" :list="fmVersionList" @close="closeMoreVer"></moreVerision>
-    <div id="copy_content_wrp">
-      <input type="text" id="copy_content" />
-    </div>
   </div>
 </template>
 
@@ -210,6 +198,7 @@ import eventManage from './eventManage'
 import serviceCall from './serviceCall'
 import deviceLog from './deviceLog'
 import moreVerision from './moreVerision'
+import iconToolTip from '@/components/iconToolTip'
 
 import { deviceInfo, getDeviceVersions } from '@/api/deviceRequest'
 export default {
@@ -220,7 +209,8 @@ export default {
     serviceCall,
     deviceTopic,
     deviceLog,
-    moreVerision
+    moreVerision,
+    iconToolTip
   },
   data() {
     return {
@@ -247,6 +237,9 @@ export default {
   computed: {
     authArr() {
       return this.$store.state.app.functionArr
+    },
+    allCopy() {
+      return `{\r"ProductKey":${this.deviceObj.productKey},\r"DeviceName":${this.deviceObj.deviceName},\r"DeviceSecret":${this.deviceObj.deviceSecret}\r}`
     }
   },
 
@@ -361,25 +354,11 @@ export default {
     toProduct() {
       this.$router.push(`../product/detail/${this.deviceObj.productKey}`)
     },
-    /*
-    复制
-    copyStr  复制内容
-    */
-    copy(copyStr) {
-      if (copyStr === '一键复制') {
-        copyStr = `{\r"ProductKey":${this.deviceObj.productKey},\r"DeviceName":${this.deviceObj.deviceName},\r"DeviceSecret":${this.deviceObj.deviceSecret}\r}`
-      }
-
-      var inputElement = document.getElementById('copy_content') // 获取要赋值的input的元素
-      inputElement.value = copyStr // 给input框赋值
-      inputElement.select() // 选中input框的内容
-      document.execCommand('Copy') // 执行浏览器复制命令
-      this.$message({
-        type: 'success',
-        message: '复制成功'
-      })
+    // 查看DeviceSecret
+    showDeviceSecret() {
+      this.lookDeviceSecret = true
+      this.burnShow = false
     },
-
     // 查看烧录方式介绍
     showBurn() {
       this.burnShow = !this.burnShow
@@ -394,14 +373,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#copy_content_wrp {
-  position: relative;
-  overflow: hidden;
-  #copy_content {
-    position: absolute;
-    left: -10000px;
-    opacity: 0;
-  }
+.svg-icon {
+  width: 20px!important;
+  height: 18px!important;
 }
 #deviceInfoView {
   position: relative;
@@ -413,6 +387,8 @@ export default {
 .productInfo {
   width: 50%;
   line-height: 35px;
+  display: flex;
+  align-items: center;
 }
 .infoType_device {
   margin-top: 20px;

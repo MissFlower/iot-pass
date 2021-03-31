@@ -118,13 +118,13 @@
           </el-form>
           <el-table :data="batchManage.batchList" border stripe>
             <el-table-column label="批次ID" prop="batchNo"></el-table-column>
-            <el-table-column label="批次类型" prop="taskType" :formatter="formatTaskType"></el-table-column>
-            <el-table-column label="升级策略">
+            <el-table-column label="批次类型" prop="taskType" :formatter="formatTaskType" align="center"></el-table-column>
+            <el-table-column label="升级策略" align="center">
               <template
                 slot-scope="scope"
               >{{ scope.row.ugStrategy == 0 ? '静态升级' : (scope.row.ugStrategy == 1 ? '动态升级' : scope.row.ugStrategy) }}</template>
             </el-table-column>
-            <el-table-column label="状态" prop="taskStatus">
+            <el-table-column label="状态" prop="taskStatus" align="center">
               <template slot-scope="scope">
                 <div
                   :style="{'background-color': taskStatusObj[scope.row.taskStatus].color}"
@@ -135,8 +135,8 @@
                 >{{ taskStatusObj[scope.row.taskStatus].label }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="添加时间" prop="=createTime" :formatter="formatCreateTime"></el-table-column>
-            <el-table-column label="操作">
+            <el-table-column label="添加时间" prop="=createTime" :formatter="formatCreateTime" align="center"></el-table-column>
+            <el-table-column label="操作" width="120" align="center">
               <template slot-scope="scope">
                 <a class="oprate_btn" @click="toBatchDetails(scope.row)">查看</a>
                 <span v-if="scope.row.taskStatus < 2">|</span>
@@ -196,14 +196,14 @@
           </el-form>
           <el-table :data="devManage.devList" border stripe>
             <el-table-column label="deviceName" prop="deviceName"></el-table-column>
-            <el-table-column label="设备所属产品">{{ productName }}</el-table-column>
-            <el-table-column label="升级批次ID" prop="batchNo"></el-table-column>
-            <el-table-column label="当前版本号" prop="destVersion">
+            <el-table-column label="设备所属产品" align="center">{{ productName }}</el-table-column>
+            <el-table-column label="升级批次ID" prop="batchNo" align="center"></el-table-column>
+            <el-table-column label="当前版本号" prop="destVersion" align="center">
               <template
                 slot-scope="scope"
               >{{ scope.row.status == 4 ? scope.row.destVersion : scope.row.srcVersion }}</template>
             </el-table-column>
-            <el-table-column label="升级状态" prop="status">
+            <el-table-column label="升级状态" prop="status" align="center">
               <template slot-scope="scope">
                 <div
                   :style="{'background-color': upgradeStatusObj[scope.row.status].color}"
@@ -212,7 +212,7 @@
                 {{ upgradeStatusObj[scope.row.status].label }}
               </template>
             </el-table-column>
-            <el-table-column label="操作">
+            <el-table-column label="操作" align="center" width="130">
               <template slot-scope="scope">
                 <a class="oprate_btn" @click="toBatchDetails(scope.row)">查看</a>
               </template>

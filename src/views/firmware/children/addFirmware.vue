@@ -8,7 +8,7 @@
     <el-drawer
       title="添加固件"
       :visible.sync="dialogFormVisible"
-      size="500px"
+      size="38%"
       :before-close="closeDrawer"
       :destroy-on-close="true"
     >
@@ -19,6 +19,7 @@
           :rules="rules"
           label-width="120px"
           v-loading="loading"
+          class="mr20"
         >
           <el-form-item label="固件类型" required>
             <el-radio-group v-model="ruleForm.fmType">
@@ -27,10 +28,10 @@
             </el-radio-group>
           </el-form-item>
           <el-form-item label="固件名称" prop="fmName">
-            <el-input type="text" class="w200" v-model="ruleForm.fmName" placeholder="请输入固件名称"></el-input>
+            <el-input type="text" class="wp100" v-model="ruleForm.fmName" placeholder="请输入固件名称"></el-input>
           </el-form-item>
           <el-form-item label="所属产品" prop="productKey">
-            <el-select v-model="ruleForm.productKey" filterable :filter-method="userFilter" @change="changeSelectProduct">
+            <el-select v-model="ruleForm.productKey" filterable :filter-method="userFilter" @change="changeSelectProduct" class="wp100">
               <el-option
                 v-for="item in products"
                 :key="item.productKey"
@@ -40,7 +41,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="产品型号" required>
-            <el-select v-model="ruleForm.productType" @change="changeSelectProdunctType">
+            <el-select v-model="ruleForm.productType" @change="changeSelectProdunctType" class="wp100">
               <el-option v-for="(item, index) in productTypeArr" :key="index" :label="item.productType" :value="item.productType"></el-option>
             </el-select>
           </el-form-item>
@@ -49,7 +50,7 @@
               v-model="ruleForm.moduleType"
               placeholder="固件模块类型"
               :disabled="typeDisabled"
-              class="w200"
+              class="wp100"
             >
               <el-option v-for="(value, index) in moduleTypeMap" :key="index" :label="value" :value="value"></el-option>
             </el-select>
@@ -62,7 +63,7 @@
             </el-select>
           </el-form-item>-->
           <el-form-item label="待升级版本号" prop="srcVersion">
-            <el-select v-model="srcVersion" multiple @focus="srcVersionFocus" class="w200">
+            <el-select v-model="srcVersion" multiple @focus="srcVersionFocus" class="wp100">
               <el-option
                 v-for="version in srcVersionList"
                 :key="version"
@@ -72,10 +73,10 @@
             </el-select>
           </el-form-item>
           <el-form-item label="升级后版本号" prop="destVersion">
-            <el-input type="text" v-model="ruleForm.destVersion" class="w200"></el-input>
+            <el-input type="text" v-model="ruleForm.destVersion" class="wp100"></el-input>
           </el-form-item>
           <el-form-item label="签名算法" required>
-            <el-select v-model="ruleForm.signMethod" placeholder="请选择签名算法" class="w200">
+            <el-select v-model="ruleForm.signMethod" placeholder="请选择签名算法" class="wp100">
               <el-option label="Md5" value="1"></el-option>
               <el-option label="SHA256" value="2"></el-option>
             </el-select>
@@ -103,13 +104,13 @@
               v-model="ruleForm.fmDesc"
               placeholder="请简要描述应用的功能"
               :rows="4"
-              class="w200"
+              class="wp100"
             ></el-input>
           </el-form-item>
         </el-form>
-        <div class="tr">
-          <el-button type="primary" @click="addFmSubmit('ruleForm')">确 定</el-button>
-          <el-button @click="closeDrawer">取 消</el-button>
+        <div class="drawer_footer tr">
+          <el-button size="mini" type="primary" @click="addFmSubmit('ruleForm')">确 定</el-button>
+          <el-button size="mini" @click="closeDrawer">取 消</el-button>
         </div>
       </div>
     </el-drawer>

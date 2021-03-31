@@ -488,34 +488,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-body,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-hr,
-p,
-blockquote,
-dl,
-dt,
-dd,
-ul,
-ol,
-li,
-pre,
-form,
-fieldset,
-legend,
-input,
-textarea,
-th,
-td,
-a {
-  margin: 0;
-  padding: 0;
-}
 .clearfix:after {
   content: ".";
   display: block;
@@ -524,9 +496,6 @@ a {
   line-height: 0;
   font-size: 0;
   visibility: hidden;
-}
-.clear {
-  clear: both;
 }
 $default: #409eff;
 .oprate_btn {

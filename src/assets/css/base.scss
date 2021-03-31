@@ -573,7 +573,15 @@ body {
   .svg-icon+.svg-icon {
     margin-left: 20px;
   }
+  .point {
+    width: 8px;
+    height: 8px;
+    display: inline-block;
+    border-radius: 50%;
+    margin-right: 6px;
+  }
 
+  // 重写部分element样式
   .searchInput .el-input__suffix-inner {
     line-height: 32px;
 
@@ -598,12 +606,22 @@ body {
   .el-link {
     font-size: 12px;
   }
-  .point {
-    width: 8px;
-    height: 8px;
-    display: inline-block;
-    border-radius: 50%;
-    margin-right: 6px;
+  // 下拉框的下拉部分不显示
+  .el-select-dropdown_none {
+    display: none;
+  }
+  // drawer css
+  .el-drawer__header {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #efefef;
+    padding: 10px 20px;
+  }
+  .drawer_footer {
+    padding: 10px 20px 15px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: #fff;
   }
 }
 

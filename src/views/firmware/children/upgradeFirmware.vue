@@ -72,6 +72,8 @@
             @focus="handleFocus"
             @change="handleChange"
             class="wp100"
+            :automatic-dropdown="false"
+            popper-class="el-select-dropdown_none"
           ></el-select>
           <div v-else>
             <label for="upload-file" class="el-button--mini el-button--primary">{{ file ? '重新上传' : '上传文件' }}</label>
@@ -160,15 +162,15 @@
             placeholder="请输入升级超时时间（分钟）"
           ></el-input>
         </el-form-item>
-        <div class="df ai_c">
-          <div class="flex1 tl f12">
-            本次批量升级共
-            <span class="blue">{{ form.selectType == 1 ? deviceCount : deviceNum }}</span> 个设备
-          </div>
-          <el-button size="mini" @click="closeDialog">取 消</el-button>
-          <el-button type="primary" size="mini" @click="upgradeSubmit('ruleFormUpgrade')">确 定</el-button>
-        </div>
       </el-form>
+      <div class="drawer_footer df ai_c">
+        <div class="flex1 tl f12">
+          本次批量升级共
+          <span class="blue">{{ form.selectType == 1 ? deviceCount : deviceNum }}</span> 个设备
+        </div>
+        <el-button size="mini" @click="closeDialog">取 消</el-button>
+        <el-button type="primary" size="mini" @click="upgradeSubmit('ruleFormUpgrade')">确 定</el-button>
+      </div>
     </el-drawer>
     <select-device
       v-if="selectDeviceFlag"
@@ -381,15 +383,18 @@ export default {
       this.$refs.ruleFormUpgrade.resetFields()
       this.$emit('upgradeVisible', this.upgradeFmVisible)
     },
+    // 打开选择设备对话框
     handleFocus() {
       this.selectDeviceFlag = true
     },
     handleChange() {
       this.deviceCount = this.selectDevicenames.length
     },
+    // 关闭设备选择
     closeDeviceDrawer() {
       this.selectDeviceFlag = false
     },
+    // 设备选择成功的回调
     successDeviceDrawer(list) {
       const version = new Set()
       this.scopeTypeChange()
@@ -405,6 +410,7 @@ export default {
       }
       this.srcVersion = [...version]
       this.deviceCount = list.length
+      this.closeDeviceDrawer()
     },
     getVersionList() {
       this.loading = true
@@ -537,5 +543,8 @@ export default {
   /* color: transparent; */
   width: 100px;
   display: inline-block;
+}
+.el-select-dropdown_none {
+  display: none;
 }
 </style>

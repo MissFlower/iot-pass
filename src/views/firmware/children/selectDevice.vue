@@ -1,40 +1,13 @@
 <template>
   <div>
-    <el-drawer
-      ref="drawer"
-      title="请选择设备"
-      :visible.sync="drawerVisible"
-      :direction="direction"
-      class="selectDevice"
-      size="45%"
-      v-loading="loading"
-      :before-close="handleClose"
-    >
+    <el-dialog ref="drawer" title="请选择设备" :visible.sync="drawerVisible" class="selectDevice" width="45%" top="10px" v-loading="loading" :before-close="handleClose">
       <div class="con">
         <div class="df pb10 bb1 ai_c">
           <div class="flex1">
-            <el-select
-              v-model="srcVersions"
-              multiple
-              class="w120"
-              placeholder="版本筛选"
-              :disabled="allFlag == 0"
-              @change="scopeTypeChange"
-            >
-              <el-option
-                v-for="version in srcVersionList"
-                :key="version"
-                :label="version"
-                :value="version"
-              ></el-option>
+            <el-select v-model="srcVersions" multiple class="w120" placeholder="版本筛选" :disabled="allFlag == 0" :collapse-tags="srcVersions.length > 3" @change="scopeTypeChange">
+              <el-option v-for="version in srcVersionList" :key="version" :label="version" :value="version"></el-option>
             </el-select>
-            <el-input
-              v-model.trim="formData.deviceName"
-              placeholder="请输入设备名称"
-              class="w150 ml10 mr20 searchInput"
-              @keyup.enter.native="searchNameFun"
-              :disabled="allFlag == 0"
-            >
+            <el-input v-model.trim="formData.deviceName" placeholder="请输入设备名称" class="w150 ml10 mr20 searchInput" @keyup.enter.native="searchNameFun" :disabled="allFlag == 0">
               <span slot="suffix">
                 <i class="el-icon-search hand" @click="getData()"></i>
                 <i class="el-icon-close hand" v-if="formData.deviceName != ''" @click="resetFun"></i>
@@ -51,14 +24,7 @@
             <el-radio-button label="0">已选择</el-radio-button>
           </el-radio-group>
         </div>
-        <el-table
-          ref="table"
-          :data="tableList"
-          :max-height="tableHeight"
-          @select="handleSelect"
-          @select-all="handleSelectAll"
-          v-loading="loading"
-        >
+        <el-table ref="table" :data="tableList" :max-height="tableHeight" @select="handleSelect" @select-all="handleSelectAll" v-loading="loading">
           <div slot="empty" class="emptyTable tc">
             <svg-icon icon-class="empty1" class="empty"></svg-icon>
             <div class="lh20">暂无数据</div>
@@ -68,16 +34,16 @@
           <el-table-column label="ProductKey" prop="productKey"></el-table-column>
           <el-table-column label="版本号" prop="version"></el-table-column>
         </el-table>
-        <pagination v-if="allFlag == 1" :data="pageInfo" :layout="`prev, pager, next`" small @pagination="getData()"></pagination>
+        <pagination v-if="allFlag == 1" :data="pageInfo" class="tr" :layout="`prev, pager, next`" small @pagination="getData()"></pagination>
       </div>
-      <div class="drawer__footer f14 df ai_c">
-        <div class="flex1">
-          <el-button type="primary" @click="handleSubmit">{{ loading ? '提交中 ...' : '确 定' }}</el-button>
+      <div slot="footer" class="f14 df ai_c tl">
+        <span class="flex1">已选择 <span class="red b">{{ selectList.length }}</span> 个设备</span>
+        <div>
           <el-button @click="cancelForm">取 消</el-button>
+          <el-button type="primary" @click="handleSubmit">{{ loading ? '提交中 ...' : '确 定' }}</el-button>
         </div>
-        <span>已选择 <span class="red b">{{ selectList.length }}</span> 个设备</span>
       </div>
-    </el-drawer>
+    </el-dialog>
   </div>
 </template>
 
@@ -105,7 +71,6 @@ export default {
     return {
       loading: false,
       drawerVisible: true,
-      direction: 'rtl',
       formData: {
         deviceName: '',
         srcVersions: '',
@@ -287,14 +252,14 @@ export default {
       this.getData()
     },
     cancelForm() {
-      this.$refs.drawer.closeDrawer()
+      // this.$refs.drawer.closeDrawer()
       this.$emit('close')
     },
     handleSubmit() {
       if (this.selectList.length > 5000) {
         this.$message.error('选择的设备数量过大')
       } else {
-        this.$refs.drawer.closeDrawer()
+        // this.$refs.drawer.closeDrawer()
         this.$emit('success', this.selectList)
       }
     }
@@ -304,28 +269,24 @@ export default {
 
 <style lang="scss">
 .selectDevice {
-  .el-drawer__header {
+  .el-dialog__header {
     border-bottom: 1px solid #efefef;
     font-size: 14px;
     margin: 0;
     padding: 12px 20px;
   }
-  .el-drawer__body {
-    display: flex;
-    flex-direction: column;
+  .el-dialog__body {
+    padding-top: 20px;
+    padding-bottom: 0;
   }
   .con {
-    padding: 22px;
+    // padding: 22px;
     margin-bottom: -15px;
     flex: 1;
     overflow: auto;
     .emptyTable {
       margin: 100px 0;
     }
-  }
-  .drawer__footer {
-    bottom: 0px;
-    padding: 16px;
   }
   .el-table th {
     background-color: #fafafa;

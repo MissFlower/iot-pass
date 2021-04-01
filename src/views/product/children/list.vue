@@ -35,7 +35,7 @@
           <el-button type="text" @click="goEqu(scope.row.id)">设备管理</el-button>
           <el-button
             type="text"
-            :disabled="scope.row.productStatus"
+            :disabled="scope.row.productStatus == 0"
             @click="delProduct(scope.row.productKey)"
             v-show="authArr.indexOf('product_delete') > -1"
           >删除</el-button>

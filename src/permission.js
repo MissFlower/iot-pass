@@ -20,6 +20,8 @@ router.beforeEach(async(to, from, next) => {
           const meta = JSON.parse(JSON.stringify(to.meta))
           if (to.query.id) {
             meta.name += `（ ${to.query.id} ）`
+          } else if (to.query.name) {
+            meta.name += `（ ${to.query.name} ）`
           } else if (to.params.key) {
             meta.name += `（ ${to.params.key} ）`
           }

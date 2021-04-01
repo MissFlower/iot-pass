@@ -50,7 +50,7 @@ export default {
   },
 
   watch: {
-    customObj(obj) {
+    customObj() {
       this.customList()
     }
   },
@@ -61,9 +61,8 @@ export default {
       topicCustomList(Object.assign(this.tableData, this.customObj)).then(res => {
         this.loading = false
         if (res.code === 200) {
-          const { ...pagination } = res.data
-          this.tableData = pagination
-          var list = res.data.data
+          this.tableData.total = res.data.total
+          const list = res.data.data
 
           // topic权限
           const topicAccessDict = { '1': '订阅', '2': '发布', '3': '订阅+发布' }

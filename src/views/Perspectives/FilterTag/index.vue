@@ -4,7 +4,7 @@
  * @Autor: AiDongYang
  * @Date: 2020-08-21 16:51:04
  * @LastEditors: AiDongYang
- * @LastEditTime: 2021-03-01 14:36:11
+ * @LastEditTime: 2021-03-25 18:21:23
 -->
 <template>
   <div class="filter-tag-container">
@@ -56,6 +56,10 @@ export default {
       }
     },
     productKey: {
+      type: String,
+      required: true
+    },
+    metric: {
       type: String,
       required: true
     },
@@ -132,7 +136,8 @@ export default {
       const { data } = await getTagValueByTagkey({
         productKey: this.productKey,
         tagKey: this.tagKey,
-        tagValuePre: this.searchValue
+        tagValuePre: this.searchValue,
+        metric: this.metric
       })
       return data ? data.map(item => { return { checked: false, value: item } }) : []
     },

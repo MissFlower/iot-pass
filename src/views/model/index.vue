@@ -7,16 +7,16 @@
 <template>
   <div id="model" v-loading="loading">
     <div class="f20 p10">
-      <i class="el-icon-back hand" @click="goBack"></i>
+      <i class="el-icon-back hand" @click.stop="goBack"></i>
       <span style="margin-left:15px">编辑草稿</span>
     </div>
     <div class="f12 c9 df mt10 mb20">
-      <div class="flex1 df ai_c">
-        <div class="w120">产品名称</div>
+      <div class="df ai_c">
+        <div class="b">产品名称：</div>
         <div>{{ productName }}</div>
       </div>
-      <div class="flex1 df ai_c">
-        <div class="w120">productKey</div>
+      <div class="df ai_c ml20">
+        <div class="b">productKey：</div>
         <div>{{ productKey }}</div>
         <iconToolTip ref="iconToolTip" :content="`复制`" :icon="`el-icon-copy-document`" :copyStr="productKey" class="ml10"></iconToolTip>
       </div>
@@ -36,7 +36,7 @@
           历史版本
           <i class="el-icon-arrow-down el-icon--right"></i>
         </el-button>
-        <el-dropdown-menu slot="dropdown">
+        <el-dropdown-menu>
           <el-dropdown-item v-for="(item, index) in historyList" :key="index">
             <div @click="setSelectHistory(item.version)">
               <i
@@ -46,7 +46,7 @@
               <span>{{ item.version }}</span>
             </div>
           </el-dropdown-item>
-          <el-dropdown-item divided @click.native="showMoreHistory" class="tc">查看更多</el-dropdown-item>
+          <el-dropdown-item :disabled="historyList.length == 0" :divided="historyList.length > 0" @click.native="showMoreHistory" class="tc">查看更多</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
       <div v-if="!loading" class="info df ai_c mb5 mt10 c9">

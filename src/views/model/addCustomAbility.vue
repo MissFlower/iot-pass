@@ -5,16 +5,16 @@
  -->
 
 <template>
-  <el-dialog
+  <el-drawer
     :visible.sync="dialogVisible"
     :title="title"
-    width="400px"
+    size="45%"
     :close-on-press-escape="false"
     :close-on-click-modal="false"
     class="addCustomAbility"
     @close="close"
   >
-    <el-form ref="addCustomAbilityForm" :model="formData" :rules="rules" v-loading="loading">
+    <el-form ref="addCustomAbilityForm" :model="formData" :rules="rules" v-loading="loading" class="formDrawer">
       <el-form-item prop="abilityType">
         <span slot="label">
           功能类型
@@ -104,11 +104,11 @@
         ></el-input>
       </el-form-item>
     </el-form>
-    <div slot="footer">
-      <el-button type="primary" @click="handleSave" :disabled="showFlag || loading">确认</el-button>
+    <div class="mb10 tr mr20">
       <el-button @click="close" :disabled="loading">取消</el-button>
+      <el-button type="primary" @click="handleSave" :disabled="showFlag || loading">确认</el-button>
     </div>
-  </el-dialog>
+  </el-drawer>
 </template>
 
 <script>
@@ -318,8 +318,12 @@ export default {
 
 <style lang="scss">
 .addCustomAbility {
-  .el-dialog__body {
-    padding: 0 20px;
+  .el-drawer__body {
+    overflow: auto;
+    .formDrawer {
+      padding: 10px 20px;
+      widows: 100%;
+    }
   }
   .el-form-item--small .el-form-item__content,
   .el-form-item--small .el-form-item__label {

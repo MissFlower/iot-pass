@@ -14,7 +14,7 @@
       :model-type="modelType"
       @success="handleSuccess"
     ></datatype-selectpart>
-    <div>
+    <div class="form_label">
       <span class="red mr5">*</span>读写类型
     </div>
     <el-form-item>

@@ -8,7 +8,7 @@
   <div id="dataSelectPart">
     <el-form ref="dataSelectPartForm" :model="formData" :rules="rules">
       <el-form-item label="数据类型" prop="type">
-        <el-select v-model="formData.type" @change="handleChange" :disabled="showFlag || modelType">
+        <el-select v-model="formData.type" @change="handleChange" :disabled="showFlag || modelType" class="wp100">
           <el-option
             v-for="(item, index) in dataTypeArr"
             :key="index"
@@ -18,25 +18,21 @@
         </el-select>
       </el-form-item>
       <div v-if="formData.type == 'int' || formData.type == 'float' || formData.type == 'double'">
-        <div>
-          <span class="red mr5">*</span>取值范围
-        </div>
-        <div class="df ai_c mt10">
-          <el-form-item prop="min">
+        <div class="form_label"><span class="red mr5">*</span><span>取值范围</span></div>
+        <div class="df ai_c jc_sb">
+          <el-form-item prop="min" class="flex1">
             <el-input
               v-model="formData.specs.min"
               placeholder="最小值"
-              class="w150 mr10"
               @input="rangeValueFun"
               :disabled="showFlag"
             ></el-input>
-            <span class="mr10">~</span>
           </el-form-item>
-          <el-form-item prop="max">
+          <span class="mr20 ml20 mb20">~</span>
+          <el-form-item prop="max" class="flex1">
             <el-input
               v-model="formData.specs.max"
               placeholder="最大值"
-              class="w150"
               @input="rangeValueFun"
               :disabled="showFlag"
             ></el-input>
@@ -51,7 +47,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="单位" placeholder="请选择单位">
-          <el-select v-model="formData.specs.unit" filterable :disabled="showFlag">
+          <el-select v-model="formData.specs.unit" filterable :disabled="showFlag" class="wp100">
             <el-option
               v-for="item in unitArr"
               :key="item.symbol"
@@ -62,18 +58,18 @@
         </el-form-item>
       </div>
       <div v-if="formData.type == 'enum'" class="mb10">
-        <div>
+        <div class="form_label">
           <span class="red mr5">*</span>枚举项
         </div>
-        <div class="df mt10 mb10">
-          <div class="flex1">
+        <div class="df mb10">
+          <div class="flex1 form_label lh20 mr20">
             参数值
             <el-tooltip>
               <i class="el-icon-question c9"></i>
               <div slot="content" class="f12 c9 w200">支持整型，取值范围：-2147483648 ~ 2147483647</div>
             </el-tooltip>
           </div>
-          <div class="flex1">
+          <div class="flex1 form_label lh20 ml20">
             参数描述
             <el-tooltip>
               <i class="el-icon-question c9"></i>
@@ -81,23 +77,21 @@
             </el-tooltip>
           </div>
         </div>
-        <div v-for="(item, index) in enumArr" :key="index" class="df enumItem">
+        <div v-for="(item, index) in enumArr" :key="index" class="df enumItem jc_sb">
           <el-form-item class="flex1">
             <el-input
               v-model="item.key"
               placeholder="编号如’0‘"
-              class="w150 mr10"
               @input="enumKeyChange(index)"
               :disabled="showFlag"
             ></el-input>
-            <span class="mr10">~</span>
             <div class="red f12 lh14 pr20" v-if="item.errorKey">{{ item.errorKey }}</div>
           </el-form-item>
+          <span class="mr20 ml20 mt5">~</span>
           <el-form-item class="flex1">
             <el-input
               v-model="item.desc"
               placeholder="对该枚举项的描述"
-              class="w150"
               @input="enumDescChange(index)"
               :disabled="showFlag"
             ></el-input>
@@ -115,27 +109,27 @@
         </span>
       </div>
       <div v-if="formData.type == 'bool'">
-        <div class="mb10">
+        <div class="form_label">
           <span class="red mr5">*</span>布尔值
         </div>
         <el-form-item prop="bool0">
-          <span class="dib w30 tc">0 -</span>
+          <span class="dib w50 tc">0 -</span>
           <el-input
             v-model="boolObj[0]"
             placeholder="如：关"
-            class="ml20"
-            style="width: calc(100% - 50px)"
+            class="ml10"
+            style="width: calc(100% - 60px)"
             :disabled="showFlag"
           ></el-input>
         </el-form-item>
         <div>
           <el-form-item prop="bool1">
-            <span class="dib w30 tc">1 -</span>
+            <span class="dib w50 tc">1 -</span>
             <el-input
               v-model="boolObj[1]"
               placeholder="如：开"
-              class="ml20"
-              style="width: calc(100% - 50px)"
+              class="ml10"
+              style="width: calc(100% - 60px)"
               :disabled="showFlag"
             ></el-input>
           </el-form-item>
@@ -150,7 +144,7 @@
         <el-input disabled v-model="dataText"></el-input>
       </el-form-item>
       <div v-if="formData.type == 'struct'">
-        <div class="mb10">
+        <div class="form_label">
           <span class="red mr5">*</span>JSON对象：
         </div>
         <el-form-item>

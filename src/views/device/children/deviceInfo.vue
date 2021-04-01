@@ -5,10 +5,10 @@
  -->
 <template>
   <div id="deviceInfoView" v-loading="loading">
-    <div class="f20 b">
-      <i class="el-icon-back" @click="back" />
-      {{ deviceObj.deviceName }}
-      <el-tag :type="deviceStatusType[deviceObj.deviceStatus]" v-if="existenceFlag">{{ deviceObj.deviceStatusStr }}</el-tag>
+    <div class="f20 b df ai_c">
+      <i class="el-icon-back mr20" @click="back" />
+      <span>{{ deviceObj.deviceName }}</span>
+      <el-tag :type="deviceStatusType[deviceObj.deviceStatus]" v-if="existenceFlag" class="ml10">{{ deviceObj.deviceStatusStr }}</el-tag>
     </div>
     <div class="f12 c6 mt20 mb20 df fww">
       <div class="productInfo">

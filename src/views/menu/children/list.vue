@@ -5,7 +5,7 @@
  -->
 
 <template>
-  <div id="menu" v-loading="loading">
+  <div id="menuList" v-loading="loading">
     <div class="mb20 df">
       <div class="flex1">
         <el-input
@@ -33,7 +33,7 @@
       </div>
       <el-button v-if="authArr.indexOf('menu_add') > -1" type="primary" @click="handleEdit(2)">新建菜单</el-button>
     </div>
-    <el-table :data="list" border :tree-props="{children: 'children', hasChildren: 'hasChildren'}" row-key="menuId" :expand-row-keys="expands">
+    <el-table :data="list" border :tree-props="{children: 'children', hasChildren: 'hasChildren'}" row-key="menuId" :expand-row-keys="expands" :max-height="tableHeight">
       <el-table-column label="ID" prop="menuId" min-width="80"></el-table-column>
       <el-table-column label="菜单名称" prop="name"></el-table-column>
       <el-table-column label="菜单编号" prop="code"></el-table-column>
@@ -105,7 +105,8 @@ export default {
       total: 0,
       menuObj: {},
       expands: [],
-      icons: objData.icons
+      icons: objData.icons,
+      tableHeight: window.innerHeight - 215
     }
   },
   computed: {
@@ -208,7 +209,7 @@ export default {
 </script>
 
 <style lang="scss">
-#menu {
+#menuList {
   position: relative;
   height: 100%;
   width: 100%;

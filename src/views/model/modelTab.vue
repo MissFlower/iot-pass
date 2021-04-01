@@ -14,13 +14,13 @@
         @click="handleEdit"
         :disabled="productStatus ? true : false"
       >编辑草稿</el-button>
-      <div v-if="list.length > 0 && !loading" class="info df ai_c mb5">
+      <div v-if="list.length > 0 && !loading" class="info df ai_c mb5 c6">
         <i class="el-icon-warning blue mr5"></i>
         当前展示的是已发布到线上的功能定义，
         <span v-if="productStatus ? true : false">如需编辑请先撤销发布</span>
         <span v-else class="df ai_c">
           如需修改，请点击
-          <el-link :underline="false" type="primary" class="f12" @click="handleEdit">编辑草稿</el-link>
+          <el-link :underline="false" type="primary" class="f12 ml5" @click="handleEdit">编辑草稿</el-link>
         </span>
       </div>
       <el-button size="mini" :disabled="list.length == 0" @click="showCheck">物模型 TSL</el-button>

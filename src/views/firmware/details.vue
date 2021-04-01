@@ -5,108 +5,53 @@
  -->
 <template>
   <div class="details">
-    <div class="details-tit clearfix">
-      <h2>
-        <span class="go_back" @click="goBack">
-          <i class="el-icon-back"></i>
-        </span>
-        {{ details.detailList.fmName }}
-      </h2>
+    <div class="f20 df ai_c">
+      <i class="el-icon-back mr15" @click="goBack"></i>
+      <span>{{ details.detailList.fmName }}</span>
       <el-tag
         :type="details.deviceType"
-        class="el_tag"
+        class="ml15"
         v-if="details.detailList.fmStatus || details.detailList.fmStatus == 0"
       >{{ fmStatusObj[details.detailList.fmStatus].label }}</el-tag>
     </div>
-    <div class="detail_info">
-      <el-row>
-        <el-col :span="12">
-          <div class="grid-content">
-            <span class="info_left">固件类型</span>
-            <span>{{ details.detailList.fmType === 1 ? '整包' : '差分' }}</span>
+    <el-row class="f12 c9 mt20 mb20">
+      <el-col :span="12">
+        <div class="df ai_c">
+          <div class="w100 mr20">固件类型：</div>
+          <span class="c6">{{ details.detailList.fmType === 1 ? '整包' : '差分' }}</span>
+        </div>
+        <div class="df ai_c mt10">
+          <div class="w100 mr20">固件签名：</div>
+          <span class="c6">{{ details.detailList.fmSign }}</span>
+          <iconToolTip ref="iconToolTip" :content="`下载`" :icon="`el-icon-download`" @clickFun="downLoad" v-if="operateFlag" class="ml10"></iconToolTip>
+        </div>
+        <div class="df ai_c mt10">
+          <div class="w100 mr20">签名算法：</div>
+          <span class="c6">{{ details.detailList.signMethod === 1 ? 'Md5' : 'SHA256' }}</span>
+        </div>
+      </el-col>
+      <el-col :span="12" class="df ai_c">
+        <div class="flex1 df f13 c8">
+          <div class="ml20 w120" v-for="(item, index) in numTitles" :key="index">
+            <div class="">
+              <span v-if="index != 0" class="point" :style="{background: index==1 ? '#0A59C0' : '#F56C6C'}" />
+              {{ item.text }}
+            </div>
+            <div class="c6 f20 b mt10">{{ nums[item.key] }}</div>
           </div>
-        </el-col>
-        <el-col :span="12">
-          <div class="grid-content">
-            <span class="info_left">固件签名</span>
-            <span>
-              {{ details.detailList.fmSign }}
-              <iconToolTip ref="iconToolTip" :content="`下载`" :icon="`el-icon-download`" @clickFun="downLoad" v-if="operateFlag" class="ml10"></iconToolTip>
-            </span>
-          </div>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="12">
-          <div class="grid-content">
-            <span class="info_left">签名算法</span>
-            <span>{{ details.detailList.signMethod === 1 ? 'Md5' : 'SHA256' }}</span>
-          </div>
-        </el-col>
-        <!--<el-col :span="12">-->
-        <!--<div class="grid-content">-->
-        <!--<span class="info_left">自定义模块名称</span>-->
-        <!--<span>default</span>-->
-        <!--</div>-->
-        <!--</el-col>-->
-      </el-row>
-    </div>
-    <div class="details_sta">
-      <el-row>
-        <el-col :span="3">
-          <div class="grid-content">
-            <dl class="details_line">
-              <dt>目标设备总数</dt>
-              <dd>{{ nums.targetTotal }}</dd>
-            </dl>
-          </div>
-        </el-col>
-        <el-col :span="3">
-          <div class="grid-content">
-            <dl class="details_line">
-              <dt>目标成功数</dt>
-              <dd>{{ nums.targetSuccess }}</dd>
-            </dl>
-          </div>
-        </el-col>
-        <el-col :span="3">
-          <div class="grid-content">
-            <dl class="details_line">
-              <dt>目标失败数</dt>
-              <dd>{{ nums.targetFail }}</dd>
-            </dl>
-          </div>
-        </el-col>
-        <!--<el-col :span="3">-->
-        <!--<div class="refresh">-->
-        <!--<i class="el-icon-refresh"></i>-->
-        <!--</div>-->
-        <!--</el-col>-->
-      </el-row>
-    </div>
+        </div>
+      </el-col>
+    </el-row>
     <div>
       <el-tabs v-model="detailsTab" type="card" @tab-click="handleClick" v-loading="loading">
         <el-tab-pane label="批次管理" name="first" :disabled="!operateFlag">
-          <el-form ref="form" :model="batchManage" label-width="80px" :inline="true">
-            <el-form-item>
-              <el-button type="primary" @click="checkFm" :disabled="!operateFlag">验证固件</el-button>
-              <el-tooltip
-                class="item"
-                effect="dark"
-                content="请先验证固件，再进行批量升级"
-                placement="top"
-                v-if="details.detailList.fmStatus !== 2"
-              >
-                <el-button disabled>批量升级</el-button>
-              </el-tooltip>
-              <el-button v-else @click="upgradeSubmit" :disabled="!operateFlag">批量升级</el-button>
-            </el-form-item>
-            <el-form-item>
+          <div class="mb20 df ai_c">
+            <div class="flex1">
               <el-input
                 v-model="batchManage.id"
                 placeholder="请输入批次ID"
                 @keyup.enter.native="searchBatchManage"
-                class="searchInput"
+                class="searchInput w240"
                 :disabled="!operateFlag"
               >
                 <span slot="suffix">
@@ -114,8 +59,19 @@
                   <i class="el-icon-close hand" v-if="batchManage.id != ''" @click="clearFun('id')"></i>
                 </span>
               </el-input>
-            </el-form-item>
-          </el-form>
+            </div>
+            <el-button type="primary" @click="checkFm" :disabled="!operateFlag">验证固件</el-button>
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="请先验证固件，再进行批量升级"
+              placement="top"
+              v-if="details.detailList.fmStatus !== 2"
+            >
+              <el-button disabled>批量升级</el-button>
+            </el-tooltip>
+            <el-button v-else @click="upgradeSubmit" :disabled="!operateFlag">批量升级</el-button>
+          </div>
           <el-table :data="batchManage.batchList" border stripe>
             <el-table-column label="批次ID" prop="batchNo"></el-table-column>
             <el-table-column label="批次类型" prop="taskType" :formatter="formatTaskType" align="center"></el-table-column>
@@ -392,6 +348,18 @@ export default {
         detailList: {}
       },
       detailsTab: 'first',
+      numTitles: [
+        {
+          text: '目标设备总数',
+          key: 'targetTotal'
+        }, {
+          text: '目标成功数',
+          key: 'targetSucess'
+        }, {
+          text: '目标失败数',
+          key: 'targetFail'
+        }
+      ],
       nums: {
         // 标签栏上方的数量
         targetFail: 0,
@@ -755,102 +723,24 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-body,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-hr,
-p,
-blockquote,
-dl,
-dt,
-dd,
-ul,
-ol,
-li,
-pre,
-form,
-fieldset,
-legend,
-input,
-textarea,
-th,
-td,
-a {
-  margin: 0;
-  padding: 0;
-}
-.clearfix:after {
-  content: '.';
-  display: block;
-  clear: both;
-  height: 0;
-  line-height: 0;
-  font-size: 0;
-  visibility: hidden;
-}
-.clear {
-  clear: both;
-}
 $default: #409eff;
-.download {
-  color: $default;
-  margin-left: 10px;
-}
 .details {
   position: relative;
   width: 100%;
   height: 100%;
   padding: 20px;
 }
-.go_back {
-  cursor: pointer;
-  padding-right: 10px;
-}
-.details-tit {
-  > h2 {
-    float: left;
-  }
-  .el_tag {
-    float: left;
-    margin-top: 3px;
-    margin-left: 20px;
-  }
-}
 .disabled {
   color: #999;
   cursor: text;
 }
-.el-row {
-  margin-bottom: 20px;
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-.el-col {
-  border-radius: 4px;
-}
 .grid-content {
-  border-radius: 4px;
-  min-height: 24px;
+  // min-height: 24px;
   line-height: 24px;
   font-size: 12px;
   .info_left {
     display: inline-block;
     width: 20%;
-  }
-}
-.detail_info {
-  margin-top: 20px;
-}
-.details_sta {
-  margin-top: 20px;
-  margin-bottom: 20px;
-  .details_line {
-    font-size: 14px;
   }
 }
 .oprate_btn {

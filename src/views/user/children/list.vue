@@ -41,18 +41,12 @@
         @click="handleShowCon(1)"
       >新建用户</el-button>
     </div>
-    <el-table v-loading="loading" :data="list" border>
+    <el-table v-loading="loading" :data="list" border :max-height="tableHeight">
       <el-table-column label="ID" prop="id" align="center" width="50" />
       <el-table-column label="账号名" prop="account">
         <template slot-scope="{ row }">
           <span>{{ row.account }}</span>
           <svg-icon icon-class="accountRole" class="success hand f14 ml10" @mouseout="showRoleList($event, row)" @mouseleave.stop="hideRoleList" />
-          <!-- <el-tooltip v-if="authArr.indexOf('mgr_updateRole') > -1" placement="right">
-            <div slot="content">
-              <roleList :info="row"></roleList>
-            </div>
-            <svg-icon icon-class="accountRole" class="success hand f14 ml10" @hover.native="showRoleList(3, row)" />
-          </el-tooltip> -->
         </template>
       </el-table-column>
       <el-table-column label="姓名" prop="name" align="center" />
@@ -109,7 +103,8 @@ export default {
         phone: '',
         startTime: '',
         endTime: ''
-      }
+      },
+      tableHeight: window.innerHeight - 245
     }
   },
   computed: {

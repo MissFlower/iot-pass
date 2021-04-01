@@ -1,34 +1,30 @@
 <template>
   <div id="addProduct" v-loading="mainLoading">
-    <div class="f20 b pb20 title_wrp">
+    <div class="f20 b pb20 df ai_c jc_sb">
       <div>
         <i class="el-icon-back" @click="goBack"></i>
-        <span style="margin-left:15px">{{ productName }}</span>
+        <span class="ml15">{{ productName }}</span>
       </div>
-      <el-button
-        :type="btnType"
-        @click="releaseProduct"
-        v-if="authArr.indexOf('product_release') > -1 && operateFlag"
-      >{{ btnType ? '发布' : '撤销发布' }}</el-button>
+      <el-button :type="btnType" size="mini" @click="releaseProduct" v-if="authArr.indexOf('product_release') > -1 && operateFlag">{{ btnType ? '发布' : '撤销发布' }}</el-button>
     </div>
     <div class="p_key">
-      <div>
-        <span>ProductKey:</span>
-        <span class="key">{{ productKey }}</span>
+      <div class="flex1 df ai_c">
+        <div class="w100 c9 mr20">ProductKey:</div>
+        <span class="c6">{{ productKey }}</span>
         <iconToolTip ref="iconToolTip" :content="`复制`" :icon="`el-icon-copy-document`" :copyStr="productKey" v-if="operateFlag" class="ml10"></iconToolTip>
       </div>
-      <div>
-        <span>ProductSecret:</span>
-        <span class="key">*******</span>
+      <div class="flex1 df ai_c">
+        <span class="w100 c9 mr20">ProductSecret:</span>
+        <span class="c6">*******</span>
         <iconToolTip ref="iconToolTip" :content="`查看`" :icon="`eye`" @clickFun="seeSecret" v-if="operateFlag" class="ml10"></iconToolTip>
       </div>
     </div>
-    <div class="deviceCount">
-      <span class="text">设备数:</span>
-      <span class="key">{{ productData.deviceCount }}</span>
+    <div class="p_key mt10">
+      <span class="w100 c9 mr20">设备数:</span>
+      <span class="c6">{{ productData.deviceCount }}</span>
       <iconToolTip ref="iconToolTip" :content="`前往管理`" :icon="`manage`" @clickFun="goEqu" v-if="goEqu" class="ml10"></iconToolTip>
     </div>
-    <div class="tab_wrp mt20">
+    <div class="mt20">
       <el-tabs v-model="activeName" type="card" @tab-click="tabChange">
         <el-tab-pane label="产品信息" name="product" :disabled="!operateFlag">
           <product-info
@@ -233,34 +229,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.deviceCount {
-  margin-top: 15px;
-  color: #888;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  .key {
-    margin-left: 25px;
-    margin-right: 5px;
-  }
-}
-
-.title_wrp {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
 .p_key {
-  color: #888;
-  font-size: 14px;
+  font-size: 12px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  .key {
-    margin-left: 35px;
-    margin-right: 5px;
-  }
 }
 
 .dialogSecret {

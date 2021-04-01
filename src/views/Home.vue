@@ -113,9 +113,9 @@ export default {
   width: 100%;
   height: 100%;
   padding: 20px;
-  background-color: #fafafa;
+  // background-color: #fafafa;
   .con {
-    background: #fff;
+    // background: #fff;
     width: 100%;
     box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.08);
     padding-bottom: 20px;

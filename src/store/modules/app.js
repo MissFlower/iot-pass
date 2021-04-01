@@ -34,11 +34,14 @@ const app = {
       const list = JSON.parse(JSON.stringify(state.breadcrumdList))
       const paths = list.map(item => item.path)
       const len = paths.indexOf(obj.path)
-      if (len > 1) {
+      if (len === -1) {
+        list.splice(1, 0, obj)
+        state.breadcrumdList = list
+      } else if (len > 1) {
         list.splice(len, 1)
+        list.splice(1, 0, obj)
+        state.breadcrumdList = list
       }
-      list.splice(1, 0, obj)
-      state.breadcrumdList = list
     },
     RESET_BTEADCRUMB_LIST: (state, list) => {
       state.breadcrumdList = list

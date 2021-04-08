@@ -4,7 +4,7 @@
   文件说明：菜单的选择图标的组件
  -->
 <template>
-  <el-popover v-model="dialogVisible" title="选择图标" trigger="manual" placement="right">
+  <el-popover v-model="dialogVisible" title="选择图标" trigger="manual">
     <i class="el-icon-close fr" style="position: absolute;top: 10px;right: 10px;" @click="close"></i>
     <div class="w400 df ai_c fww mt20">
       <div

@@ -4,8 +4,8 @@
   文件说明：菜单的详情、编辑、创建页面
  -->
 <template>
-  <el-dialog id="menu_right_con" :visible.sync="dialogVisible" :title="`${activeItem ? '编辑' : '创建'}菜单`" :close-on-click-modal="false" v-loading="loading" @closed="close">
-    <el-form ref="form" :model="info" label-width="100px" class="mb20" :rules="rules">
+  <el-dialog id="menu_right_con" :visible.sync="dialogVisible" :title="`${activeItem ? '编辑' : '创建'}菜单`" :close-on-click-modal="false" @closed="close">
+    <el-form ref="form" :model="info" label-width="100px" class="mb20" :rules="rules" v-loading="loading">
       <el-form-item label="菜单名称" prop="name">
         <el-input v-model="info.name" placeholder="请输入菜单名称" class="w200"></el-input>
       </el-form-item>
@@ -30,16 +30,16 @@
           <el-radio label="N">否</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="排序" prop="sort" v-if="info.menuFlag == 'Y'">
-        <el-input v-model="info.sort" placeholder="请输入菜单排序" class="w200"></el-input>
-      </el-form-item>
       <el-form-item label="图标">
         <icon-select-con :icon="info.icon" @select="selectIcon" @changeShowFlag="changeShowFlag"></icon-select-con>
       </el-form-item>
+      <el-form-item label="菜单排序" prop="sort" v-if="info.menuFlag == 'Y'">
+        <el-input v-model="info.sort" placeholder="请输入菜单排序" class="w200"></el-input>
+      </el-form-item>
     </el-form>
     <div slot="footer" class="tr">
-      <el-button :disabled="show" @click.stop="close">取消</el-button>
-      <el-button type="primary" :disabled="show" @click.stop="handleSave">保存</el-button>
+      <el-button :disabled="show || loading" @click.stop="close">取消</el-button>
+      <el-button type="primary" :disabled="show || loading" @click.stop="handleSave">保存</el-button>
     </div>
   </el-dialog>
 </template>
@@ -48,8 +48,9 @@
 import iconSelectCon from './selectIocn'
 import { createMenu, updateMenu, getMenuList } from '@/api/menu'
 import { dealFun } from '@/data/fun'
+import Index from '../../../components/DeafultGraph/index.vue'
 export default {
-  components: { iconSelectCon },
+  components: { iconSelectConIndex },
   props: {
     activeItem: {
       type: Object,
@@ -90,7 +91,9 @@ export default {
         frontPath: '',
         sort: ''
       },
-      info: {},
+      info: {
+        menuFlag: 'Y'
+      },
       rules: {
         name: [{ required: true, message: '请输入菜单', trigger: 'blur' }],
         code: [{ required: true, message: '请输入编号', trigger: 'blur' }],
@@ -151,7 +154,7 @@ export default {
                 this.info[key] = this.activeItem[key]
               }
               this.info.pid = this.findMenuIds(this.activeItem.pcodes)
-              this.info.sort = this.info.sort ? this.info.sort * 1 : 0
+              this.info.sort = this.info.sort !== '' ? this.info.sort * 1 : this.info.sort
             } else {
               if (this.list && this.list.length > 0) {
                 this.info.pid = this.findMenuIds(`[0],[${this.list[0].code}],`)
@@ -246,5 +249,8 @@ export default {
 #menu_right_con .el-form-item--small.el-form-item {
   display: inline-block;
   width: 50%;
+}
+#menu_right_con .el-form {
+  min-height: 240px;
 }
 </style>

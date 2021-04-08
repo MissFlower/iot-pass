@@ -37,11 +37,11 @@
       <el-form-item label="备注名称：" prop="nickName">
         <el-input v-model="ruleForm.nickName" placeholder="请输入备注名称" />
       </el-form-item>
-      <el-form-item class="mt20 tr" style="margin-bottom:0;">
-        <el-button @click="handleCancel">取 消</el-button>
-        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
-      </el-form-item>
     </el-form>
+    <div slot="footer" class="tr">
+      <el-button @click="handleCancel">取 消</el-button>
+      <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+    </div>
   </el-dialog>
 </template>
 

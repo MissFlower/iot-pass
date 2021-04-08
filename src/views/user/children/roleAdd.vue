@@ -44,7 +44,7 @@
         </el-checkbox-group>
       </div>
     </div>
-    <div class="tr mt20">
+    <div slot="footer" class="tr">
       <el-button @click="handleCancel">取消</el-button>
       <el-button type="primary" @click="handleSave">保存</el-button>
     </div>

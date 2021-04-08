@@ -37,7 +37,7 @@
         <icon-select-con :icon="info.icon" @select="selectIcon" @changeShowFlag="changeShowFlag"></icon-select-con>
       </el-form-item>
     </el-form>
-    <div class="tc">
+    <div slot="footer" class="tr">
       <el-button :disabled="show" @click.stop="close">取消</el-button>
       <el-button type="primary" :disabled="show" @click.stop="handleSave">保存</el-button>
     </div>

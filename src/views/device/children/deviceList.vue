@@ -72,7 +72,7 @@
           @click="toNewDevice(false)"
         >添加设备</el-button>
         <el-button
-          v-if="authArr.indexOf('device_batchNew')>-1"
+          v-if="authArr.indexOf('device_patchCreateDevice')>-1"
           type="primary"
           @click="toNewDevice(true)"
         >批量添加</el-button>
@@ -313,7 +313,7 @@ export default {
     deviceObj  设备对象
     */
     deleteClick(deviceObj) {
-      this.$confirm('确定要删除此设备么?', '提示', {
+      this.$confirm('确定要删除此设备吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

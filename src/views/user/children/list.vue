@@ -46,7 +46,9 @@
       <el-table-column label="账号名" prop="account">
         <template slot-scope="{ row }">
           <span>{{ row.account }}</span>
-          <svg-icon icon-class="accountRole" class="success hand f14 ml10" @mouseout="showRoleList($event, row)" @mouseleave.stop="hideRoleList" />
+          <span @mouseout="showRoleList($event, row)" @mouseleave.stop="hideRoleList">
+            <svg-icon icon-class="accountRole" class="success hand f14 ml10" />
+          </span>
         </template>
       </el-table-column>
       <el-table-column label="姓名" prop="name" align="center" />

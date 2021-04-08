@@ -29,11 +29,11 @@
       <el-form-item label="电话：" prop="phone">
         <el-input v-model="editItem.phone" placeholder="请输入电话" />
       </el-form-item>
-      <div class="tr mb20">
-        <el-button @click="close">取消</el-button>
-        <el-button type="primary" @click="handleSave">保存</el-button>
-      </div>
     </el-form>
+    <div slot="footer" class="tr">
+      <el-button @click="close">取消</el-button>
+      <el-button type="primary" @click="handleSave">保存</el-button>
+    </div>
   </el-dialog>
 </template>
 

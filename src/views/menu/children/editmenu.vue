@@ -48,9 +48,8 @@
 import iconSelectCon from './selectIocn'
 import { createMenu, updateMenu, getMenuList } from '@/api/menu'
 import { dealFun } from '@/data/fun'
-import Index from '../../../components/DeafultGraph/index.vue'
 export default {
-  components: { iconSelectConIndex },
+  components: { iconSelectCon },
   props: {
     activeItem: {
       type: Object,

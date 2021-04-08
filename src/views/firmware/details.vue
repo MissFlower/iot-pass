@@ -354,7 +354,7 @@ export default {
           key: 'targetTotal'
         }, {
           text: '目标成功数',
-          key: 'targetSucess'
+          key: 'targetSuccess'
         }, {
           text: '目标失败数',
           key: 'targetFail'

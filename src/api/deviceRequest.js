@@ -53,7 +53,7 @@ export function createDevice(data) {
 export function batchCreateDevice(data) {
   // 批量添加设备
   return request({
-    url: '/device/patchCreateDevice',
+    url: '/device/batchCreateDevice',
     method: 'post',
     headers: headerFrom_json,
     data: data

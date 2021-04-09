@@ -21,8 +21,8 @@
     </div>
     <div class="p_key mt10">
       <span class="w100 c9 mr20">设备数:</span>
-      <span class="c6">{{ productData.deviceCount }}</span>
-      <iconToolTip ref="iconToolTip" :content="`前往管理`" :icon="`manage`" @clickFun="goEqu" v-if="goEqu" class="ml10"></iconToolTip>
+      <span class="c6">{{ productData.deviceCount ? productData.deviceCount : 0 }}</span>
+      <iconToolTip ref="iconToolTip" :content="`前往管理`" :icon="`manage`" @clickFun="goEqu" v-if="operateFlag" class="ml10"></iconToolTip>
     </div>
     <div class="mt20">
       <el-tabs v-model="activeName" type="card" @tab-click="tabChange">
@@ -81,12 +81,12 @@ export default {
       dialogVisible: false,
       activeName: 'product',
       standardSelectState: true,
-      btnType: 'primary',
+      btnType: 'primary', // 按钮type，记录产品是否发布
       productName: '',
       loading: false,
       productSecret: '',
       productData: {},
-      operateFlag: false
+      operateFlag: false // 产品是否存在
     }
   },
   computed: {

@@ -2,12 +2,15 @@
   <div id="main" v-loading="loading">
     <div class="edit_product">
       <span class="title">产品信息</span>
-      <el-link
+      <el-button
         icon="el-icon-edit"
+        type="primary"
+        class="fr"
         v-show="btnType"
         @click="dialogProEditBtn"
         v-if="authArr.indexOf('edit_product') > -1 && operateFlag"
-      >编辑</el-link>
+        size="mini"
+      >编辑</el-button>
     </div>
     <div class="grid_wrp">
       <el-row>
@@ -54,7 +57,7 @@
 
         <el-col :span="8" v-show="btnType">
           <div class="grid-content">
-            <div class="grid_col grid_left">动态注册{{ authArr.indexOf('dynamic_product') === -1 || !operateFlag }}</div>
+            <div class="grid_col grid_left">动态注册</div>
             <div class="grid_col grid_right">
               <el-switch
                 v-model="productData.dynRegister"
@@ -62,7 +65,7 @@
                 inactive-text="关闭"
                 :active-value="1"
                 :inactive-value="0"
-                :disabled="authArr.indexOf('dynamic_product') === -1 || operateFlag"
+                :disabled="authArr.indexOf('dynamic_product') === -1 || !operateFlag"
                 @change="dynRegisterChange"
               ></el-switch>
             </div>
@@ -289,6 +292,9 @@ export default {
   }
   .grid_right {
     flex: 2;
+  }
+  .el-switch {
+    height: 14px;
   }
 }
 

@@ -14,7 +14,7 @@
       </el-table-column>
 
       <el-table-column prop="access" label="设备具有的权限" width="200"></el-table-column>
-      <el-table-column prop="access" label="qos" width="200"></el-table-column>
+      <el-table-column prop="qos" label="qos" width="200"></el-table-column>
       <el-table-column prop="remark" label="描述"></el-table-column>
     </el-table>
     <!-- 分页-->

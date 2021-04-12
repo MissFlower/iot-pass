@@ -167,3 +167,8 @@ export const productStatusObj = { // 产品状态
     color: '#1e8e3e'
   }
 }
+export const TopicQos = {
+  0: '消息最多传递一次，如果当时客户端不可用，则会丢失该消息;',
+  1: '消息传递至少 1 次',
+  2: '消息仅传送一次'
+}

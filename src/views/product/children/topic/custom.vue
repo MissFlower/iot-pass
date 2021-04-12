@@ -50,6 +50,11 @@
           <div>/{{ productKey }}/${deviceName}/user/</div>
           <el-input v-model="customForm.topicName" autocomplete="off"></el-input>
         </el-form-item>
+        <el-form-item label="QOS" prop="qos">
+          <el-select v-model="customForm.qos" class="wp100">
+            <el-option v-for="(item, key) in TopicQos" :key="key" :value="key" :label="key"></el-option>
+          </el-select>
+        </el-form-item>
 
         <el-form-item label="描述">
           <el-input
@@ -72,6 +77,8 @@
 <script>
 import { productCustomEdit, productDelete, customList } from '@/api/product'
 import Pagination from '@/components/Pagination'
+
+import { TopicQos } from '@/data/constants'
 export default {
   components: {
     Pagination
@@ -148,6 +155,7 @@ export default {
       customForm: {
         topicAccess: 1,
         topicName: '',
+        qos: '',
         topicDescribe: ''
       },
       customData: [],
@@ -157,6 +165,9 @@ export default {
         ],
         topicName: [
           { required: true, validator: validateName, trigger: 'change' }
+        ],
+        qos: [
+          { required: true, message: '请选择QOS', trigger: 'change' }
         ]
       },
       tableData: {
@@ -164,7 +175,8 @@ export default {
         total: 0, // 总条数
         pageSize: 10, // 一页大小
         pageNum: 1 // 第几页 从0开始
-      }
+      },
+      TopicQos
     }
   },
   created() {

@@ -13,7 +13,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="access" label="设备具有的权限" width="200"></el-table-column>
+      <el-table-column prop="topicAccessStr" label="设备具有的权限" width="200"></el-table-column>
       <el-table-column prop="qos" label="qos" width="200"></el-table-column>
       <el-table-column prop="remark" label="描述"></el-table-column>
     </el-table>
@@ -67,8 +67,8 @@ export default {
           // topic权限
           const topicAccessDict = { '1': '订阅', '2': '发布', '3': '订阅+发布' }
           var newList = list.map(function(value) {
-            if (value.topicAccess != null) {
-              value.topicAccessStr = topicAccessDict[value.topicAccess.toString()]
+            if (value.access != null) {
+              value.topicAccessStr = topicAccessDict[value.access.toString()]
             }
             return value
           })

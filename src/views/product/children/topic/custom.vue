@@ -8,22 +8,23 @@
       class="mt10 wp100"
       :header-cell-style="{background:'#F5F7FA',color:'#606266'}"
     >
-      <el-table-column prop="topicName" label="自定义topic">
-        <template slot-scope="scope">{{ scope.row.topicName }}</template>
+      <el-table-column prop="name" label="自定义topic">
+        <!-- <template slot-scope="scope">{{ scope.row.name }}</template> -->
       </el-table-column>
 
       <el-table-column label="操作权限" width="100">
         <template
           slot-scope="scope"
-        >{{ scope.row.topicAccess === 1 ? '订阅' : (scope.row.topicAccess === 2 ? '发布' : '发布和订阅') }}</template>
+        >{{ scope.row.access === 1 ? '订阅' : (scope.row.access === 2 ? '发布' : '发布和订阅') }}</template>
       </el-table-column>
+      <el-table-column prop="qos" label="QOS"></el-table-column>
 
-      <el-table-column prop="topicDescribe" label="描述"></el-table-column>
+      <el-table-column prop="remark" label="描述"></el-table-column>
 
       <el-table-column label="操作" width="180">
         <template slot-scope="scope">
           <el-button type="text" @click="editTopic(scope.row)" class="mr20">编辑</el-button>
-          <el-popconfirm title="确定要删除Topic类吗？" @onConfirm="deleteTopic(scope.row.topicId)">
+          <el-popconfirm title="确定要删除Topic类吗？" @onConfirm="deleteTopic(scope.row.id)">
             <el-button type="text" slot="reference">删除</el-button>
           </el-popconfirm>
         </template>
@@ -34,9 +35,9 @@
     <!-- 定义or编辑 topic -->
     <el-dialog title="定义Topic类" :visible.sync="dialogFormVisible">
       <el-form ref="customDialog" :model="customForm" label-position="top" :rules="customRules">
-        <el-form-item label="设备操作权限" prop="topicAccess">
+        <el-form-item label="设备操作权限" prop="access">
           <el-select
-            v-model="customForm.topicAccess"
+            v-model="customForm.access"
             style="width:100%"
             @change="topicAccessChange"
           >
@@ -46,9 +47,9 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="Topic类" prop="topicName">
+        <el-form-item label="Topic类" prop="name">
           <div>/{{ productKey }}/${deviceName}/user/</div>
-          <el-input v-model="customForm.topicName" autocomplete="off"></el-input>
+          <el-input v-model="customForm.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="QOS" prop="qos">
           <el-select v-model="customForm.qos" class="wp100">
@@ -58,7 +59,7 @@
 
         <el-form-item label="描述">
           <el-input
-            v-model="customForm.topicDescribe"
+            v-model="customForm.remark"
             autocomplete="off"
             type="textarea"
             rows="5"
@@ -98,7 +99,7 @@ export default {
       if (value.indexOf('//') !== -1) {
         accessFlag = false
       }
-      if (this.customForm.topicAccess === 1) {
+      if (this.customForm.access === 1) {
         res2 = /^[\w/+#]{1,64}$/
         const sy = value.indexOf('#')
         if (sy >= 0) {
@@ -153,17 +154,17 @@ export default {
       dialogFormVisible: false,
       productKey: this.$route.params.key,
       customForm: {
-        topicAccess: 1,
-        topicName: '',
+        access: 1,
+        name: '',
         qos: '',
-        topicDescribe: ''
+        remark: ''
       },
       customData: [],
       customRules: {
-        topicAccess: [
+        access: [
           { required: true, message: '请选择设备操作权限', trigger: 'change' }
         ],
-        topicName: [
+        name: [
           { required: true, validator: validateName, trigger: 'change' }
         ],
         qos: [
@@ -185,27 +186,27 @@ export default {
   methods: {
     // 选择设备操作权限
     topicAccessChange() {
-      this.$refs['customDialog'].validateField('topicName')
+      this.$refs['customDialog'].validateField('name')
     },
     // 编辑topic
     editTopic(row) {
       this.dialogFormVisible = true
-      this.customForm.topicAccess = row.topicAccess
-      let arr = row.topicName.split('/')
+      this.customForm.access = row.access
+      let arr = row.name.split('/')
       const index = arr.indexOf('user')
       arr = arr.splice(index + 1, arr.length - index - 1)
-      this.customForm.topicName = arr.join('/')
-      this.customForm.topicDescribe = row.topicDescribe || ''
-      this.submitTopicId = row.topicId
+      this.customForm.name = arr.join('/')
+      this.customForm.remark = row.remark || ''
+      this.submitTopicId = row.id
     },
     // 定义topic
     customDialog() {
       this.dialogFormVisible = true
       this.submitTopicId = ''
       this.customForm = {
-        topicAccess: 1,
-        topicName: '',
-        topicDescribe: ''
+        access: 1,
+        name: '',
+        remark: ''
       }
       setTimeout(() => {
         this.$refs['customDialog'].clearValidate()
@@ -250,7 +251,7 @@ export default {
     submitTopic(id) {
       var obj = {}
       if (this.submitTopicId) {
-        obj = Object.assign({}, obj, { topicId: this.submitTopicId })
+        obj = Object.assign({}, obj, { id: this.submitTopicId })
       }
 
       this.$refs['customDialog'].validate(valid => {

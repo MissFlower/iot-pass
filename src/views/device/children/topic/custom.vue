@@ -6,16 +6,16 @@
       style="width: 100%"
       :header-cell-style="{background:'#F5F7FA',color:'#606266'}"
     >
-      <el-table-column prop="topicName" label="自定义topic">
+      <el-table-column prop="name" label="自定义topic">
         <template slot-scope="scope">
           <!-- /{{scope.row.productKey}}/${deviceName}/user/ -->
-          {{ scope.row.topicName }}
+          {{ scope.row.name }}
         </template>
       </el-table-column>
 
-      <el-table-column prop="topicAccessStr" label="设备具有的权限" width="200"></el-table-column>
-
-      <el-table-column prop="topicDescribe" label="描述"></el-table-column>
+      <el-table-column prop="access" label="设备具有的权限" width="200"></el-table-column>
+      <el-table-column prop="access" label="qos" width="200"></el-table-column>
+      <el-table-column prop="remark" label="描述"></el-table-column>
     </el-table>
     <!-- 分页-->
     <pagination :data="tableData" @pagination="changePage" class="tr" />

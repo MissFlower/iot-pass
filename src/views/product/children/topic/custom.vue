@@ -51,12 +51,12 @@
           <div>/{{ productKey }}/${deviceName}/user/</div>
           <el-input v-model="customForm.name" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="QOS" prop="qos">
+        <!-- <el-form-item label="QOS" prop="qos">
           <el-input v-model="customForm.qos" class="wp100" disabled></el-input>
-          <!-- <el-select v-model="customForm.qos" class="wp100" disabled>
+          <el-select v-model="customForm.qos" class="wp100" disabled>
             <el-option v-for="(item, key) in TopicQos" :key="key" :value="key" :label="key" ></el-option>
-          </el-select> -->
-        </el-form-item>
+          </el-select>
+        </el-form-item> -->
 
         <el-form-item label="描述">
           <el-input
@@ -157,7 +157,7 @@ export default {
       customForm: {
         access: 1,
         name: '',
-        qos: '0',
+        // qos: '0',
         remark: ''
       },
       customData: [],
@@ -206,8 +206,8 @@ export default {
       this.customForm = {
         access: 1,
         name: '',
-        remark: '',
-        qos: '0'
+        remark: ''
+        // qos: '0'
       }
       setTimeout(() => {
         this.$refs['customDialog'].clearValidate()

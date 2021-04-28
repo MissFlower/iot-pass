@@ -52,9 +52,10 @@
           <el-input v-model="customForm.name" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="QOS" prop="qos">
-          <el-select v-model="customForm.qos" class="wp100">
-            <el-option v-for="(item, key) in TopicQos" :key="key" :value="key" :label="key"></el-option>
-          </el-select>
+          <el-input v-model="customForm.qos" class="wp100" disabled></el-input>
+          <!-- <el-select v-model="customForm.qos" class="wp100" disabled>
+            <el-option v-for="(item, key) in TopicQos" :key="key" :value="key" :label="key" ></el-option>
+          </el-select> -->
         </el-form-item>
 
         <el-form-item label="描述">
@@ -79,7 +80,7 @@
 import { productCustomEdit, productDelete, customList } from '@/api/product'
 import Pagination from '@/components/Pagination'
 
-import { TopicQos } from '@/data/constants'
+// import { TopicQos } from '@/data/constants'
 export default {
   components: {
     Pagination
@@ -156,7 +157,7 @@ export default {
       customForm: {
         access: 1,
         name: '',
-        qos: '',
+        qos: '0',
         remark: ''
       },
       customData: [],
@@ -176,8 +177,7 @@ export default {
         total: 0, // 总条数
         pageSize: 10, // 一页大小
         pageNum: 1 // 第几页 从0开始
-      },
-      TopicQos
+      }
     }
   },
   created() {
@@ -206,7 +206,8 @@ export default {
       this.customForm = {
         access: 1,
         name: '',
-        remark: ''
+        remark: '',
+        qos: '0'
       }
       setTimeout(() => {
         this.$refs['customDialog'].clearValidate()

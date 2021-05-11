@@ -174,7 +174,16 @@ export default {
       return this.$store.state.app.functionArr
     }
   },
-
+  watch: {
+    $route() {
+      if (this.$route.meta.code === 'device') {
+        if (this.$route.query.productId) {
+          this.productId = this.$route.query.productId
+          this.changeProductFun()
+        }
+      }
+    }
+  },
   mounted() {
     if (this.$route.query.productId) {
       this.productId = this.$route.query.productId

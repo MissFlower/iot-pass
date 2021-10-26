@@ -294,6 +294,7 @@ export default {
       } else {
         obj.modelType = '2'
       }
+      obj.modelData.desc = this.formData.modelData.desc
       obj.modelData = JSON.stringify(obj.modelData)
       const submitObj = JSON.parse(JSON.stringify(obj))
       promise(submitObj).then(res => {
